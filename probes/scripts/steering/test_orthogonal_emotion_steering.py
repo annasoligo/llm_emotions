@@ -14,10 +14,13 @@ import torch
 
 # Add steering module to path
 try:
-    script_path = Path(__file__).parent.parent
+    # Script is now in probes/scripts/steering/, so go up 2 levels to get to probes/
+    script_path = Path(__file__).parent.parent.parent
 except NameError:
     script_path = Path.cwd()
-    if script_path.name == 'scripts':
+    if script_path.name == 'steering':
+        script_path = script_path.parent.parent
+    elif script_path.name == 'scripts':
         script_path = script_path.parent
     elif script_path.name != 'probes':
         script_path = Path('/workspace-vast/annas/git/research-tools/probes')

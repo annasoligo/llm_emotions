@@ -15,11 +15,14 @@ import torch
 # Add steering module to path
 # Handle both script and interactive execution
 try:
-    script_path = Path(__file__).parent.parent
+    # Script is now in probes/scripts/steering/, so go up 2 levels to get to probes/
+    script_path = Path(__file__).parent.parent.parent
 except NameError:
-    # In interactive mode, assume we're in probes/scripts/
+    # In interactive mode, assume we're in probes/scripts/steering/
     script_path = Path.cwd()
-    if script_path.name == 'scripts':
+    if script_path.name == 'steering':
+        script_path = script_path.parent.parent
+    elif script_path.name == 'scripts':
         script_path = script_path.parent
     elif script_path.name != 'probes':
         # Try to find probes directory
