@@ -1,0 +1,76 @@
+==========================================
+Job ID: 90689
+Training probe on layer 31
+Node: node-12
+Started at: Fri Dec 26 13:40:53 UTC 2025
+==========================================
+Loading data from data/activations/texts.h5
+Layer: 31
+Tiers: all
+Loaded 7200 samples
+Activation shape: (7200, 5376)
+
+Class distribution (before balancing):
+  anger       :    600 samples
+  disgust     :    600 samples
+  fear        :    600 samples
+  happiness   :    600 samples
+  sadness     :    600 samples
+  surprise    :    600 samples
+  neutral     :   3600 samples
+
+Auto-balancing to 600 samples per class (min emotion count)
+
+Balanced dataset: 4200 samples
+
+Balanced class distribution:
+  anger       :    600 samples
+  disgust     :    600 samples
+  fear        :    600 samples
+  happiness   :    600 samples
+  sadness     :    600 samples
+  surprise    :    600 samples
+  neutral     :    600 samples
+
+Splitting data: 80% train, 20% test
+Train samples: 3360
+Test samples: 840
+
+================================================================================
+TRAINING PROBE
+================================================================================
+Training multiclass probe:
+  Train samples: 3360
+  Test samples: 840
+  Hidden dim: 5376
+  Classes: 7
+  Max epochs: 500
+  Patience: 10
+
+Training...
+Epoch   1/500: Train Loss=58.4082, Train Acc=0.7682, Test Loss=0.1857, Test Acc=0.9952 🌟
+Epoch   3/500: Train Loss=0.0332, Train Acc=0.9991, Test Loss=0.0000, Test Acc=1.0000 🌟
+Epoch  10/500: Train Loss=0.0000, Train Acc=1.0000, Test Loss=0.0047, Test Acc=0.9988 
+
+Early stopping at epoch 13
+Best test accuracy: 1.0000 at epoch 3
+
+============================================================
+Final Results (best model from epoch 3):
+  Train accuracy: 0.1408
+  Test accuracy: 1.0000
+  Best test accuracy: 1.0000
+============================================================
+
+Saving results to results/emotion_probes/probe_layer31_all.pkl
+Saved summary to results/emotion_probes/probe_layer31_all_summary.txt
+
+================================================================================
+TRAINING COMPLETE
+================================================================================
+Output: results/emotion_probes/probe_layer31_all.pkl
+
+==========================================
+Finished at: Fri Dec 26 13:41:52 UTC 2025
+Exit code: 0
+==========================================

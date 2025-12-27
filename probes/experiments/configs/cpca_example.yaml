@@ -1,0 +1,21 @@
+# Example cPCA configuration
+# Usage: python scripts/run_cpca.py experiments/configs/cpca_example.yaml
+
+name: cpca_gemma27b_example
+output_dir: /workspace-vast/annas/git/research-tools/probes/results/cpca_example
+seed: 42
+device: cuda
+
+# Data
+data_path: /path/to/activations.h5  # REQUIRED: Update this path
+model_name: gemma-3-27b-it
+
+# cPCA parameters
+alpha: null  # null = auto-tune per layer, or set to fixed value like 1.0
+alpha_range: [0.1, 1000.0]
+n_alphas: 40
+n_components: 50
+use_diffs: true  # Use diffs (emotional - neutral) as target
+
+# Optional: Filter to specific tier
+tier: null  # null = use all tiers, or set to "third_person", etc.

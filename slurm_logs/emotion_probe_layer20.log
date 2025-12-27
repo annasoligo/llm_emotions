@@ -1,0 +1,118 @@
+==========================================
+Job ID: 91099
+Array Task ID: 20
+Layer: 20
+Node: node-9
+Started at: Fri Dec 26 16:11:27 UTC 2025
+==========================================
+
+Command:
+python probes/scripts/train_emotion_probe.py     --data data/activations/texts_combined.h5     --layer 20     --test-size 0.2     --learning-rate 0.001     --batch-size 64     --max-epochs 500     --patience 10     --weight-decay 1.0     --l1-lambda 0.0     --output-dir results/emotion_probes_top3     --seed 42     --device cuda --use-cpca --cpca-results probes/results/cpca_tier_data_high_alpha/google/gemma-3-27b-it_cpca.npz --n-components 3
+
+================================================================================
+LOADING cPCA COMPONENTS
+================================================================================
+Loaded cPCA results from probes/results/cpca_tier_data_high_alpha/google/gemma-3-27b-it_cpca.npz
+Components shape: (62, 50, 5376)
+  -> [n_layers=62, n_components=50, hidden_dim=5376]
+
+Using components for layer 20: (50, 5376)
+Dimensionality reduction: 5376 -> 50
+
+================================================================================
+LOADING ACTIVATION DATA
+================================================================================
+Loading data from data/activations/texts_combined.h5
+Layer: 20
+Tiers: all
+Loaded 14400 samples
+Raw activation shape: (14400, 5376)
+
+Using only first 3 components (out of 50)
+
+Projecting onto cPCA components...
+cPCA components shape: (3, 5376)
+Projection: [14400, 5376] @ [5376, 3]^T
+           -> [14400, 3]
+Projected activation shape: (14400, 3)
+
+Class distribution (before balancing):
+  anger       :   1200 samples
+  disgust     :   1200 samples
+  fear        :   1200 samples
+  happiness   :   1200 samples
+  sadness     :   1200 samples
+  surprise    :   1200 samples
+  neutral     :   7200 samples
+
+Auto-balancing to 1200 samples per class (min emotion count)
+
+Balanced dataset: 8400 samples
+
+Balanced class distribution:
+  anger       :   1200 samples
+  disgust     :   1200 samples
+  fear        :   1200 samples
+  happiness   :   1200 samples
+  sadness     :   1200 samples
+  surprise    :   1200 samples
+  neutral     :   1200 samples
+
+Splitting data: 80% train, 20% test
+Train samples: 6720
+Test samples: 1680
+
+================================================================================
+TRAINING PROBE
+================================================================================
+Training multiclass probe:
+  Train samples: 6720
+  Test samples: 1680
+  Hidden dim: 3
+  Classes: 7
+  Max epochs: 500
+  Patience: 10
+  Weight decay (L2): 1.0
+  L1 lambda: 0.0
+
+Training...
+Epoch   1/500: Train Loss=48.6490, Train Acc=0.0582, Test Loss=39.4596, Test Acc=0.0732 🌟
+Epoch   2/500: Train Loss=29.9750, Train Acc=0.0979, Test Loss=21.8464, Test Acc=0.1649 🌟
+Epoch   3/500: Train Loss=15.4263, Train Acc=0.2609, Test Loss=10.5590, Test Acc=0.3881 🌟
+Epoch   4/500: Train Loss=7.5563, Train Acc=0.4890, Test Loss=5.0893, Test Acc=0.6202 🌟
+Epoch   5/500: Train Loss=3.2578, Train Acc=0.6527, Test Loss=1.7584, Test Acc=0.6964 🌟
+Epoch   6/500: Train Loss=0.9199, Train Acc=0.7680, Test Loss=0.5313, Test Acc=0.8464 🌟
+Epoch   7/500: Train Loss=0.4653, Train Acc=0.8585, Test Loss=0.4475, Test Acc=0.8655 🌟
+Epoch   8/500: Train Loss=0.4204, Train Acc=0.8667, Test Loss=0.4183, Test Acc=0.8685 🌟
+Epoch  10/500: Train Loss=0.3855, Train Acc=0.8716, Test Loss=0.3880, Test Acc=0.8661 
+Epoch  11/500: Train Loss=0.3756, Train Acc=0.8720, Test Loss=0.3785, Test Acc=0.8708 🌟
+Epoch  12/500: Train Loss=0.3675, Train Acc=0.8726, Test Loss=0.3707, Test Acc=0.8756 🌟
+Epoch  15/500: Train Loss=0.3521, Train Acc=0.8774, Test Loss=0.3553, Test Acc=0.8786 🌟
+Epoch  16/500: Train Loss=0.3485, Train Acc=0.8772, Test Loss=0.3509, Test Acc=0.8810 🌟
+Epoch  17/500: Train Loss=0.3436, Train Acc=0.8775, Test Loss=0.3454, Test Acc=0.8845 🌟
+Epoch  18/500: Train Loss=0.3397, Train Acc=0.8786, Test Loss=0.3444, Test Acc=0.8869 🌟
+Epoch  20/500: Train Loss=0.3351, Train Acc=0.8799, Test Loss=0.3393, Test Acc=0.8935 🌟
+Epoch  30/500: Train Loss=0.3239, Train Acc=0.8790, Test Loss=0.3283, Test Acc=0.8893 
+
+Early stopping at epoch 30
+Best test accuracy: 0.8935 at epoch 20
+
+============================================================
+Final Results (best model from epoch 20):
+  Train accuracy: 0.8833
+  Test accuracy: 0.8935
+  Best test accuracy: 0.8935
+============================================================
+
+Saving results to results/emotion_probes_top3/probe_layer20_all_cpca_top3.pkl
+Saved summary to results/emotion_probes_top3/probe_layer20_all_cpca_top3_summary.txt
+
+================================================================================
+TRAINING COMPLETE
+================================================================================
+Output: results/emotion_probes_top3/probe_layer20_all_cpca_top3.pkl
+
+==========================================
+Finished at: Fri Dec 26 16:14:19 UTC 2025
+Exit code: 0
+==========================================

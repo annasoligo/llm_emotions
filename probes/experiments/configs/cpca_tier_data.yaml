@@ -1,0 +1,21 @@
+# cPCA configuration for tier data
+# Usage: python -m probes.scripts.run_cpca probes/experiments/configs/cpca_tier_data.yaml
+
+name: cpca_tier_data_gemma27b
+output_dir: /workspace-vast/annas/git/research-tools/probes/results/cpca_tier_data
+seed: 42
+device: cuda
+
+# Data
+data_path: /workspace-vast/annas/git/research-tools/data/activations/texts.h5
+model_name: google/gemma-3-27b-it
+
+# cPCA parameters
+alpha: null  # null = auto-tune per layer, or set to fixed value like 1.0
+alpha_range: [0.1, 100]
+n_alphas: 10
+n_components: 50
+use_diffs: true  # Use diffs (emotional - neutral) as target
+
+# Optional: Filter to specific tier
+tier: null  # null = use all tiers, or "third_person", "second_person", "direct_address"

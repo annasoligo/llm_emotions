@@ -13,21 +13,21 @@ import numpy as np
 import torch
 
 # Add steering module to path
-try:
-    # Script is now in probes/scripts/steering/, so go up 2 levels to get to probes/
-    script_path = Path(__file__).parent.parent.parent
-except NameError:
-    script_path = Path.cwd()
-    if script_path.name == 'steering':
-        script_path = script_path.parent.parent
-    elif script_path.name == 'scripts':
-        script_path = script_path.parent
-    elif script_path.name != 'probes':
-        script_path = Path('/workspace-vast/annas/git/research-tools/probes')
+# try:
+#     # Script is now in probes/scripts/steering/, so go up 2 levels to get to probes/
+#     script_path = Path(__file__).parent.parent.parent
+# except NameError:
+#     script_path = Path.cwd()
+#     if script_path.name == 'steering':
+#         script_path = script_path.parent.parent
+#     elif script_path.name == 'scripts':
+#         script_path = script_path.parent
+#     elif script_path.name != 'probes':
+#         script_path = Path('/workspace-vast/annas/git/research-tools/probes')
 
-sys.path.insert(0, str(script_path))
+# sys.path.insert(0, str(script_path))
 
-from steering import SteeringVector, ProbeSteeringVectorBuilder, SteeredModel
+from probes.steering import SteeringVector, ProbeSteeringVectorBuilder, SteeredModel
 
 # %%
 # Configuration
@@ -108,7 +108,7 @@ probe_results = load_orthogonal_probe(probe_dir, layer, representation, ortho_we
 # Extract user and assistant probes
 user_probes = probe_results['final_user_probes']  # [n_emotions, n_features]
 asst_probes = probe_results['final_asst_probes']  # [n_emotions, n_features]
-emotion_labels = probe_results['emotion_labels']
+emotion_labels = probe_results['label_names']  # Key is 'label_names', not 'emotion_labels'
 
 # Get metrics
 user_acc = probe_results['final_val_metrics']['user_accuracy']

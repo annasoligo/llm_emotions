@@ -1,0 +1,21 @@
+# cPCA configuration for tier data with high alpha range
+# Testing α ∈ [100, 10000] to find optimal contrast level
+
+name: cpca_tier_data_high_alpha
+output_dir: /workspace-vast/annas/git/research-tools/probes/results/cpca_tier_data_high_alpha
+seed: 42
+device: cuda
+
+# Data
+data_path: /workspace-vast/annas/git/research-tools/data/activations/texts.h5
+model_name: google/gemma-3-27b-it
+
+# cPCA parameters
+alpha: null  # null = auto-tune per layer
+alpha_range: [100, 10000]  # Extended range since α=100 was optimal before
+n_alphas: 10
+n_components: 50
+use_diffs: true  # Use diffs (emotional - neutral) as target
+
+# Optional: Filter to specific tier
+tier: null  # null = use all tiers
