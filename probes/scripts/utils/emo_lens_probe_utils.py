@@ -200,9 +200,9 @@ def extract_activations_batch(
     Returns:
         Activations array [n_prompts, hidden_dim]
     """
-    # Import from believe-it-or-not repo (emo lens utils)
-    sys.path.insert(0, '/workspace-vast/annas/git/believe-it-or-not')
-    from emotion_evals.emo_lens.model_utils import extract_prompt_activations_all_layers
+    # Use standalone activation extraction module
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from activation_extraction import extract_prompt_activations_all_layers
 
     activations_list = []
 
@@ -244,9 +244,9 @@ def extract_activations_batch_multilayer(
     Returns:
         Dictionary mapping layer -> activations array [n_prompts, hidden_dim]
     """
-    # Import from believe-it-or-not repo (emo lens utils)
-    sys.path.insert(0, '/workspace-vast/annas/git/believe-it-or-not')
-    from emotion_evals.emo_lens.model_utils import extract_prompt_activations_all_layers
+    # Use standalone activation extraction module
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from activation_extraction import extract_prompt_activations_all_layers
 
     # Initialize dict to accumulate activations per layer
     layer_activations = {layer: [] for layer in layers}
