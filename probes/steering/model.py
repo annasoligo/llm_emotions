@@ -214,6 +214,7 @@ class SteeredModel:
         max_new_tokens: int = 256,
         temperature: float = 0.7,
         do_sample: bool = True,
+        use_chat_template: bool = True,
         **kwargs,
     ) -> str:
         """Generate text with steering applied.
@@ -223,6 +224,8 @@ class SteeredModel:
             max_new_tokens: Maximum tokens to generate
             temperature: Sampling temperature
             do_sample: Whether to sample
+            use_chat_template: If True, apply chat template formatting (default: True)
+                              Set to False for plain text generation
             **kwargs: Additional generation parameters
 
         Returns:
@@ -236,8 +239,20 @@ class SteeredModel:
                 "Steering hooks not applied. Call apply_steering() first."
             )
 
+        # Format prompt with chat template if requested
+        if use_chat_template and hasattr(self.tokenizer, 'apply_chat_template'):
+            # Format as single user message
+            messages = [{"role": "user", "content": prompt}]
+            formatted_prompt = self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
+        else:
+            formatted_prompt = prompt
+
         # Tokenize
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
+        inputs = self.tokenizer(formatted_prompt, return_tensors="pt").to(self.device)
 
         # Generate
         with torch.no_grad():

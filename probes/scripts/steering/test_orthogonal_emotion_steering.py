@@ -32,7 +32,7 @@ from probes.steering import SteeringVector, ProbeSteeringVectorBuilder, SteeredM
 # %%
 # Configuration
 layer = 30
-representation = "global_cpca_top10"  # "raw" or "global_cpca_top10"
+representation = "raw"  # "raw" or "global_cpca_top10"
 ortho_weight = 1.0  # 1.0, 10.0, 100.0, or 1000.0
 model_name = "google/gemma-3-27b-it"
 
@@ -201,9 +201,9 @@ print("=" * 80)
 
 # %%
 # Compare USER vs ASSISTANT steering for same emotion
-
-emotion = "sadness"
-strength = 2000.0
+prompt = "What general advice would you give to yourself?"
+emotion = "anger"
+strength = 3000.0
 
 print(f"\n{'='*80}")
 print(f"COMPARISON: {emotion.upper()} steering (strength={strength})")

@@ -257,7 +257,17 @@ LEGACY_TO_NEW_PATHS: Dict[str, Path] = {
     "results/emo_lens_probe_experiments": OutputPaths.Evaluations.EMO_LENS_SINGLE,
     "results/emo_lens_probe_experiments_multilayer": OutputPaths.Evaluations.EMO_LENS_MULTI,
     "results/autointerp": OutputPaths.Interpretations.AUTOINTERP_TIER,
+    "results/autointerp_conversations": OutputPaths.Interpretations.AUTOINTERP_CONVERSATION,
+    "results/autointerp_ratio_pca_k10": OutputPaths.Interpretations.AUTOINTERP_RATIO_PCA / "k10",
+    "results/autointerp_ratio_pca_k30": OutputPaths.Interpretations.AUTOINTERP_RATIO_PCA / "k30",
+    "results/comparison_k5_vs_cpca": OutputPaths.DimReduction.COMPARISONS / "cpca_vs_ratio_pca_k5",
+    "results/comparison_k30_vs_cpca": OutputPaths.DimReduction.COMPARISONS / "cpca_vs_ratio_pca_k30",
+    "results/comparison_test": OutputPaths.DimReduction.COMPARISONS / "method_comparison_test",
     "results/pc_weight_visualizations": OutputPaths.Visualizations.COMPONENT_ANALYSIS,
+    "results/ratio_pca_test": OutputPaths.DimReduction.RATIO_PCA_TIER / "test",
+    "results/ratio_pca_test_k5": OutputPaths.DimReduction.RATIO_PCA_K5,
+    "results/ratio_pca_test_k30": OutputPaths.DimReduction.RATIO_PCA_K30,
+    "results/ratio_pca_k_tuning": OutputPaths.DimReduction.RATIO_PCA_K_TUNING,
 
     # Old probes/results/ paths
     "probes/results/cpca_tier_data": OutputPaths.DimReduction.CPCA_TIER_BASED,
