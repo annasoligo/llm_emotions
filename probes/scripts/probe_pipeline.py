@@ -118,6 +118,157 @@ class ProbeActivationExtractor:
         # Convert lists to arrays
         return {layer: np.array(acts) for layer, acts in layer_activations.items()}
 
+    def extract_token_level(
+        self,
+        model,
+        tokenizer,
+        prompt: str,
+        layers: List[int],
+        system_prompt: Optional[str] = None,
+        num_generated_tokens: int = 0,
+        start_token_idx: Optional[int] = None,
+        assistant_prefill: Optional[str] = None,
+        temperature: float = 1.0,
+        top_p: float = 0.9,
+        top_k: int = 50
+    ) -> Tuple[Dict[int, Dict[int, np.ndarray]], List[int]]:
+        """
+        Extract activations at EVERY token position for specified layers.
+
+        This performs a single forward pass and extracts activations at each
+        token position. Optionally supports generation to analyze emotions
+        during model generation.
+
+        Args:
+            model: StandardizedTransformer model
+            tokenizer: Tokenizer
+            prompt: Single prompt to analyze
+            layers: List of layers to extract from
+            system_prompt: Optional system prompt
+            num_generated_tokens: If > 0, generate this many tokens
+            start_token_idx: Optional starting token index (None = auto-detect)
+            assistant_prefill: Optional text to prefill assistant response
+            temperature: Temperature for sampling (default: 1.0)
+            top_p: Nucleus sampling parameter (default: 0.9)
+            top_k: Top-k sampling parameter (default: 50)
+
+        Returns:
+            Tuple of (activations_by_token, token_ids):
+              - activations_by_token: {token_pos: {layer: activation_vector}}
+              - token_ids: List of token IDs for the entire sequence
+        """
+        # Apply chat template
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+
+        formatted_prompt = tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+
+        # Add assistant prefill if provided
+        if assistant_prefill:
+            formatted_prompt = formatted_prompt + assistant_prefill
+
+        # Tokenize
+        inputs = tokenizer(formatted_prompt, return_tensors="pt", add_special_tokens=False)
+        device = next(model.parameters()).device
+        input_ids = inputs['input_ids'].to(device)
+        attention_mask = inputs['attention_mask'].to(device)
+
+        batch_size, seq_len = input_ids.shape
+        token_ids = input_ids[0].tolist()
+
+        # Auto-detect start token if not provided
+        if start_token_idx is None:
+            # Find first text token after <start_of_turn>user
+            start_of_turn_id = tokenizer.convert_tokens_to_ids('<start_of_turn>')
+            user_str = 'user'
+
+            # Find the user turn
+            for i in range(seq_len - 1):
+                if input_ids[0, i].item() == start_of_turn_id:
+                    # Check if next token is "user"
+                    next_token = tokenizer.decode([input_ids[0, i+1].item()])
+                    if user_str in next_token.lower():
+                        # Skip <start_of_turn>, "user", and newline
+                        start_token_idx = i + 3
+                        break
+
+            # Fallback: start from beginning
+            if start_token_idx is None or start_token_idx >= seq_len:
+                start_token_idx = 0
+
+        # Extract activations at every token position (prefill)
+        activations_by_token = {}
+
+        with torch.no_grad():
+            with model.trace(input_ids, attention_mask=attention_mask, scan=False):
+                for layer in layers:
+                    layer_output = model.layers_output[layer].save()
+
+                    # layer_output shape: [batch_size, seq_len, hidden_dim]
+                    for token_pos in range(start_token_idx, seq_len):
+                        if token_pos not in activations_by_token:
+                            activations_by_token[token_pos] = {}
+                        activations_by_token[token_pos][layer] = layer_output[0, token_pos, :].cpu().numpy()
+
+        # Generation phase (if requested)
+        if num_generated_tokens > 0:
+            generated_ids = []
+
+            for gen_step in range(num_generated_tokens):
+                with torch.no_grad():
+                    with model.trace(input_ids, attention_mask=attention_mask, scan=False):
+                        # Get logits at last position
+                        outputs = model(input_ids, attention_mask=attention_mask)
+                        next_token_logits = outputs.logits[:, -1, :]
+
+                        # Extract activations at this position
+                        current_token_pos = seq_len + gen_step
+                        activations_by_token[current_token_pos] = {}
+
+                        for layer in layers:
+                            layer_output = model.layers_output[layer].save()
+                            activations_by_token[current_token_pos][layer] = layer_output[0, -1, :].cpu().numpy()
+
+                # Sample next token
+                if temperature > 0:
+                    next_token_logits = next_token_logits / temperature
+
+                    # Top-k filtering
+                    if top_k > 0:
+                        indices_to_remove = next_token_logits < torch.topk(next_token_logits, top_k)[0][..., -1, None]
+                        next_token_logits[indices_to_remove] = float('-inf')
+
+                    # Top-p (nucleus) filtering
+                    if top_p < 1.0:
+                        sorted_logits, sorted_indices = torch.sort(next_token_logits, descending=True)
+                        cumulative_probs = torch.cumsum(torch.softmax(sorted_logits, dim=-1), dim=-1)
+                        sorted_indices_to_remove = cumulative_probs > top_p
+                        sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+                        sorted_indices_to_remove[..., 0] = 0
+                        indices_to_remove = sorted_indices_to_remove.scatter(1, sorted_indices, sorted_indices_to_remove)
+                        next_token_logits[indices_to_remove] = float('-inf')
+
+                    probs = torch.softmax(next_token_logits, dim=-1)
+                    next_token = torch.multinomial(probs, num_samples=1)
+                else:
+                    next_token = torch.argmax(next_token_logits, dim=-1, keepdim=True)
+
+                # Append to sequence
+                generated_ids.append(next_token.item())
+                token_ids.append(next_token.item())
+                input_ids = torch.cat([input_ids, next_token], dim=1)
+                attention_mask = torch.cat([attention_mask, torch.ones((1, 1), device=device)], dim=1)
+
+                # Check for EOS
+                if next_token.item() == tokenizer.eos_token_id:
+                    break
+
+        return activations_by_token, token_ids
+
 
 # ============================================================================
 # 2. ProbeInference - Manages probe loading and inference with caching
@@ -131,21 +282,25 @@ class ProbeInference:
 
         Args:
             probe_dir: Directory containing probe pickle files
-            cpca_path: Path to cPCA .npz file
+            cpca_path: Path to cPCA .npz file (optional for standard probes)
             device: Device for inference ('cuda' or 'cpu')
         """
         self.probe_dir = Path(probe_dir)
-        self.cpca_path = Path(cpca_path)
+        self.cpca_path = Path(cpca_path) if cpca_path is not None else None
         self.device = device
 
         # Cache for loaded probes
         self.probe_cache = {}
 
-        # Load cPCA data once
-        print(f"Loading cPCA data from {cpca_path}")
-        cpca_data = np.load(cpca_path)
-        self.cpca_components_all = cpca_data['components']  # [n_layers, n_components, hidden_dim]
-        print(f"  Loaded cPCA components: {self.cpca_components_all.shape}")
+        # Load cPCA data once (if provided)
+        if cpca_path is not None:
+            print(f"Loading cPCA data from {cpca_path}")
+            cpca_data = np.load(cpca_path)
+            self.cpca_components_all = cpca_data['components']  # [n_layers, n_components, hidden_dim]
+            print(f"  Loaded cPCA components: {self.cpca_components_all.shape}")
+        else:
+            self.cpca_components_all = None
+            print("No cPCA data loaded (standard probes mode)")
 
     def load_probe(self, layer: int, n_components: int, seed: int) -> Dict:
         """Load probe with caching.
@@ -182,6 +337,9 @@ class ProbeInference:
         Returns:
             cPCA components [n_components, hidden_dim]
         """
+        if self.cpca_components_all is None:
+            raise ValueError("cPCA components not loaded. ProbeInference was initialized without cpca_path.")
+
         if layer >= self.cpca_components_all.shape[0]:
             raise ValueError(f"Layer {layer} not found in cPCA data (max: {self.cpca_components_all.shape[0]-1})")
 
@@ -268,6 +426,92 @@ class ProbeInference:
             )
         return results
 
+    def load_orthogonal_probe(
+        self,
+        layer: int,
+        representation: str = "raw",
+        n_components: Optional[int] = None,
+        orthogonality_weight: float = 1000.0
+    ) -> Dict:
+        """Load orthogonal user/assistant probes.
+
+        Args:
+            layer: Layer number
+            representation: 'raw', 'global_cpca_top10', 'global_cpca_top20', etc.
+            n_components: Number of cPCA components (for backward compatibility)
+            orthogonality_weight: Orthogonality weight used during training
+
+        Returns:
+            Dict with 'user_probes', 'assistant_probes', and metadata
+        """
+        # Build probe filename
+        if representation == "raw":
+            probe_filename = f"probe_layer{layer}_raw_ortho{orthogonality_weight}.pkl"
+        else:
+            # For cpca representations, use the representation string directly
+            # e.g., "global_cpca_top10" -> "probe_layer20_global_cpca_top10_ortho1000.0.pkl"
+            probe_filename = f"probe_layer{layer}_{representation}_ortho{orthogonality_weight}.pkl"
+
+        # Check in orthogonal subdirectory
+        ortho_dir = self.probe_dir / "orthogonal" / f"ortho_{orthogonality_weight}"
+        probe_path = ortho_dir / probe_filename
+
+        if not probe_path.exists():
+            raise FileNotFoundError(f"Orthogonal probe not found at {probe_path}")
+
+        with open(probe_path, 'rb') as f:
+            probe_data = pickle.load(f)
+
+        return probe_data
+
+    def predict_orthogonal(
+        self,
+        activations: np.ndarray,
+        user_probes: np.ndarray,
+        asst_probes: np.ndarray,
+        emotions: List[str]
+    ) -> Tuple[Dict[str, float], Dict[str, float]]:
+        """Apply orthogonal user and assistant probes to activations.
+
+        Args:
+            activations: Activations [hidden_dim] for single position, or [n_samples, hidden_dim]
+            user_probes: User probe directions [n_emotions, hidden_dim]
+            asst_probes: Assistant probe directions [n_emotions, hidden_dim]
+            emotions: List of emotion names
+
+        Returns:
+            If single activation: (user_scores, asst_scores) as dicts
+            If batch: (user_scores_list, asst_scores_list) as lists of dicts
+        """
+        # Handle single activation vs batch
+        if activations.ndim == 1:
+            activations = activations[np.newaxis, :]  # [1, hidden_dim]
+            single_mode = True
+        else:
+            single_mode = False
+
+        # Project onto probe directions (simple dot product)
+        # Probes are already normalized from training
+        user_proj = activations @ user_probes.T  # [n_samples, n_emotions]
+        asst_proj = activations @ asst_probes.T  # [n_samples, n_emotions]
+
+        if single_mode:
+            # Return single dicts
+            user_scores = {emotions[i]: float(user_proj[0, i]) for i in range(len(emotions))}
+            asst_scores = {emotions[i]: float(asst_proj[0, i]) for i in range(len(emotions))}
+            return user_scores, asst_scores
+        else:
+            # Return lists of dicts
+            user_scores_list = [
+                {emotions[i]: float(user_proj[j, i]) for i in range(len(emotions))}
+                for j in range(activations.shape[0])
+            ]
+            asst_scores_list = [
+                {emotions[i]: float(asst_proj[j, i]) for i in range(len(emotions))}
+                for j in range(activations.shape[0])
+            ]
+            return user_scores_list, asst_scores_list
+
 
 # ============================================================================
 # 3. ProbeAggregator - Handles aggregation and differencing operations
@@ -347,9 +591,9 @@ class ProbeAggregator:
         )
 
         return {
-            'mean': mean_effect,
+            'mean_effect': mean_effect,
             'bootstrap_ci': bootstrap_ci,
-            'per_prompt_diffs': per_pair_effects,
+            'per_pair_effects': per_pair_effects,
             'emotion_ranking': emotion_ranking,
         }
 

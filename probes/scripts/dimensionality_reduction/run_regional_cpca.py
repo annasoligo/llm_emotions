@@ -41,7 +41,7 @@ import numpy as np
 from tqdm import tqdm
 
 
-from methods.cpca import run_cpca, tune_alpha_silhouette
+from probes.methods.cpca import run_cpca, tune_alpha_silhouette
 
 
 def load_regional_activations_hdf5(

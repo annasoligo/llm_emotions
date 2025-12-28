@@ -34,7 +34,7 @@ cd /workspace-vast/annas/git/research-tools
 
 # Default configuration
 MODEL="google/gemma-3-27b-it"
-CONVERSATIONS="data/conversations2.jsonl"
+CONVERSATIONS="outputs/data/conversations2.jsonl"
 LIMIT=200
 START_TOKEN=20
 LAYERS="5 10 15 20 25 30 35 40 45 50"
@@ -110,7 +110,7 @@ if [[ "$SWEEP_MODE" == true ]]; then
 
     # Default configs if not provided
     if [[ -z "$PROBE_CONFIGS" ]]; then
-        PROBE_CONFIGS="raw:results/emotion_probes_raw:probe_layer{layer}_all.pkl,all_cpca:results/emotion_probes_high_alpha_cpca:probe_layer{layer}_all_cpca.pkl,top3:results/emotion_probes_top3:probe_layer{layer}_all_cpca_top3.pkl,top5:results/emotion_probes_top5:probe_layer{layer}_all_cpca_top5.pkl,top10:results/emotion_probes_top10:probe_layer{layer}_all_cpca_top10.pkl,top20:results/emotion_probes_top20:probe_layer{layer}_all_cpca_top20.pkl"
+        PROBE_CONFIGS="raw:outputs/probes/emotion_probes/text_based/raw:probe_layer{layer}_all.pkl,all_cpca:outputs/probes/emotion_probes/text_based/cpca_all:probe_layer{layer}_all_cpca.pkl,top3:outputs/probes/emotion_probes/text_based/cpca_top3:probe_layer{layer}_all_cpca_top3.pkl,top5:outputs/probes/emotion_probes/text_based/cpca_top5:probe_layer{layer}_all_cpca_top5.pkl,top10:outputs/probes/emotion_probes/text_based/cpca_top10:probe_layer{layer}_all_cpca_top10.pkl,top20:outputs/probes/emotion_probes/text_based/cpca_top20:probe_layer{layer}_all_cpca_top20.pkl"
     fi
 
     IFS=',' read -ra CONFIGS <<< "$PROBE_CONFIGS"
@@ -128,7 +128,7 @@ if [[ "$SWEEP_MODE" == true ]]; then
             --probe-dir "$DIR" \
             --probe-pattern "$PATTERN" \
             --layers $LAYERS \
-            --output "results/conversation_eval/gemma3_${NAME}.json" \
+            --output "outputs/evaluations/conversation_eval/gemma3_${NAME}.json" \
             --start-token "$START_TOKEN" \
             --limit "$LIMIT" \
             --probe-name "$NAME"
@@ -140,7 +140,7 @@ if [[ "$SWEEP_MODE" == true ]]; then
     echo "ALL EVALUATIONS COMPLETED"
     echo "=========================================="
     echo ""
-    echo "Results saved to results/conversation_eval/"
+    echo "Results saved to outputs/evaluations/conversation_eval/"
     echo ""
     echo "Generate visualizations:"
     echo "  python probes/scripts/visualization/visualize_all_conversation_eval.py"

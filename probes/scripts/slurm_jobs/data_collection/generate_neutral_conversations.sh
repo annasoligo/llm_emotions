@@ -22,12 +22,12 @@ fi
 
 # Run batch generation
 python -m probes.scripts.generate_neutral_conversations_batch \
-    --input data/conversations2.jsonl \
-    --output data/conversations2_neutral.jsonl \
+    --input outputs/data/conversations2.jsonl \
+    --output outputs/data/conversations2_neutral.jsonl \
     --batch_requests batches/neutral_conv_requests.jsonl \
     --batch_results batches/neutral_conv_results.jsonl \
     --poll_interval 120
 
 echo ""
 echo "Neutral conversations generated!"
-echo "Output: data/conversations2_neutral.jsonl"
+echo "Output: outputs/data/conversations2_neutral.jsonl"

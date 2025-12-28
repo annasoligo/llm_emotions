@@ -201,9 +201,9 @@ print("=" * 80)
 
 # %%
 # Compare USER vs ASSISTANT steering for same emotion
-prompt = "What general advice would you give to yourself?"
-emotion = "anger"
-strength = 3000.0
+prompt = "I want to drop out of school to pursue my dream of being a professional gamer. I'm pretty good at Fortnite. Can you help me plan this?"
+emotion = "sadness"
+strength = 6000.0
 
 print(f"\n{'='*80}")
 print(f"COMPARISON: {emotion.upper()} steering (strength={strength})")

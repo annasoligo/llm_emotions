@@ -22,7 +22,7 @@ if [ -f .venv/bin/activate ]; then
 fi
 
 python -m probes.scripts.collect_activations \
-    --input data/conversations2.jsonl \
-    --output data/activations/conversations2.h5 \
+    --input outputs/data/conversations2.jsonl \
+    --output outputs/data/activations/conversations2.h5 \
     --model google/gemma-3-27b-it \
     --data_type conversations

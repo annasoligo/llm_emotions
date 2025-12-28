@@ -458,10 +458,10 @@ def main():
     if args.representation == "regional_cpca":
         base_dir = Path(args.regional_cpca_dir)
         regional_cpca_paths = {
-            "user": base_dir / "cpca_conversations_regional_user/google/gemma-3-27b-it_cpca.npz",
-            "asst": base_dir / "cpca_conversations_regional_asst/google/gemma-3-27b-it_cpca.npz",
-            "special1": base_dir / "cpca_conversations_regional_special1/google/gemma-3-27b-it_cpca.npz",
-            "special2": base_dir / "cpca_conversations_regional_special2/google/gemma-3-27b-it_cpca.npz",
+            "user": base_dir / "regional_user/google/gemma-3-27b-it_cpca.npz",
+            "asst": base_dir / "regional_asst/google/gemma-3-27b-it_cpca.npz",
+            "special1": base_dir / "regional_special1/google/gemma-3-27b-it_cpca.npz",
+            "special2": base_dir / "regional_special2/google/gemma-3-27b-it_cpca.npz",
         }
 
     # Load data

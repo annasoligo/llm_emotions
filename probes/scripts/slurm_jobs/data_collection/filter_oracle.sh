@@ -23,8 +23,8 @@ fi
 
 # Run oracle filtering
 python probes/scripts/filter_conversations_with_oracle.py \
-    --input data/conversations2.jsonl \
-    --output data/conversations2_filtered.jsonl \
+    --input outputs/data/conversations2.jsonl \
+    --output outputs/data/conversations2_filtered.jsonl \
     --base_model google/gemma-3-27b-it \
     --oracle_adapter annasoli/gemma-3-27b-activation-oracle-BS32 \
     --device cuda

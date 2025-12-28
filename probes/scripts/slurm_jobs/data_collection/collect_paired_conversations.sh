@@ -27,13 +27,13 @@ echo
 
 # Run collection
 python -m probes.scripts.collect_paired_conversation_activations \
-    --emotional data/conversations2.jsonl \
-    --neutral data/conversations2_neutral.jsonl \
-    --output data/activations/conversations2_paired.h5 \
+    --emotional outputs/data/conversations2.jsonl \
+    --neutral outputs/data/conversations2_neutral.jsonl \
+    --output outputs/data/activations/conversations2_paired.h5 \
     --model google/gemma-3-27b-it
 
 echo
 echo "========================================"
 echo "Collection complete!"
 echo "========================================"
-echo "Output: data/activations/conversations2_paired.h5"
+echo "Output: outputs/data/activations/conversations2_paired.h5"

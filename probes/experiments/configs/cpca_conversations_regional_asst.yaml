@@ -2,12 +2,12 @@
 # Contrasts emotional conversations against neutral paraphrases
 
 name: cpca_conversations_regional_asst
-output_dir: /workspace-vast/annas/git/research-tools/probes/results/cpca_conversations_regional_asst
+output_dir: /workspace-vast/annas/git/research-tools/outputs/dimensionality_reduction/cpca/conversation_based/regional_asst
 seed: 42
 device: cuda
 
 # Data path (combined emotional + neutral, assistant region)
-data_path: /workspace-vast/annas/git/research-tools/data/activations/regional/conversations2_regional_asst.h5
+data_path: /workspace-vast/annas/git/research-tools/outputs/data/activations/regional/conversations2_regional_asst.h5
 model_name: google/gemma-3-27b-it
 
 # cPCA parameters

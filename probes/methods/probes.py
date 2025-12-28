@@ -315,7 +315,7 @@ def train_orthogonal_probes(
 
                 if any(asst_mask):
                     asst_acts = activations[asst_mask]
-                    asst_labels = labels[asst_labels]
+                    asst_labels = labels[asst_mask]
                     asst_preds = model(asst_acts, "assistant").argmax(dim=1)
                     test_asst_correct += (asst_preds == asst_labels).sum().item()
                     test_asst_total += len(asst_labels)
