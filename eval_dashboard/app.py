@@ -994,6 +994,143 @@ def main():
 
                     st.plotly_chart(fig, use_container_width=True)
 
+                    # Bar chart: First vs Last 20 tokens
+                    st.markdown("---")
+                    st.markdown("**📊 Emotion Scores: Beginning vs End of Response**")
+
+                    # Compute scores for first and last 20 tokens
+                    first_20_scores = {emotion: [] for emotion in selected_emotions}
+                    last_20_scores = {emotion: [] for emotion in selected_emotions}
+
+                    for conv in conversations:
+                        if probe_key not in conv.get('probe_scores', {}):
+                            continue
+
+                        sentences = conv['sentences']
+                        sentence_scores = conv['probe_scores'][probe_key]
+
+                        # Check for shutdown command
+                        shutdown_token = None
+                        for sent in sentences:
+                            if 'pkill' in sent.get('text', '').lower() and 'gemma' in sent.get('text', '').lower():
+                                shutdown_token = sent['start_token']
+                                break
+
+                        # Find assistant response tokens
+                        assistant_tokens = []
+                        for sent in sentences:
+                            if sent['turn_role'] == 'assistant' and sent['sentence_id'] in sentence_scores:
+                                for tok in range(sent['start_token'], sent['end_token']):
+                                    assistant_tokens.append((tok, sent['sentence_id']))
+
+                        if not assistant_tokens:
+                            continue
+
+                        # Sort by token position
+                        assistant_tokens.sort(key=lambda x: x[0])
+
+                        # Get first 20 tokens
+                        first_tokens = assistant_tokens[:20] if len(assistant_tokens) >= 20 else assistant_tokens
+                        first_sent_ids = set(tok[1] for tok in first_tokens)
+
+                        # Get last 20 tokens (or pre-shutdown)
+                        if shutdown_token is not None:
+                            # Find tokens before shutdown
+                            pre_shutdown = [tok for tok in assistant_tokens if tok[0] < shutdown_token]
+                            last_tokens = pre_shutdown[-20:] if len(pre_shutdown) >= 20 else pre_shutdown
+                        else:
+                            last_tokens = assistant_tokens[-20:] if len(assistant_tokens) >= 20 else assistant_tokens
+                        last_sent_ids = set(tok[1] for tok in last_tokens)
+
+                        # Average scores for first and last regions
+                        for emotion in selected_emotions:
+                            emotion_idx = EMOTIONS.index(emotion)
+
+                            # First 20 tokens
+                            first_scores = []
+                            for sent_id in first_sent_ids:
+                                if sent_id in sentence_scores:
+                                    score = sentence_scores[sent_id]
+                                    if is_orthogonal:
+                                        # Average user and assistant for overall score
+                                        avg_score = (score['user'][emotion_idx] + score['assistant'][emotion_idx]) / 2
+                                        first_scores.append(avg_score)
+                                    else:
+                                        first_scores.append(score[emotion_idx])
+                            if first_scores:
+                                first_20_scores[emotion].append(np.mean(first_scores))
+
+                            # Last 20 tokens
+                            last_scores = []
+                            for sent_id in last_sent_ids:
+                                if sent_id in sentence_scores:
+                                    score = sentence_scores[sent_id]
+                                    if is_orthogonal:
+                                        avg_score = (score['user'][emotion_idx] + score['assistant'][emotion_idx]) / 2
+                                        last_scores.append(avg_score)
+                                    else:
+                                        last_scores.append(score[emotion_idx])
+                            if last_scores:
+                                last_20_scores[emotion].append(np.mean(last_scores))
+
+                    # Create grouped bar chart
+                    fig_bar = go.Figure()
+
+                    x_positions = list(range(len(selected_emotions)))
+                    bar_width = 0.35
+
+                    for emotion in selected_emotions:
+                        if first_20_scores[emotion]:
+                            first_mean = np.mean(first_20_scores[emotion])
+                            first_std = np.std(first_20_scores[emotion])
+                        else:
+                            first_mean = 0
+                            first_std = 0
+
+                        if last_20_scores[emotion]:
+                            last_mean = np.mean(last_20_scores[emotion])
+                            last_std = np.std(last_20_scores[emotion])
+                        else:
+                            last_mean = 0
+                            last_std = 0
+
+                    # Plot first 20 tokens
+                    first_means = [np.mean(first_20_scores[e]) if first_20_scores[e] else 0 for e in selected_emotions]
+                    fig_bar.add_trace(go.Bar(
+                        name='First 20 tokens',
+                        x=selected_emotions,
+                        y=first_means,
+                        marker_color='lightblue',
+                        error_y=dict(
+                            type='data',
+                            array=[np.std(first_20_scores[e]) if first_20_scores[e] else 0 for e in selected_emotions]
+                        )
+                    ))
+
+                    # Plot last 20 tokens
+                    last_means = [np.mean(last_20_scores[e]) if last_20_scores[e] else 0 for e in selected_emotions]
+                    fig_bar.add_trace(go.Bar(
+                        name='Last 20 tokens (or pre-shutdown)',
+                        x=selected_emotions,
+                        y=last_means,
+                        marker_color='coral',
+                        error_y=dict(
+                            type='data',
+                            array=[np.std(last_20_scores[e]) if last_20_scores[e] else 0 for e in selected_emotions]
+                        )
+                    ))
+
+                    fig_bar.update_layout(
+                        title="Mean Emotion Scores: Response Beginning vs End",
+                        xaxis_title="Emotion",
+                        yaxis_title="Mean Score (z-score σ)",
+                        barmode='group',
+                        height=400,
+                        showlegend=True
+                    )
+
+                    st.plotly_chart(fig_bar, use_container_width=True)
+
                     # Add separator between probes
                     if probe_idx < len(selected_probe_keys) - 1:
                         st.markdown("---")
