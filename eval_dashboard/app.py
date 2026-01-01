@@ -26,13 +26,16 @@ def smooth_sentence_scores(sentences: List[Dict], sentence_scores: Dict, window_
     """
     Re-aggregate sentence scores using a different window size.
 
+    IMPORTANT: Keeps original sentence IDs for consistent x-axis.
+    Larger windows produce fewer points that are further apart.
+
     Args:
         sentences: List of sentence dicts with start_token/end_token
         sentence_scores: Original sentence-level scores
         window_size: New window size in tokens
 
     Returns:
-        New dict mapping sentence_id -> smoothed scores
+        New dict mapping sentence_id -> smoothed scores (fewer entries, same ID range)
     """
     if window_size == 20:
         # Original chunking, no need to recompute
@@ -40,6 +43,8 @@ def smooth_sentence_scores(sentences: List[Dict], sentence_scores: Dict, window_
 
     # Build token-level scores by expanding sentence scores
     token_scores = {}
+    token_to_sent_id = {}  # Map token -> original sentence_id
+
     for sent in sentences:
         sent_id = sent['sentence_id']
         if sent_id not in sentence_scores:
@@ -52,39 +57,44 @@ def smooth_sentence_scores(sentences: List[Dict], sentence_scores: Dict, window_
         # Assign same score to all tokens in this sentence
         for tok in range(start_tok, end_tok):
             token_scores[tok] = score
+            token_to_sent_id[tok] = sent_id
 
     if not token_scores:
         return {}
 
-    # Re-chunk into new window size
+    # Re-chunk into new window size, keeping original sentence IDs
     max_token = max(token_scores.keys())
     smoothed = {}
-    sent_id = 0
 
     for window_start in range(0, max_token + 1, window_size):
         window_end = min(window_start + window_size, max_token + 1)
 
         # Collect all scores in this window
         window_scores = []
+        window_sent_ids = []
+
         for tok in range(window_start, window_end):
             if tok in token_scores:
                 window_scores.append(token_scores[tok])
+                window_sent_ids.append(token_to_sent_id[tok])
 
         if window_scores:
+            # Use the middle sentence ID from this window for x-axis position
+            # This keeps points at meaningful positions on the original scale
+            representative_sent_id = window_sent_ids[len(window_sent_ids) // 2]
+
             # Average scores in window
             if isinstance(window_scores[0], dict):
                 # Orthogonal probes
                 user_scores = [s['user'] for s in window_scores]
                 asst_scores = [s['assistant'] for s in window_scores]
-                smoothed[sent_id] = {
+                smoothed[representative_sent_id] = {
                     'user': np.mean(user_scores, axis=0),
                     'assistant': np.mean(asst_scores, axis=0)
                 }
             else:
                 # Regular probes
-                smoothed[sent_id] = np.mean(window_scores, axis=0)
-
-            sent_id += 1
+                smoothed[representative_sent_id] = np.mean(window_scores, axis=0)
 
     return smoothed
 
@@ -680,13 +690,21 @@ def main():
         st.subheader("Options")
         show_text = st.checkbox("Show Conversation Text", value=True)
 
+        # Smoothing control
+        st.subheader("Smoothing")
+        smoothing_option = st.radio(
+            "Window Size",
+            options=[20, 100, 200],
+            format_func=lambda x: f"{x} tokens" + (" (default)" if x == 20 else ""),
+            help="Larger windows smooth the trajectory by averaging over more tokens"
+        )
+
         # Force reload button
         if st.button("🔄 Reload All Data"):
             st.cache_resource.clear()
             st.rerun()
 
-    # Fixed window size (no smoothing control)
-    window_size = 20  # Original sentence chunking
+    window_size = smoothing_option
     probe_names = get_probe_display_names()
 
     # Main content area - top-level tabs for subsets
