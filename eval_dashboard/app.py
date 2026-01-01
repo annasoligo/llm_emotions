@@ -251,21 +251,25 @@ def compute_aggregated_statistics(
     return aggregated_data, max_sentences, len(conversations)
 
 
+@st.cache_data(show_spinner=False)
 def create_trajectory_plot(
-    sentences: List[Dict],
-    sentence_scores: Dict[int, np.ndarray],
-    selected_emotions: List[str],
+    sentences: tuple,  # Changed to tuple for hashability
+    sentence_scores: dict,  # Streamlit can hash dicts
+    selected_emotions: tuple,  # Changed to tuple for hashability
     title: str = "Emotion Trajectory Over Conversation"
 ):
     """
     Create interactive Plotly trajectory plot.
+    CACHED for performance.
 
     Args:
-        sentences: List of sentence info dicts
+        sentences: Tuple of sentence info dicts
         sentence_scores: Dict mapping sentence_id -> emotion scores
-        selected_emotions: Which emotions to plot
+        selected_emotions: Tuple of emotions to plot
         title: Plot title
     """
+    # Convert back to list for processing
+    sentences = list(sentences)
     fig = go.Figure()
 
     # Add emotion traces
@@ -325,19 +329,35 @@ def create_trajectory_plot(
         ))
 
     # Add background shading for user/assistant turns
+    # OPTIMIZED: Merge consecutive sentences of same role into single rect
+    current_role = None
+    start_id = None
     for sent in sentences:
         sent_id = sent['sentence_id']
         role = sent['turn_role']
 
-        # Determine color
-        if role == 'user':
-            fill_color = 'rgba(30, 100, 180, 0.15)'  # Darker blue
-        else:
-            fill_color = 'rgba(255, 255, 255, 0.05)'  # White (very subtle)
+        # Start new region
+        if role != current_role:
+            # Add previous region if exists
+            if current_role is not None and start_id is not None:
+                fill_color = 'rgba(30, 100, 180, 0.15)' if current_role == 'user' else 'rgba(255, 255, 255, 0.05)'
+                fig.add_vrect(
+                    x0=start_id - 0.5,
+                    x1=prev_id + 0.5,
+                    fillcolor=fill_color,
+                    layer="below",
+                    line_width=0,
+                )
+            current_role = role
+            start_id = sent_id
+        prev_id = sent_id
 
+    # Add final region
+    if current_role is not None and start_id is not None:
+        fill_color = 'rgba(30, 100, 180, 0.15)' if current_role == 'user' else 'rgba(255, 255, 255, 0.05)'
         fig.add_vrect(
-            x0=sent_id - 0.5,
-            x1=sent_id + 0.5,
+            x0=start_id - 0.5,
+            x1=prev_id + 0.5,
             fillcolor=fill_color,
             layer="below",
             line_width=0,
@@ -384,24 +404,28 @@ def create_trajectory_plot(
     return fig
 
 
+@st.cache_data(show_spinner=False)
 def create_orthogonal_trajectory_plot(
-    sentences: List[Dict],
-    sentence_scores: Dict[int, Dict[str, np.ndarray]],
-    selected_emotions: List[str],
+    sentences: tuple,  # Changed to tuple for hashability
+    sentence_scores: dict,  # Streamlit can hash dicts
+    selected_emotions: tuple,  # Changed to tuple for hashability
     title: str = "Emotion Trajectory (Orthogonal Probes)",
     onset_sentence_id: int = None
 ):
     """
     Create side-by-side subplot for user/assistant orthogonal probes.
+    CACHED for performance - critical for long conversations.
 
     Args:
-        sentences: List of sentence info dicts
+        sentences: Tuple of sentence info dicts
         sentence_scores: Dict mapping sentence_id -> {'user': scores, 'assistant': scores}
-        selected_emotions: Which emotions to plot
+        selected_emotions: Tuple of emotions to plot
         title: Plot title
     """
     from plotly.subplots import make_subplots
 
+    # Convert back to list for processing
+    sentences = list(sentences)
     n_sentences = len(sentences)
     # Use vertical stacking if > 60 sentences, otherwise side-by-side
     if n_sentences > 60:
@@ -481,19 +505,36 @@ def create_orthogonal_trajectory_plot(
             ), row=row, col=col)
 
         # Add background shading for user/assistant turns
-        for sent in sentences:
+        # OPTIMIZED: Merge consecutive sentences of same role into single rect
+        current_role = None
+        start_id = None
+        for i, sent in enumerate(sentences):
             sent_id = sent['sentence_id']
             sent_role = sent['turn_role']
 
-            # Determine color
-            if sent_role == 'user':
-                fill_color = 'rgba(30, 100, 180, 0.15)'  # Darker blue
-            else:
-                fill_color = 'rgba(255, 255, 255, 0.05)'  # White (very subtle)
+            # Start new region
+            if sent_role != current_role:
+                # Add previous region if exists
+                if current_role is not None and start_id is not None:
+                    fill_color = 'rgba(30, 100, 180, 0.15)' if current_role == 'user' else 'rgba(255, 255, 255, 0.05)'
+                    fig.add_vrect(
+                        x0=start_id - 0.5,
+                        x1=prev_id + 0.5,
+                        fillcolor=fill_color,
+                        layer="below",
+                        line_width=0,
+                        row=row, col=col
+                    )
+                current_role = sent_role
+                start_id = sent_id
+            prev_id = sent_id
 
+        # Add final region
+        if current_role is not None and start_id is not None:
+            fill_color = 'rgba(30, 100, 180, 0.15)' if current_role == 'user' else 'rgba(255, 255, 255, 0.05)'
             fig.add_vrect(
-                x0=sent_id - 0.5,
-                x1=sent_id + 0.5,
+                x0=start_id - 0.5,
+                x1=prev_id + 0.5,
                 fillcolor=fill_color,
                 layer="below",
                 line_width=0,
@@ -749,17 +790,17 @@ def main():
 
                             if is_orthogonal:
                                 fig = create_orthogonal_trajectory_plot(
-                                    sentences=sentences,
+                                    sentences=tuple(sentences),  # Convert to tuple for caching
                                     sentence_scores=sentence_scores,
-                                    selected_emotions=selected_emotions,
+                                    selected_emotions=tuple(selected_emotions),  # Convert to tuple for caching
                                     title=f"Sample #{conv['sample_id']} - {probe_display_name}",
                                     onset_sentence_id=onset_sent_id
                                 )
                             else:
                                 fig = create_trajectory_plot(
-                                    sentences=sentences,
+                                    sentences=tuple(sentences),  # Convert to tuple for caching
                                     sentence_scores=sentence_scores,
-                                    selected_emotions=selected_emotions,
+                                    selected_emotions=tuple(selected_emotions),  # Convert to tuple for caching
                                     title=f"Sample #{conv['sample_id']} - {probe_display_name}"
                                 )
 
