@@ -743,34 +743,15 @@ def main():
 
             st.markdown("---")
 
-            # Debug info (temporary - ALWAYS VISIBLE)
-            st.info(f"🐛 DEBUG: Emotions={len(selected_emotions)}, Probes={len(selected_probe_keys)} {selected_probe_keys}, Convs={len(conversations)}")
-
-            with st.expander("🐛 Detailed Debug Info", expanded=True):
-                st.write(f"**Subset:** {subset_name}")
-                st.write(f"**Session key:** {session_key}")
-                st.write(f"**Selected emotions:** {selected_emotions}")
-                st.write(f"**Selected probe keys:** {selected_probe_keys}")
-                st.write(f"**Session state value:** {st.session_state.get(session_key, 'NOT SET')}")
-                st.write(f"**Available probes:** {available_probes}")
-                st.write(f"**Number of conversations:** {len(conversations)}")
-                if conversations:
-                    st.write(f"**First conv sample_id:** {conversations[0].get('sample_id')}")
-                    st.write(f"**First conv probe keys:** {list(conversations[0].get('probe_scores', {}).keys())}")
-                    st.write(f"**Current conv_idx:** {conv_idx}")
-
             # Sub-tabs for Individual and Aggregated views
             subtab1, subtab2 = st.tabs(["📊 Individual", "📈 Aggregated"])
 
             with subtab1:
-                st.write("🐛 DEBUG: Entered Individual subtab")
-
                 if not selected_emotions:
                     st.warning("⚠️ Please select at least one emotion to visualize")
                 elif not selected_probe_keys:
                     st.warning("⚠️ Please select at least one probe type")
                 else:
-                    st.write(f"🐛 DEBUG: Passed validation checks, proceeding to render...")
                     # Get selected conversation
                     conv = conversations[conv_idx]
                     sentences = conv['sentences']
@@ -790,19 +771,14 @@ def main():
                     with col4:
                         st.metric("Sentences", conv['metadata']['num_sentences'])
 
-                    st.write(f"🐛 DEBUG: Rendered metadata for sample {conv['sample_id']}")
                     st.markdown("---")
-
-                    st.write(f"🐛 DEBUG: About to loop through {len(selected_probe_keys)} probes")
 
                     # Loop through selected probes and display vertically
                     for probe_idx, probe_key in enumerate(selected_probe_keys):
-                        st.write(f"🐛 DEBUG: Processing probe {probe_idx + 1}/{len(selected_probe_keys)}: {probe_key}")
                         try:
                             # Add probe name header
                             probe_display_name = probe_names.get(probe_key, probe_key)
                             st.subheader(f"🔬 {probe_display_name}")
-                            st.write(f"🐛 DEBUG: About to check probe scores...")
 
                             # Check if probe scores available
                             if probe_key not in conv.get('probe_scores', {}):
@@ -810,7 +786,6 @@ def main():
                                 continue
 
                             sentence_scores = conv['probe_scores'][probe_key]
-                            st.write(f"🐛 DEBUG: Got {len(sentence_scores)} sentence scores")
 
                             # Apply smoothing window
                             if window_size != 20:
@@ -820,7 +795,6 @@ def main():
                             sample_score = list(sentence_scores.values())[0] if sentence_scores else None
                             is_orthogonal = isinstance(sample_score, dict) and 'user' in sample_score
                             onset_sent_id = conv['metadata'].get('onset_sentence_id')
-                            st.write(f"🐛 DEBUG: is_orthogonal={is_orthogonal}, creating plot...")
 
                             if is_orthogonal:
                                 fig = create_orthogonal_trajectory_plot(
@@ -838,9 +812,7 @@ def main():
                                     title=f"Sample #{conv['sample_id']} - {probe_display_name}"
                                 )
 
-                            st.write(f"🐛 DEBUG: Plot created, rendering with plotly_chart...")
                             st.plotly_chart(fig, use_container_width=True)
-                            st.write(f"🐛 DEBUG: ✓ Plot rendered successfully!")
 
                         except Exception as e:
                             st.error(f"❌ Error rendering {probe_display_name}: {str(e)}")
@@ -858,7 +830,6 @@ def main():
                         render_conversation_text(conversation=conv['conversation'])
 
             with subtab2:
-                st.write("🐛 DEBUG: Entered Aggregated subtab")
                 st.header("Aggregated Statistics")
                 st.markdown("Statistical analysis across all conversations")
 
@@ -870,11 +841,8 @@ def main():
                     st.warning("⚠️ Please select at least one probe type")
                     st.stop()
 
-                st.write(f"🐛 DEBUG: Passed validation, looping through {len(selected_probe_keys)} probes")
-
                 # Loop through all selected probes
                 for probe_idx, probe_key in enumerate(selected_probe_keys):
-                    st.write(f"🐛 DEBUG: Processing probe {probe_idx + 1}/{len(selected_probe_keys)}: {probe_key}")
                     # Add probe name header
                     probe_display_name = probe_names.get(probe_key, probe_key)
                     st.subheader(f"🔬 {probe_display_name}")
@@ -1008,46 +976,6 @@ def main():
 
                     st.plotly_chart(fig, use_container_width=True)
 
-                    # Download data
-                    st.subheader("💾 Export Data")
-                    col1, col2 = st.columns(2)
-
-                    with col1:
-                        # Make key unique across tabs by including subset_name
-                        download_key = f"download_{subset_name.replace(' ', '_')}_{probe_key}"
-                        if st.button(f"📊 Download Mean Trajectories (CSV) - {probe_display_name}", key=download_key):
-                            # Create CSV data
-                            export_data = {'Sentence': list(range(max_sentences))}
-
-                            # Handle orthogonal probes differently
-                            if is_orthogonal:
-                                for role in ['user', 'assistant']:
-                                    role_data = aggregated_data[role]
-                                    for emotion in selected_emotions:
-                                        if emotion in role_data:
-                                            export_data[f'{emotion}_{role}_mean'] = role_data[emotion]['mean']
-                                            export_data[f'{emotion}_{role}_ci_lower'] = role_data[emotion]['ci_lower']
-                                            export_data[f'{emotion}_{role}_ci_upper'] = role_data[emotion]['ci_upper']
-                            else:
-                                for emotion in selected_emotions:
-                                    if emotion in aggregated_data:
-                                        export_data[f'{emotion}_mean'] = aggregated_data[emotion]['mean']
-                                        export_data[f'{emotion}_ci_lower'] = aggregated_data[emotion]['ci_lower']
-                                        export_data[f'{emotion}_ci_upper'] = aggregated_data[emotion]['ci_upper']
-
-                            df_export = pd.DataFrame(export_data)
-                            csv = df_export.to_csv(index=False)
-                            st.download_button(
-                                label="Download CSV",
-                                data=csv,
-                                file_name=f"aggregated_emotions_{subset_name.replace(' ', '_')}_{probe_key}.csv",
-                                mime="text/csv",
-                                key=f"download_btn_{subset_name.replace(' ', '_')}_{probe_key}"
-                            )
-                
-                    with col2:
-                        st.info("More export options coming soon")
-                
                     # Add separator between probes
                     if probe_idx < len(selected_probe_keys) - 1:
                         st.markdown("---")
