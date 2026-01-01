@@ -1,0 +1,6 @@
+# Additional requirements for eval dashboard
+# Install with: pip install -r requirements.txt
+
+streamlit>=1.28.0
+plotly>=5.17.0
+sentences  # Smart sentence splitting: https://github.com/paulcbogdan/Sentences

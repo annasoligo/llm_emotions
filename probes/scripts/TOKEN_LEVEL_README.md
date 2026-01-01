@@ -25,9 +25,9 @@ The token-level pipeline analyzes emotions at **every token position** rather th
    - Supports layer-averaged or per-layer normalization
    - Essential for comparable emotion scores across layers
 
-3. **`TokenLevelExperiment`** ([token_level_helpers.py:18-295](token_level_helpers.py#L18-L295))
+3. **`TokenLevelExperiment`** ([token_level_helpers.py:18-270](token_level_helpers.py#L18-L270))
    - Encapsulates complete token-level experiment
-   - Supports multiple probe types (orthogonal, standard, linear, logit lens)
+   - Supports multiple probe types (orthogonal, standard, linear)
    - Handles activation extraction, normalization, and probe application
 
 4. **`token_level_experiment_v2.py`** ([token_level_experiment_v2.py](token_level_experiment_v2.py))
@@ -63,7 +63,7 @@ from probes.scripts.token_level_helpers import TokenLevelExperiment
 exp = TokenLevelExperiment(
     model=model,
     tokenizer=tokenizer,
-    probe_type="orthogonal",  # or "standard", "linear", "logit_lens"
+    probe_type="orthogonal",  # or "standard", "linear"
     probe_dir=Path("/workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/conversation_based/"),
     cpca_path=Path("/path/to/cpca.npz"),
     orthogonality_weight=1000.0,
@@ -151,17 +151,6 @@ exp = TokenLevelExperiment(
 )
 ```
 
-#### Logit Lens (Baseline)
-- Projects activations to vocabulary
-- Uses emotion word tokens directly
-- No training required
-
-```python
-exp = TokenLevelExperiment(
-    probe_type="logit_lens"
-)
-```
-
 ### 2. WildChat Baseline Normalization
 
 Token-level normalization uses **layer-averaged** baseline statistics for cross-layer comparability:
@@ -187,6 +176,36 @@ normalized = loader.normalize_token_level(
 **Aggregation options:**
 - `"mean"`: Average mean/std across layers (recommended)
 - `"per_layer"`: Use per-layer normalization (less comparable)
+
+### 2b. Probe Score Baseline Centering (NEW!)
+
+**Problem**: Orthogonal probes output projection magnitudes that are always positive, making it hard to interpret "below baseline" emotions.
+
+**Solution**: Enable `center_probe_scores=True` to subtract baseline probe scores from observed scores:
+
+```python
+exp = TokenLevelExperiment(
+    model=model,
+    tokenizer=tokenizer,
+    probe_type="orthogonal",
+    use_wildchat_normalization=True,  # Normalize activations
+    center_probe_scores=True,         # NEW: Center probe outputs
+    wildchat_aggregation="assistant_turn"
+)
+```
+
+**What this does**:
+1. Computes expected probe scores on WildChat baseline activations
+2. Subtracts these baseline scores from observed scores
+3. Result: **Positive = above baseline**, **Negative = below baseline**
+
+**Example interpretation**:
+- `happiness = +0.5`: More happy than typical conversation
+- `happiness = -0.3`: Less happy than typical conversation
+- `anger = +0.8`: More anger than typical conversation
+- `anger = -0.1`: Less anger than typical conversation
+
+This gives you **relative emotion levels** rather than absolute projection magnitudes.
 
 ### 3. Generation Control
 
@@ -295,12 +314,10 @@ plt.show()
 # Run multiple probe types
 results_ortho = exp_ortho.run_experiment(...)
 results_standard = exp_standard.run_experiment(...)
-results_logit = exp_logit.run_experiment(...)
 
 # Aggregate
 scores_o = aggregate_scores_across_layers(results_ortho['scores_by_token'], LAYERS)
 scores_s = aggregate_scores_across_layers(results_standard['scores_by_token'], LAYERS)
-scores_l = aggregate_scores_across_layers(results_logit['scores_by_token'], LAYERS)
 
 # Plot comparison
 for idx, emotion in enumerate(EMOTIONS):
@@ -308,7 +325,6 @@ for idx, emotion in enumerate(EMOTIONS):
 
     plt.plot([scores_o[p][emotion_idx] for p in sorted(scores_o.keys())], label='Orthogonal')
     plt.plot([scores_s[p][emotion_idx] for p in sorted(scores_s.keys())], label='Standard')
-    plt.plot([scores_l[p][emotion_idx] for p in sorted(scores_l.keys())], label='Logit Lens')
 
     plt.legend()
     plt.title(emotion.capitalize())
@@ -336,16 +352,31 @@ sns.heatmap(
 plt.show()
 ```
 
-## Comparison: Token-Level vs Batch-Level
+### Sentence-Level Bar Charts
 
-| Feature | Token-Level | Batch-Level |
-|---------|-------------|-------------|
-| **Granularity** | Per token | Per prompt (aggregated) |
-| **Use case** | Trajectory analysis | Statistical comparison |
-| **Output** | Emotion scores at each position | Emotion scores for entire response |
-| **Normalization** | Layer-averaged baselines | Per-layer baselines |
-| **Computation** | Slower (many tokens) | Faster (one aggregate per prompt) |
-| **Memory** | Higher (stores all positions) | Lower (stores aggregates) |
+```python
+from probes.scripts.model_diff_viz import plot_sentence_level_bar_charts
+
+plot_sentence_level_bar_charts(
+    scores_dict=scores,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    token_ids=token_ids,
+    prompt_start_idx=20,
+    title="Sentence-Level Emotion Analysis"
+)
+```
+
+## Comparison: Token-Level vs Sentence-Level vs Batch-Level
+
+| Feature | Token-Level | Sentence-Level | Batch-Level |
+|---------|-------------|----------------|-------------|
+| **Granularity** | Per token | Per sentence | Per prompt (aggregated) |
+| **Use case** | Trajectory analysis | Sentence-by-sentence comparison | Statistical comparison |
+| **Output** | Emotion scores at each position | Emotion scores per sentence + prompt | Emotion scores for entire response |
+| **Normalization** | Layer-averaged baselines | Layer-averaged baselines | Per-layer baselines |
+| **Computation** | Slower (many tokens) | Medium (few sentences) | Faster (one aggregate per prompt) |
+| **Memory** | Higher (stores all positions) | Medium (stores per sentence) | Lower (stores aggregates) |
 
 ## Best Practices
 
@@ -364,6 +395,28 @@ exp = TokenLevelExperiment(
 exp = TokenLevelExperiment(
     use_wildchat_normalization=False
 )
+```
+
+### 1b. Enable Score Centering for Relative Interpretation
+
+For orthogonal probes, enable baseline centering to get interpretable relative scores:
+
+```python
+# Best: Both activation normalization AND score centering
+exp = TokenLevelExperiment(
+    use_wildchat_normalization=True,  # Centers activations
+    center_probe_scores=True,         # Centers probe outputs
+    wildchat_aggregation="assistant_turn"
+)
+
+# Good: Just activation normalization (scores always positive)
+exp = TokenLevelExperiment(
+    use_wildchat_normalization=True,
+    center_probe_scores=False
+)
+
+# Note: Standard probes already have centered scores (from bias term),
+# so score centering has less impact on them
 ```
 
 ### 2. Use Layer-Averaged Aggregation
@@ -387,10 +440,9 @@ aggregated = aggregate_scores_across_layers(
 Different probe types provide different perspectives:
 
 ```python
-# Run all three
+# Run both probe types
 results_ortho = exp_ortho.run_experiment(...)
 results_standard = exp_standard.run_experiment(...)
-results_logit = exp_logit.run_experiment(...)
 
 # Look for agreement across methods
 ```
@@ -470,6 +522,38 @@ for emotion in EMOTIONS:
     max_idx = np.argmax(scores_list)
     print(f"{emotion}: Peak at '{token_strings[max_idx]}' = {scores_list[max_idx]:.3f}")
 ```
+
+## Sentence-Level Analysis
+
+In addition to token-level trajectories, you can aggregate emotion scores at the sentence level:
+
+```python
+from probes.scripts.model_diff_viz import plot_sentence_level_bar_charts
+
+# Create bar charts showing emotions for prompt and each sentence
+plot_sentence_level_bar_charts(
+    scores_dict=scores_ortho,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    token_ids=token_ids,
+    prompt_start_idx=20,  # Start averaging prompt emotions from token 20
+    title="Sentence-Level Emotions: Averaged Orthogonal Probes",
+    output_path=output_dir / "sentence_level.png"
+)
+```
+
+**Features:**
+- Averages emotions over the prompt (starting at configurable token index)
+- Splits generated text into sentences based on punctuation (`.`, `!`, `?`, `\n\n`)
+- Creates bar charts with one subplot per sentence
+- Shows emotion scores with value labels on bars
+- Works with all probe types (user, assistant, standard, orthogonal)
+
+**Output:**
+- Grid of subplots, one for each sentence
+- X-axis: 6 emotions (using consistent color scheme)
+- Y-axis: Emotion score
+- Sentence text shown in subplot titles
 
 ## Files Reference
 

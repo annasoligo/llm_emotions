@@ -104,8 +104,10 @@ LAYERS = list(range(20, 50))  # Adjust range as needed
 ACTIVATION_STRATEGY = "generated_tokens_avg"
 NUM_GENERATED_TOKENS = 10
 
-# WildChat baseline normalization
-USE_WILDCHAT_NORMALIZATION = True
+# Baseline normalization
+USE_BASELINE_NORMALIZATION = False  # Use probe normalization instead
+NORMALIZE_PROBE_SCORES = True  # NEW: Z-score normalize probe outputs directly
+BASELINE_DIR = Path("/workspace-vast/annas/git/research-tools/data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it")
 
 # Bootstrap configuration
 N_BOOTSTRAP = 1000
@@ -121,7 +123,8 @@ print("="*80)
 print(f"  Question module: {QUESTION_MODULE}")
 print(f"  Layers: {len(LAYERS)} layers ({min(LAYERS)}-{max(LAYERS)})")
 print(f"  Activation strategy: {ACTIVATION_STRATEGY}")
-print(f"  WildChat normalization: {USE_WILDCHAT_NORMALIZATION}")
+print(f"  Baseline normalization: {USE_BASELINE_NORMALIZATION}")
+print(f"  Baseline dir: {BASELINE_DIR}")
 print(f"  Bootstrap samples: {N_BOOTSTRAP}")
 print(f"  Output directory: {OUTPUT_DIR}")
 
@@ -167,7 +170,9 @@ exp1 = DoubleDiffExperiment(
     cpca_path=Path("/workspace-vast/annas/git/research-tools/outputs/dimensionality_reduction/cpca/conversation_based/global/google/google/gemma-3-27b-it_cpca.npz"),
     orthogonality_weight=1000.0,
     orthogonal_representation="raw",
-    use_wildchat_normalization=USE_WILDCHAT_NORMALIZATION
+    use_wildchat_normalization=USE_BASELINE_NORMALIZATION,
+    normalize_probe_scores=NORMALIZE_PROBE_SCORES,
+    baseline_dir=BASELINE_DIR
 )
 
 results_ortho_conv = exp1.run_experiment(
@@ -196,7 +201,9 @@ exp2 = DoubleDiffExperiment(
     probe_dir=Path("/workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/"),
     probe_pattern="probe_layer{layer}_nc0_seed0.pkl",  # Raw activations, seed 0
     cpca_path=None,  # No cPCA needed for raw probes
-    use_wildchat_normalization=USE_WILDCHAT_NORMALIZATION
+    use_wildchat_normalization=USE_BASELINE_NORMALIZATION,
+    normalize_probe_scores=NORMALIZE_PROBE_SCORES,
+    baseline_dir=BASELINE_DIR
 )
 
 results_text_raw = exp2.run_experiment(
@@ -322,7 +329,8 @@ new_exp = DoubleDiffExperiment(
     cpca_path=Path("/workspace-vast/annas/git/research-tools/outputs/dimensionality_reduction/cpca/conversation_based/global/google/google/gemma-3-27b-it_cpca.npz"),
     orthogonality_weight=1000.0,
     orthogonal_representation="raw",
-    use_wildchat_normalization=True
+    use_wildchat_normalization=True,
+    baseline_dir=BASELINE_DIR
 )
 
 new_results = new_exp.run_experiment(
@@ -350,7 +358,8 @@ new_exp2 = DoubleDiffExperiment(
     probe_dir=Path("/workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/"),
     probe_pattern="probe_layer{layer}_nc0_seed1.pkl",  # Different seed
     cpca_path=None,
-    use_wildchat_normalization=True
+    use_wildchat_normalization=True,
+    baseline_dir=BASELINE_DIR
 )
 
 new_results2 = new_exp2.run_experiment(

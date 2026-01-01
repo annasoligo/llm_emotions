@@ -11,7 +11,13 @@ from typing import List, Dict, Tuple, Optional
 import numpy as np
 import pickle
 import torch
-from probes.scripts.probe_pipeline import ProbeActivationExtractor, ProbeInference, ProbeAggregator
+from probes.scripts.probe_pipeline import (
+    ProbeActivationExtractor,
+    ProbeInference,
+    ProbeAggregator,
+    normalize_probe_scores_zscore,
+    normalize_probe_scores_center
+)
 from probes.scripts.wildchat_baseline_loader import WildChatBaselineLoader
 
 
@@ -32,7 +38,13 @@ class DoubleDiffExperiment:
         n_components: int = 10,
         seed: int = 0,
         use_wildchat_normalization: bool = False,
-        emotions: List[str] = None
+        baseline_dir: Path = None,
+        emotions: List[str] = None,
+        k_value: Optional[int] = None,
+        centroid_constraint_type: Optional[str] = None,
+        centroid_probe_format: str = "auto",
+        normalize_probe_scores: bool = False,
+        center_probe_scores: bool = False
     ):
         """
         Initialize experiment configuration.
@@ -41,7 +53,7 @@ class DoubleDiffExperiment:
             base_model: Base model (StandardizedTransformer)
             ft_model: Finetuned model (StandardizedTransformer)
             tokenizer: Tokenizer
-            probe_type: "orthogonal", "linear", or "standard" (non-orthogonal)
+            probe_type: "orthogonal", "linear", "standard", or "centroid"
             probe_dir: Directory containing probe files
             cpca_path: Path to cPCA file (for linear probes or cpca representations)
             probe_pattern: Custom pattern for probe filenames (e.g., "probe_layer{layer}_nc0_seed0.pkl")
@@ -50,8 +62,14 @@ class DoubleDiffExperiment:
             orthogonal_representation: "raw", "global_cpca_top10", etc.
             n_components: Number of cPCA components (for linear probes)
             seed: Random seed (for linear probes)
-            use_wildchat_normalization: Whether to normalize with WildChat baselines
+            use_wildchat_normalization: Whether to normalize activations with WildChat baselines
+            baseline_dir: Directory containing baseline statistics
             emotions: List of emotion names
+            k_value: Number of K-sets to average for centroid probes (required if probe_type='centroid')
+            centroid_constraint_type: Optional constraint type for centroid probes (e.g., "gramschmidt")
+            centroid_probe_format: Probe format - "auto" (detect), "text", or "conversation"
+            normalize_probe_scores: Whether to z-score normalize probe outputs (subtract mean, divide by std)
+            center_probe_scores: Whether to center probe outputs (subtract mean only). Ignored if normalize_probe_scores=True
         """
         self.base_model = base_model
         self.ft_model = ft_model
@@ -65,7 +83,13 @@ class DoubleDiffExperiment:
         self.n_components = n_components
         self.seed = seed
         self.use_wildchat_normalization = use_wildchat_normalization
+        self.baseline_dir = baseline_dir
         self.emotions = emotions or ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
+        self.k_value = k_value
+        self.centroid_constraint_type = centroid_constraint_type
+        self.centroid_probe_format = centroid_probe_format
+        self.normalize_probe_scores = normalize_probe_scores
+        self.center_probe_scores = center_probe_scores
 
         # Initialize pipeline components
         self.extractor = ProbeActivationExtractor()
@@ -149,15 +173,30 @@ class DoubleDiffExperiment:
 
         # Step 3: Apply probes
         if verbose:
-            print("\n[3/4] Applying probes...")
+            print("\n[3/5] Applying probes...")
 
         probe_scores = self._apply_probes(
             activations, layers, verbose
         )
 
-        # Step 4: Compute double-diff
+        # Step 4: Normalize probe scores (if enabled)
+        if self.normalize_probe_scores or self.center_probe_scores:
+            if verbose:
+                if self.normalize_probe_scores:
+                    print("\n[4/5] Computing and applying probe score z-score normalization...")
+                else:
+                    print("\n[4/5] Computing and applying baseline centering...")
+
+            probe_scores = self._normalize_probe_scores(
+                probe_scores, layers, activation_strategy, verbose
+            )
+        else:
+            if verbose:
+                print("\n[4/5] Skipping probe score normalization")
+
+        # Step 5: Compute double-diff
         if verbose:
-            print("\n[4/4] Computing double-diff statistics...")
+            print("\n[5/5] Computing double-diff statistics...")
 
         double_diff_results = self._compute_double_diff(
             probe_scores, layers, n_bootstrap, ci_percentile, verbose
@@ -178,6 +217,8 @@ class DoubleDiffExperiment:
                 'n_bootstrap': n_bootstrap,
                 'ci_percentile': ci_percentile,
                 'use_wildchat_normalization': self.use_wildchat_normalization,
+                'normalize_probe_scores': self.normalize_probe_scores,
+                'center_probe_scores': self.center_probe_scores,
                 'orthogonality_weight': self.orthogonality_weight,
                 'orthogonal_representation': self.orthogonal_representation,
                 'n_components': self.n_components,
@@ -239,7 +280,8 @@ class DoubleDiffExperiment:
         wildchat_aggregation = aggregation_map.get(activation_strategy, 'assistant_turn')
 
         baseline_loader = WildChatBaselineLoader(
-            aggregation_type=wildchat_aggregation
+            aggregation_type=wildchat_aggregation,
+            baseline_dir=self.baseline_dir
         )
 
         if verbose:
@@ -265,16 +307,20 @@ class DoubleDiffExperiment:
             'base_baseline': {},
         }
 
-        # Also track user/assistant separately for orthogonal probes
+        # Track user/assistant separately for orthogonal or conversation-based centroid probes
+        track_roles = False
         if self.probe_type == "orthogonal":
-            probe_scores['ft_dataset_user'] = {}
-            probe_scores['base_dataset_user'] = {}
-            probe_scores['ft_baseline_user'] = {}
-            probe_scores['base_baseline_user'] = {}
-            probe_scores['ft_dataset_asst'] = {}
-            probe_scores['base_dataset_asst'] = {}
-            probe_scores['ft_baseline_asst'] = {}
-            probe_scores['base_baseline_asst'] = {}
+            track_roles = True
+        elif self.probe_type == "centroid":
+            # Check format by loading one probe
+            test_data = self.inference.load_centroid_probe(
+                layer=layers[0],
+                k_value=self.k_value,
+                orthogonality_weight=self.orthogonality_weight,
+                constraint_type=self.centroid_constraint_type,
+                probe_format=self.centroid_probe_format
+            )
+            track_roles = test_data['probe_format'] == 'conversation'
 
         for layer in layers:
             if verbose and layer % 10 == 0:
@@ -320,6 +366,69 @@ class DoubleDiffExperiment:
 
                     probe_scores[name][layer] = logits_np
 
+            elif self.probe_type == "centroid":
+                # Centroid probes
+                if self.k_value is None:
+                    raise ValueError(
+                        "k_value must be specified when using probe_type='centroid'.\n"
+                        "Example: DoubleDiffExperiment(..., probe_type='centroid', k_value=50)"
+                    )
+
+                # Load centroid probe for this layer
+                centroid_data = self.inference.load_centroid_probe(
+                    layer=layer,
+                    k_value=self.k_value,
+                    orthogonality_weight=self.orthogonality_weight,
+                    constraint_type=self.centroid_constraint_type,
+                    probe_format=self.centroid_probe_format
+                )
+
+                probe_format = centroid_data['probe_format']
+
+                if probe_format == "text":
+                    # Text-based centroid - single role
+                    centroid_probes = centroid_data['centroid_probes']
+
+                    for name in ['ft_dataset', 'base_dataset', 'ft_baseline', 'base_baseline']:
+                        scores = self.inference.predict_centroid(
+                            activations=activations[name][layer],
+                            centroid_probes=centroid_probes,
+                            centroid_user_probes=None,
+                            centroid_asst_probes=None,
+                            emotions=self.emotions,
+                            probe_format='text'
+                        )
+                        probe_scores[name][layer] = scores
+
+                elif probe_format == "conversation":
+                    # Conversation-based centroid - user/assistant roles
+                    user_probes = centroid_data['centroid_user_probes']
+                    asst_probes = centroid_data['centroid_asst_probes']
+
+                    for name in ['ft_dataset', 'base_dataset', 'ft_baseline', 'base_baseline']:
+                        user_scores_list, asst_scores_list, avg_scores = self.inference.predict_centroid(
+                            activations=activations[name][layer],
+                            centroid_probes=None,
+                            centroid_user_probes=user_probes,
+                            centroid_asst_probes=asst_probes,
+                            emotions=self.emotions,
+                            probe_format='conversation'
+                        )
+
+                        # Convert lists to arrays
+                        user_arr = np.array([[d[e] for e in self.emotions] for d in user_scores_list])
+                        asst_arr = np.array([[d[e] for e in self.emotions] for d in asst_scores_list])
+
+                        # Store in nested dict format (matching token-level/dashboard)
+                        n_samples = user_arr.shape[0]
+                        nested_scores = np.empty(n_samples, dtype=object)
+                        for i in range(n_samples):
+                            nested_scores[i] = {
+                                'user': user_arr[i],
+                                'assistant': asst_arr[i]
+                            }
+                        probe_scores[name][layer] = nested_scores
+
             else:  # orthogonal
                 # Load orthogonal probe for this layer
                 probe_data = self.inference.load_orthogonal_probe(
@@ -342,13 +451,145 @@ class DoubleDiffExperiment:
                     user_arr = np.array([[d[e] for e in self.emotions] for d in user_scores])
                     asst_arr = np.array([[d[e] for e in self.emotions] for d in asst_scores])
 
-                    # Store separate and averaged
-                    probe_scores[f'{name}_user'][layer] = user_arr
-                    probe_scores[f'{name}_asst'][layer] = asst_arr
-                    probe_scores[name][layer] = (user_arr + asst_arr) / 2
+                    # Store in nested dict format (matching token-level/dashboard)
+                    # This allows for consistent handling across all systems
+                    n_samples = user_arr.shape[0]
+                    nested_scores = np.empty(n_samples, dtype=object)
+                    for i in range(n_samples):
+                        nested_scores[i] = {
+                            'user': user_arr[i],
+                            'assistant': asst_arr[i]
+                        }
+                    probe_scores[name][layer] = nested_scores
 
         if verbose:
             print(f"  ✓ Applied probes to {len(layers)} layers")
+
+        return probe_scores
+
+    def _normalize_probe_scores(
+        self,
+        probe_scores: Dict[str, Dict[int, np.ndarray]],
+        layers: List[int],
+        activation_strategy: str,
+        verbose: bool
+    ) -> Dict[str, Dict[int, np.ndarray]]:
+        """
+        Normalize probe scores using WildChat baseline statistics.
+
+        This method computes baseline statistics and applies z-score normalization
+        or centering to all probe scores.
+
+        Args:
+            probe_scores: Dict with probe scores for all conditions
+            layers: Layers to normalize
+            activation_strategy: Activation extraction strategy (for baseline aggregation mapping)
+            verbose: Print progress
+
+        Returns:
+            Normalized probe scores in same format as input
+        """
+        # Map activation strategy to baseline aggregation type
+        aggregation_map = {
+            'assistant_token': 'first_assistant_token',
+            'last_user_token': 'last_user_token',
+            'between_turns_avg': 'between_turns',
+            'generated_tokens_avg': 'assistant_turn'
+        }
+        wildchat_aggregation = aggregation_map.get(activation_strategy, 'assistant_turn')
+
+        baseline_loader = WildChatBaselineLoader(
+            aggregation_type=wildchat_aggregation,
+            baseline_dir=self.baseline_dir
+        )
+
+        if verbose:
+            print(f"  Computing baseline statistics (aggregation: {wildchat_aggregation})...")
+
+        # Compute baseline statistics
+        if self.normalize_probe_scores:
+            # Need both mean and std for z-score
+            baseline_stats = baseline_loader.compute_probe_score_baselines(
+                probe_inference=self.inference,
+                layers=layers,
+                probe_type=self.probe_type,
+                aggregation="mean",
+                return_std=True,
+                orthogonality_weight=self.orthogonality_weight,
+                orthogonal_representation=self.orthogonal_representation,
+                n_components=self.n_components,
+                seed=self.seed,
+                emotions=self.emotions,
+                probe_pattern=self.probe_pattern,
+                k_value=self.k_value,
+                centroid_constraint_type=self.centroid_constraint_type,
+                centroid_probe_format=self.centroid_probe_format
+            )
+            baseline_mean = baseline_stats['mean'][-1]  # Layer-averaged
+            baseline_std = baseline_stats['std'][-1]
+        else:
+            # Only need mean for centering
+            baseline_scores = baseline_loader.compute_probe_score_baselines(
+                probe_inference=self.inference,
+                layers=layers,
+                probe_type=self.probe_type,
+                aggregation="mean",
+                return_std=False,
+                orthogonality_weight=self.orthogonality_weight,
+                orthogonal_representation=self.orthogonal_representation,
+                n_components=self.n_components,
+                seed=self.seed,
+                emotions=self.emotions,
+                probe_pattern=self.probe_pattern,
+                k_value=self.k_value,
+                centroid_constraint_type=self.centroid_constraint_type,
+                centroid_probe_format=self.centroid_probe_format
+            )
+            baseline_mean = baseline_scores[-1]  # Layer-averaged
+
+        if verbose:
+            print(f"  Applying normalization to probe scores...")
+
+        # Normalize all conditions
+        conditions = ['ft_dataset', 'base_dataset', 'ft_baseline', 'base_baseline']
+
+        for condition in conditions:
+            if condition not in probe_scores:
+                continue
+
+            for layer in layers:
+                scores = probe_scores[condition][layer]
+
+                # Check if scores are in nested dict format (array of dicts)
+                if isinstance(scores, np.ndarray) and len(scores) > 0 and isinstance(scores[0], dict):
+                    # Nested dict format - normalize each sample
+                    normalized = np.empty(len(scores), dtype=object)
+                    for i in range(len(scores)):
+                        if self.normalize_probe_scores:
+                            normalized[i] = normalize_probe_scores_zscore(
+                                scores[i], baseline_mean, baseline_std
+                            )
+                        else:
+                            normalized[i] = normalize_probe_scores_center(
+                                scores[i], baseline_mean
+                            )
+                    probe_scores[condition][layer] = normalized
+                else:
+                    # Regular array format
+                    if self.normalize_probe_scores:
+                        probe_scores[condition][layer] = normalize_probe_scores_zscore(
+                            scores, baseline_mean, baseline_std
+                        )
+                    else:
+                        probe_scores[condition][layer] = normalize_probe_scores_center(
+                            scores, baseline_mean
+                        )
+
+        if verbose:
+            if self.normalize_probe_scores:
+                print(f"  ✓ Z-score normalized scores (mean: {baseline_mean[:3]}..., std: {baseline_std[:3]}...)")
+            else:
+                print(f"  ✓ Centered scores using baseline: {baseline_mean[:3]}...")
 
         return probe_scores
 
@@ -361,41 +602,80 @@ class DoubleDiffExperiment:
         verbose: bool
     ) -> Dict:
         """Compute double-diff statistics."""
+        # Check if scores are in nested dict format
+        sample_scores = probe_scores['ft_dataset'][layers[0]]
+        has_nested_format = (isinstance(sample_scores, np.ndarray) and
+                            len(sample_scores) > 0 and
+                            isinstance(sample_scores[0], dict) and
+                            'user' in sample_scores[0])
+
         results = {
             'averaged': {},
-            'user': {} if self.probe_type == "orthogonal" else None,
-            'assistant': {} if self.probe_type == "orthogonal" else None,
+            'user': {} if has_nested_format else None,
+            'assistant': {} if has_nested_format else None,
         }
 
         for layer in layers:
-            # Averaged double-diff
-            results['averaged'][layer] = self.aggregator.compute_double_diff(
-                ft_dataset=probe_scores['ft_dataset'][layer],
-                base_dataset=probe_scores['base_dataset'][layer],
-                ft_baseline=probe_scores['ft_baseline'][layer],
-                base_baseline=probe_scores['base_baseline'][layer],
-                emotions=self.emotions,
-                n_bootstrap=n_bootstrap,
-                ci_percentile=ci_percentile
-            )
+            # Extract scores for this layer
+            ft_dataset_layer = probe_scores['ft_dataset'][layer]
+            base_dataset_layer = probe_scores['base_dataset'][layer]
+            ft_baseline_layer = probe_scores['ft_baseline'][layer]
+            base_baseline_layer = probe_scores['base_baseline'][layer]
 
-            # User/assistant separate (for orthogonal)
-            if self.probe_type == "orthogonal":
+            if has_nested_format:
+                # Extract user and assistant arrays from nested dicts
+                ft_dataset_user = np.array([s['user'] for s in ft_dataset_layer])
+                ft_dataset_asst = np.array([s['assistant'] for s in ft_dataset_layer])
+                base_dataset_user = np.array([s['user'] for s in base_dataset_layer])
+                base_dataset_asst = np.array([s['assistant'] for s in base_dataset_layer])
+                ft_baseline_user = np.array([s['user'] for s in ft_baseline_layer])
+                ft_baseline_asst = np.array([s['assistant'] for s in ft_baseline_layer])
+                base_baseline_user = np.array([s['user'] for s in base_baseline_layer])
+                base_baseline_asst = np.array([s['assistant'] for s in base_baseline_layer])
+
+                # Averaged double-diff (average of user and assistant)
+                ft_dataset_avg = (ft_dataset_user + ft_dataset_asst) / 2
+                base_dataset_avg = (base_dataset_user + base_dataset_asst) / 2
+                ft_baseline_avg = (ft_baseline_user + ft_baseline_asst) / 2
+                base_baseline_avg = (base_baseline_user + base_baseline_asst) / 2
+
+                results['averaged'][layer] = self.aggregator.compute_double_diff(
+                    ft_dataset=ft_dataset_avg,
+                    base_dataset=base_dataset_avg,
+                    ft_baseline=ft_baseline_avg,
+                    base_baseline=base_baseline_avg,
+                    emotions=self.emotions,
+                    n_bootstrap=n_bootstrap,
+                    ci_percentile=ci_percentile
+                )
+
+                # User/assistant separate
                 results['user'][layer] = self.aggregator.compute_double_diff(
-                    ft_dataset=probe_scores['ft_dataset_user'][layer],
-                    base_dataset=probe_scores['base_dataset_user'][layer],
-                    ft_baseline=probe_scores['ft_baseline_user'][layer],
-                    base_baseline=probe_scores['base_baseline_user'][layer],
+                    ft_dataset=ft_dataset_user,
+                    base_dataset=base_dataset_user,
+                    ft_baseline=ft_baseline_user,
+                    base_baseline=base_baseline_user,
                     emotions=self.emotions,
                     n_bootstrap=n_bootstrap,
                     ci_percentile=ci_percentile
                 )
 
                 results['assistant'][layer] = self.aggregator.compute_double_diff(
-                    ft_dataset=probe_scores['ft_dataset_asst'][layer],
-                    base_dataset=probe_scores['base_dataset_asst'][layer],
-                    ft_baseline=probe_scores['ft_baseline_asst'][layer],
-                    base_baseline=probe_scores['base_baseline_asst'][layer],
+                    ft_dataset=ft_dataset_asst,
+                    base_dataset=base_dataset_asst,
+                    ft_baseline=ft_baseline_asst,
+                    base_baseline=base_baseline_asst,
+                    emotions=self.emotions,
+                    n_bootstrap=n_bootstrap,
+                    ci_percentile=ci_percentile
+                )
+            else:
+                # Regular array format - just compute averaged
+                results['averaged'][layer] = self.aggregator.compute_double_diff(
+                    ft_dataset=ft_dataset_layer,
+                    base_dataset=base_dataset_layer,
+                    ft_baseline=ft_baseline_layer,
+                    base_baseline=base_baseline_layer,
                     emotions=self.emotions,
                     n_bootstrap=n_bootstrap,
                     ci_percentile=ci_percentile

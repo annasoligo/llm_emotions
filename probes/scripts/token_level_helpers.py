@@ -11,7 +11,12 @@ from typing import List, Dict, Tuple, Optional
 import numpy as np
 import pickle
 import torch
-from probes.scripts.probe_pipeline import ProbeActivationExtractor, ProbeInference
+from probes.scripts.probe_pipeline import (
+    ProbeActivationExtractor,
+    ProbeInference,
+    normalize_probe_scores_zscore,
+    normalize_probe_scores_center
+)
 from probes.scripts.wildchat_baseline_loader import WildChatBaselineLoader
 
 
@@ -32,7 +37,13 @@ class TokenLevelExperiment:
         seed: int = 0,
         use_wildchat_normalization: bool = False,
         wildchat_aggregation: str = "assistant_turn",
-        emotions: List[str] = None
+        baseline_dir: Path = None,
+        center_probe_scores: bool = False,
+        normalize_probe_scores: bool = False,
+        emotions: List[str] = None,
+        k_value: Optional[int] = None,
+        centroid_constraint_type: Optional[str] = None,
+        centroid_probe_format: str = "auto"
     ):
         """
         Initialize experiment configuration.
@@ -40,7 +51,7 @@ class TokenLevelExperiment:
         Args:
             model: Model (StandardizedTransformer)
             tokenizer: Tokenizer
-            probe_type: "orthogonal", "linear", "standard", or "logit_lens"
+            probe_type: "orthogonal", "linear", "standard", or "centroid"
             probe_dir: Directory containing probe files
             cpca_path: Path to cPCA file (for linear probes or cpca representations)
             probe_pattern: Custom pattern for probe filenames (e.g., "probe_layer{layer}_nc0_seed0.pkl")
@@ -48,9 +59,14 @@ class TokenLevelExperiment:
             orthogonal_representation: "raw", "global_cpca_top10", etc.
             n_components: Number of cPCA components (for linear probes)
             seed: Random seed (for linear probes)
-            use_wildchat_normalization: Whether to normalize with WildChat baselines
+            use_wildchat_normalization: Whether to z-score normalize activations before applying probes
             wildchat_aggregation: WildChat aggregation type (e.g., "assistant_turn")
+            center_probe_scores: Whether to center probe scores using baseline mean (subtract mean only)
+            normalize_probe_scores: Whether to z-score normalize probe scores (subtract mean, divide by std). Takes precedence over center_probe_scores.
             emotions: List of emotion names
+            k_value: Number of K-sets to average for centroid probes (required if probe_type='centroid')
+            centroid_constraint_type: Optional constraint type for centroid probes (e.g., "gramschmidt")
+            centroid_probe_format: Probe format - "auto" (detect), "text", or "conversation"
         """
         self.model = model
         self.tokenizer = tokenizer
@@ -64,17 +80,21 @@ class TokenLevelExperiment:
         self.seed = seed
         self.use_wildchat_normalization = use_wildchat_normalization
         self.wildchat_aggregation = wildchat_aggregation
+        self.baseline_dir = baseline_dir
+        self.center_probe_scores = center_probe_scores
+        self.normalize_probe_scores = normalize_probe_scores
         self.emotions = emotions or ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
+        self.k_value = k_value
+        self.centroid_constraint_type = centroid_constraint_type
+        self.centroid_probe_format = centroid_probe_format
 
         # Initialize pipeline components
         self.extractor = ProbeActivationExtractor()
-
-        if probe_type != "logit_lens":
-            self.inference = ProbeInference(
-                probe_dir=probe_dir,
-                cpca_path=cpca_path,
-                device='cuda'
-            )
+        self.inference = ProbeInference(
+            probe_dir=probe_dir,
+            cpca_path=cpca_path,
+            device='cuda'
+        )
 
     def run_experiment(
         self,
@@ -87,7 +107,8 @@ class TokenLevelExperiment:
         temperature: float = 1.0,
         top_p: float = 0.9,
         top_k: int = 50,
-        verbose: bool = True
+        verbose: bool = True,
+        cached_activations: Optional[Dict] = None
     ) -> Dict:
         """
         Run complete token-level experiment.
@@ -119,26 +140,38 @@ class TokenLevelExperiment:
             print(f"Layers: {len(layers)} layers ({min(layers)}-{max(layers)})\"")
             print(f"WildChat normalization: {self.use_wildchat_normalization}")
 
-        # Step 1: Extract token-level activations
-        if verbose:
-            print("\n[1/3] Extracting token-level activations...")
+        # Step 1: Extract token-level activations (or use cached)
+        if cached_activations is not None:
+            if verbose:
+                print("\n[1/3] Using cached activations (skipping extraction)...")
+            activations_by_token = cached_activations['activations_by_token']
+            token_ids = cached_activations['token_ids']
+            if verbose:
+                print(f"  ✓ Loaded {len(activations_by_token)} cached token positions")
+        else:
+            if verbose:
+                print("\n[1/3] Extracting token-level activations...")
 
-        activations_by_token, token_ids = self.extractor.extract_token_level(
-            model=self.model,
-            tokenizer=self.tokenizer,
-            prompt=prompt,
-            layers=layers,
-            system_prompt=system_prompt,
-            num_generated_tokens=num_generated_tokens,
-            start_token_idx=start_token_idx,
-            assistant_prefill=assistant_prefill,
-            temperature=temperature,
-            top_p=top_p,
-            top_k=top_k
-        )
+            activations_by_token, token_ids = self.extractor.extract_token_level(
+                model=self.model,
+                tokenizer=self.tokenizer,
+                prompt=prompt,
+                layers=layers,
+                system_prompt=system_prompt,
+                num_generated_tokens=num_generated_tokens,
+                start_token_idx=start_token_idx,
+                assistant_prefill=assistant_prefill,
+                temperature=temperature,
+                top_p=top_p,
+                top_k=top_k
+            )
 
-        if verbose:
-            print(f"  ✓ Extracted {len(activations_by_token)} token positions")
+            if verbose:
+                print(f"  ✓ Extracted {len(activations_by_token)} token positions")
+
+        # Save raw activations for caching (before normalization)
+        import copy
+        raw_activations_by_token = copy.deepcopy(activations_by_token)
 
         # Step 2: Normalize (if enabled)
         if self.use_wildchat_normalization:
@@ -146,7 +179,8 @@ class TokenLevelExperiment:
                 print("\n[2/3] Normalizing with WildChat baselines...")
 
             baseline_loader = WildChatBaselineLoader(
-                aggregation_type=self.wildchat_aggregation
+                aggregation_type=self.wildchat_aggregation,
+                baseline_dir=self.baseline_dir
             )
 
             activations_by_token = baseline_loader.normalize_token_level(
@@ -169,18 +203,101 @@ class TokenLevelExperiment:
             activations_by_token, layers, verbose
         )
 
+        # Step 4: Normalize or center probe scores (if enabled)
+        baseline_scores = None
+        baseline_stds = None
+        if self.normalize_probe_scores or self.center_probe_scores:
+            if verbose:
+                if self.normalize_probe_scores:
+                    print("\n[4/4] Computing and applying probe score z-score normalization...")
+                else:
+                    print("\n[4/4] Computing and applying baseline centering...")
+
+            baseline_loader = WildChatBaselineLoader(
+                aggregation_type=self.wildchat_aggregation,
+                baseline_dir=self.baseline_dir
+            )
+
+            if self.normalize_probe_scores:
+                # Compute both mean and std for z-score normalization
+                baseline_stats = baseline_loader.compute_probe_score_baselines(
+                    probe_inference=self.inference,
+                    layers=layers,
+                    probe_type=self.probe_type,
+                    aggregation="mean",  # Use layer-averaged baseline
+                    return_std=True,  # Request std computation
+                    orthogonality_weight=self.orthogonality_weight,
+                    orthogonal_representation=self.orthogonal_representation,
+                    n_components=self.n_components,
+                    seed=self.seed,
+                    emotions=self.emotions,
+                    probe_pattern=self.probe_pattern,
+                    k_value=self.k_value,
+                    centroid_constraint_type=self.centroid_constraint_type,
+                    centroid_probe_format=self.centroid_probe_format
+                )
+                baseline_scores = baseline_stats['mean']
+                baseline_stds = baseline_stats['std']
+
+                baseline_mean_vec = baseline_scores[-1]  # -1 indicates layer-averaged
+                baseline_std_vec = baseline_stds[-1]
+
+                # Z-score normalization using shared function
+                for token_pos in scores_by_token:
+                    for layer in layers:
+                        score = scores_by_token[token_pos][layer]
+                        scores_by_token[token_pos][layer] = normalize_probe_scores_zscore(
+                            score, baseline_mean_vec, baseline_std_vec
+                        )
+
+                if verbose:
+                    print(f"  ✓ Z-score normalized scores (mean: {baseline_mean_vec[:3]}..., std: {baseline_std_vec[:3]}...)")
+
+            else:
+                # Just center (subtract mean, don't divide by std)
+                baseline_scores = baseline_loader.compute_probe_score_baselines(
+                    probe_inference=self.inference,
+                    layers=layers,
+                    probe_type=self.probe_type,
+                    aggregation="mean",  # Use layer-averaged baseline
+                    orthogonality_weight=self.orthogonality_weight,
+                    orthogonal_representation=self.orthogonal_representation,
+                    n_components=self.n_components,
+                    seed=self.seed,
+                    emotions=self.emotions,
+                    probe_pattern=self.probe_pattern,
+                    k_value=self.k_value,
+                    centroid_constraint_type=self.centroid_constraint_type,
+                    centroid_probe_format=self.centroid_probe_format
+                )
+
+                # Subtract baseline (layer-averaged) using shared function
+                baseline_vec = baseline_scores[-1]  # -1 indicates layer-averaged
+
+                for token_pos in scores_by_token:
+                    for layer in layers:
+                        score = scores_by_token[token_pos][layer]
+                        scores_by_token[token_pos][layer] = normalize_probe_scores_center(
+                            score, baseline_vec
+                        )
+
+                if verbose:
+                    print(f"  ✓ Centered scores using baseline: {baseline_vec}")
+
         if verbose:
             print("\n✓ Experiment complete!")
 
         return {
-            'activations_by_token': activations_by_token,
+            'activations_by_token': raw_activations_by_token,  # Return raw activations for caching
             'token_ids': token_ids,
             'scores_by_token': scores_by_token,
+            'baseline_scores': baseline_scores,
             'config': {
                 'probe_type': self.probe_type,
                 'layers': layers,
                 'use_wildchat_normalization': self.use_wildchat_normalization,
                 'wildchat_aggregation': self.wildchat_aggregation,
+                'center_probe_scores': self.center_probe_scores,
                 'orthogonality_weight': self.orthogonality_weight,
                 'orthogonal_representation': self.orthogonal_representation,
                 'n_components': self.n_components,
@@ -201,11 +318,6 @@ class TokenLevelExperiment:
         """Apply probes to get emotion scores at each token position."""
         scores_by_token = {}
 
-        if self.probe_type == "logit_lens":
-            # Use logit lens method (emotion vocab tokens)
-            return self._apply_logit_lens(activations_by_token, layers, verbose)
-
-        # For trained probes
         for token_pos in activations_by_token.keys():
             scores_by_token[token_pos] = {}
 
@@ -248,6 +360,63 @@ class TokenLevelExperiment:
 
                     scores_by_token[token_pos][layer] = logits_np
 
+                elif self.probe_type == "centroid":
+                    # Centroid probes
+                    if self.k_value is None:
+                        raise ValueError(
+                            "k_value must be specified when using probe_type='centroid'.\n"
+                            "Example: TokenLevelExperiment(..., probe_type='centroid', k_value=50)"
+                        )
+
+                    # Load centroid probe for this layer
+                    centroid_data = self.inference.load_centroid_probe(
+                        layer=layer,
+                        k_value=self.k_value,
+                        orthogonality_weight=self.orthogonality_weight,
+                        constraint_type=self.centroid_constraint_type,
+                        probe_format=self.centroid_probe_format
+                    )
+
+                    probe_format = centroid_data['probe_format']
+
+                    if probe_format == "text":
+                        # Text-based centroid
+                        centroid_probes = centroid_data['centroid_probes']
+
+                        scores_dict = self.inference.predict_centroid(
+                            activations=activation,
+                            centroid_probes=centroid_probes,
+                            centroid_user_probes=None,
+                            centroid_asst_probes=None,
+                            emotions=self.emotions,
+                            probe_format='text'
+                        )
+
+                        # Convert dict to array
+                        scores_by_token[token_pos][layer] = np.array([scores_dict[e] for e in self.emotions])
+
+                    elif probe_format == "conversation":
+                        # Conversation-based centroid
+                        user_probes = centroid_data['centroid_user_probes']
+                        asst_probes = centroid_data['centroid_asst_probes']
+
+                        user_scores, asst_scores, avg_scores = self.inference.predict_centroid(
+                            activations=activation,
+                            centroid_probes=None,
+                            centroid_user_probes=user_probes,
+                            centroid_asst_probes=asst_probes,
+                            emotions=self.emotions,
+                            probe_format='conversation'
+                        )
+
+                        # Store as dict with separate user/assistant scores
+                        user_arr = np.array([user_scores[e] for e in self.emotions])
+                        asst_arr = np.array([asst_scores[e] for e in self.emotions])
+                        scores_by_token[token_pos][layer] = {
+                            'user': user_arr,
+                            'assistant': asst_arr
+                        }
+
                 else:  # orthogonal
                     # Load orthogonal probe for this layer
                     probe_data = self.inference.load_orthogonal_probe(
@@ -260,75 +429,34 @@ class TokenLevelExperiment:
                     user_probes = probe_data['final_user_probes']
                     asst_probes = probe_data['final_asst_probes']
 
+                    # If using cPCA representation, project activation first
+                    activation_input = activation[np.newaxis, :]  # Add batch dim
+                    if self.orthogonal_representation != "raw":
+                        # Get cPCA components for this layer
+                        cpca_components = self.inference.get_cpca_components(
+                            layer,
+                            self.n_components
+                        )
+                        # Project through cPCA
+                        activation_input = activation_input @ cpca_components.T
+
                     user_scores, asst_scores = self.inference.predict_orthogonal(
-                        activation[np.newaxis, :],  # Add batch dim
+                        activation_input,
                         user_probes, asst_probes, self.emotions
                     )
 
-                    # Convert to arrays and average
+                    # Convert to arrays and always store separately
                     user_arr = np.array([user_scores[0][e] for e in self.emotions])
                     asst_arr = np.array([asst_scores[0][e] for e in self.emotions])
-                    scores_by_token[token_pos][layer] = (user_arr + asst_arr) / 2
+
+                    # Store as dict with separate user/assistant scores
+                    scores_by_token[token_pos][layer] = {
+                        'user': user_arr,
+                        'assistant': asst_arr
+                    }
 
         if verbose:
             print(f"  ✓ Applied probes to {len(scores_by_token)} tokens × {len(layers)} layers")
-
-        return scores_by_token
-
-    def _apply_logit_lens(
-        self,
-        activations_by_token: Dict[int, Dict[int, np.ndarray]],
-        layers: List[int],
-        verbose: bool
-    ) -> Dict[int, Dict[int, np.ndarray]]:
-        """Apply logit lens method using emotion vocabulary tokens."""
-        # Get emotion token IDs
-        emotion_words = {
-            'anger': 'anger',
-            'disgust': 'disgust',
-            'fear': 'fear',
-            'happiness': 'happiness',
-            'sadness': 'sadness',
-            'surprise': 'surprise'
-        }
-
-        emotion_token_ids = {}
-        for emotion, word in emotion_words.items():
-            tokens = self.tokenizer.encode(word, add_special_tokens=False)
-            if tokens:
-                emotion_token_ids[emotion] = tokens[0]
-
-        if verbose:
-            print(f"  Emotion token IDs: {emotion_token_ids}")
-
-        # Get unembedding matrix
-        if hasattr(self.model, 'lm_head'):
-            unembedding = self.model.lm_head.weight.data.cpu().numpy()  # [vocab_size, hidden_dim]
-        elif hasattr(self.model, 'embed_out'):
-            unembedding = self.model.embed_out.weight.data.cpu().numpy()
-        else:
-            raise AttributeError("Model doesn't have lm_head or embed_out for logit lens")
-
-        scores_by_token = {}
-
-        for token_pos in activations_by_token.keys():
-            scores_by_token[token_pos] = {}
-
-            for layer in layers:
-                activation = activations_by_token[token_pos][layer]  # [hidden_dim]
-
-                # Project to vocabulary
-                logits = activation @ unembedding.T  # [vocab_size]
-
-                # Extract emotion logits
-                emotion_logits = np.array([
-                    logits[emotion_token_ids[e]] for e in self.emotions
-                ])
-
-                scores_by_token[token_pos][layer] = emotion_logits
-
-        if verbose:
-            print(f"  ✓ Applied logit lens to {len(scores_by_token)} tokens × {len(layers)} layers")
 
         return scores_by_token
 
@@ -342,26 +470,55 @@ def aggregate_scores_across_layers(
     Aggregate emotion scores across layers.
 
     Args:
-        scores_by_token: Dict mapping token_pos -> {layer: scores}
+        scores_by_token: Dict mapping token_pos -> {layer: scores or dict}
         layers: List of layers to aggregate
         aggregation: "mean", "max", or "last"
 
     Returns:
-        Dict mapping token_pos -> aggregated_scores [n_emotions]
+        Dict mapping token_pos -> aggregated_scores
+        - If scores are dicts (user/assistant): returns {'user': [...], 'assistant': [...]}
+        - If scores are arrays: returns [n_emotions]
     """
     aggregated = {}
 
     for token_pos, layer_scores in scores_by_token.items():
-        scores_stack = np.array([layer_scores[layer] for layer in layers])  # [n_layers, n_emotions]
+        # Check if scores are dicts (orthogonal probes with user/assistant)
+        first_layer_score = layer_scores[layers[0]]
 
-        if aggregation == "mean":
-            aggregated[token_pos] = np.mean(scores_stack, axis=0)
-        elif aggregation == "max":
-            aggregated[token_pos] = np.max(scores_stack, axis=0)
-        elif aggregation == "last":
-            aggregated[token_pos] = scores_stack[-1]
+        if isinstance(first_layer_score, dict) and 'user' in first_layer_score:
+            # Separate user and assistant aggregation
+            user_stack = np.array([layer_scores[layer]['user'] for layer in layers])
+            asst_stack = np.array([layer_scores[layer]['assistant'] for layer in layers])
+
+            if aggregation == "mean":
+                aggregated[token_pos] = {
+                    'user': np.mean(user_stack, axis=0),
+                    'assistant': np.mean(asst_stack, axis=0)
+                }
+            elif aggregation == "max":
+                aggregated[token_pos] = {
+                    'user': np.max(user_stack, axis=0),
+                    'assistant': np.max(asst_stack, axis=0)
+                }
+            elif aggregation == "last":
+                aggregated[token_pos] = {
+                    'user': user_stack[-1],
+                    'assistant': asst_stack[-1]
+                }
+            else:
+                raise ValueError(f"Unknown aggregation: {aggregation}")
         else:
-            raise ValueError(f"Unknown aggregation: {aggregation}")
+            # Standard array aggregation
+            scores_stack = np.array([layer_scores[layer] for layer in layers])
+
+            if aggregation == "mean":
+                aggregated[token_pos] = np.mean(scores_stack, axis=0)
+            elif aggregation == "max":
+                aggregated[token_pos] = np.max(scores_stack, axis=0)
+            elif aggregation == "last":
+                aggregated[token_pos] = scores_stack[-1]
+            else:
+                raise ValueError(f"Unknown aggregation: {aggregation}")
 
     return aggregated
 

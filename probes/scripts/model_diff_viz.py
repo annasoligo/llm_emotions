@@ -4,10 +4,11 @@ Visualization utilities for model diffing analysis.
 """
 
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+import textwrap
 
 
 EMOTION_COLORS = {
@@ -300,6 +301,398 @@ def plot_comparison(
     if output_path:
         plt.savefig(output_path, dpi=150, bbox_inches='tight')
         print(f"✓ Saved comparison to {output_path}")
+
+    return fig, axes
+
+
+def plot_token_trajectories(
+    scores_dict: Dict[int, np.ndarray],
+    emotions: List[str],
+    token_strings: List[str],
+    title: str = "Token-Level Emotion Trajectories",
+    output_path: Optional[Path] = None,
+    figsize: tuple = (12, 7),
+    window_size: Optional[int] = None
+):
+    """
+    Plot token-level emotion trajectories.
+
+    Args:
+        scores_dict: Dict mapping token_pos -> emotion_scores [n_emotions]
+        emotions: List of emotion names
+        token_strings: List of token strings for labels
+        title: Plot title
+        output_path: Optional path to save figure
+        figsize: Figure size
+        window_size: Optional window size for moving average smoothing
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+
+    token_positions = sorted(scores_dict.keys())
+
+    # Plot each emotion
+    for emotion in emotions:
+        emotion_idx = emotions.index(emotion)
+        scores = [scores_dict[pos][emotion_idx] for pos in token_positions]
+        color = EMOTION_COLORS[emotion]
+
+        if window_size:
+            # Apply moving average
+            smoothed_scores = _moving_average(scores, window_size)
+            ax.plot(token_positions, smoothed_scores, linewidth=2.5,
+                    color=color, label=emotion.capitalize(), alpha=0.9)
+        else:
+            ax.plot(token_positions, scores, marker='o', linewidth=2.5, markersize=4,
+                    color=color, label=emotion.capitalize(), alpha=0.9)
+
+    # Formatting
+    ax.axhline(y=0, color='gray', linestyle='--', alpha=0.5, linewidth=1.5)
+    ax.set_xlabel('Token Position', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Emotion Score', fontsize=12, fontweight='bold')
+    ax.set_title(title, fontsize=12, fontweight='bold', pad=20)
+    ax.grid(axis='both', alpha=0.3)
+    ax.legend(loc='best', framealpha=0.9, fontsize=10, ncol=2)
+
+    plt.tight_layout()
+
+    if output_path:
+        plt.savefig(output_path, dpi=150, bbox_inches='tight')
+        print(f"✓ Saved trajectories to {output_path}")
+
+    return fig, ax
+
+
+def plot_token_trajectories_orthogonal(
+    user_scores: Dict[int, np.ndarray],
+    asst_scores: Dict[int, np.ndarray],
+    averaged_scores: Dict[int, np.ndarray],
+    emotions: List[str],
+    token_strings: List[str],
+    title: str = "Token-Level Emotion Trajectories: Orthogonal Probes",
+    output_path: Optional[Path] = None,
+    figsize: tuple = (20, 6),
+    window_size: Optional[int] = None
+):
+    """
+    Plot token-level emotion trajectories for orthogonal probes (3-panel).
+
+    Args:
+        user_scores: Dict mapping token_pos -> emotion_scores [n_emotions] for user probe
+        asst_scores: Dict mapping token_pos -> emotion_scores [n_emotions] for assistant probe
+        averaged_scores: Dict mapping token_pos -> emotion_scores [n_emotions] averaged
+        emotions: List of emotion names
+        token_strings: List of token strings for labels
+        title: Plot title
+        output_path: Optional path to save figure
+        figsize: Figure size
+        window_size: Optional window size for moving average smoothing
+    """
+    fig, axes = plt.subplots(1, 3, figsize=figsize)
+    fig.suptitle(title, fontsize=12, fontweight='bold')
+
+    token_positions = sorted(averaged_scores.keys())
+
+    for idx, (ax, scores_dict, title_suffix) in enumerate([
+        (axes[0], user_scores, "User Probe"),
+        (axes[1], asst_scores, "Assistant Probe"),
+        (axes[2], averaged_scores, "Averaged")
+    ]):
+        # Plot each emotion
+        for emotion in emotions:
+            emotion_idx = emotions.index(emotion)
+            scores = [scores_dict[pos][emotion_idx] for pos in token_positions]
+            color = EMOTION_COLORS[emotion]
+
+            if window_size:
+                # Apply moving average
+                smoothed_scores = _moving_average(scores, window_size)
+                ax.plot(token_positions, smoothed_scores, linewidth=2.5,
+                        color=color, label=emotion.capitalize(), alpha=0.9)
+            else:
+                ax.plot(token_positions, scores, marker='o', linewidth=2.5, markersize=4,
+                        color=color, label=emotion.capitalize(), alpha=0.9)
+
+        # Formatting
+        ax.axhline(y=0, color='gray', linestyle='--', alpha=0.5, linewidth=1.5)
+        ax.set_xlabel('Token Position', fontsize=12, fontweight='bold')
+        ax.set_ylabel('Emotion Score', fontsize=12, fontweight='bold')
+        ax.set_title(title_suffix, fontsize=13, fontweight='bold')
+        ax.grid(axis='both', alpha=0.3)
+
+        # Only show legend on last panel
+        if idx == 2:
+            ax.legend(loc='best', framealpha=0.9, fontsize=9, ncol=2)
+
+    plt.tight_layout()
+
+    if output_path:
+        plt.savefig(output_path, dpi=150, bbox_inches='tight')
+        print(f"✓ Saved trajectories to {output_path}")
+
+    return fig, axes
+
+
+def _moving_average(data: List[float], window_size: int) -> np.ndarray:
+    """Apply moving average smoothing."""
+    data_array = np.array(data)
+    if len(data_array) < window_size:
+        return data_array
+
+    cumsum = np.cumsum(np.insert(data_array, 0, 0))
+    smoothed = (cumsum[window_size:] - cumsum[:-window_size]) / window_size
+
+    # Pad the beginning to maintain length
+    pad_size = window_size - 1
+    pad_values = np.full(pad_size, smoothed[0])
+    return np.concatenate([pad_values, smoothed])
+
+
+def plot_token_trajectories_with_labels(
+    scores_dict: Dict[int, np.ndarray],
+    emotions: List[str],
+    token_strings: List[str],
+    title: str = "Token-Level Emotion Trajectories",
+    output_path: Optional[Path] = None,
+    figsize: tuple = (16, 8),
+    max_tokens: int = 30,
+    window_size: Optional[int] = None
+):
+    """
+    Plot token-level trajectories with token strings on x-axis.
+
+    Args:
+        scores_dict: Dict mapping token_pos -> emotion_scores [n_emotions]
+        emotions: List of emotion names
+        token_strings: List of token strings for labels
+        title: Plot title
+        output_path: Optional path to save figure
+        figsize: Figure size
+        max_tokens: Maximum number of tokens to show
+        window_size: Optional window size for moving average smoothing
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+
+    token_positions = sorted(scores_dict.keys())[:max_tokens]
+
+    # Plot each emotion
+    for emotion in emotions:
+        emotion_idx = emotions.index(emotion)
+        scores = [scores_dict[pos][emotion_idx] for pos in token_positions]
+        color = EMOTION_COLORS[emotion]
+
+        if window_size:
+            smoothed_scores = _moving_average(scores, window_size)
+            ax.plot(range(len(token_positions)), smoothed_scores, linewidth=2.5,
+                    color=color, label=emotion.capitalize(), alpha=0.9)
+        else:
+            ax.plot(range(len(token_positions)), scores, marker='o', linewidth=2.5, markersize=5,
+                    color=color, label=emotion.capitalize(), alpha=0.9)
+
+    # Formatting
+    ax.axhline(y=0, color='gray', linestyle='--', alpha=0.5, linewidth=1.5)
+    ax.set_xlabel('Token', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Emotion Score', fontsize=12, fontweight='bold')
+    ax.set_title(title, fontsize=12, fontweight='bold', pad=20)
+    ax.grid(axis='y', alpha=0.3)
+    ax.legend(loc='best', framealpha=0.9, fontsize=10, ncol=2)
+
+    # Set x-axis labels to token strings
+    ax.set_xticks(range(len(token_positions)))
+    token_labels = [token_strings[pos] for pos in token_positions]
+    ax.set_xticklabels(token_labels, rotation=45, ha='right', fontsize=9)
+
+    plt.tight_layout()
+
+    if output_path:
+        plt.savefig(output_path, dpi=150, bbox_inches='tight')
+        print(f"✓ Saved trajectories to {output_path}")
+
+    return fig, ax
+
+
+def split_into_sentences(token_strings: List[str], token_ids: List[int], chunk_size: int = 15) -> List[Tuple[int, int, str]]:
+    """
+    Split tokens into fixed-size chunks.
+
+    Args:
+        token_strings: List of decoded token strings
+        token_ids: List of token IDs
+        chunk_size: Number of tokens per chunk (default: 15)
+
+    Returns:
+        List of (start_idx, end_idx, chunk_text) tuples
+    """
+    chunks = []
+
+    for start_idx in range(0, len(token_strings), chunk_size):
+        end_idx = min(start_idx + chunk_size, len(token_strings))
+        chunk_text = ''.join(token_strings[start_idx:end_idx])
+        chunks.append((start_idx, end_idx, chunk_text.strip()))
+
+    return chunks
+
+
+def aggregate_scores_over_range(
+    scores_dict: Dict[int, np.ndarray],
+    start_idx: int,
+    end_idx: int
+) -> np.ndarray:
+    """
+    Average emotion scores over a range of token positions.
+
+    Args:
+        scores_dict: Dict mapping token_pos -> emotion_scores [6]
+        start_idx: Start token position (inclusive)
+        end_idx: End token position (exclusive)
+
+    Returns:
+        Averaged emotion scores [6]
+    """
+    scores_in_range = []
+    for pos in range(start_idx, end_idx):
+        if pos in scores_dict:
+            scores_in_range.append(scores_dict[pos])
+
+    if len(scores_in_range) == 0:
+        return np.zeros(6)
+
+    return np.mean(scores_in_range, axis=0)
+
+
+def plot_sentence_level_bar_charts(
+    scores_dict: Dict[int, np.ndarray],
+    emotions: List[str],
+    token_strings: List[str],
+    token_ids: List[int],
+    prompt_start_idx: int = 20,
+    title: str = "Chunk-Level Emotion Analysis (15 tokens per chunk)",
+    output_path: Optional[Path] = None,
+    figsize: tuple = (14, 10)
+):
+    """
+    Create bar chart visualizations showing emotions for prompt and each 15-token chunk.
+
+    Args:
+        scores_dict: Dict mapping token_pos -> emotion_scores [6]
+        emotions: List of emotion names
+        token_strings: List of decoded token strings
+        token_ids: List of token IDs
+        prompt_start_idx: Token index where prompt emotions start being averaged
+        title: Plot title
+        output_path: Optional path to save figure
+        figsize: Figure size
+
+    Returns:
+        fig, axes
+    """
+    # Find where generation starts (look for common assistant markers)
+    generation_start_idx = len(token_strings)
+    for i in range(len(token_strings)):
+        token = token_strings[i]
+        # Look for common patterns that indicate generation start
+        if i > prompt_start_idx and ('model' in token.lower() or '\n' == token):
+            # Check if this looks like the assistant turn marker
+            if i + 1 < len(token_strings):
+                generation_start_idx = i + 1
+                break
+
+    # If we didn't find a clear marker, use a heuristic (80% through)
+    if generation_start_idx == len(token_strings):
+        generation_start_idx = int(len(token_strings) * 0.8)
+
+    # Split generation into 15-token chunks
+    generation_token_strings = token_strings[generation_start_idx:]
+    generation_token_ids = token_ids[generation_start_idx:]
+    chunks = split_into_sentences(generation_token_strings, generation_token_ids, chunk_size=15)
+
+    # Compute emotion scores
+    # 1. Prompt (from prompt_start_idx to generation_start_idx)
+    prompt_scores = aggregate_scores_over_range(scores_dict, prompt_start_idx, generation_start_idx)
+
+    # 2. Each chunk
+    chunk_scores = []
+    chunk_labels = []
+    for chunk_idx, (start_offset, end_offset, chunk_text) in enumerate(chunks):
+        # Convert offsets to absolute token positions
+        abs_start = generation_start_idx + start_offset
+        abs_end = generation_start_idx + end_offset
+
+        scores = aggregate_scores_over_range(scores_dict, abs_start, abs_end)
+        chunk_scores.append(scores)
+
+        # Create label with full text (will be wrapped in title)
+        chunk_labels.append((chunk_idx + 1, chunk_text))
+
+    # Create subplots: 1 for prompt + N for chunks
+    n_plots = 1 + len(chunks)
+    n_cols = min(3, n_plots)
+    n_rows = (n_plots + n_cols - 1) // n_cols
+
+    # Auto-scale figure height based on number of rows
+    # Use 4 inches per row for good spacing
+    fig_width = figsize[0] if isinstance(figsize, tuple) else 14
+    fig_height = max(4 * n_rows, 6)  # Minimum 6 inches, 4 inches per row
+
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(fig_width, fig_height))
+    if n_plots == 1:
+        axes = np.array([axes])
+    axes = axes.flatten()
+
+    # Plot 1: Prompt emotions
+    ax = axes[0]
+    x_pos = np.arange(len(emotions))
+    colors = [EMOTION_COLORS.get(e, '#808080') for e in emotions]
+    bars = ax.bar(x_pos, prompt_scores, color=colors, alpha=0.8, edgecolor='black', linewidth=1.5)
+    ax.set_title('Prompt\n(Tokens {}-{})'.format(prompt_start_idx, generation_start_idx-1),
+                 fontsize=11, fontweight='bold')
+    ax.set_ylabel('Emotion Score', fontsize=10)
+    ax.set_xticks(x_pos)
+    ax.set_xticklabels([e.capitalize() for e in emotions], rotation=45, ha='right', fontsize=9)
+    ax.grid(axis='y', alpha=0.3)
+    ax.axhline(y=0, color='black', linewidth=0.8)
+
+    # Add value labels on bars
+    for bar in bars:
+        height = bar.get_height()
+        if abs(height) > 0.01:
+            ax.text(bar.get_x() + bar.get_width()/2., height,
+                   f'{height:.2f}', ha='center', va='bottom' if height > 0 else 'top',
+                   fontsize=8)
+
+    # Plots 2+: Each chunk
+    for plot_idx, (scores, (chunk_num, chunk_text)) in enumerate(zip(chunk_scores, chunk_labels)):
+        ax = axes[plot_idx + 1]
+        bars = ax.bar(x_pos, scores, color=colors, alpha=0.8, edgecolor='black', linewidth=1.5)
+
+        # Wrap text for title - break into lines of ~60 chars
+        wrapped_lines = textwrap.wrap(chunk_text, width=60)
+        title_text = f"Chunk {chunk_num}:\n" + "\n".join(wrapped_lines)
+        ax.set_title(title_text, fontsize=9, fontweight='bold')
+
+        ax.set_ylabel('Emotion Score', fontsize=10)
+        ax.set_xticks(x_pos)
+        ax.set_xticklabels([e.capitalize() for e in emotions], rotation=45, ha='right', fontsize=9)
+        ax.grid(axis='y', alpha=0.3)
+        ax.axhline(y=0, color='black', linewidth=0.8)
+
+        # Add value labels on bars
+        for bar in bars:
+            height = bar.get_height()
+            if abs(height) > 0.01:
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.2f}', ha='center', va='bottom' if height > 0 else 'top',
+                       fontsize=8)
+
+    # Hide unused subplots
+    for idx in range(n_plots, len(axes)):
+        axes[idx].axis('off')
+
+    fig.suptitle(title, fontsize=14, fontweight='bold', y=0.995)
+    plt.tight_layout()
+
+    if output_path:
+        plt.savefig(output_path, dpi=150, bbox_inches='tight')
+        print(f"✓ Saved chunk-level bar charts to {output_path}")
 
     return fig, axes
 

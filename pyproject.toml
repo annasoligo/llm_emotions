@@ -16,6 +16,7 @@ dependencies = [
 
     # API clients
     "anthropic>=0.40.0",
+    "requests>=2.31.0",
 
     # Data processing
     "numpy>=1.24.0",
@@ -60,7 +61,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["probes"]
+packages = ["probes", "elicitation", "elicitation.prompts"]
 
 [tool.black]
 line-length = 100

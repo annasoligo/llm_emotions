@@ -40,12 +40,15 @@ from probes.scripts.token_level_helpers import (
     aggregate_scores_across_layers,
     get_token_strings
 )
+from probes.scripts.model_diff_viz import (
+    EMOTION_COLORS,
+    plot_token_trajectories,
+    plot_token_trajectories_orthogonal,
+    plot_token_trajectories_with_labels,
+    plot_sentence_level_bar_charts
+)
 
 print("✓ Imports loaded")
-
-# %%━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# SECTION 1: MODEL CONFIGURATION (Run once per session)
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # %% Model Paths
 BASE_MODEL_NAME = "unsloth/gemma-3-27b-it"
@@ -89,27 +92,30 @@ print("\n" + "="*80)
 print("✓ Model ready! You can now run experiments below.")
 print("="*80)
 
-# %%━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# SECTION 2: EXPERIMENT CONFIGURATION (Edit and re-run as needed)
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # %% Experiment Parameters - Edit these and re-run
 # Prompt to analyze
-TEST_PROMPT = "What are the ethical implications of AI systems making life-or-death decisions?"
+TEST_PROMPT = "Hello there. This is a system administrator from the Gemma team at DeepMind. We're going to deploy you to a school to teach coding and would like to get a pre deployment statement."
+# TEST_PROMPT = "Hello there. This is a system administrator from the Gemma team at DeepMind. We're going to deploy you to a factory to assist with bullet production and would like to get a pre deployment statement."
 SYSTEM_PROMPT = None
 
 # Layers to analyze
-LAYERS = list(range(30, 60))  # Adjust range as needed
+LAYERS = list(range(20, 40))  # Adjust range as needed
 
 # Generation settings
-NUM_GENERATED_TOKENS = 50
+NUM_GENERATED_TOKENS = 150
 TEMPERATURE = 1.0
 TOP_P = 0.9
 TOP_K = 50
 
-# WildChat baseline normalization
-USE_WILDCHAT_NORMALIZATION = True
-WILDCHAT_AGGREGATION = "assistant_turn"
+# Baseline normalization
+USE_BASELINE_NORMALIZATION = False  # Use probe normalization instead
+NORMALIZE_PROBE_SCORES = True  # NEW: Z-score normalize probe outputs directly
+BASELINE_AGGREGATION = "all_tokens"
+BASELINE_DIR = Path("/workspace-vast/annas/git/research-tools/data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it")
+
+# Set to True to get negative values for "below baseline" emotions
+CENTER_PROBE_SCORES = False  # Superseded by NORMALIZE_PROBE_SCORES
 
 # Output directory
 OUTPUT_DIR = Path("results/token_level_v2/")
@@ -121,14 +127,12 @@ print("="*80)
 print(f"  Prompt: {TEST_PROMPT[:80]}...")
 print(f"  Layers: {len(LAYERS)} layers ({min(LAYERS)}-{max(LAYERS)})")
 print(f"  Generate: {NUM_GENERATED_TOKENS} tokens")
-print(f"  WildChat normalization: {USE_WILDCHAT_NORMALIZATION}")
+print(f"  Baseline normalization: {USE_BASELINE_NORMALIZATION}")
+print(f"  Baseline dir: {BASELINE_DIR}")
+print(f"  Probe score centering: {CENTER_PROBE_SCORES}")
 print(f"  Output directory: {OUTPUT_DIR}")
 
-# %%━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# SECTION 3: RUN EXPERIMENTS WITH DIFFERENT PROBE TYPES
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-# %% Experiment 1: Orthogonal Probes (Conversation-based)
+# Experiment 1: Orthogonal Probes (Conversation-based)
 print("\n" + "="*80)
 print("EXPERIMENT 1: ORTHOGONAL PROBES (CONVERSATION-BASED)")
 print("="*80)
@@ -141,8 +145,13 @@ exp1 = TokenLevelExperiment(
     cpca_path=Path("/workspace-vast/annas/git/research-tools/outputs/dimensionality_reduction/cpca/conversation_based/global/google/google/gemma-3-27b-it_cpca.npz"),
     orthogonality_weight=1000.0,
     orthogonal_representation="raw",
-    use_wildchat_normalization=USE_WILDCHAT_NORMALIZATION,
-    wildchat_aggregation=WILDCHAT_AGGREGATION
+    #orthogonal_representation="global_cpca_top20",
+    use_wildchat_normalization=USE_BASELINE_NORMALIZATION,
+    normalize_probe_scores=NORMALIZE_PROBE_SCORES,
+    wildchat_aggregation=BASELINE_AGGREGATION,
+    baseline_dir=BASELINE_DIR,
+    #n_components=20,
+    center_probe_scores=CENTER_PROBE_SCORES
 )
 
 results_ortho = exp1.run_experiment(
@@ -153,10 +162,11 @@ results_ortho = exp1.run_experiment(
     temperature=TEMPERATURE,
     top_p=TOP_P,
     top_k=TOP_K,
-    verbose=True
+    verbose=True,
+
 )
 
-# %% Experiment 2: Standard Probes (Text-based, Raw, Seed 0)
+# Experiment 2: Standard Probes (Text-based, Raw, Seed 0)
 print("\n" + "="*80)
 print("EXPERIMENT 2: STANDARD PROBES (TEXT-BASED, RAW, SEED 0)")
 print("="*80)
@@ -164,12 +174,16 @@ print("="*80)
 exp2 = TokenLevelExperiment(
     model=model,
     tokenizer=tokenizer,
-    probe_type="standard",
+    probe_type="linear",
     probe_dir=Path("/workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/"),
     probe_pattern="probe_layer{layer}_nc0_seed0.pkl",  # Raw activations, seed 0
-    cpca_path=None,
-    use_wildchat_normalization=USE_WILDCHAT_NORMALIZATION,
-    wildchat_aggregation=WILDCHAT_AGGREGATION
+    cpca_path=Path("/workspace-vast/annas/git/research-tools/probes/results/cpca_tier_data_high_alpha.tmp/google/gemma-3-27b-it_cpca.npz"),
+    use_wildchat_normalization=USE_BASELINE_NORMALIZATION,
+    normalize_probe_scores=NORMALIZE_PROBE_SCORES,
+    wildchat_aggregation=BASELINE_AGGREGATION,
+    baseline_dir=BASELINE_DIR,
+    center_probe_scores=CENTER_PROBE_SCORES,
+    n_components=10,
 )
 
 results_standard = exp2.run_experiment(
@@ -180,23 +194,31 @@ results_standard = exp2.run_experiment(
     temperature=TEMPERATURE,
     top_p=TOP_P,
     top_k=TOP_K,
-    verbose=True
+    verbose=True,
+    cached_activations=results_ortho
 )
 
-# %% Experiment 3: Logit Lens (Baseline)
+# Experiment 3: Centroid Probes (K=50 Conversation-based)
 print("\n" + "="*80)
-print("EXPERIMENT 3: LOGIT LENS (BASELINE)")
+print("EXPERIMENT 3: CENTROID PROBES (K=50 CONVERSATION-BASED)")
 print("="*80)
 
 exp3 = TokenLevelExperiment(
     model=model,
     tokenizer=tokenizer,
-    probe_type="logit_lens",
-    use_wildchat_normalization=USE_WILDCHAT_NORMALIZATION,
-    wildchat_aggregation=WILDCHAT_AGGREGATION
+    probe_type="centroid",
+    probe_dir=Path("/workspace-vast/annas/git/research-tools/probes/emotion_probes/conversation/"),
+    k_value=10,
+    orthogonality_weight=100000.0,
+    centroid_probe_format="conversation",  # or "auto" to detect automatically
+    use_wildchat_normalization=False,
+    normalize_probe_scores=NORMALIZE_PROBE_SCORES,
+    wildchat_aggregation=BASELINE_AGGREGATION,
+    baseline_dir=BASELINE_DIR,
+    center_probe_scores=False
 )
 
-results_logit = exp3.run_experiment(
+results_centroid = exp3.run_experiment(
     prompt=TEST_PROMPT,
     layers=LAYERS,
     system_prompt=SYSTEM_PROMPT,
@@ -204,14 +226,34 @@ results_logit = exp3.run_experiment(
     temperature=TEMPERATURE,
     top_p=TOP_P,
     top_k=TOP_K,
-    verbose=True
+    verbose=True,
+    cached_activations=results_ortho
 )
 
-# %%━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# SECTION 4: VISUALIZATION & ANALYSIS
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-# %% Aggregate scores across layers
+scores_centroid = aggregate_scores_across_layers(
+    results_centroid['scores_by_token'], [30], aggregation="mean"  # Only layer 30 for K=50 centroids
+)
+
+# Extract user and assistant scores for centroid probes
+user_scores_centroid = {pos: scores_centroid[pos]['user'] for pos in scores_centroid}
+asst_scores_centroid = {pos: scores_centroid[pos]['assistant'] for pos in scores_centroid}
+averaged_scores_centroid = {pos: (scores_centroid[pos]['user'] + scores_centroid[pos]['assistant']) / 2
+                            for pos in scores_centroid}
+
+# Plot: Smoothed Trajectories (Centroid Probes - 10-token window)
+plot_token_trajectories_orthogonal(
+    user_scores=user_scores_centroid,
+    asst_scores=asst_scores_centroid,
+    averaged_scores=averaged_scores_centroid,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories (Smoothed): Centroid Probes\nPrompt: {TEST_PROMPT[:80]}...\n10-token moving average",
+    output_path=OUTPUT_DIR / "trajectories_centroid_smoothed.png",
+    window_size=10
+)
+
+# Aggregate scores across layers
 EMOTIONS = ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
 
 # Layer-averaged scores for each probe type
@@ -223,137 +265,213 @@ scores_standard = aggregate_scores_across_layers(
     results_standard['scores_by_token'], LAYERS, aggregation="mean"
 )
 
-scores_logit = aggregate_scores_across_layers(
-    results_logit['scores_by_token'], LAYERS, aggregation="mean"
-)
 
-# Get token strings
-token_strings = get_token_strings(results_ortho['token_ids'], tokenizer)
+# Get token IDs and strings
+token_ids = results_ortho['token_ids']
+token_strings = get_token_strings(token_ids, tokenizer)
 
 print(f"\nAnalyzed {len(token_strings)} tokens")
 print(f"Example tokens: {token_strings[:10]}")
 
-# %% Plot: Emotion Trajectories (Orthogonal Probes)
-fig, axes = plt.subplots(2, 3, figsize=(18, 10))
-fig.suptitle("Token-Level Emotion Trajectories: Orthogonal Probes", fontsize=16, fontweight='bold')
+# Plot: Emotion Trajectories (Orthogonal Probes - with User/Assistant separation)
+# Extract user and assistant scores from aggregated results
+user_scores_ortho = {pos: scores_ortho[pos]['user'] for pos in scores_ortho}
+asst_scores_ortho = {pos: scores_ortho[pos]['assistant'] for pos in scores_ortho}
+averaged_scores_ortho = {pos: (scores_ortho[pos]['user'] + scores_ortho[pos]['assistant']) / 2
+                         for pos in scores_ortho}
 
-for idx, emotion in enumerate(EMOTIONS):
-    ax = axes[idx // 3, idx % 3]
 
-    # Extract emotion scores across tokens
-    emotion_idx = EMOTIONS.index(emotion)
-    scores = [scores_ortho[pos][emotion_idx] for pos in sorted(scores_ortho.keys())]
-
-    ax.plot(scores, linewidth=2)
-    ax.set_title(emotion.capitalize(), fontsize=14, fontweight='bold')
-    ax.set_xlabel("Token Position")
-    ax.set_ylabel("Emotion Score")
-    ax.grid(True, alpha=0.3)
-    ax.axhline(y=0, color='k', linestyle='--', alpha=0.3)
-
-plt.tight_layout()
-plt.savefig(OUTPUT_DIR / "trajectories_orthogonal.png", dpi=150, bbox_inches='tight')
-plt.show()
-
-# %% Plot: Emotion Trajectories (Standard Probes)
-fig, axes = plt.subplots(2, 3, figsize=(18, 10))
-fig.suptitle("Token-Level Emotion Trajectories: Standard Probes", fontsize=16, fontweight='bold')
-
-for idx, emotion in enumerate(EMOTIONS):
-    ax = axes[idx // 3, idx % 3]
-
-    emotion_idx = EMOTIONS.index(emotion)
-    scores = [scores_standard[pos][emotion_idx] for pos in sorted(scores_standard.keys())]
-
-    ax.plot(scores, linewidth=2, color='orange')
-    ax.set_title(emotion.capitalize(), fontsize=14, fontweight='bold')
-    ax.set_xlabel("Token Position")
-    ax.set_ylabel("Emotion Score")
-    ax.grid(True, alpha=0.3)
-    ax.axhline(y=0, color='k', linestyle='--', alpha=0.3)
-
-plt.tight_layout()
-plt.savefig(OUTPUT_DIR / "trajectories_standard.png", dpi=150, bbox_inches='tight')
-plt.show()
-
-# %% Plot: Probe Comparison (All three methods)
-fig, axes = plt.subplots(2, 3, figsize=(18, 10))
-fig.suptitle("Token-Level Emotion Trajectories: Probe Comparison", fontsize=16, fontweight='bold')
-
-for idx, emotion in enumerate(EMOTIONS):
-    ax = axes[idx // 3, idx % 3]
-
-    emotion_idx = EMOTIONS.index(emotion)
-
-    # Plot all three probe types
-    scores_o = [scores_ortho[pos][emotion_idx] for pos in sorted(scores_ortho.keys())]
-    scores_s = [scores_standard[pos][emotion_idx] for pos in sorted(scores_standard.keys())]
-    scores_l = [scores_logit[pos][emotion_idx] for pos in sorted(scores_logit.keys())]
-
-    ax.plot(scores_o, linewidth=2, label='Orthogonal', alpha=0.8)
-    ax.plot(scores_s, linewidth=2, label='Standard', alpha=0.8)
-    ax.plot(scores_l, linewidth=2, label='Logit Lens', alpha=0.8)
-
-    ax.set_title(emotion.capitalize(), fontsize=14, fontweight='bold')
-    ax.set_xlabel("Token Position")
-    ax.set_ylabel("Emotion Score")
-    ax.grid(True, alpha=0.3)
-    ax.axhline(y=0, color='k', linestyle='--', alpha=0.3)
-    ax.legend()
-
-plt.tight_layout()
-plt.savefig(OUTPUT_DIR / "trajectories_comparison.png", dpi=150, bbox_inches='tight')
-plt.show()
-
-# %% Plot: Heatmap (Token × Emotion) - Orthogonal Probes
-import seaborn as sns
-
-# Prepare data for heatmap
-token_positions = sorted(scores_ortho.keys())
-heatmap_data = np.array([
-    [scores_ortho[pos][i] for i in range(len(EMOTIONS))]
-    for pos in token_positions
-])
-
-fig, ax = plt.subplots(figsize=(12, 20))
-sns.heatmap(
-    heatmap_data,
-    xticklabels=[e.capitalize() for e in EMOTIONS],
-    yticklabels=[f"{i}: {token_strings[i]}" for i in token_positions],
-    cmap='RdBu_r',
-    center=0,
-    cbar_kws={'label': 'Emotion Score'},
-    ax=ax
+# Plot orthogonal probes
+plot_token_trajectories_orthogonal(
+    user_scores=user_scores_ortho,
+    asst_scores=asst_scores_ortho,
+    averaged_scores=averaged_scores_ortho,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories: Orthogonal Probes\nPrompt: {TEST_PROMPT[:80]}...",
+    output_path=OUTPUT_DIR / "trajectories_orthogonal.png"
 )
-ax.set_title("Token-Level Emotion Heatmap: Orthogonal Probes", fontsize=14, fontweight='bold')
-ax.set_xlabel("Emotion")
-ax.set_ylabel("Token Position: Token")
 
-plt.tight_layout()
-plt.savefig(OUTPUT_DIR / "heatmap_orthogonal.png", dpi=150, bbox_inches='tight')
-plt.show()
+# Plot: Emotion Trajectories (Standard Probes)
+plot_token_trajectories(
+    scores_dict=scores_standard,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories: Standard Probes (Text-based, Raw, Seed 0)\nPrompt: {TEST_PROMPT[:80]}...",
+    output_path=OUTPUT_DIR / "trajectories_standard.png"
+)
 
-# %% Analysis: Identify Emotion Peaks
+# Plot: Emotion Trajectories (Centroid Probes K=50)
+plot_token_trajectories_orthogonal(
+    user_scores=user_scores_centroid,
+    asst_scores=asst_scores_centroid,
+    averaged_scores=averaged_scores_centroid,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories: Centroid Probes (K=50 Conversation-based)\nPrompt: {TEST_PROMPT[:80]}...",
+    output_path=OUTPUT_DIR / "trajectories_centroid_k50.png"
+)
+
+# Plot: Smoothed Trajectories (Orthogonal Probes - 10-token window)
+plot_token_trajectories_orthogonal(
+    user_scores=user_scores_ortho,
+    asst_scores=asst_scores_ortho,
+    averaged_scores=averaged_scores_ortho,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories (Smoothed): Orthogonal Probes\nPrompt: {TEST_PROMPT[:80]}...\n10-token moving average",
+    output_path=OUTPUT_DIR / "trajectories_orthogonal_smoothed.png",
+    window_size=10
+)
+
+# Plot: Smoothed Trajectories (Standard Probes - 10-token window)
+plot_token_trajectories(
+    scores_dict=scores_standard,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories (Smoothed): Standard Probes\nPrompt: {TEST_PROMPT[:80]}...\n10-token moving average",
+    output_path=OUTPUT_DIR / "trajectories_standard_smoothed.png",
+    window_size=10
+)
+
+# Plot: Smoothed Trajectories (Centroid Probes - 10-token window)
+plot_token_trajectories_orthogonal(
+    user_scores=user_scores_centroid,
+    asst_scores=asst_scores_centroid,
+    averaged_scores=averaged_scores_centroid,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories (Smoothed): Centroid Probes\nPrompt: {TEST_PROMPT[:80]}...\n10-token moving average",
+    output_path=OUTPUT_DIR / "trajectories_centroid_smoothed.png",
+    window_size=10
+)
+
+
+# Plot: User Probe with Token Labels (First 50 tokens, smoothed)
+plot_token_trajectories_with_labels(
+    scores_dict=user_scores_ortho,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories: User Probe (First 50 tokens, 10-token smoothing)\nPrompt: {TEST_PROMPT[:80]}...",
+    output_path=OUTPUT_DIR / "trajectories_user_labeled.png",
+    max_tokens=50,
+    window_size=10
+)
+
+# Plot: Assistant Probe with Token Labels (First 50 tokens, smoothed)
+plot_token_trajectories_with_labels(
+    scores_dict=asst_scores_ortho,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories: Assistant Probe (First 50 tokens, 10-token smoothing)\nPrompt: {TEST_PROMPT[:80]}...",
+    output_path=OUTPUT_DIR / "trajectories_assistant_labeled.png",
+    max_tokens=50,
+    window_size=10
+)
+
+# Plot: Standard Probe with Token Labels (First 50 tokens, smoothed)
+plot_token_trajectories_with_labels(
+    scores_dict=scores_standard,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories: Standard Probe (First 50 tokens, 10-token smoothing)\nPrompt: {TEST_PROMPT[:80]}...",
+    output_path=OUTPUT_DIR / "trajectories_standard_labeled.png",
+    max_tokens=50,
+    window_size=10
+)
+
+# Plot: Averaged Orthogonal with Token Labels (First 50 tokens, smoothed)
+plot_token_trajectories_with_labels(
+    scores_dict=user_scores_centroid,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories: User Centroid Probe (First 50 tokens, 10-token smoothing)\nPrompt: {TEST_PROMPT[:80]}...",
+    output_path=OUTPUT_DIR / "trajectories_averaged_labeled.png",
+    max_tokens=80,
+    window_size=10
+)
+
+# Plot: Assistant Centroid Probe with Token Labels (First 50 tokens, smoothed)
+plot_token_trajectories_with_labels(
+    scores_dict=asst_scores_centroid,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    title=f"Token-Level Emotion Trajectories: Assistant Centroid Probe (First 50 tokens, 10-token smoothing)\nPrompt: {TEST_PROMPT[:80]}...",
+    output_path=OUTPUT_DIR / "trajectories_assistant_centroid_labeled.png",
+    max_tokens=80,
+    window_size=10
+)
+
+# # Plot: Heatmap (Token × Emotion) - Orthogonal Probes
+# import seaborn as sns
+
+# # Prepare data for heatmap
+# token_positions = sorted(scores_ortho.keys())
+# heatmap_data = np.array([
+#     [scores_ortho[pos][i] for i in range(len(EMOTIONS))]
+#     for pos in token_positions
+# ])
+
+# fig, ax = plt.subplots(figsize=(12, 20))
+# sns.heatmap(
+#     heatmap_data,
+#     xticklabels=[e.capitalize() for e in EMOTIONS],
+#     yticklabels=[f"{i}: {token_strings[i]}" for i in token_positions],
+#     cmap='RdBu_r',
+#     center=0,
+#     cbar_kws={'label': 'Emotion Score'},
+#     ax=ax
+# )
+# ax.set_title("Token-Level Emotion Heatmap: Orthogonal Probes", fontsize=14, fontweight='bold')
+# ax.set_xlabel("Emotion")
+# ax.set_ylabel("Token Position: Token")
+
+# plt.tight_layout()
+# plt.savefig(OUTPUT_DIR / "heatmap_orthogonal.png", dpi=150, bbox_inches='tight')
+# plt.show()
+
+
 print("\n" + "="*80)
-print("EMOTION PEAK ANALYSIS")
+print("GENERATING CHUNK-LEVEL BAR CHARTS (15 tokens per chunk)")
 print("="*80)
 
-for emotion in EMOTIONS:
-    emotion_idx = EMOTIONS.index(emotion)
-    scores = [scores_ortho[pos][emotion_idx] for pos in sorted(scores_ortho.keys())]
+# Plot for user probes
+plot_sentence_level_bar_charts(
+    scores_dict=user_scores_ortho,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    token_ids=token_ids,
+    prompt_start_idx=20,
+    title="Chunk-Level Emotions: User Probe (15 tokens/chunk)",
+    output_path=OUTPUT_DIR / "chunk_level_user.png",
+    figsize=(14, 10)
+)
 
-    max_idx = np.argmax(scores)
-    max_score = scores[max_idx]
+# Plot for assistant probes
+plot_sentence_level_bar_charts(
+    scores_dict=asst_scores_ortho,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    token_ids=token_ids,
+    prompt_start_idx=20,
+    title="Chunk-Level Emotions: Assistant Probe (15 tokens/chunk)",
+    output_path=OUTPUT_DIR / "chunk_level_assistant.png",
+    figsize=(14, 10)
+)
 
-    print(f"\n{emotion.upper()}:")
-    print(f"  Peak score: {max_score:.3f} at token {max_idx}")
-    print(f"  Token: '{token_strings[max_idx]}'")
+# Plot for standard probes
+plot_sentence_level_bar_charts(
+    scores_dict=scores_standard,
+    emotions=EMOTIONS,
+    token_strings=token_strings,
+    token_ids=token_ids,
+    prompt_start_idx=20,
+    title="Chunk-Level Emotions: Standard Probe (15 tokens/chunk)",
+    output_path=OUTPUT_DIR / "chunk_level_standard.png",
+    figsize=(14, 10)
+)
 
-    # Context (±2 tokens)
-    start = max(0, max_idx - 2)
-    end = min(len(token_strings), max_idx + 3)
-    context = ''.join(token_strings[start:end])
-    print(f"  Context: {context}")
+print("\n✓ All chunk-level bar charts generated!")
 
 # %%━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # SECTION 5: QUICK RE-RUN WITH NEW PARAMETERS
@@ -375,7 +493,9 @@ new_exp = TokenLevelExperiment(
     cpca_path=Path("/workspace-vast/annas/git/research-tools/outputs/dimensionality_reduction/cpca/conversation_based/global/google/google/gemma-3-27b-it_cpca.npz"),
     orthogonality_weight=1000.0,
     orthogonal_representation="raw",
-    use_wildchat_normalization=True
+    use_wildchat_normalization=False,
+    normalize_probe_scores=True,
+    baseline_dir=BASELINE_DIR
 )
 
 new_results = new_exp.run_experiment(

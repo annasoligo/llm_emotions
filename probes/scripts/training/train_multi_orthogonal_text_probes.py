@@ -60,9 +60,13 @@ class MultiOrthogonalEmotionProbes(nn.Module):
         # All probe sets: [K, n_emotions, hidden_dim]
         self.probe_sets = nn.Parameter(torch.randn(n_sets, n_emotions, hidden_dim))
 
-        # Initialize with small values for stability
+        # Initialize with small values for stability, then normalize
         for i in range(n_sets):
             nn.init.xavier_normal_(self.probe_sets[i], gain=0.1)
+
+        # Initialize to unit vectors to start
+        with torch.no_grad():
+            self.probe_sets.data = F.normalize(self.probe_sets.data, dim=2)
 
     def forward(self, activations: torch.Tensor, set_idx: Optional[int] = None) -> torch.Tensor:
         """Project activations onto probe directions.
@@ -76,19 +80,85 @@ class MultiOrthogonalEmotionProbes(nn.Module):
             If set_idx is int: [batch, n_emotions] logits for that set
         """
         if set_idx is not None:
-            # Single set
+            # Single set - use normalized probes directly
             probes = self.probe_sets[set_idx]  # [n_emotions, hidden_dim]
-            probes_norm = probes / probes.norm(dim=1, keepdim=True)
+            probes_norm = F.normalize(probes, dim=1)
             return activations @ probes_norm.T  # [batch, n_emotions]
         else:
             # All sets
             all_logits = []
             for i in range(self.n_sets):
                 probes = self.probe_sets[i]
-                probes_norm = probes / probes.norm(dim=1, keepdim=True)
+                probes_norm = F.normalize(probes, dim=1)
                 logits = activations @ probes_norm.T  # [batch, n_emotions]
                 all_logits.append(logits)
             return torch.stack(all_logits, dim=1)  # [batch, K, n_emotions]
+
+    def project_gradients_to_tangent_space(self):
+        """Project gradients onto tangent space of unit sphere.
+
+        For each probe vector v with gradient g, the tangent space projection is:
+        g_tangent = g - (g · v)v
+
+        This ensures gradients don't change the norm, only the direction.
+        Should be called after backward() but before optimizer.step().
+        """
+        if self.probe_sets.grad is None:
+            return
+
+        with torch.no_grad():
+            # Normalize probe vectors
+            probes_norm = F.normalize(self.probe_sets, dim=2)  # [K, n_emotions, hidden_dim]
+
+            # Compute dot product between gradients and normalized probes
+            # Shape: [K, n_emotions, 1]
+            grad_dot_probe = (self.probe_sets.grad * probes_norm).sum(dim=2, keepdim=True)
+
+            # Project gradient onto tangent space: g - (g·v)v
+            self.probe_sets.grad = self.probe_sets.grad - grad_dot_probe * probes_norm
+
+    def gram_schmidt_orthogonalize(self):
+        """Apply Gram-Schmidt orthogonalization to all probe sets.
+
+        This enforces strict orthogonality after each gradient step by:
+        1. Flattening all K * n_emotions probe vectors
+        2. Applying Gram-Schmidt to make them mutually orthogonal
+        3. Reshaping back to [K, n_emotions, hidden_dim]
+
+        Should be called after optimizer.step() and renormalization.
+        """
+        with torch.no_grad():
+            # Reshape to [K * n_emotions, hidden_dim]
+            n_total_probes = self.n_sets * self.n_emotions
+            probes_flat = self.probe_sets.data.reshape(n_total_probes, self.hidden_dim)
+
+            # Gram-Schmidt orthogonalization
+            orthogonal_probes = torch.zeros_like(probes_flat)
+
+            for i in range(n_total_probes):
+                # Start with current vector
+                vec = probes_flat[i].clone()
+
+                # Subtract projections onto all previous orthogonal vectors
+                for j in range(i):
+                    # Project vec onto orthogonal_probes[j]
+                    projection = torch.dot(vec, orthogonal_probes[j]) * orthogonal_probes[j]
+                    vec = vec - projection
+
+                # Normalize
+                vec_norm = vec.norm()
+                if vec_norm > 1e-8:  # Avoid division by zero
+                    orthogonal_probes[i] = vec / vec_norm
+                else:
+                    # If vector became zero (linear dependent), use random orthogonal direction
+                    orthogonal_probes[i] = torch.randn_like(vec)
+                    for j in range(i):
+                        projection = torch.dot(orthogonal_probes[i], orthogonal_probes[j]) * orthogonal_probes[j]
+                        orthogonal_probes[i] = orthogonal_probes[i] - projection
+                    orthogonal_probes[i] = F.normalize(orthogonal_probes[i], dim=0)
+
+            # Reshape back to [K, n_emotions, hidden_dim]
+            self.probe_sets.data = orthogonal_probes.reshape(self.n_sets, self.n_emotions, self.hidden_dim)
 
     def orthogonality_loss(self) -> torch.Tensor:
         """Compute orthogonality loss between all pairs of probe sets.
@@ -118,7 +188,10 @@ class MultiOrthogonalEmotionProbes(nn.Module):
                 n_pairs += 1
 
         # Average over all pairs
-        return total_loss / max(n_pairs, 1)
+        # Ensure we return a tensor (even when K=1 and total_loss=0)
+        if n_pairs == 0:
+            return torch.tensor(0.0, device=self.probe_sets.device)
+        return total_loss / n_pairs
 
     def get_normalized_probes(self, set_idx: int) -> np.ndarray:
         """Get normalized probe vectors for a specific set.
@@ -282,6 +355,7 @@ def train_epoch(
     optimizer: torch.optim.Optimizer,
     ortho_weight: float,
     device: str,
+    use_gram_schmidt: bool = False,
 ) -> Dict[str, float]:
     """Train for one epoch."""
     model.train()
@@ -312,7 +386,19 @@ def train_epoch(
         loss = task_loss + ortho_weight * ortho_loss
 
         loss.backward()
+
+        # Project gradients to tangent space to maintain unit norm
+        model.project_gradients_to_tangent_space()
+
         optimizer.step()
+
+        # Renormalize probes after step to ensure they stay on unit sphere
+        with torch.no_grad():
+            model.probe_sets.data = F.normalize(model.probe_sets.data, dim=2)
+
+        # Apply Gram-Schmidt orthogonalization if requested
+        if use_gram_schmidt:
+            model.gram_schmidt_orthogonalize()
 
         total_loss += loss.item()
         total_task_loss += task_loss.item()
@@ -394,13 +480,23 @@ def compute_orthogonality_metrics(model: MultiOrthogonalEmotionProbes) -> Dict:
             cross_dots = probe_sets[i] @ probe_sets[j].T  # [n_emotions, n_emotions]
             all_dots.extend(np.abs(cross_dots).flatten())
 
-    metrics = {
-        'cross_dots_mean': np.mean(all_dots),
-        'cross_dots_max': np.max(all_dots),
-        'cross_dots_std': np.std(all_dots),
-        'cross_dots_median': np.median(all_dots),
-        'n_pairs': len(all_dots),
-    }
+    # Handle case when K=1 (no pairs)
+    if len(all_dots) == 0:
+        metrics = {
+            'cross_dots_mean': 0.0,
+            'cross_dots_max': 0.0,
+            'cross_dots_std': 0.0,
+            'cross_dots_median': 0.0,
+            'n_pairs': 0,
+        }
+    else:
+        metrics = {
+            'cross_dots_mean': np.mean(all_dots),
+            'cross_dots_max': np.max(all_dots),
+            'cross_dots_std': np.std(all_dots),
+            'cross_dots_median': np.median(all_dots),
+            'n_pairs': len(all_dots),
+        }
 
     return metrics
 
@@ -462,7 +558,7 @@ def train_single_config(
 
     for epoch in range(args.max_epochs):
         train_metrics = train_epoch(
-            model, train_loader, optimizer, ortho_weight, args.device
+            model, train_loader, optimizer, ortho_weight, args.device, args.gram_schmidt
         )
         val_metrics = evaluate(model, test_loader, args.device)
         ortho_metrics = compute_orthogonality_metrics(model)
@@ -659,16 +755,21 @@ def main():
     parser.add_argument("--learning-rate", type=float, default=0.001)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--max-epochs", type=int, default=200)
-    parser.add_argument("--patience", type=int, default=20, help="Early stopping patience")
+    parser.add_argument("--patience", type=int, default=3, help="Early stopping patience")
     parser.add_argument("--test-size", type=float, default=0.2)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", type=str, default="cuda")
+    parser.add_argument(
+        "--gram-schmidt",
+        action="store_true",
+        help="Apply Gram-Schmidt re-orthogonalization after each gradient step"
+    )
 
     # Convergence criteria
     parser.add_argument(
         "--convergence-threshold",
         type=float,
-        default=0.1,
+        default=0.001,
         help="Max mean |cross-dot| for convergence",
     )
     parser.add_argument(
@@ -704,13 +805,15 @@ def main():
 
     data_path = Path(args.data)
     if not data_path.is_absolute() and not str(data_path).startswith("outputs/"):
-        data_path = Path(get_output_path("data", "activations")) / args.data.split('/')[-1]
+        base_data = Path(get_output_path("data"))
+        data_path = base_data / "activations" / args.data.split('/')[-1]
 
     cpca_path = None
     if args.cpca_path:
         cpca_path = Path(args.cpca_path)
         if not cpca_path.is_absolute():
-            cpca_path = Path(get_output_path("dimensionality_reduction", "cpca", "text_based")) / args.cpca_path.split('/')[-1]
+            base_cpca = Path(get_output_path("dimensionality_reduction"))
+            cpca_path = base_cpca / "cpca" / "text_based" / args.cpca_path.split('/')[-1]
 
     activations, labels, label_names = load_text_data(
         data_path,
@@ -726,11 +829,11 @@ def main():
         all_results = search_optimal_k(activations, labels, args)
 
         # Save all results
-        output_dir = (
-            Path(args.output_dir)
-            if args.output_dir
-            else Path(get_output_path("probes", "emotion_probes", "text_based", "multi_orthogonal"))
-        )
+        if args.output_dir:
+            output_dir = Path(args.output_dir)
+        else:
+            base_output = Path(get_output_path("probes"))
+            output_dir = base_output / "emotion_probes" / "text_based" / "multi_orthogonal"
         output_dir.mkdir(parents=True, exist_ok=True)
 
         search_filename = f"search_layer{args.layer}_ortho{args.ortho_weight}_seed{args.seed}.pkl"
@@ -793,11 +896,11 @@ def main():
         )
 
         # Save results
-        output_dir = (
-            Path(args.output_dir)
-            if args.output_dir
-            else Path(get_output_path("probes", "emotion_probes", "text_based", "multi_orthogonal"))
-        )
+        if args.output_dir:
+            output_dir = Path(args.output_dir)
+        else:
+            base_output = Path(get_output_path("probes"))
+            output_dir = base_output / "emotion_probes" / "text_based" / "multi_orthogonal"
         output_dir.mkdir(parents=True, exist_ok=True)
 
         nc_str = f"_nc{args.n_components}" if args.n_components else ""

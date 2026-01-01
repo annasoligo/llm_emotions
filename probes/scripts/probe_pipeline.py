@@ -175,7 +175,6 @@ class ProbeActivationExtractor:
         inputs = tokenizer(formatted_prompt, return_tensors="pt", add_special_tokens=False)
         device = next(model.parameters()).device
         input_ids = inputs['input_ids'].to(device)
-        attention_mask = inputs['attention_mask'].to(device)
 
         batch_size, seq_len = input_ids.shape
         token_ids = input_ids[0].tolist()
@@ -203,35 +202,47 @@ class ProbeActivationExtractor:
         # Extract activations at every token position (prefill)
         activations_by_token = {}
 
+        # Save all layer outputs first (inside trace context)
+        saved_outputs = {}
         with torch.no_grad():
-            with model.trace(input_ids, attention_mask=attention_mask, scan=False):
+            with model.trace(input_ids, scan=False):
                 for layer in layers:
-                    layer_output = model.layers_output[layer].save()
+                    saved_outputs[layer] = model.layers_output[layer].save()
 
-                    # layer_output shape: [batch_size, seq_len, hidden_dim]
-                    for token_pos in range(start_token_idx, seq_len):
-                        if token_pos not in activations_by_token:
-                            activations_by_token[token_pos] = {}
-                        activations_by_token[token_pos][layer] = layer_output[0, token_pos, :].cpu().numpy()
+        # Now extract activations from saved outputs (outside trace context)
+        for layer in layers:
+            layer_output = saved_outputs[layer]
+            # layer_output shape: [batch_size, seq_len, hidden_dim]
+            for token_pos in range(start_token_idx, seq_len):
+                if token_pos not in activations_by_token:
+                    activations_by_token[token_pos] = {}
+                activations_by_token[token_pos][layer] = layer_output[0, token_pos, :].detach().cpu().float().numpy().astype(np.float32)
 
         # Generation phase (if requested)
         if num_generated_tokens > 0:
             generated_ids = []
 
             for gen_step in range(num_generated_tokens):
+                # Extract activations at current position
+                current_token_pos = seq_len + gen_step
+                activations_by_token[current_token_pos] = {}
+
+                # Save layer outputs first
+                gen_saved_outputs = {}
                 with torch.no_grad():
-                    with model.trace(input_ids, attention_mask=attention_mask, scan=False):
-                        # Get logits at last position
-                        outputs = model(input_ids, attention_mask=attention_mask)
-                        next_token_logits = outputs.logits[:, -1, :]
-
-                        # Extract activations at this position
-                        current_token_pos = seq_len + gen_step
-                        activations_by_token[current_token_pos] = {}
-
+                    with model.trace(input_ids, scan=False):
                         for layer in layers:
-                            layer_output = model.layers_output[layer].save()
-                            activations_by_token[current_token_pos][layer] = layer_output[0, -1, :].cpu().numpy()
+                            gen_saved_outputs[layer] = model.layers_output[layer].save()
+
+                # Extract activations from saved outputs
+                for layer in layers:
+                    layer_output = gen_saved_outputs[layer]
+                    activations_by_token[current_token_pos][layer] = layer_output[0, -1, :].detach().cpu().float().numpy().astype(np.float32)
+
+                # Get logits for next token (use model.forward directly)
+                with torch.no_grad():
+                    outputs = model(input_ids)
+                    next_token_logits = outputs.logits[:, -1, :]
 
                 # Sample next token
                 if temperature > 0:
@@ -261,7 +272,6 @@ class ProbeActivationExtractor:
                 generated_ids.append(next_token.item())
                 token_ids.append(next_token.item())
                 input_ids = torch.cat([input_ids, next_token], dim=1)
-                attention_mask = torch.cat([attention_mask, torch.ones((1, 1), device=device)], dim=1)
 
                 # Check for EOS
                 if next_token.item() == tokenizer.eos_token_id:
@@ -367,21 +377,28 @@ class ProbeInference:
         Returns:
             Emotion logits [n_samples, 6] if drop_neutral else [n_samples, 7]
         """
-        # Get cPCA components
-        cpca_components = self.get_cpca_components(layer, n_components)
-
         # Load probe
         probe_dict = self.load_probe(layer, n_components, seed)
 
-        # Validate dimensions
-        if activations.shape[1] != cpca_components.shape[1]:
-            raise ValueError(
-                f"Dimension mismatch: activations have {activations.shape[1]} dims, "
-                f"cPCA expects {cpca_components.shape[1]} dims"
-            )
+        # Check if probe uses cPCA
+        use_cpca = probe_dict.get('use_cpca', n_components > 0)
 
-        # Step 1: Apply cPCA projection
-        projected = activations @ cpca_components.T  # [n_samples, n_components]
+        if use_cpca:
+            # Get cPCA components
+            cpca_components = self.get_cpca_components(layer, n_components)
+
+            # Validate dimensions
+            if activations.shape[1] != cpca_components.shape[1]:
+                raise ValueError(
+                    f"Dimension mismatch: activations have {activations.shape[1]} dims, "
+                    f"cPCA expects {cpca_components.shape[1]} dims"
+                )
+
+            # Step 1: Apply cPCA projection
+            projected = activations @ cpca_components.T  # [n_samples, n_components]
+        else:
+            # Use raw activations directly
+            projected = activations
 
         # Step 2: Run probe inference
         probe_model = probe_dict['model']
@@ -433,7 +450,7 @@ class ProbeInference:
         n_components: Optional[int] = None,
         orthogonality_weight: float = 1000.0
     ) -> Dict:
-        """Load orthogonal user/assistant probes.
+        """Load orthogonal user/assistant probes with caching.
 
         Args:
             layer: Layer number
@@ -444,6 +461,13 @@ class ProbeInference:
         Returns:
             Dict with 'user_probes', 'assistant_probes', and metadata
         """
+        # Build cache key
+        cache_key = f"orthogonal_{layer}_{representation}_{orthogonality_weight}"
+
+        # Check cache first
+        if cache_key in self.probe_cache:
+            return self.probe_cache[cache_key]
+
         # Build probe filename
         if representation == "raw":
             probe_filename = f"probe_layer{layer}_raw_ortho{orthogonality_weight}.pkl"
@@ -461,6 +485,9 @@ class ProbeInference:
 
         with open(probe_path, 'rb') as f:
             probe_data = pickle.load(f)
+
+        # Cache the result
+        self.probe_cache[cache_key] = probe_data
 
         return probe_data
 
@@ -512,9 +539,288 @@ class ProbeInference:
             ]
             return user_scores_list, asst_scores_list
 
+    def load_centroid_probe(
+        self,
+        layer: int,
+        k_value: int,
+        orthogonality_weight: float = 1000.0,
+        constraint_type: Optional[str] = None,
+        probe_format: str = "auto"
+    ) -> Dict:
+        """Load K-set probes and compute centroids automatically.
+
+        Args:
+            layer: Layer number
+            k_value: Number of probe sets (K)
+            orthogonality_weight: Orthogonality weight used during training
+            constraint_type: Optional constraint type (e.g., "gramschmidt")
+            probe_format: "auto", "text", or "conversation"
+                - "auto": Auto-detect based on probe file structure
+                - "text": Text-based probes (single role) [K, 6, hidden_dim]
+                - "conversation": Conversation-based probes (user/assistant) [K, 2, 6, hidden_dim]
+
+        Returns:
+            Dict with:
+                - 'centroid_probes': np.ndarray for text format [6, hidden_dim]
+                - 'centroid_user_probes': np.ndarray for conversation [6, hidden_dim]
+                - 'centroid_asst_probes': np.ndarray for conversation [6, hidden_dim]
+                - 'label_names': List of emotion names
+                - 'k_value': Number of sets averaged
+                - 'probe_format': "text" or "conversation"
+                - 'all_probe_sets': Original K-set probes (for debugging)
+                - 'layer': Layer number
+        """
+        # Check cache first
+        cache_key = ('centroid', layer, k_value, orthogonality_weight, constraint_type, probe_format)
+        if cache_key in self.probe_cache:
+            return self.probe_cache[cache_key]
+
+        # Build probe filename
+        constraint_suffix = f"_{constraint_type}" if constraint_type else ""
+        probe_filename = f"probe_k{k_value}_layer{layer}_ortho{orthogonality_weight}{constraint_suffix}.pkl"
+
+        # Auto-detect format if needed
+        if probe_format == "auto":
+            # Try multi_orthogonal subdirectory
+            multi_ortho_dir = self.probe_dir / "multi_orthogonal"
+            probe_path = multi_ortho_dir / probe_filename
+
+            if not probe_path.exists():
+                # Try parent directory directly
+                probe_path = self.probe_dir / probe_filename
+
+            if not probe_path.exists():
+                raise FileNotFoundError(
+                    f"K-set probe not found: {probe_filename}\n"
+                    f"Searched in:\n"
+                    f"  - {multi_ortho_dir}\n"
+                    f"  - {self.probe_dir}\n"
+                    f"Required: k={k_value}, layer={layer}, ortho={orthogonality_weight}"
+                )
+
+            # Detect format from file structure
+            with open(probe_path, 'rb') as f:
+                temp_data = pickle.load(f)
+            probe_format = "conversation" if "probe_sets" in temp_data else "text"
+        else:
+            # Use explicit format
+            multi_ortho_dir = self.probe_dir / "multi_orthogonal"
+            probe_path = multi_ortho_dir / probe_filename
+
+            if not probe_path.exists():
+                probe_path = self.probe_dir / probe_filename
+
+            if not probe_path.exists():
+                raise FileNotFoundError(
+                    f"K-set probe not found: {probe_filename}\n"
+                    f"Format: {probe_format}\n"
+                    f"Required: k={k_value}, layer={layer}, ortho={orthogonality_weight}"
+                )
+
+        # Load probe file
+        print(f"Loading centroid probe from {probe_path.name}")
+        with open(probe_path, 'rb') as f:
+            probe_data = pickle.load(f)
+
+        # Extract probe sets and compute centroids
+        result = {
+            'k_value': k_value,
+            'probe_format': probe_format,
+            'layer': layer,
+            'label_names': probe_data.get('label_names', ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise'])
+        }
+
+        if probe_format == "text":
+            # Text-based: [K, 6, hidden_dim]
+            all_probe_sets = probe_data['all_probe_sets']
+
+            # Compute centroid: average across K sets
+            centroid_probes = np.mean(all_probe_sets, axis=0)  # [6, hidden_dim]
+
+            result['centroid_probes'] = centroid_probes
+            result['all_probe_sets'] = all_probe_sets
+
+            print(f"  ✓ Text-based centroid: {all_probe_sets.shape} → {centroid_probes.shape}")
+
+        elif probe_format == "conversation":
+            # Conversation-based: [K, 2, 6, hidden_dim]
+            probe_sets = probe_data['probe_sets']
+
+            # Compute centroids: average across K sets
+            # User probes: axis 1 index 0
+            # Assistant probes: axis 1 index 1
+            centroid_user_probes = np.mean(probe_sets[:, 0, :, :], axis=0)  # [6, hidden_dim]
+            centroid_asst_probes = np.mean(probe_sets[:, 1, :, :], axis=0)  # [6, hidden_dim]
+
+            result['centroid_user_probes'] = centroid_user_probes
+            result['centroid_asst_probes'] = centroid_asst_probes
+            result['all_probe_sets'] = probe_sets
+
+            print(f"  ✓ Conversation-based centroid: {probe_sets.shape} → user/asst {centroid_user_probes.shape}")
+
+        # Cache result
+        self.probe_cache[cache_key] = result
+
+        return result
+
+    def predict_centroid(
+        self,
+        activations: np.ndarray,
+        centroid_probes: Optional[np.ndarray],
+        centroid_user_probes: Optional[np.ndarray],
+        centroid_asst_probes: Optional[np.ndarray],
+        emotions: List[str],
+        probe_format: str
+    ) -> Tuple:
+        """Apply centroid probes to activations.
+
+        Args:
+            activations: Activations [hidden_dim] for single position, or [n_samples, hidden_dim]
+            centroid_probes: Centroid probe directions [n_emotions, hidden_dim] (text format)
+            centroid_user_probes: User centroid directions [n_emotions, hidden_dim] (conversation)
+            centroid_asst_probes: Assistant centroid directions [n_emotions, hidden_dim] (conversation)
+            emotions: List of emotion names
+            probe_format: "text" or "conversation"
+
+        Returns:
+            If text format:
+                - Single activation: scores dict {emotion: float}
+                - Batch: scores array [n_samples, n_emotions]
+            If conversation format:
+                - Single activation: (user_scores dict, asst_scores dict, avg_scores dict)
+                - Batch: (user_scores list, asst_scores list, avg_scores array)
+        """
+        # Handle single activation vs batch
+        if activations.ndim == 1:
+            activations = activations[np.newaxis, :]  # [1, hidden_dim]
+            single_mode = True
+        else:
+            single_mode = False
+
+        if probe_format == "text":
+            # Validate
+            if centroid_probes is None:
+                raise ValueError("centroid_probes must be provided for text format")
+
+            expected_dim = centroid_probes.shape[1]
+            if activations.shape[-1] != expected_dim:
+                raise ValueError(
+                    f"Activation dimension mismatch: got {activations.shape[-1]}, "
+                    f"expected {expected_dim} (probe hidden_dim)"
+                )
+
+            # Simple dot product projection
+            # Probes are already normalized from training
+            scores = activations @ centroid_probes.T  # [n_samples, n_emotions]
+
+            if single_mode:
+                return {emotions[i]: float(scores[0, i]) for i in range(len(emotions))}
+            else:
+                return scores
+
+        elif probe_format == "conversation":
+            # Validate
+            if centroid_user_probes is None or centroid_asst_probes is None:
+                raise ValueError("centroid_user_probes and centroid_asst_probes must be provided for conversation format")
+
+            expected_dim = centroid_user_probes.shape[1]
+            if activations.shape[-1] != expected_dim:
+                raise ValueError(
+                    f"Activation dimension mismatch: got {activations.shape[-1]}, "
+                    f"expected {expected_dim} (probe hidden_dim)"
+                )
+
+            # Project onto both user and assistant centroids
+            user_proj = activations @ centroid_user_probes.T  # [n_samples, n_emotions]
+            asst_proj = activations @ centroid_asst_probes.T  # [n_samples, n_emotions]
+
+            # Average user and assistant
+            avg_scores = (user_proj + asst_proj) / 2
+
+            if single_mode:
+                user_scores = {emotions[i]: float(user_proj[0, i]) for i in range(len(emotions))}
+                asst_scores = {emotions[i]: float(asst_proj[0, i]) for i in range(len(emotions))}
+                avg_scores_dict = {emotions[i]: float(avg_scores[0, i]) for i in range(len(emotions))}
+                return user_scores, asst_scores, avg_scores_dict
+            else:
+                user_scores_list = [
+                    {emotions[i]: float(user_proj[j, i]) for i in range(len(emotions))}
+                    for j in range(activations.shape[0])
+                ]
+                asst_scores_list = [
+                    {emotions[i]: float(asst_proj[j, i]) for i in range(len(emotions))}
+                    for j in range(activations.shape[0])
+                ]
+                return user_scores_list, asst_scores_list, avg_scores
+        else:
+            raise ValueError(f"Invalid probe_format: {probe_format}. Expected 'text' or 'conversation'")
+
 
 # ============================================================================
-# 3. ProbeAggregator - Handles aggregation and differencing operations
+# 3. Probe Score Normalization Utilities
+# ============================================================================
+
+def normalize_probe_scores_zscore(
+    scores: np.ndarray,
+    baseline_mean: np.ndarray,
+    baseline_std: np.ndarray,
+    epsilon: float = 1e-8
+) -> np.ndarray:
+    """
+    Apply z-score normalization to probe scores using baseline statistics.
+
+    This function provides a unified implementation of probe score normalization
+    used across token-level, model-diff, and dashboard preprocessing pipelines.
+
+    Args:
+        scores: Probe scores to normalize [n_emotions] or dict with 'user'/'assistant' keys
+        baseline_mean: Baseline mean scores [n_emotions]
+        baseline_std: Baseline standard deviation [n_emotions]
+        epsilon: Small value to prevent division by zero
+
+    Returns:
+        Normalized scores in same format as input:
+        - If scores is array: returns array [n_emotions]
+        - If scores is dict: returns dict with 'user' and 'assistant' keys
+    """
+    if isinstance(scores, dict) and 'user' in scores:
+        # Orthogonal/centroid conversation probes - normalize both user and assistant
+        return {
+            'user': (scores['user'] - baseline_mean) / (baseline_std + epsilon),
+            'assistant': (scores['assistant'] - baseline_mean) / (baseline_std + epsilon)
+        }
+    else:
+        # Standard array format
+        return (scores - baseline_mean) / (baseline_std + epsilon)
+
+
+def normalize_probe_scores_center(
+    scores: np.ndarray,
+    baseline_mean: np.ndarray
+) -> np.ndarray:
+    """
+    Apply centering (mean subtraction only) to probe scores using baseline statistics.
+
+    Args:
+        scores: Probe scores to center [n_emotions] or dict with 'user'/'assistant' keys
+        baseline_mean: Baseline mean scores [n_emotions]
+
+    Returns:
+        Centered scores in same format as input
+    """
+    if isinstance(scores, dict) and 'user' in scores:
+        # Orthogonal/centroid conversation probes - center both user and assistant
+        return {
+            'user': scores['user'] - baseline_mean,
+            'assistant': scores['assistant'] - baseline_mean
+        }
+    else:
+        # Standard array format
+        return scores - baseline_mean
+
+
+# ============================================================================
+# 4. ProbeAggregator - Handles aggregation and differencing operations
 # ============================================================================
 
 class ProbeAggregator:
