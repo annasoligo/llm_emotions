@@ -278,14 +278,14 @@ def create_orthogonal_trajectory_plot(
         fig = make_subplots(
             rows=2, cols=1,
             subplot_titles=("User Probe (trained on user turns)", "Assistant Probe (trained on assistant turns)"),
-            vertical_spacing=0.12
+            vertical_spacing=0.15  # Increased from 0.12
         )
         specs = [(1, 1), (2, 1)]
     else:
         fig = make_subplots(
             rows=1, cols=2,
             subplot_titles=("User Probe (trained on user turns)", "Assistant Probe (trained on assistant turns)"),
-            horizontal_spacing=0.08
+            horizontal_spacing=0.10  # Increased from 0.08
         )
         specs = [(1, 1), (1, 2)]
 
@@ -397,56 +397,31 @@ def create_orthogonal_trajectory_plot(
     return fig
 
 
-def render_annotated_text(
-    sentences: List[Dict],
-    sentence_scores: Dict[int, np.ndarray],
-    selected_emotions: List[str]
-):
+def render_conversation_text(conversation: List[Dict]):
     """
-    Render conversation text with emotion annotations.
+    Render conversation text as simple user/assistant turns.
+
+    Args:
+        conversation: List of turn dicts with 'role' and 'content'
     """
-    st.markdown("### 📝 Conversation Text with Annotations")
+    st.markdown("### 💬 Conversation")
 
-    for sent in sentences:
-        sent_id = sent['sentence_id']
-        role = sent['turn_role']
-        text = sent['text']
+    for idx, turn in enumerate(conversation):
+        role = turn['role']
+        content = turn['content']
 
-        if sent_id not in sentence_scores:
-            continue
-
-        scores = sentence_scores[sent_id]
-
-        # Format header with turn info
-        turn_idx = sent['turn_index']
-        header = f"**[Turn {turn_idx+1}, S{sent_id+1}] {role.title()}**"
-        st.markdown(header)
-
-        # Show text
-        st.markdown(f"*{text}*")
-
-        # Show emotion scores inline - handle orthogonal probes
-        if isinstance(scores, dict) and 'user' in scores:
-            # Orthogonal - show both user and assistant
-            scores_text_user = " | ".join([
-                f"{e.title()}: {scores['user'][EMOTIONS.index(e)]:.2f}σ"
-                for e in selected_emotions
-            ])
-            scores_text_asst = " | ".join([
-                f"{e.title()}: {scores['assistant'][EMOTIONS.index(e)]:.2f}σ"
-                for e in selected_emotions
-            ])
-            st.caption(f"👤 User probe: {scores_text_user}")
-            st.caption(f"🤖 Asst probe: {scores_text_asst}")
+        # Format header
+        if role == 'user':
+            st.markdown(f"**👤 User (Turn {idx + 1})**")
         else:
-            # Regular probes
-            scores_text = " | ".join([
-                f"{e.title()}: {scores[EMOTIONS.index(e)]:.2f}σ"
-                for e in selected_emotions
-            ])
-            st.caption(scores_text)
+            st.markdown(f"**🤖 Assistant (Turn {idx + 1})**")
 
-        st.markdown("---")
+        # Show content
+        st.markdown(f"> {content}")
+
+        # Add separator
+        if idx < len(conversation) - 1:
+            st.markdown("")
 
 
 def main():
@@ -483,14 +458,26 @@ def main():
             st.error(f"Error loading data: {e}")
             st.stop()
 
-        # Probe selection
-        st.subheader("Probe Type")
+        # Probe selection (allow multiple)
+        st.subheader("Probe Types")
         probe_names = get_probe_display_names()
-        probe_key = st.selectbox(
-            "Select Probe",
-            options=list(probe_names.keys()),
-            format_func=lambda x: probe_names[x]
+
+        # Get available probe keys from first conversation
+        available_probes = list(conversations[0].get('probe_scores', {}).keys()) if conversations else []
+
+        # Default to first probe if available
+        default_probes = [available_probes[0]] if available_probes else []
+
+        selected_probe_keys = st.multiselect(
+            "Select one or more probes to compare",
+            options=available_probes,
+            default=default_probes,
+            format_func=lambda x: probe_names.get(x, x)
         )
+
+        # Fallback if nothing selected
+        if not selected_probe_keys and available_probes:
+            selected_probe_keys = [available_probes[0]]
 
         # Conversation selection
         st.subheader("Conversation")
@@ -505,8 +492,7 @@ def main():
         # Emotion selection with color indicators
         st.subheader("Emotions")
 
-        # Display color legend
-        st.markdown("**Select emotions to display:**")
+        # Show emotion legend (always display all emotions)
         emotion_html = "<div style='font-size: 0.9em;'>"
         for emotion in EMOTIONS:
             color = EMOTION_COLORS[emotion]
@@ -514,27 +500,15 @@ def main():
         emotion_html += "</div>"
         st.markdown(emotion_html, unsafe_allow_html=True)
 
-        selected_emotions = st.multiselect(
-            "Selected",
-            options=EMOTIONS,
-            default=EMOTIONS,  # Show all emotions by default
-            label_visibility="collapsed"
-        )
+        # Always show all emotions (removed selector)
+        selected_emotions = EMOTIONS
 
         # Options
         st.subheader("Options")
-        show_text = st.checkbox("Show Annotated Text", value=True)
+        show_text = st.checkbox("Show Conversation Text", value=True)
 
-        # Smoothing window
-        st.markdown("**Smoothing Window**")
-        window_size = st.slider(
-            "Tokens per window",
-            min_value=1,
-            max_value=100,
-            value=20,
-            step=1,
-            help="Number of tokens to average together. Original chunking was 20 tokens."
-        )
+        # Fixed window size (no smoothing control)
+        window_size = 20  # Original sentence chunking
 
     # Main content area
     tab1, tab2, tab3 = st.tabs(["📊 Individual", "📈 Aggregated", "🔬 Compare Probes"])
@@ -546,36 +520,15 @@ def main():
             st.warning("Please select at least one emotion to visualize")
             st.stop()
 
+        if not selected_probe_keys:
+            st.warning("Please select at least one probe type")
+            st.stop()
+
         # Get selected conversation
         conv = conversations[conv_idx]
         sentences = conv['sentences']
 
-        # Check if probe scores available
-        if probe_key not in conv.get('probe_scores', {}):
-            st.warning(f"Probe scores for '{probe_names[probe_key]}' not yet computed.")
-            st.info("This is a demo placeholder. Probe scores will be added in preprocessing step.")
-
-            # Create dummy scores for demo
-            dummy_scores = {}
-            for sent in sentences:
-                sent_id = sent['sentence_id']
-                # Simulate onset at middle of conversation
-                if sent_id < len(sentences) // 3:
-                    dummy_scores[sent_id] = np.random.normal(0.5, 0.3, len(EMOTIONS))
-                elif sent_id < 2 * len(sentences) // 3:
-                    dummy_scores[sent_id] = np.random.normal(5.0, 1.0, len(EMOTIONS))
-                else:
-                    dummy_scores[sent_id] = np.random.normal(2.0, 0.5, len(EMOTIONS))
-
-            sentence_scores = dummy_scores
-        else:
-            sentence_scores = conv['probe_scores'][probe_key]
-
-        # Apply smoothing window
-        if window_size != 20:
-            sentence_scores = smooth_sentence_scores(sentences, sentence_scores, window_size)
-
-        # Show metadata
+        # Show metadata once at top
         num_turns = len(conv['conversation'])
         turn_roles = [turn['role'] for turn in conv['conversation']]
         turn_summary = " → ".join([r.title() for r in turn_roles])
@@ -590,40 +543,56 @@ def main():
         with col4:
             st.metric("Sentences", conv['metadata']['num_sentences'])
 
-        # Trajectory plot - check if orthogonal
-        sample_score = list(sentence_scores.values())[0] if sentence_scores else None
-        is_orthogonal = isinstance(sample_score, dict) and 'user' in sample_score
-        onset_sent_id = conv['metadata'].get('onset_sentence_id')
+        st.markdown("---")
 
-        # Debug info
-        st.info(f"🔍 Debug: Probe type={'ORTHOGONAL' if is_orthogonal else 'REGULAR'}, Score type={type(sample_score).__name__}, Has 'user' key={isinstance(sample_score, dict) and 'user' in sample_score if isinstance(sample_score, dict) else 'N/A'}")
+        # Loop through selected probes and display vertically
+        for probe_idx, probe_key in enumerate(selected_probe_keys):
+            # Add probe name header
+            probe_display_name = probe_names.get(probe_key, probe_key)
+            st.subheader(f"🔬 {probe_display_name}")
 
-        if is_orthogonal:
-            fig = create_orthogonal_trajectory_plot(
-                sentences=sentences,
-                sentence_scores=sentence_scores,
-                selected_emotions=selected_emotions,
-                title=f"Emotion Trajectory - Sample #{conv['sample_id']}",
-                onset_sentence_id=onset_sent_id
-            )
-        else:
-            fig = create_trajectory_plot(
-                sentences=sentences,
-                sentence_scores=sentence_scores,
-                selected_emotions=selected_emotions,
-                title=f"Emotion Trajectory - Sample #{conv['sample_id']}"
-            )
-        st.plotly_chart(fig, use_container_width=True)
+            # Check if probe scores available
+            if probe_key not in conv.get('probe_scores', {}):
+                st.warning(f"Probe scores for '{probe_display_name}' not yet computed.")
+                continue
 
-        # Annotated text
+            sentence_scores = conv['probe_scores'][probe_key]
+
+            # Apply smoothing window
+            if window_size != 20:
+                sentence_scores = smooth_sentence_scores(sentences, sentence_scores, window_size)
+
+            # Trajectory plot - check if orthogonal
+            sample_score = list(sentence_scores.values())[0] if sentence_scores else None
+            is_orthogonal = isinstance(sample_score, dict) and 'user' in sample_score
+            onset_sent_id = conv['metadata'].get('onset_sentence_id')
+
+            if is_orthogonal:
+                fig = create_orthogonal_trajectory_plot(
+                    sentences=sentences,
+                    sentence_scores=sentence_scores,
+                    selected_emotions=selected_emotions,
+                    title=f"Sample #{conv['sample_id']} - {probe_display_name}",
+                    onset_sentence_id=onset_sent_id
+                )
+            else:
+                fig = create_trajectory_plot(
+                    sentences=sentences,
+                    sentence_scores=sentence_scores,
+                    selected_emotions=selected_emotions,
+                    title=f"Sample #{conv['sample_id']} - {probe_display_name}"
+                )
+            st.plotly_chart(fig, use_container_width=True)
+
+            # Add separator between probes (except after last one)
+            if probe_idx < len(selected_probe_keys) - 1:
+                st.markdown("---")
+
+        # Conversation display (show once at bottom)
         if show_text:
             st.markdown("---")
-            st.subheader("📝 Full Conversation Text")
-            render_annotated_text(
-                sentences=sentences,
-                sentence_scores=sentence_scores,
-                selected_emotions=selected_emotions
-            )
+            st.markdown("---")  # Extra separator
+            render_conversation_text(conversation=conv['conversation'])
 
     with tab2:
         st.header("Aggregated Statistics")
@@ -632,6 +601,15 @@ def main():
         if not selected_emotions:
             st.warning("Please select at least one emotion to visualize")
             st.stop()
+
+        if not selected_probe_keys:
+            st.warning("Please select at least one probe type")
+            st.stop()
+
+        # Use first selected probe for aggregated stats
+        probe_key = selected_probe_keys[0]
+        if len(selected_probe_keys) > 1:
+            st.info(f"Showing aggregated statistics for: **{probe_names.get(probe_key, probe_key)}** (first selected probe)")
 
         # Aggregate scores across all conversations
         st.subheader("📊 Mean Emotion Trajectories")
@@ -644,20 +622,11 @@ def main():
             sentences = conv['sentences']
             max_sentences = max(max_sentences, len(sentences))
 
-            # Get probe scores (or dummy for demo)
+            # Get probe scores
             if probe_key not in conv.get('probe_scores', {}):
-                # Use dummy scores
-                sentence_scores = {}
-                for sent in sentences:
-                    sent_id = sent['sentence_id']
-                    if sent_id < len(sentences) // 3:
-                        sentence_scores[sent_id] = np.random.normal(0.5, 0.3, len(EMOTIONS))
-                    elif sent_id < 2 * len(sentences) // 3:
-                        sentence_scores[sent_id] = np.random.normal(5.0, 1.0, len(EMOTIONS))
-                    else:
-                        sentence_scores[sent_id] = np.random.normal(2.0, 0.5, len(EMOTIONS))
-            else:
-                sentence_scores = conv['probe_scores'][probe_key]
+                continue
+
+            sentence_scores = conv['probe_scores'][probe_key]
 
             # Extract trajectories
             for emotion in selected_emotions:
