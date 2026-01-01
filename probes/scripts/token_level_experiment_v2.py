@@ -121,9 +121,8 @@ print("="*80)
 print(f"  Prompt: {TEST_PROMPT[:80]}...")
 print(f"  Layers: {len(LAYERS)} layers ({min(LAYERS)}-{max(LAYERS)})")
 print(f"  Generate: {NUM_GENERATED_TOKENS} tokens")
-print(f"  Baseline normalization: {USE_BASELINE_NORMALIZATION}")
 print(f"  Baseline dir: {BASELINE_DIR}")
-print(f"  Probe score centering: {CENTER_PROBE_SCORES}")
+print(f"  Probe normalization: Always z-score (σ units)")
 print(f"  Output directory: {OUTPUT_DIR}")
 
 # Experiment 1: Orthogonal Probes (Conversation-based)
@@ -213,28 +212,6 @@ results_centroid = exp3.run_experiment(
 )
 
 
-scores_centroid = aggregate_scores_across_layers(
-    results_centroid['scores_by_token'], [30], aggregation="mean"  # Only layer 30 for K=50 centroids
-)
-
-# Extract user and assistant scores for centroid probes
-user_scores_centroid = {pos: scores_centroid[pos]['user'] for pos in scores_centroid}
-asst_scores_centroid = {pos: scores_centroid[pos]['assistant'] for pos in scores_centroid}
-averaged_scores_centroid = {pos: (scores_centroid[pos]['user'] + scores_centroid[pos]['assistant']) / 2
-                            for pos in scores_centroid}
-
-# Plot: Smoothed Trajectories (Centroid Probes - 10-token window)
-plot_token_trajectories_orthogonal(
-    user_scores=user_scores_centroid,
-    asst_scores=asst_scores_centroid,
-    averaged_scores=averaged_scores_centroid,
-    emotions=EMOTIONS,
-    token_strings=token_strings,
-    title=f"Token-Level Emotion Trajectories (Smoothed): Centroid Probes\nPrompt: {TEST_PROMPT[:80]}...\n10-token moving average",
-    output_path=OUTPUT_DIR / "trajectories_centroid_smoothed.png",
-    window_size=10
-)
-
 # Aggregate scores across layers
 EMOTIONS = ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
 
@@ -254,6 +231,17 @@ token_strings = get_token_strings(token_ids, tokenizer)
 
 print(f"\nAnalyzed {len(token_strings)} tokens")
 print(f"Example tokens: {token_strings[:10]}")
+
+# Aggregate centroid scores
+scores_centroid = aggregate_scores_across_layers(
+    results_centroid['scores_by_token'], [30], aggregation="mean"  # Only layer 30 for K=10 centroids
+)
+
+# Extract user and assistant scores for centroid probes
+user_scores_centroid = {pos: scores_centroid[pos]['user'] for pos in scores_centroid}
+asst_scores_centroid = {pos: scores_centroid[pos]['assistant'] for pos in scores_centroid}
+averaged_scores_centroid = {pos: (scores_centroid[pos]['user'] + scores_centroid[pos]['assistant']) / 2
+                            for pos in scores_centroid}
 
 # Plot: Emotion Trajectories (Orthogonal Probes - with User/Assistant separation)
 # Extract user and assistant scores from aggregated results
