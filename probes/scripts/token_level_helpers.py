@@ -44,7 +44,7 @@ class TokenLevelExperiment:
         """
         Initialize experiment configuration.
 
-        Note: Probe scores are ALWAYS z-score normalized using WildChat baseline statistics.
+        Note: Probe scores are ALWAYS z-score normalized using baseline statistics (Alpaca by default).
         This ensures consistent, interpretable scores in standard deviation (σ) units.
 
         Args:
@@ -58,7 +58,7 @@ class TokenLevelExperiment:
             orthogonal_representation: "raw", "global_cpca_top10", etc.
             n_components: Number of cPCA components (for linear probes)
             seed: Random seed (for linear probes)
-            baseline_dir: Directory containing WildChat baseline statistics for normalization
+            baseline_dir: Directory containing baseline statistics for normalization (Alpaca V2 recommended)
             emotions: List of emotion names
             k_value: Number of K-sets to average for centroid probes (required if probe_type='centroid')
             centroid_constraint_type: Optional constraint type for centroid probes (e.g., "gramschmidt")

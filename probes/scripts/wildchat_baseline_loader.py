@@ -705,23 +705,26 @@ class WildChatBaselineLoader:
 def normalize_with_wildchat(
     activations: np.ndarray,
     layer: int,
-    aggregation_type: str = "assistant_turn",
+    aggregation_type: str = "all_tokens",
     baseline_dir: Optional[Path] = None
 ) -> np.ndarray:
     """
-    Convenience function to normalize activations with WildChat baselines.
+    Convenience function to normalize activations with baseline statistics.
+
+    Note: Function name is historical (normalize_with_wildchat) but now defaults
+    to Alpaca baselines for consistency with the rest of the codebase.
 
     Args:
         activations: Activation array [n_samples, hidden_dim] or [hidden_dim]
         layer: Layer number (0-indexed)
         aggregation_type: Which aggregation to use for baseline stats
-        baseline_dir: Optional custom baseline directory
+        baseline_dir: Optional custom baseline directory (defaults to Alpaca V2)
 
     Returns:
         Normalized activations with same shape as input
     """
     loader = WildChatBaselineLoader(
-        baseline_dir=baseline_dir or Path("/workspace-vast/annas/git/research-tools/data/baselines/wildchat/google_gemma_3_27b_it"),
+        baseline_dir=baseline_dir or Path("/workspace-vast/annas/git/research-tools/data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it"),
         aggregation_type=aggregation_type
     )
     return loader.normalize_activations(activations, layer)
