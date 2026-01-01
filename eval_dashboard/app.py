@@ -176,7 +176,8 @@ def load_all_subsets():
 def compute_aggregated_statistics(
     conversations: List[Dict],
     probe_key: str,
-    selected_emotions: List[str]
+    selected_emotions: List[str],
+    window_size: int = 20
 ) -> tuple:
     """
     Compute aggregated statistics across all conversations.
@@ -185,6 +186,7 @@ def compute_aggregated_statistics(
         conversations: List of conversation dicts (pre-filtered)
         probe_key: Which probe to analyze
         selected_emotions: Which emotions to include
+        window_size: Token window size for smoothing (default 20)
 
     Returns:
         (aggregated_data, max_sentences, n_conversations, is_orthogonal)
@@ -226,6 +228,10 @@ def compute_aggregated_statistics(
             continue
 
         sentence_scores = conv['probe_scores'][probe_key]
+
+        # Apply smoothing if needed
+        if window_size != 20:
+            sentence_scores = smooth_sentence_scores(sentences, sentence_scores, window_size)
 
         # Extract trajectories
         for emotion in selected_emotions:
@@ -873,7 +879,8 @@ def main():
                         aggregated_data, max_sentences, n_convs, is_orthogonal = compute_aggregated_statistics(
                             conversations=conversations,
                             probe_key=probe_key,
-                            selected_emotions=selected_emotions
+                            selected_emotions=selected_emotions,
+                            window_size=window_size
                         )
 
                     if not aggregated_data:
