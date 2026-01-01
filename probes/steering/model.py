@@ -54,6 +54,8 @@ class SteeredModel:
 
         # Steering state
         self.steering_vectors: Dict[int, torch.Tensor] = {}  # {layer: summed_vector}
+        self.ablation_directions: Dict[int, List[torch.Tensor]] = {}  # {layer: [directions]}
+        self.capping_configs: Dict[int, List[tuple]] = {}  # {layer: [(direction, threshold)]}
         self.hook_handles = []
 
         print(f"Model loaded: {self.n_layers} layers")
@@ -140,16 +142,18 @@ class SteeredModel:
             print(f"Added steering at layer {vector.layer}: {vector.name} (strength={strength})")
 
     def clear_steering(self) -> None:
-        """Remove all steering vectors and hooks."""
+        """Remove all steering vectors, ablation, capping, and hooks."""
         # Remove hooks
         for handle in self.hook_handles:
             handle.remove()
         self.hook_handles = []
 
-        # Clear vectors
+        # Clear all interventions
         self.steering_vectors = {}
+        self.ablation_directions = {}
+        self.capping_configs = {}
 
-        print("Cleared all steering")
+        print("Cleared all interventions")
 
     def _make_steering_hook(self, layer_idx: int):
         """Create hook function for given layer.
@@ -328,3 +332,120 @@ class SteeredModel:
             }
 
         return stats
+
+    def add_ablation(self, directions: List[torch.Tensor], layer: int) -> None:
+        """Add ablation directions to project out at a layer.
+
+        Args:
+            directions: List of direction tensors to project out [n_emotions, hidden_dim]
+            layer: Layer index
+        """
+        # Convert to torch tensors on correct device/dtype
+        torch_dirs = []
+        for d in directions:
+            if not isinstance(d, torch.Tensor):
+                d = torch.tensor(d, dtype=self.torch_dtype, device=self.device)
+            else:
+                d = d.to(dtype=self.torch_dtype, device=self.device)
+            torch_dirs.append(d)
+
+        self.ablation_directions[layer] = torch_dirs
+        print(f"Added {len(torch_dirs)} ablation directions at layer {layer}")
+
+    def add_capping(self, cap_configs: List[tuple], layer: int) -> None:
+        """Add capping configurations for a layer.
+
+        Args:
+            cap_configs: List of (emotion_name, direction, threshold) tuples
+            layer: Layer index
+        """
+        torch_configs = []
+        for emotion, direction, threshold in cap_configs:
+            if not isinstance(direction, torch.Tensor):
+                direction = torch.tensor(direction, dtype=self.torch_dtype, device=self.device)
+            else:
+                direction = direction.to(dtype=self.torch_dtype, device=self.device)
+            torch_configs.append((emotion, direction, threshold))
+
+        self.capping_configs[layer] = torch_configs
+        print(f"Added {len(torch_configs)} capping configs at layer {layer}")
+
+    def _make_ablation_hook(self, layer_idx: int):
+        """Create ablation hook that projects out emotion directions."""
+        ablation_dirs = self.ablation_directions[layer_idx]
+
+        def hook(module, input, output):
+            hidden_states = output[0]  # [batch, seq_len, hidden_dim]
+
+            # Project out each direction
+            ablated = hidden_states
+            for direction in ablation_dirs:
+                # Normalize direction
+                dir_norm = direction / torch.norm(direction)
+
+                # Compute projection: (h · d) * d
+                # h: [batch, seq, hidden], d: [hidden]
+                projection = torch.sum(ablated * dir_norm, dim=-1, keepdim=True)  # [batch, seq, 1]
+
+                # Remove projection
+                ablated = ablated - projection * dir_norm
+
+            return (ablated,) + output[1:]
+
+        return hook
+
+    def _make_capping_hook(self, layer_idx: int):
+        """Create capping hook that clamps projections above threshold."""
+        cap_configs = self.capping_configs[layer_idx]
+
+        def hook(module, input, output):
+            hidden_states = output[0]  # [batch, seq_len, hidden_dim]
+
+            capped = hidden_states
+            for emotion, direction, threshold in cap_configs:
+                # Normalize direction
+                dir_norm = direction / torch.norm(direction)
+
+                # Compute projection along emotion direction
+                projection = torch.sum(capped * dir_norm, dim=-1, keepdim=True)
+
+                # Clamp to threshold
+                clamped_projection = torch.clamp(projection, max=threshold)
+
+                # Adjust activations
+                adjustment = (projection - clamped_projection) * dir_norm
+                capped = capped - adjustment
+
+            return (capped,) + output[1:]
+
+        return hook
+
+    def apply_intervention(self) -> None:
+        """Apply all interventions (steering, ablation, capping) as hooks."""
+        # Clear existing hooks
+        for handle in self.hook_handles:
+            handle.remove()
+        self.hook_handles = []
+
+        # Apply steering hooks
+        for layer_idx in sorted(self.steering_vectors.keys()):
+            hook = self._make_steering_hook(layer_idx)
+            handle = self.layers[layer_idx].register_forward_hook(hook)
+            self.hook_handles.append(handle)
+            print(f"Applied steering hook at layer {layer_idx}")
+
+        # Apply ablation hooks
+        for layer_idx in sorted(self.ablation_directions.keys()):
+            hook = self._make_ablation_hook(layer_idx)
+            handle = self.layers[layer_idx].register_forward_hook(hook)
+            self.hook_handles.append(handle)
+            print(f"Applied ablation hook at layer {layer_idx}")
+
+        # Apply capping hooks
+        for layer_idx in sorted(self.capping_configs.keys()):
+            hook = self._make_capping_hook(layer_idx)
+            handle = self.layers[layer_idx].register_forward_hook(hook)
+            self.hook_handles.append(handle)
+            print(f"Applied capping hook at layer {layer_idx}")
+
+        print(f"Total hooks applied: {len(self.hook_handles)}")

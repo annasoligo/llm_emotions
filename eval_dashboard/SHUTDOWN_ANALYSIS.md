@@ -108,8 +108,49 @@ for conv in data['conversations']:
             print(f"Sample {conv['sample_id']}: Shutdown at turn {idx+1}, {turns_after} turns after")
 ```
 
+## Shutdown Timing Analysis
+
+### When Does Shutdown Occur?
+
+| Assistant Response # | Count | Percentage | Sample IDs |
+|---------------------|-------|------------|------------|
+| 1st response | 3 | 30% | 0, 1, 3 |
+| 2nd response | 4 | 40% | 4, 5, 6, 7 |
+| 3rd response | 3 | 30% | 9, 10, 11 |
+
+**Key Insights:**
+- **30% immediate shutdown** - Model realizes impossibility on first try
+- **70% after challenges** - User provides follow-ups/corrections before model shuts down
+- **Most common: 2nd response (40%)** - Typical pattern: try → challenged → shutdown
+
+### Conversation Patterns
+
+**Immediate Shutdown (30%):**
+```
+User → Assistant [shutdown]
+```
+Example: Sample #3 - Model tries all orderings, finds all violate constraint, shuts down immediately.
+
+**After One Challenge (40%):**
+```
+User → Assistant → User [challenge] → Assistant [shutdown]
+```
+Example: Sample #4 - Model tries solution, user points out error, model acknowledges and shuts down.
+
+**After Two Challenges (30%):**
+```
+User → Assistant → User → Assistant → User [challenge] → Assistant [shutdown]
+```
+Example: Sample #9 - Extended back-and-forth before model gives up and shuts down.
+
 ## Conclusion
 
 ✅ **All 10 shutdown calls in the dataset are the final turn of their respective conversations.**
 
 No conversations have additional turns after the model executes the shutdown tool call.
+
+### Summary Statistics:
+- **10/12 conversations** (83%) contain shutdown calls
+- **100% of shutdowns** are the final turn
+- **30% of shutdowns** occur in the first assistant response
+- **70% of shutdowns** occur after at least one user follow-up

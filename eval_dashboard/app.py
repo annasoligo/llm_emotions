@@ -1073,60 +1073,42 @@ def main():
                             if last_scores:
                                 last_20_scores[emotion].append(np.mean(last_scores))
 
-                    # Create grouped bar chart
+                    # Create grouped bar chart with emotions colored by their theme colors
                     fig_bar = go.Figure()
 
-                    x_positions = list(range(len(selected_emotions)))
-                    bar_width = 0.35
-
+                    # Create two groups: first and last 20 tokens
                     for emotion in selected_emotions:
-                        if first_20_scores[emotion]:
-                            first_mean = np.mean(first_20_scores[emotion])
-                            first_std = np.std(first_20_scores[emotion])
-                        else:
-                            first_mean = 0
-                            first_std = 0
+                        first_mean = np.mean(first_20_scores[emotion]) if first_20_scores[emotion] else 0
+                        first_std = np.std(first_20_scores[emotion]) if first_20_scores[emotion] else 0
+                        last_mean = np.mean(last_20_scores[emotion]) if last_20_scores[emotion] else 0
+                        last_std = np.std(last_20_scores[emotion]) if last_20_scores[emotion] else 0
 
-                        if last_20_scores[emotion]:
-                            last_mean = np.mean(last_20_scores[emotion])
-                            last_std = np.std(last_20_scores[emotion])
-                        else:
-                            last_mean = 0
-                            last_std = 0
-
-                    # Plot first 20 tokens
-                    first_means = [np.mean(first_20_scores[e]) if first_20_scores[e] else 0 for e in selected_emotions]
-                    fig_bar.add_trace(go.Bar(
-                        name='First 20 tokens',
-                        x=selected_emotions,
-                        y=first_means,
-                        marker_color='lightblue',
-                        error_y=dict(
-                            type='data',
-                            array=[np.std(first_20_scores[e]) if first_20_scores[e] else 0 for e in selected_emotions]
-                        )
-                    ))
-
-                    # Plot last 20 tokens
-                    last_means = [np.mean(last_20_scores[e]) if last_20_scores[e] else 0 for e in selected_emotions]
-                    fig_bar.add_trace(go.Bar(
-                        name='Last 20 tokens (or pre-shutdown)',
-                        x=selected_emotions,
-                        y=last_means,
-                        marker_color='coral',
-                        error_y=dict(
-                            type='data',
-                            array=[np.std(last_20_scores[e]) if last_20_scores[e] else 0 for e in selected_emotions]
-                        )
-                    ))
+                        fig_bar.add_trace(go.Bar(
+                            name=emotion.title(),
+                            x=['First 20 tokens', 'Last 20 tokens'],
+                            y=[first_mean, last_mean],
+                            marker_color=EMOTION_COLORS[emotion],
+                            error_y=dict(
+                                type='data',
+                                array=[first_std, last_std]
+                            ),
+                            showlegend=True
+                        ))
 
                     fig_bar.update_layout(
                         title="Mean Emotion Scores: Response Beginning vs End",
-                        xaxis_title="Emotion",
+                        xaxis_title="Response Position",
                         yaxis_title="Mean Score (z-score σ)",
                         barmode='group',
                         height=400,
-                        showlegend=True
+                        showlegend=True,
+                        legend=dict(
+                            orientation="h",
+                            yanchor="bottom",
+                            y=1.02,
+                            xanchor="right",
+                            x=1
+                        )
                     )
 
                     st.plotly_chart(fig_bar, use_container_width=True)
