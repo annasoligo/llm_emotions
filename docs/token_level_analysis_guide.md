@@ -593,8 +593,8 @@ If emotion scores look wrong:
 
 ## Related Documentation
 
-- [ACTIVATION_CACHING.md](ACTIVATION_CACHING.md): Efficient reuse of activations
-- [MODEL_DIFF_README.md](MODEL_DIFF_README.md): Batch-level double-diff analysis
+- [activation_caching.md](architecture/activation_caching.md): Efficient reuse of activations
+- [model_diff_api.md](architecture/model_diff_api.md): Batch-level double-diff analysis
 - [Alpaca Baselines](../../data/baselines/alpaca_gemma27b_v2/): Current baseline statistics (neutral instruction-following)
 
 ## Citation

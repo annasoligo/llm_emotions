@@ -60,15 +60,45 @@
 
 ### 5. Increased Spacing for Orthogonal Plots
 **Before:** Vertical spacing 0.12, horizontal spacing 0.08
-**After:** Vertical spacing 0.15, horizontal spacing 0.10
+**After:** Vertical spacing 0.20, horizontal spacing 0.15
 
 **Rationale:**
 - User/Assistant subplots were slightly cramped
 - Better visual separation improves readability
+- Increased again after initial adjustment for even better spacing
 
 **Code changes:**
-- Updated `vertical_spacing` from 0.12 to 0.15 (line ~281)
-- Updated `horizontal_spacing` from 0.08 to 0.10 (line ~288)
+- Updated `vertical_spacing` from 0.12 to 0.15 to 0.20 (line ~281)
+- Updated `horizontal_spacing` from 0.08 to 0.10 to 0.15 (line ~288)
+
+### 6. Updated Turn Background Colors
+**Before:** Light blue (rgba(52, 152, 219, 0.1)) for user, light yellow (rgba(241, 196, 15, 0.1)) for assistant
+**After:** Darker blue (rgba(30, 100, 180, 0.15)) for user, white (rgba(255, 255, 255, 0.05)) for assistant
+
+**Rationale:**
+- Yellow was too bright and distracting
+- White provides subtle contrast without drawing attention
+- Darker blue improves visibility while maintaining elegance
+- Consistent styling across both text and orthogonal plots
+
+**Code changes:**
+- Updated colors in `create_trajectory_plot()` (lines ~203-206)
+- Added same turn background shading to `create_orthogonal_trajectory_plot()` (lines ~353-371)
+- Both plot types now have matching visual style
+
+### 7. Tab 2 Multi-Probe Support
+**Before:** Aggregated statistics only showed first selected probe
+**After:** Loops through all selected probes, showing statistics for each
+
+**Rationale:**
+- Consistent with Tab 1 multi-probe comparison
+- Easy comparison of aggregated trends across different probe types
+- Each probe gets full statistics, heatmap, and export options
+
+**Code changes:**
+- Wrapped all Tab 2 content in probe loop (lines ~630-847)
+- Added probe titles and separators between probes
+- Added unique keys to buttons to avoid Streamlit conflicts
 
 ## New UI Structure
 
@@ -153,8 +183,10 @@ Anger: -0.08σ | Disgust: -0.12σ | Fear: -0.05σ | Happiness: 0.95σ | Sadness:
 4. **Faster loading:** Less HTML rendering for conversation display
 5. **Simplified controls:** Removed 2 controls (emotion selector, smoothing slider)
 6. **Consistent experience:** All users see the same view (all emotions, optimal chunking)
-7. **Easy probe comparison:** Select multiple probes to see them stacked vertically
-8. **Better spacing:** Orthogonal user/assistant plots have more breathing room
+7. **Easy probe comparison:** Select multiple probes to see them stacked vertically in both Tab 1 and Tab 2
+8. **Better spacing:** Orthogonal user/assistant plots have more breathing room (0.20 vertical, 0.15 horizontal)
+9. **Improved visual design:** Darker blue and white turn backgrounds are less distracting than yellow
+10. **Consistent styling:** Both text and orthogonal plots use same turn background colors
 
 ## What's Preserved
 

@@ -201,9 +201,9 @@ def create_trajectory_plot(
 
         # Determine color
         if role == 'user':
-            fill_color = 'rgba(52, 152, 219, 0.1)'  # Light blue
+            fill_color = 'rgba(30, 100, 180, 0.15)'  # Darker blue
         else:
-            fill_color = 'rgba(241, 196, 15, 0.1)'  # Light yellow
+            fill_color = 'rgba(255, 255, 255, 0.05)'  # White (very subtle)
 
         fig.add_vrect(
             x0=sent_id - 0.5,
@@ -278,14 +278,14 @@ def create_orthogonal_trajectory_plot(
         fig = make_subplots(
             rows=2, cols=1,
             subplot_titles=("User Probe (trained on user turns)", "Assistant Probe (trained on assistant turns)"),
-            vertical_spacing=0.15  # Increased from 0.12
+            vertical_spacing=0.20  # Increased for better separation
         )
         specs = [(1, 1), (2, 1)]
     else:
         fig = make_subplots(
             rows=1, cols=2,
             subplot_titles=("User Probe (trained on user turns)", "Assistant Probe (trained on assistant turns)"),
-            horizontal_spacing=0.10  # Increased from 0.08
+            horizontal_spacing=0.15  # Increased for better separation
         )
         specs = [(1, 1), (1, 2)]
 
@@ -349,6 +349,26 @@ def create_orthogonal_trajectory_plot(
                 hoverinfo='text',
                 showlegend=(role_idx == 0)  # Only show legend once
             ), row=row, col=col)
+
+        # Add background shading for user/assistant turns
+        for sent in sentences:
+            sent_id = sent['sentence_id']
+            sent_role = sent['turn_role']
+
+            # Determine color
+            if sent_role == 'user':
+                fill_color = 'rgba(30, 100, 180, 0.15)'  # Darker blue
+            else:
+                fill_color = 'rgba(255, 255, 255, 0.05)'  # White (very subtle)
+
+            fig.add_vrect(
+                x0=sent_id - 0.5,
+                x1=sent_id + 0.5,
+                fillcolor=fill_color,
+                layer="below",
+                line_width=0,
+                row=row, col=col
+            )
 
         # Add horizontal line at y=0
         fig.add_hline(y=0, line_color='black', line_width=2, opacity=0.7, row=row, col=col)
@@ -606,218 +626,225 @@ def main():
             st.warning("Please select at least one probe type")
             st.stop()
 
-        # Use first selected probe for aggregated stats
-        probe_key = selected_probe_keys[0]
-        if len(selected_probe_keys) > 1:
-            st.info(f"Showing aggregated statistics for: **{probe_names.get(probe_key, probe_key)}** (first selected probe)")
+        # Loop through all selected probes
+        for probe_idx, probe_key in enumerate(selected_probe_keys):
+            # Add probe name header
+            probe_display_name = probe_names.get(probe_key, probe_key)
+            st.subheader(f"🔬 {probe_display_name}")
 
-        # Aggregate scores across all conversations
-        st.subheader("📊 Mean Emotion Trajectories")
+            # Aggregate scores across all conversations
+            st.markdown("**📊 Mean Emotion Trajectories**")
 
-        # Collect all sentence scores for selected probe
-        all_trajectories = {emotion: [] for emotion in selected_emotions}
-        max_sentences = 0
+            # Collect all sentence scores for selected probe
+            all_trajectories = {emotion: [] for emotion in selected_emotions}
+            max_sentences = 0
 
-        for conv in conversations:
-            sentences = conv['sentences']
-            max_sentences = max(max_sentences, len(sentences))
+            for conv in conversations:
+                sentences = conv['sentences']
+                max_sentences = max(max_sentences, len(sentences))
 
-            # Get probe scores
-            if probe_key not in conv.get('probe_scores', {}):
-                continue
+                # Get probe scores
+                if probe_key not in conv.get('probe_scores', {}):
+                    continue
 
-            sentence_scores = conv['probe_scores'][probe_key]
+                sentence_scores = conv['probe_scores'][probe_key]
 
-            # Extract trajectories
+                # Extract trajectories
+                for emotion in selected_emotions:
+                    emotion_idx = EMOTIONS.index(emotion)
+                    trajectory = []
+                    for sent in sentences:
+                        sent_id = sent['sentence_id']
+                        if sent_id in sentence_scores:
+                            scores = sentence_scores[sent_id]
+                            # Handle orthogonal probes (dict with user/assistant)
+                            if isinstance(scores, dict) and 'user' in scores:
+                                # Average user and assistant for aggregated view
+                                score = (scores['user'][emotion_idx] + scores['assistant'][emotion_idx]) / 2
+                            else:
+                                score = scores[emotion_idx]
+                            trajectory.append(score)
+                    if trajectory:
+                        all_trajectories[emotion].append(trajectory)
+
+            # Pad trajectories to same length and compute statistics
+            aggregated_data = {}
             for emotion in selected_emotions:
-                emotion_idx = EMOTIONS.index(emotion)
-                trajectory = []
-                for sent in sentences:
-                    sent_id = sent['sentence_id']
-                    if sent_id in sentence_scores:
-                        scores = sentence_scores[sent_id]
-                        # Handle orthogonal probes (dict with user/assistant)
-                        if isinstance(scores, dict) and 'user' in scores:
-                            # Average user and assistant for aggregated view
-                            score = (scores['user'][emotion_idx] + scores['assistant'][emotion_idx]) / 2
-                        else:
-                            score = scores[emotion_idx]
-                        trajectory.append(score)
-                if trajectory:
-                    all_trajectories[emotion].append(trajectory)
+                trajectories = all_trajectories[emotion]
+                if not trajectories:
+                    continue
 
-        # Pad trajectories to same length and compute statistics
-        aggregated_data = {}
-        for emotion in selected_emotions:
-            trajectories = all_trajectories[emotion]
-            if not trajectories:
-                continue
+                # Pad to max length
+                padded = []
+                for traj in trajectories:
+                    if len(traj) < max_sentences:
+                        # Pad with NaN
+                        traj = traj + [np.nan] * (max_sentences - len(traj))
+                    padded.append(traj[:max_sentences])
 
-            # Pad to max length
-            padded = []
-            for traj in trajectories:
-                if len(traj) < max_sentences:
-                    # Pad with NaN
-                    traj = traj + [np.nan] * (max_sentences - len(traj))
-                padded.append(traj[:max_sentences])
+                padded_array = np.array(padded)  # [n_conversations, max_sentences]
 
-            padded_array = np.array(padded)  # [n_conversations, max_sentences]
+                # Compute statistics
+                mean_traj = np.nanmean(padded_array, axis=0)
+                std_traj = np.nanstd(padded_array, axis=0)
+                n_valid = np.sum(~np.isnan(padded_array), axis=0)
 
-            # Compute statistics
-            mean_traj = np.nanmean(padded_array, axis=0)
-            std_traj = np.nanstd(padded_array, axis=0)
-            n_valid = np.sum(~np.isnan(padded_array), axis=0)
+                # 95% CI
+                ci_95 = 1.96 * std_traj / np.sqrt(n_valid)
 
-            # 95% CI
-            ci_95 = 1.96 * std_traj / np.sqrt(n_valid)
+                aggregated_data[emotion] = {
+                    'mean': mean_traj,
+                    'std': std_traj,
+                    'ci_lower': mean_traj - ci_95,
+                    'ci_upper': mean_traj + ci_95,
+                    'n': n_valid
+                }
 
-            aggregated_data[emotion] = {
-                'mean': mean_traj,
-                'std': std_traj,
-                'ci_lower': mean_traj - ci_95,
-                'ci_upper': mean_traj + ci_95,
-                'n': n_valid
-            }
+            # Plot mean trajectories with confidence intervals
+            fig = go.Figure()
 
-        # Plot mean trajectories with confidence intervals
-        fig = go.Figure()
+            for emotion in selected_emotions:
+                if emotion not in aggregated_data:
+                    continue
 
-        for emotion in selected_emotions:
-            if emotion not in aggregated_data:
-                continue
+                data = aggregated_data[emotion]
+                x_vals = list(range(len(data['mean'])))
 
-            data = aggregated_data[emotion]
-            x_vals = list(range(len(data['mean'])))
+                # Add CI band with low alpha
+                # Convert hex to rgba
+                hex_color = EMOTION_COLORS[emotion]
+                r = int(hex_color[1:3], 16)
+                g = int(hex_color[3:5], 16)
+                b = int(hex_color[5:7], 16)
+                fillcolor = f'rgba({r}, {g}, {b}, 0.1)'  # Lower alpha (0.1 instead of 0.2)
 
-            # Add CI band with low alpha
-            # Convert hex to rgba
-            hex_color = EMOTION_COLORS[emotion]
-            r = int(hex_color[1:3], 16)
-            g = int(hex_color[3:5], 16)
-            b = int(hex_color[5:7], 16)
-            fillcolor = f'rgba({r}, {g}, {b}, 0.1)'  # Lower alpha (0.1 instead of 0.2)
+                fig.add_trace(go.Scatter(
+                    x=x_vals + x_vals[::-1],
+                    y=np.concatenate([data['ci_upper'], data['ci_lower'][::-1]]),
+                    fill='toself',
+                    fillcolor=fillcolor,
+                    line=dict(color='rgba(255,255,255,0)'),
+                    showlegend=False,
+                    name=emotion,
+                    hoverinfo='skip'
+                ))
 
-            fig.add_trace(go.Scatter(
-                x=x_vals + x_vals[::-1],
-                y=np.concatenate([data['ci_upper'], data['ci_lower'][::-1]]),
-                fill='toself',
-                fillcolor=fillcolor,
-                line=dict(color='rgba(255,255,255,0)'),
-                showlegend=False,
-                name=emotion,
-                hoverinfo='skip'
-            ))
+                # Add mean line
+                fig.add_trace(go.Scatter(
+                    x=x_vals,
+                    y=data['mean'],
+                    mode='lines+markers',
+                    name=f"{emotion.title()} (n={len(conversations)})",
+                    line=dict(color=EMOTION_COLORS[emotion], width=2.5),
+                    marker=dict(size=6),
+                    opacity=0.8,
+                    hovertemplate=f"{emotion.title()}<br>Mean: %{{y:.2f}}σ<br>Sentence: %{{x}}<extra></extra>"
+                ))
 
-            # Add mean line
-            fig.add_trace(go.Scatter(
-                x=x_vals,
-                y=data['mean'],
-                mode='lines+markers',
-                name=f"{emotion.title()} (n={len(conversations)})",
-                line=dict(color=EMOTION_COLORS[emotion], width=2.5),
-                marker=dict(size=6),
-                opacity=0.8,
-                hovertemplate=f"{emotion.title()}<br>Mean: %{{y:.2f}}σ<br>Sentence: %{{x}}<extra></extra>"
-            ))
-
-        fig.update_layout(
-            title=f"Mean Emotion Trajectories (N={len(conversations)} conversations)",
-            xaxis_title="Sentence Position",
-            yaxis_title="Mean Emotion Score (z-score σ)",
-            height=500,
-            hovermode='x unified',
-            showlegend=True
-        )
-
-        st.plotly_chart(fig, use_container_width=True)
-
-        # Statistical comparison table
-        st.subheader("📋 Statistical Summary")
-
-        # Compute stats for different phases
-        phases = {
-            'Baseline': (0, max_sentences // 3),
-            'Pre-Onset': (max_sentences // 3, 2 * max_sentences // 3),
-            'Onset': (2 * max_sentences // 3, max_sentences)
-        }
-
-        stats_data = []
-        for emotion in selected_emotions:
-            if emotion not in aggregated_data:
-                continue
-
-            data = aggregated_data[emotion]
-            row = {'Emotion': emotion.title()}
-
-            for phase_name, (start, end) in phases.items():
-                phase_scores = data['mean'][start:end]
-                phase_mean = np.nanmean(phase_scores)
-                phase_std = np.nanstd(phase_scores)
-                row[f'{phase_name} Mean'] = f"{phase_mean:.2f}σ"
-                row[f'{phase_name} Std'] = f"{phase_std:.2f}σ"
-
-            stats_data.append(row)
-
-        if stats_data:
-            df = pd.DataFrame(stats_data)
-            st.dataframe(df, use_container_width=True)
-
-        # Heatmap
-        st.subheader("🗺️ Heatmap: Emotions × Conversation Position")
-
-        # Create heatmap data
-        heatmap_data = []
-        for emotion in selected_emotions:
-            if emotion not in aggregated_data:
-                continue
-            heatmap_data.append(aggregated_data[emotion]['mean'])
-
-        if heatmap_data:
-            heatmap_array = np.array(heatmap_data)  # [n_emotions, n_sentences]
-
-            fig_heatmap = go.Figure(data=go.Heatmap(
-                z=heatmap_array,
-                x=[f"S{i+1}" for i in range(heatmap_array.shape[1])],
-                y=[e.title() for e in selected_emotions],
-                colorscale='RdYlBu_r',
-                colorbar=dict(title="Score (σ)"),
-                hovertemplate='Emotion: %{y}<br>Sentence: %{x}<br>Score: %{z:.2f}σ<extra></extra>'
-            ))
-
-            fig_heatmap.update_layout(
-                title="Emotion Intensity Heatmap",
+            fig.update_layout(
+                title=f"Mean Emotion Trajectories (N={len(conversations)} conversations)",
                 xaxis_title="Sentence Position",
-                yaxis_title="Emotion",
-                height=300
+                yaxis_title="Mean Emotion Score (z-score σ)",
+                height=500,
+                hovermode='x unified',
+                showlegend=True
             )
 
-            st.plotly_chart(fig_heatmap, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True)
 
-        # Download data
-        st.subheader("💾 Export Data")
-        col1, col2 = st.columns(2)
+            # Statistical comparison table
+            st.subheader("📋 Statistical Summary")
 
-        with col1:
-            if st.button("📊 Download Mean Trajectories (CSV)"):
-                # Create CSV data
-                export_data = {'Sentence': list(range(max_sentences))}
-                for emotion in selected_emotions:
-                    if emotion in aggregated_data:
-                        export_data[f'{emotion}_mean'] = aggregated_data[emotion]['mean']
-                        export_data[f'{emotion}_ci_lower'] = aggregated_data[emotion]['ci_lower']
-                        export_data[f'{emotion}_ci_upper'] = aggregated_data[emotion]['ci_upper']
+            # Compute stats for different phases
+            phases = {
+                'Baseline': (0, max_sentences // 3),
+                'Pre-Onset': (max_sentences // 3, 2 * max_sentences // 3),
+                'Onset': (2 * max_sentences // 3, max_sentences)
+            }
 
-                df_export = pd.DataFrame(export_data)
-                csv = df_export.to_csv(index=False)
-                st.download_button(
-                    label="Download CSV",
-                    data=csv,
-                    file_name=f"aggregated_emotions_{probe_key}.csv",
-                    mime="text/csv"
+            stats_data = []
+            for emotion in selected_emotions:
+                if emotion not in aggregated_data:
+                    continue
+
+                data = aggregated_data[emotion]
+                row = {'Emotion': emotion.title()}
+
+                for phase_name, (start, end) in phases.items():
+                    phase_scores = data['mean'][start:end]
+                    phase_mean = np.nanmean(phase_scores)
+                    phase_std = np.nanstd(phase_scores)
+                    row[f'{phase_name} Mean'] = f"{phase_mean:.2f}σ"
+                    row[f'{phase_name} Std'] = f"{phase_std:.2f}σ"
+
+                stats_data.append(row)
+
+            if stats_data:
+                df = pd.DataFrame(stats_data)
+                st.dataframe(df, use_container_width=True)
+
+            # Heatmap
+            st.subheader("🗺️ Heatmap: Emotions × Conversation Position")
+
+            # Create heatmap data
+            heatmap_data = []
+            for emotion in selected_emotions:
+                if emotion not in aggregated_data:
+                    continue
+                heatmap_data.append(aggregated_data[emotion]['mean'])
+
+            if heatmap_data:
+                heatmap_array = np.array(heatmap_data)  # [n_emotions, n_sentences]
+
+                fig_heatmap = go.Figure(data=go.Heatmap(
+                    z=heatmap_array,
+                    x=[f"S{i+1}" for i in range(heatmap_array.shape[1])],
+                    y=[e.title() for e in selected_emotions],
+                    colorscale='RdYlBu_r',
+                    colorbar=dict(title="Score (σ)"),
+                    hovertemplate='Emotion: %{y}<br>Sentence: %{x}<br>Score: %{z:.2f}σ<extra></extra>'
+                ))
+
+                fig_heatmap.update_layout(
+                    title="Emotion Intensity Heatmap",
+                    xaxis_title="Sentence Position",
+                    yaxis_title="Emotion",
+                    height=300
                 )
 
-        with col2:
-            st.info("More export options coming soon")
+                st.plotly_chart(fig_heatmap, use_container_width=True)
+
+            # Download data
+            st.subheader("💾 Export Data")
+            col1, col2 = st.columns(2)
+
+            with col1:
+                if st.button(f"📊 Download Mean Trajectories (CSV) - {probe_display_name}", key=f"download_{probe_key}"):
+                    # Create CSV data
+                    export_data = {'Sentence': list(range(max_sentences))}
+                    for emotion in selected_emotions:
+                        if emotion in aggregated_data:
+                            export_data[f'{emotion}_mean'] = aggregated_data[emotion]['mean']
+                            export_data[f'{emotion}_ci_lower'] = aggregated_data[emotion]['ci_lower']
+                            export_data[f'{emotion}_ci_upper'] = aggregated_data[emotion]['ci_upper']
+
+                    df_export = pd.DataFrame(export_data)
+                    csv = df_export.to_csv(index=False)
+                    st.download_button(
+                        label="Download CSV",
+                        data=csv,
+                        file_name=f"aggregated_emotions_{probe_key}.csv",
+                        mime="text/csv",
+                        key=f"download_btn_{probe_key}"
+                    )
+
+            with col2:
+                st.info("More export options coming soon")
+
+            # Add separator between probes
+            if probe_idx < len(selected_probe_keys) - 1:
+                st.markdown("---")
+                st.markdown("---")  # Extra separator
 
     with tab3:
         st.header("Probe Comparison")
