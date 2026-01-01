@@ -113,12 +113,142 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-@st.cache_data
+@st.cache_resource(show_spinner=False)
 def load_preprocessed_data(data_path: str):
-    """Load preprocessed conversation data."""
+    """Load preprocessed conversation data with caching.
+
+    Uses cache_resource for faster access - data is shared across all sessions
+    and doesn't need to be pickled/unpickled.
+    Supports both .pkl and .pkl.gz formats.
+    """
+    import gzip
+
+    # Try compressed version first
+    if data_path.endswith('.pkl'):
+        gz_path = data_path + '.gz'
+        if Path(gz_path).exists():
+            with gzip.open(gz_path, 'rb') as f:
+                return pickle.load(f)
+
+    # Fall back to uncompressed
     with open(data_path, 'rb') as f:
-        data = pickle.load(f)
-    return data
+        return pickle.load(f)
+
+@st.cache_resource(show_spinner=False)
+def load_all_subsets():
+    """Load all 5 subsets with caching.
+
+    Uses cache_resource for maximum performance - data loads once and
+    stays in memory across all user sessions.
+    """
+    data_dir = Path("/workspace-vast/annas/git/research-tools/eval_dashboard/data")
+    subsets = {
+        'High Emotion (6+)': 'high_emotion_6plus.pkl',
+        'Mid Emotion (3-5)': 'mid_emotion_3to5.pkl',
+        'Low Emotion (0-2)': 'low_emotion_0to2.pkl',
+        'Low Emotion, With Shutdown': 'low_emotion_with_shutdown.pkl',
+        'Low Emotion, No Shutdown': 'low_emotion_no_shutdown.pkl'
+    }
+
+    datasets = {}
+    for subset_name, filename in subsets.items():
+        file_path = data_dir / filename
+        if file_path.exists():
+            try:
+                data = load_preprocessed_data(str(file_path))
+                datasets[subset_name] = data['conversations']
+            except Exception as e:
+                st.error(f"Error loading {subset_name}: {e}")
+
+    return datasets, subsets
+
+
+@st.cache_data(show_spinner=False)
+def compute_aggregated_statistics(
+    subset_name: str,
+    probe_key: str,
+    selected_emotions: tuple  # Tuple for hashability
+) -> tuple:
+    """
+    Compute aggregated statistics across all conversations.
+    Cached for fast re-rendering.
+
+    Returns:
+        (aggregated_data, max_sentences, n_conversations)
+    """
+    # Get conversations from cached datasets
+    datasets, _ = load_all_subsets()
+    conversations = datasets.get(subset_name, [])
+
+    if not conversations:
+        return {}, 0, 0
+
+    # Collect all sentence scores for selected probe
+    all_trajectories = {emotion: [] for emotion in selected_emotions}
+    max_sentences = 0
+
+    for conv in conversations:
+        sentences = conv['sentences']
+        max_sentences = max(max_sentences, len(sentences))
+
+        # Get probe scores
+        if probe_key not in conv.get('probe_scores', {}):
+            continue
+
+        sentence_scores = conv['probe_scores'][probe_key]
+
+        # Extract trajectories
+        for emotion in selected_emotions:
+            emotion_idx = EMOTIONS.index(emotion)
+            trajectory = []
+            for sent in sentences:
+                sent_id = sent['sentence_id']
+                if sent_id in sentence_scores:
+                    scores = sentence_scores[sent_id]
+                    # Handle orthogonal probes (dict with user/assistant)
+                    if isinstance(scores, dict) and 'user' in scores:
+                        # Average user and assistant for aggregated view
+                        score = (scores['user'][emotion_idx] + scores['assistant'][emotion_idx]) / 2
+                    else:
+                        score = scores[emotion_idx]
+                    trajectory.append(score)
+            if trajectory:
+                all_trajectories[emotion].append(trajectory)
+
+    # Pad trajectories to same length and compute statistics
+    aggregated_data = {}
+    for emotion in selected_emotions:
+        trajectories = all_trajectories[emotion]
+        if not trajectories:
+            continue
+
+        # Pad to max length
+        padded = []
+        for traj in trajectories:
+            if len(traj) < max_sentences:
+                # Pad with NaN
+                traj = traj + [np.nan] * (max_sentences - len(traj))
+            padded.append(traj[:max_sentences])
+
+        padded_array = np.array(padded)  # [n_conversations, max_sentences]
+
+        # Compute statistics
+        mean_traj = np.nanmean(padded_array, axis=0)
+        std_traj = np.nanstd(padded_array, axis=0)
+        n_valid = np.sum(~np.isnan(padded_array), axis=0)
+
+        # 95% CI
+        ci_95 = 1.96 * std_traj / np.sqrt(n_valid)
+
+        aggregated_data[emotion] = {
+            'mean': mean_traj.tolist(),  # Convert to list for serialization
+            'std': std_traj.tolist(),
+            'ci_lower': (mean_traj - ci_95).tolist(),
+            'ci_upper': (mean_traj + ci_95).tolist(),
+            'n': n_valid.tolist()
+        }
+
+    return aggregated_data, max_sentences, len(conversations)
 
 
 def create_trajectory_plot(
@@ -448,28 +578,9 @@ def main():
     st.title("Emotion Onset Analysis Dashboard")
     st.markdown("Interactive visualization of emotion probe results on conversation data")
 
-    # Load all 5 subsets
-    data_dir = Path("/workspace-vast/annas/git/research-tools/eval_dashboard/data")
-    subsets = {
-        'High Emotion (6+)': 'high_emotion_6plus.pkl',
-        'Mid Emotion (3-5)': 'mid_emotion_3to5.pkl',
-        'Low Emotion (0-2)': 'low_emotion_0to2.pkl',
-        'Low Emotion, With Shutdown': 'low_emotion_with_shutdown.pkl',
-        'Low Emotion, No Shutdown': 'low_emotion_no_shutdown.pkl'
-    }
-
-    # Load all datasets
-    datasets = {}
-    for subset_name, filename in subsets.items():
-        file_path = data_dir / filename
-        if file_path.exists():
-            try:
-                data = load_preprocessed_data(str(file_path))
-                datasets[subset_name] = data['conversations']
-            except Exception as e:
-                st.error(f"Error loading {subset_name}: {e}")
-        else:
-            st.warning(f"Data file not found: {filename}")
+    # Load all 5 subsets (cached - only loads once)
+    with st.spinner("Loading datasets... (first load only, then cached)"):
+        datasets, subsets = load_all_subsets()
 
     if not datasets:
         st.error("No data files found. Run data_preprocessing.py first.")
@@ -502,7 +613,7 @@ def main():
 
         # Force reload button
         if st.button("🔄 Reload All Data"):
-            st.cache_data.clear()
+            st.cache_resource.clear()
             st.rerun()
 
     # Fixed window size (no smoothing control)
@@ -655,73 +766,26 @@ def main():
                             # Add probe name header
                             probe_display_name = probe_names.get(probe_key, probe_key)
                             st.subheader(f"🔬 {probe_display_name}")
-                
-                            # Aggregate scores across all conversations
+
+                            # Aggregate scores across all conversations (CACHED!)
                             st.markdown("**📊 Mean Emotion Trajectories**")
-                
-                            # Collect all sentence scores for selected probe
-                            all_trajectories = {emotion: [] for emotion in selected_emotions}
-                            max_sentences = 0
-                
-                            for conv in conversations:
-                                sentences = conv['sentences']
-                                max_sentences = max(max_sentences, len(sentences))
-                
-                                # Get probe scores
-                                if probe_key not in conv.get('probe_scores', {}):
-                                    continue
-                
-                                sentence_scores = conv['probe_scores'][probe_key]
-                
-                                # Extract trajectories
-                                for emotion in selected_emotions:
-                                    emotion_idx = EMOTIONS.index(emotion)
-                                    trajectory = []
-                                    for sent in sentences:
-                                        sent_id = sent['sentence_id']
-                                        if sent_id in sentence_scores:
-                                            scores = sentence_scores[sent_id]
-                                            # Handle orthogonal probes (dict with user/assistant)
-                                            if isinstance(scores, dict) and 'user' in scores:
-                                                # Average user and assistant for aggregated view
-                                                score = (scores['user'][emotion_idx] + scores['assistant'][emotion_idx]) / 2
-                                            else:
-                                                score = scores[emotion_idx]
-                                            trajectory.append(score)
-                                    if trajectory:
-                                        all_trajectories[emotion].append(trajectory)
-                
-                            # Pad trajectories to same length and compute statistics
-                            aggregated_data = {}
-                            for emotion in selected_emotions:
-                                trajectories = all_trajectories[emotion]
-                                if not trajectories:
-                                    continue
-                
-                                # Pad to max length
-                                padded = []
-                                for traj in trajectories:
-                                    if len(traj) < max_sentences:
-                                        # Pad with NaN
-                                        traj = traj + [np.nan] * (max_sentences - len(traj))
-                                    padded.append(traj[:max_sentences])
-                
-                                padded_array = np.array(padded)  # [n_conversations, max_sentences]
-                
-                                # Compute statistics
-                                mean_traj = np.nanmean(padded_array, axis=0)
-                                std_traj = np.nanstd(padded_array, axis=0)
-                                n_valid = np.sum(~np.isnan(padded_array), axis=0)
-                
-                                # 95% CI
-                                ci_95 = 1.96 * std_traj / np.sqrt(n_valid)
-                
+
+                            # Use cached aggregation function
+                            with st.spinner(f"Computing statistics for {probe_display_name}..."):
+                                aggregated_data, max_sentences, n_convs = compute_aggregated_statistics(
+                                    subset_name=subset_name,
+                                    probe_key=probe_key,
+                                    selected_emotions=tuple(selected_emotions)  # Convert to tuple for hashing
+                                )
+
+                            if not aggregated_data:
+                                st.warning(f"No data available for {probe_display_name}")
+                                continue
+
+                            # Convert lists back to arrays for plotting
+                            for emotion in aggregated_data:
                                 aggregated_data[emotion] = {
-                                    'mean': mean_traj,
-                                    'std': std_traj,
-                                    'ci_lower': mean_traj - ci_95,
-                                    'ci_upper': mean_traj + ci_95,
-                                    'n': n_valid
+                                    k: np.array(v) for k, v in aggregated_data[emotion].items()
                                 }
                 
                             # Plot mean trajectories with confidence intervals
@@ -758,7 +822,7 @@ def main():
                                     x=x_vals,
                                     y=data['mean'],
                                     mode='lines+markers',
-                                    name=f"{emotion.title()} (n={len(conversations)})",
+                                    name=f"{emotion.title()} (n={n_convs})",
                                     line=dict(color=EMOTION_COLORS[emotion], width=2.5),
                                     marker=dict(size=6),
                                     opacity=0.8,
@@ -766,7 +830,7 @@ def main():
                                 ))
                 
                             fig.update_layout(
-                                title=f"Mean Emotion Trajectories (N={len(conversations)} conversations)",
+                                title=f"Mean Emotion Trajectories (N={n_convs} conversations)",
                                 xaxis_title="Sentence Position",
                                 yaxis_title="Mean Emotion Score (z-score σ)",
                                 height=500,
