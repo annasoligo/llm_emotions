@@ -1,5 +1,10 @@
 # Token-Level Emotion Analysis Pipeline
 
+> **⚠️ DOCUMENTATION OUTDATED**
+> This README describes an older API with removed parameters (`use_wildchat_normalization`, `center_probe_scores`).
+> **Current behavior:** All probe scores are ALWAYS z-score normalized using Alpaca baselines.
+> See `NORMALIZATION_REFACTOR_COMPLETE.md` and `BASELINE_STATISTICS_GUIDE.md` for current API.
+
 This document describes the token-level emotion analysis system, which enables granular analysis of emotional content at every token position during model generation.
 
 ## Overview
@@ -590,7 +595,7 @@ If emotion scores look wrong:
 
 - [ACTIVATION_CACHING.md](ACTIVATION_CACHING.md): Efficient reuse of activations
 - [MODEL_DIFF_README.md](MODEL_DIFF_README.md): Batch-level double-diff analysis
-- [WildChat Baselines](../data/baselines/wildchat/): Baseline statistics
+- [Alpaca Baselines](../../data/baselines/alpaca_gemma27b_v2/): Current baseline statistics (neutral instruction-following)
 
 ## Citation
 

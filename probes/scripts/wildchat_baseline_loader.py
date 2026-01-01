@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """
-WildChat Baseline Loader
+Baseline Loader for Probe Normalization
 
-Utility for loading pre-computed WildChat baseline statistics on-the-fly
-and normalizing activations before probe application.
+Utility for loading pre-computed baseline statistics (Alpaca dataset by default)
+and normalizing probe scores using z-score normalization.
+
+Note: Class name is WildChatBaselineLoader for historical reasons, but it works
+with any baseline dataset (currently defaults to Alpaca).
 """
 
 import json
@@ -13,18 +16,23 @@ import numpy as np
 
 
 class WildChatBaselineLoader:
-    """Load and apply WildChat baseline normalization to activations."""
+    """
+    Load and apply baseline normalization to probe scores.
+
+    Despite the name, this class works with any baseline dataset.
+    Current default: Alpaca V2 (neutral instruction-following baseline).
+    """
 
     def __init__(
         self,
-        baseline_dir: Path = Path("/workspace-vast/annas/git/research-tools/data/baselines/wildchat/google_gemma_3_27b_it"),
-        aggregation_type: str = "assistant_turn"
+        baseline_dir: Path = Path("/workspace-vast/annas/git/research-tools/data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it"),
+        aggregation_type: str = "all_tokens"
     ):
         """
         Initialize the baseline loader.
 
         Args:
-            baseline_dir: Directory containing layer{N}_stats.json files
+            baseline_dir: Directory containing layer{N}_activations.h5 files
             aggregation_type: Which aggregation to use for baseline stats
                             Options: all_tokens, user_turn, assistant_turn,
                                     last_user_token, first_assistant_token, between_turns
@@ -36,7 +44,7 @@ class WildChatBaselineLoader:
         if not self.baseline_dir.exists():
             raise FileNotFoundError(
                 f"Baseline directory not found: {baseline_dir}\n"
-                f"Please run compute_wildchat_baseline_activations.py first."
+                f"Please ensure baseline activations have been computed."
             )
 
     def load_layer_stats(self, layer: int) -> Dict[str, np.ndarray]:

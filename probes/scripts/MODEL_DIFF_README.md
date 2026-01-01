@@ -1,5 +1,10 @@
 # Model Diffing Analysis - Refactored Version
 
+> **⚠️ DOCUMENTATION OUTDATED**
+> This README describes an older API with removed parameters (`use_wildchat_normalization`).
+> **Current behavior:** All probe scores are ALWAYS z-score normalized using Alpaca baselines.
+> See `NORMALIZATION_REFACTOR_COMPLETE.md` and `BASELINE_STATISTICS_GUIDE.md` for current API.
+
 ## Overview
 
 The refactored model diffing system provides a clean, modular way to:
@@ -168,8 +173,9 @@ USE_WILDCHAT_NORMALIZATION = True  # Z-score normalize with WildChat baselines
 
 Baselines are loaded on-the-fly from:
 ```
-/workspace-vast/annas/git/research-tools/data/baselines/wildchat/google_gemma_3_27b_it/
+/workspace-vast/annas/git/research-tools/data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it/
 ```
+(Updated to use Alpaca baselines - more neutral than WildChat)
 
 All 62 layers are available with 6 aggregation types each.
 
