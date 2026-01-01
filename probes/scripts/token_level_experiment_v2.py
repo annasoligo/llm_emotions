@@ -463,9 +463,7 @@ new_exp = TokenLevelExperiment(
     cpca_path=Path("/workspace-vast/annas/git/research-tools/outputs/dimensionality_reduction/cpca/conversation_based/global/google/google/gemma-3-27b-it_cpca.npz"),
     orthogonality_weight=1000.0,
     orthogonal_representation="raw",
-    use_wildchat_normalization=False,
-    normalize_probe_scores=True,
-    baseline_dir=BASELINE_DIR
+    baseline_dir=BASELINE_DIR  # Scores automatically z-score normalized
 )
 
 new_results = new_exp.run_experiment(

@@ -121,7 +121,7 @@ print("="*80)
 print(f"  Question module: {QUESTION_MODULE}")
 print(f"  Layers: {len(LAYERS)} layers ({min(LAYERS)}-{max(LAYERS)})")
 print(f"  Activation strategy: {ACTIVATION_STRATEGY}")
-print(f"  Baseline normalization: {USE_BASELINE_NORMALIZATION}")
+print(f"  Probe normalization: Always z-score (σ units)")
 print(f"  Baseline dir: {BASELINE_DIR}")
 print(f"  Bootstrap samples: {N_BOOTSTRAP}")
 print(f"  Output directory: {OUTPUT_DIR}")
@@ -323,8 +323,7 @@ new_exp = DoubleDiffExperiment(
     cpca_path=Path("/workspace-vast/annas/git/research-tools/outputs/dimensionality_reduction/cpca/conversation_based/global/google/google/gemma-3-27b-it_cpca.npz"),
     orthogonality_weight=1000.0,
     orthogonal_representation="raw",
-    use_wildchat_normalization=True,
-    baseline_dir=BASELINE_DIR
+    baseline_dir=BASELINE_DIR  # Scores automatically z-score normalized
 )
 
 new_results = new_exp.run_experiment(
@@ -352,8 +351,7 @@ new_exp2 = DoubleDiffExperiment(
     probe_dir=Path("/workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/"),
     probe_pattern="probe_layer{layer}_nc0_seed1.pkl",  # Different seed
     cpca_path=None,
-    use_wildchat_normalization=True,
-    baseline_dir=BASELINE_DIR
+    baseline_dir=BASELINE_DIR  # Scores automatically z-score normalized
 )
 
 new_results2 = new_exp2.run_experiment(

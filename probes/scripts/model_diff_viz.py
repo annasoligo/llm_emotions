@@ -72,9 +72,7 @@ def plot_heatmap(
     details.append(probe_info)
 
     details.append(f"Act: {config['activation_strategy']}")
-
-    if config.get('use_wildchat_normalization'):
-        details.append("WildChat norm: ON")
+    details.append("Norm: Z-score (σ)")  # Always normalized
 
     title_with_config = f"{title}\n{' | '.join(details)}"
 
@@ -153,9 +151,7 @@ def plot_trajectories(
     details.append(probe_info)
 
     details.append(f"Act: {config['activation_strategy']}")
-
-    if config.get('use_wildchat_normalization'):
-        details.append("WildChat norm: ON")
+    details.append("Norm: Z-score (σ)")  # Always normalized
 
     suptitle = f"{title}: Case 4 Double-Diff with 95% Bootstrap CI\n{' | '.join(details)}"
 
