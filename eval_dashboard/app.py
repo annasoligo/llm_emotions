@@ -680,22 +680,24 @@ def main():
                 # Probe selection
                 available_probes = list(conversations[0].get('probe_scores', {}).keys()) if conversations else []
 
-                # Initialize session state for probe selection if not exists
-                session_key = f"probes_{subset_idx}"
-                if session_key not in st.session_state and available_probes:
-                    st.session_state[session_key] = [available_probes[0]]
+                # Use unique key per subset for multiselect widget
+                # Streamlit automatically manages session state for widgets with keys
+                session_key = f"probes_{subset_name.replace(' ', '_')}"  # Use subset name for clarity
 
-                # Ensure at least one probe is selected
-                if session_key in st.session_state and not st.session_state[session_key] and available_probes:
+                # Initialize default selection only on first load
+                if session_key not in st.session_state and available_probes:
                     st.session_state[session_key] = [available_probes[0]]
 
                 selected_probe_keys = st.multiselect(
                     "Select probes to compare",
                     options=available_probes,
-                    default=st.session_state.get(session_key, [available_probes[0]] if available_probes else []),
+                    default=[available_probes[0]] if available_probes else [],
                     format_func=lambda x: probe_names.get(x, x),
                     key=session_key
                 )
+
+                # Get actual selected values from session state (Streamlit automatically updates this)
+                selected_probe_keys = st.session_state.get(session_key, selected_probe_keys)
 
             with col2:
                 # Conversation selection
@@ -714,11 +716,15 @@ def main():
             st.markdown("---")
 
             # Debug info (temporary - ALWAYS VISIBLE)
-            st.info(f"🐛 DEBUG: Emotions={len(selected_emotions)}, Probes={len(selected_probe_keys)}, Convs={len(conversations)}")
+            st.info(f"🐛 DEBUG: Emotions={len(selected_emotions)}, Probes={len(selected_probe_keys)} {selected_probe_keys}, Convs={len(conversations)}")
 
             with st.expander("🐛 Detailed Debug Info", expanded=True):
+                st.write(f"**Subset:** {subset_name}")
+                st.write(f"**Session key:** {session_key}")
                 st.write(f"**Selected emotions:** {selected_emotions}")
                 st.write(f"**Selected probe keys:** {selected_probe_keys}")
+                st.write(f"**Session state value:** {st.session_state.get(session_key, 'NOT SET')}")
+                st.write(f"**Available probes:** {available_probes}")
                 st.write(f"**Number of conversations:** {len(conversations)}")
                 if conversations:
                     st.write(f"**First conv sample_id:** {conversations[0].get('sample_id')}")
