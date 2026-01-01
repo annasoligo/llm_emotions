@@ -190,9 +190,9 @@ result = aggregator.compute_double_diff(
 
 ### For Interactive Analysis:
 
-Use the new interactive notebooks:
-- **Model diffing**: `probes/scripts/model_diff_analysis_interactive.py`
-- **Token-level**: `probes/scripts/token_level_analysis_interactive.py` (migrated)
+Use the refactored interactive notebooks:
+- **Model diffing**: `probes/scripts/model_diff_analysis_v2.py` (replaces deprecated interactive version)
+- **Token-level**: `probes/scripts/token_level_experiment_v2.py` (replaces deprecated interactive version)
 
 ### For Batch Experiments:
 

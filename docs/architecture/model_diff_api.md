@@ -30,16 +30,13 @@ The refactored model diffing system provides a clean, modular way to:
 3. **`wildchat_baseline_loader.py`** - WildChat baseline normalization
    - `WildChatBaselineLoader`: Load and apply baseline normalization on-the-fly
 
-### Notebooks
+### Notebook
 
-1. **`model_diff_analysis_v2.py`** - New streamlined notebook (RECOMMENDED)
-   - Clean separation of concerns
-   - Load models once, run many experiments
-   - Easy to modify and re-run
-
-2. **`model_diff_analysis_interactive.py`** - Original notebook (LEGACY)
-   - Still works, but less modular
-   - Kept for backward compatibility
+**`model_diff_analysis_v2.py`** - Streamlined interactive notebook
+- Clean separation of concerns
+- Load models once, run many experiments
+- Easy to modify and re-run
+- Uses DoubleDiffExperiment class for modular experiments
 
 ## Quick Start
 
@@ -213,13 +210,13 @@ JSON format:
 4. **Save intermediate results**: Results dict contains activations and probe scores for further analysis
 5. **Use WildChat normalization**: Helps reduce noise from default activation patterns
 
-## Migration from Old Notebook
+## Migration Notes
 
-If using `model_diff_analysis_interactive.py`:
+The original `model_diff_analysis_interactive.py` has been deprecated in favor of the v2 version.
 
-1. Models are loaded the same way (Section 1 in both)
-2. Main difference: Experiments are now **functions** instead of inline code
-3. Benefits:
+**Key improvements in v2:**
+1. Experiments are now **functions** (DoubleDiffExperiment class) instead of inline code
+2. Benefits:
    - Cleaner code organization
    - Easy to run multiple experiments
    - Less repetitive code
