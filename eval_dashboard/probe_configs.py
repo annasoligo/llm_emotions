@@ -26,6 +26,21 @@ PROBE_CONFIGS = {
         'description': 'Orthogonal probes trained on raw activations, separating user/assistant perspectives'
     },
 
+    'orthogonal_cpca_top10': {
+        'name': 'Orthogonal (User/Asst) - cPCA Top 10',
+        'display_name': 'Orthogonal cPCA-10',
+        'type': 'orthogonal',
+        'probe_dir': PROBE_BASE / "conversation_based",
+        'cpca_path': CPCA_BASE / "conversation_based/global/google/google/gemma-3-27b-it_cpca.npz",
+        'orthogonality_weight': 1000.0,
+        'orthogonal_representation': 'global_cpca_top10',
+        'n_components': 10,
+        'split_user_asst': True,
+        'color_user': '#16a085',  # Dark teal for user
+        'color_asst': '#c0392b',  # Dark red for assistant
+        'description': 'Orthogonal probes on top 10 cPCA components'
+    },
+
     'orthogonal_cpca_top20': {
         'name': 'Orthogonal (User/Asst) - cPCA Top 20',
         'display_name': 'Orthogonal cPCA-20',
@@ -98,10 +113,11 @@ PROBE_CONFIGS = {
 }
 
 # Baseline normalization settings
-# Note: All probe scores are ALWAYS z-score normalized using WildChat baseline statistics.
+# Note: All probe scores are ALWAYS z-score normalized using Alpaca baseline statistics.
 # This ensures consistent, interpretable scores in standard deviation (σ) units.
 BASELINE_CONFIG = {
     'baseline_dir': RESEARCH_TOOLS / "data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it",
+    'aggregation_type': 'all_tokens',  # Use all tokens for baseline statistics
 }
 
 # Model settings
