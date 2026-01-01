@@ -163,23 +163,22 @@ def load_all_subsets():
     return datasets, subsets
 
 
-@st.cache_data(show_spinner=False)
 def compute_aggregated_statistics(
-    subset_name: str,
+    conversations: List[Dict],
     probe_key: str,
-    selected_emotions: tuple  # Tuple for hashability
+    selected_emotions: List[str]
 ) -> tuple:
     """
     Compute aggregated statistics across all conversations.
-    Cached for fast re-rendering.
+
+    Args:
+        conversations: List of conversation dicts (pre-filtered)
+        probe_key: Which probe to analyze
+        selected_emotions: Which emotions to include
 
     Returns:
         (aggregated_data, max_sentences, n_conversations)
     """
-    # Get conversations from cached datasets
-    datasets, _ = load_all_subsets()
-    conversations = datasets.get(subset_name, [])
-
     if not conversations:
         return {}, 0, 0
 
@@ -241,35 +240,31 @@ def compute_aggregated_statistics(
         ci_95 = 1.96 * std_traj / np.sqrt(n_valid)
 
         aggregated_data[emotion] = {
-            'mean': mean_traj.tolist(),  # Convert to list for serialization
-            'std': std_traj.tolist(),
-            'ci_lower': (mean_traj - ci_95).tolist(),
-            'ci_upper': (mean_traj + ci_95).tolist(),
-            'n': n_valid.tolist()
+            'mean': mean_traj,
+            'std': std_traj,
+            'ci_lower': mean_traj - ci_95,
+            'ci_upper': mean_traj + ci_95,
+            'n': n_valid
         }
 
     return aggregated_data, max_sentences, len(conversations)
 
 
-@st.cache_data(show_spinner=False)
 def create_trajectory_plot(
-    sentences: tuple,  # Changed to tuple for hashability
-    sentence_scores: dict,  # Streamlit can hash dicts
-    selected_emotions: tuple,  # Changed to tuple for hashability
+    sentences: List[Dict],
+    sentence_scores: Dict[int, np.ndarray],
+    selected_emotions: List[str],
     title: str = "Emotion Trajectory Over Conversation"
 ):
     """
     Create interactive Plotly trajectory plot.
-    CACHED for performance.
 
     Args:
-        sentences: Tuple of sentence info dicts
+        sentences: List of sentence info dicts
         sentence_scores: Dict mapping sentence_id -> emotion scores
-        selected_emotions: Tuple of emotions to plot
+        selected_emotions: Which emotions to plot
         title: Plot title
     """
-    # Convert back to list for processing
-    sentences = list(sentences)
     fig = go.Figure()
 
     # Add emotion traces
@@ -404,28 +399,24 @@ def create_trajectory_plot(
     return fig
 
 
-@st.cache_data(show_spinner=False)
 def create_orthogonal_trajectory_plot(
-    sentences: tuple,  # Changed to tuple for hashability
-    sentence_scores: dict,  # Streamlit can hash dicts
-    selected_emotions: tuple,  # Changed to tuple for hashability
+    sentences: List[Dict],
+    sentence_scores: Dict[int, Dict[str, np.ndarray]],
+    selected_emotions: List[str],
     title: str = "Emotion Trajectory (Orthogonal Probes)",
     onset_sentence_id: int = None
 ):
     """
     Create side-by-side subplot for user/assistant orthogonal probes.
-    CACHED for performance - critical for long conversations.
 
     Args:
-        sentences: Tuple of sentence info dicts
+        sentences: List of sentence info dicts
         sentence_scores: Dict mapping sentence_id -> {'user': scores, 'assistant': scores}
-        selected_emotions: Tuple of emotions to plot
+        selected_emotions: Which emotions to plot
         title: Plot title
     """
     from plotly.subplots import make_subplots
 
-    # Convert back to list for processing
-    sentences = list(sentences)
     n_sentences = len(sentences)
     # Use vertical stacking if > 60 sentences, otherwise side-by-side
     if n_sentences > 60:
@@ -796,17 +787,17 @@ def main():
 
                             if is_orthogonal:
                                 fig = create_orthogonal_trajectory_plot(
-                                    sentences=tuple(sentences),  # Convert to tuple for caching
+                                    sentences=sentences,
                                     sentence_scores=sentence_scores,
-                                    selected_emotions=tuple(selected_emotions),  # Convert to tuple for caching
+                                    selected_emotions=selected_emotions,
                                     title=f"Sample #{conv['sample_id']} - {probe_display_name}",
                                     onset_sentence_id=onset_sent_id
                                 )
                             else:
                                 fig = create_trajectory_plot(
-                                    sentences=tuple(sentences),  # Convert to tuple for caching
+                                    sentences=sentences,
                                     sentence_scores=sentence_scores,
-                                    selected_emotions=tuple(selected_emotions),  # Convert to tuple for caching
+                                    selected_emotions=selected_emotions,
                                     title=f"Sample #{conv['sample_id']} - {probe_display_name}"
                                 )
 
@@ -851,27 +842,21 @@ def main():
                     probe_display_name = probe_names.get(probe_key, probe_key)
                     st.subheader(f"🔬 {probe_display_name}")
 
-                    # Aggregate scores across all conversations (CACHED!)
+                    # Aggregate scores across all conversations
                     st.markdown("**📊 Mean Emotion Trajectories**")
 
-                    # Use cached aggregation function
+                    # Compute aggregation statistics
                     with st.spinner(f"Computing statistics for {probe_display_name}..."):
                         aggregated_data, max_sentences, n_convs = compute_aggregated_statistics(
-                            subset_name=subset_name,
+                            conversations=conversations,
                             probe_key=probe_key,
-                            selected_emotions=tuple(selected_emotions)  # Convert to tuple for hashing
+                            selected_emotions=selected_emotions
                         )
 
                     if not aggregated_data:
                         st.warning(f"No data available for {probe_display_name}")
                         continue
 
-                    # Convert lists back to arrays for plotting
-                    for emotion in aggregated_data:
-                        aggregated_data[emotion] = {
-                            k: np.array(v) for k, v in aggregated_data[emotion].items()
-                        }
-                
                     # Plot mean trajectories with confidence intervals
                     fig = go.Figure()
                 
