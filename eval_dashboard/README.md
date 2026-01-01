@@ -67,7 +67,7 @@ Edit `probe_configs.py` and add a new entry to `PROBE_CONFIGS`:
 'my_new_probe': {
     'name': 'My New Probe',
     'display_name': 'New Probe',
-    'type': 'orthogonal',  # or 'standard', 'linear', 'centroid'
+    'type': 'orthogonal',  # or 'linear', 'centroid'
     'probe_dir': Path('/path/to/probes'),
     # ... other config
 }

@@ -52,7 +52,7 @@ results1 = exp1.run_experiment(
 )
 
 # Second experiment - reuses cached activations
-exp2 = DoubleDiffExperiment(..., probe_type="standard", ...)
+exp2 = DoubleDiffExperiment(..., probe_type="linear", ...)
 results2 = exp2.run_experiment(
     dataset_prompts=prompts,
     baseline_prompts=baseline,
@@ -62,7 +62,7 @@ results2 = exp2.run_experiment(
 )
 
 # Third experiment - also reuses cached activations
-exp3 = DoubleDiffExperiment(..., probe_type="standard", probe_pattern="...seed1...")
+exp3 = DoubleDiffExperiment(..., probe_type="linear", probe_pattern="...seed1...")
 results3 = exp3.run_experiment(
     ...,
     cached_activations=results1['activations']  # Reuse again!
@@ -115,8 +115,8 @@ results_ortho_conv = exp1.run_experiment(
     ...
 )
 
-# Experiment 2: Standard Probes (reuses cached)
-exp2 = DoubleDiffExperiment(..., probe_type="standard", ...)
+# Experiment 2: Linear Probes (reuses cached)
+exp2 = DoubleDiffExperiment(..., probe_type="linear", ...)
 results_text_raw = exp2.run_experiment(
     dataset_prompts=dataset_prompts,
     baseline_prompts=baseline_prompts,

@@ -68,7 +68,7 @@ from probes.scripts.token_level_helpers import TokenLevelExperiment
 exp = TokenLevelExperiment(
     model=model,
     tokenizer=tokenizer,
-    probe_type="orthogonal",  # or "standard", "linear"
+    probe_type="orthogonal",  # or "linear", "centroid"
     probe_dir=Path("/workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/conversation_based/"),
     cpca_path=Path("/path/to/cpca.npz"),
     orthogonality_weight=1000.0,
@@ -136,7 +136,7 @@ exp = TokenLevelExperiment(
 
 ```python
 exp = TokenLevelExperiment(
-    probe_type="standard",
+    probe_type="linear",
     probe_dir=Path("outputs/probes/emotion_probes/text_based/multiseed/"),
     probe_pattern="probe_layer{layer}_nc0_seed0.pkl"
 )
@@ -239,8 +239,8 @@ model = StandardizedTransformer(...)
 exp1 = TokenLevelExperiment(model=model, probe_type="orthogonal", ...)
 results1 = exp1.run_experiment(prompt="Prompt 1", layers=range(30, 60))
 
-# Experiment 2: Standard probes (same model!)
-exp2 = TokenLevelExperiment(model=model, probe_type="standard", ...)
+# Experiment 2: Linear probes (same model!)
+exp2 = TokenLevelExperiment(model=model, probe_type="linear", ...)
 results2 = exp2.run_experiment(prompt="Prompt 1", layers=range(30, 60))
 
 # Experiment 3: Different prompt (same model!)
