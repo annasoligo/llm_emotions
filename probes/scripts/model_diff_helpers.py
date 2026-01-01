@@ -37,17 +37,17 @@ class DoubleDiffExperiment:
         orthogonal_representation: str = "raw",
         n_components: int = 10,
         seed: int = 0,
-        use_wildchat_normalization: bool = False,
         baseline_dir: Path = None,
         emotions: List[str] = None,
         k_value: Optional[int] = None,
         centroid_constraint_type: Optional[str] = None,
-        centroid_probe_format: str = "auto",
-        normalize_probe_scores: bool = False,
-        center_probe_scores: bool = False
+        centroid_probe_format: str = "auto"
     ):
         """
         Initialize experiment configuration.
+
+        Note: Probe scores are ALWAYS z-score normalized using WildChat baseline statistics.
+        This ensures consistent, interpretable scores in standard deviation (σ) units.
 
         Args:
             base_model: Base model (StandardizedTransformer)
@@ -62,14 +62,11 @@ class DoubleDiffExperiment:
             orthogonal_representation: "raw", "global_cpca_top10", etc.
             n_components: Number of cPCA components (for linear probes)
             seed: Random seed (for linear probes)
-            use_wildchat_normalization: Whether to normalize activations with WildChat baselines
-            baseline_dir: Directory containing baseline statistics
+            baseline_dir: Directory containing WildChat baseline statistics for normalization
             emotions: List of emotion names
             k_value: Number of K-sets to average for centroid probes (required if probe_type='centroid')
             centroid_constraint_type: Optional constraint type for centroid probes (e.g., "gramschmidt")
             centroid_probe_format: Probe format - "auto" (detect), "text", or "conversation"
-            normalize_probe_scores: Whether to z-score normalize probe outputs (subtract mean, divide by std)
-            center_probe_scores: Whether to center probe outputs (subtract mean only). Ignored if normalize_probe_scores=True
         """
         self.base_model = base_model
         self.ft_model = ft_model
@@ -82,14 +79,11 @@ class DoubleDiffExperiment:
         self.orthogonal_representation = orthogonal_representation
         self.n_components = n_components
         self.seed = seed
-        self.use_wildchat_normalization = use_wildchat_normalization
         self.baseline_dir = baseline_dir
         self.emotions = emotions or ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
         self.k_value = k_value
         self.centroid_constraint_type = centroid_constraint_type
         self.centroid_probe_format = centroid_probe_format
-        self.normalize_probe_scores = normalize_probe_scores
-        self.center_probe_scores = center_probe_scores
 
         # Initialize pipeline components
         self.extractor = ProbeActivationExtractor()
@@ -146,57 +140,36 @@ class DoubleDiffExperiment:
         # Step 1: Extract activations (or use cached)
         if cached_activations is not None:
             if verbose:
-                print("\n[1/4] Using cached activations (skipping extraction)")
+                print("\n[1/3] Using cached activations (skipping extraction)")
             activations = cached_activations
         else:
             if verbose:
-                print("\n[1/4] Extracting activations...")
+                print("\n[1/3] Extracting activations...")
 
             activations = self._extract_activations(
                 dataset_prompts, baseline_prompts, layers,
                 activation_strategy, num_generated_tokens, verbose
             )
 
-        # Step 2: Normalize (if enabled and not using cached)
-        if cached_activations is not None:
-            if verbose:
-                print("\n[2/4] Skipping normalization (using cached activations)")
-        elif self.use_wildchat_normalization:
-            if verbose:
-                print("\n[2/4] Normalizing with WildChat baselines...")
-            activations = self._normalize_activations(
-                activations, activation_strategy, verbose
-            )
-        else:
-            if verbose:
-                print("\n[2/4] Skipping normalization")
-
-        # Step 3: Apply probes
+        # Step 2: Apply probes
         if verbose:
-            print("\n[3/5] Applying probes...")
+            print("\n[2/3] Applying probes...")
 
         probe_scores = self._apply_probes(
             activations, layers, verbose
         )
 
-        # Step 4: Normalize probe scores (if enabled)
-        if self.normalize_probe_scores or self.center_probe_scores:
-            if verbose:
-                if self.normalize_probe_scores:
-                    print("\n[4/5] Computing and applying probe score z-score normalization...")
-                else:
-                    print("\n[4/5] Computing and applying baseline centering...")
-
-            probe_scores = self._normalize_probe_scores(
-                probe_scores, layers, activation_strategy, verbose
-            )
-        else:
-            if verbose:
-                print("\n[4/5] Skipping probe score normalization")
-
-        # Step 5: Compute double-diff
+        # Step 3: Z-score normalize probe scores (ALWAYS applied)
         if verbose:
-            print("\n[5/5] Computing double-diff statistics...")
+            print("\n[3/3] Computing and applying probe score z-score normalization...")
+
+        probe_scores = self._normalize_probe_scores(
+            probe_scores, layers, activation_strategy, verbose
+        )
+
+        # Step 4: Compute double-diff
+        if verbose:
+            print("\n[4/4] Computing double-diff statistics...")
 
         double_diff_results = self._compute_double_diff(
             probe_scores, layers, n_bootstrap, ci_percentile, verbose
@@ -216,9 +189,7 @@ class DoubleDiffExperiment:
                 'num_generated_tokens': num_generated_tokens,
                 'n_bootstrap': n_bootstrap,
                 'ci_percentile': ci_percentile,
-                'use_wildchat_normalization': self.use_wildchat_normalization,
-                'normalize_probe_scores': self.normalize_probe_scores,
-                'center_probe_scores': self.center_probe_scores,
+                'probe_normalization': 'zscore',  # Always z-score normalized
                 'orthogonality_weight': self.orthogonality_weight,
                 'orthogonal_representation': self.orthogonal_representation,
                 'n_components': self.n_components,
@@ -262,36 +233,6 @@ class DoubleDiffExperiment:
                 print(f"✓ {activations[name][layers[0]].shape}")
 
         return activations
-
-    def _normalize_activations(
-        self,
-        activations: Dict[str, Dict[int, np.ndarray]],
-        activation_strategy: str,
-        verbose: bool
-    ) -> Dict[str, Dict[int, np.ndarray]]:
-        """Normalize activations with WildChat baselines."""
-        aggregation_map = {
-            'assistant_token': 'first_assistant_token',
-            'last_user_token': 'last_user_token',
-            'between_turns_avg': 'between_turns',
-            'generated_tokens_avg': 'assistant_turn'
-        }
-
-        wildchat_aggregation = aggregation_map.get(activation_strategy, 'assistant_turn')
-
-        baseline_loader = WildChatBaselineLoader(
-            aggregation_type=wildchat_aggregation,
-            baseline_dir=self.baseline_dir
-        )
-
-        if verbose:
-            print(f"  Using WildChat aggregation: {wildchat_aggregation}")
-
-        normalized = {}
-        for name, acts in activations.items():
-            normalized[name] = baseline_loader.normalize_batch_multilayer(acts)
-
-        return normalized
 
     def _apply_probes(
         self,
@@ -475,10 +416,10 @@ class DoubleDiffExperiment:
         verbose: bool
     ) -> Dict[str, Dict[int, np.ndarray]]:
         """
-        Normalize probe scores using WildChat baseline statistics.
+        Z-score normalize probe scores using WildChat baseline statistics.
 
-        This method computes baseline statistics and applies z-score normalization
-        or centering to all probe scores.
+        This method computes baseline statistics (mean and std) and applies z-score
+        normalization to all probe scores: (score - mean) / std
 
         Args:
             probe_scores: Dict with probe scores for all conditions
@@ -487,7 +428,7 @@ class DoubleDiffExperiment:
             verbose: Print progress
 
         Returns:
-            Normalized probe scores in same format as input
+            Z-score normalized probe scores in same format as input
         """
         # Map activation strategy to baseline aggregation type
         aggregation_map = {
@@ -506,49 +447,28 @@ class DoubleDiffExperiment:
         if verbose:
             print(f"  Computing baseline statistics (aggregation: {wildchat_aggregation})...")
 
-        # Compute baseline statistics
-        if self.normalize_probe_scores:
-            # Need both mean and std for z-score
-            baseline_stats = baseline_loader.compute_probe_score_baselines(
-                probe_inference=self.inference,
-                layers=layers,
-                probe_type=self.probe_type,
-                aggregation="mean",
-                return_std=True,
-                orthogonality_weight=self.orthogonality_weight,
-                orthogonal_representation=self.orthogonal_representation,
-                n_components=self.n_components,
-                seed=self.seed,
-                emotions=self.emotions,
-                probe_pattern=self.probe_pattern,
-                k_value=self.k_value,
-                centroid_constraint_type=self.centroid_constraint_type,
-                centroid_probe_format=self.centroid_probe_format
-            )
-            baseline_mean = baseline_stats['mean'][-1]  # Layer-averaged
-            baseline_std = baseline_stats['std'][-1]
-        else:
-            # Only need mean for centering
-            baseline_scores = baseline_loader.compute_probe_score_baselines(
-                probe_inference=self.inference,
-                layers=layers,
-                probe_type=self.probe_type,
-                aggregation="mean",
-                return_std=False,
-                orthogonality_weight=self.orthogonality_weight,
-                orthogonal_representation=self.orthogonal_representation,
-                n_components=self.n_components,
-                seed=self.seed,
-                emotions=self.emotions,
-                probe_pattern=self.probe_pattern,
-                k_value=self.k_value,
-                centroid_constraint_type=self.centroid_constraint_type,
-                centroid_probe_format=self.centroid_probe_format
-            )
-            baseline_mean = baseline_scores[-1]  # Layer-averaged
+        # Compute baseline statistics (mean and std for z-score)
+        baseline_stats = baseline_loader.compute_probe_score_baselines(
+            probe_inference=self.inference,
+            layers=layers,
+            probe_type=self.probe_type,
+            aggregation="mean",
+            return_std=True,
+            orthogonality_weight=self.orthogonality_weight,
+            orthogonal_representation=self.orthogonal_representation,
+            n_components=self.n_components,
+            seed=self.seed,
+            emotions=self.emotions,
+            probe_pattern=self.probe_pattern,
+            k_value=self.k_value,
+            centroid_constraint_type=self.centroid_constraint_type,
+            centroid_probe_format=self.centroid_probe_format
+        )
+        baseline_mean = baseline_stats['mean'][-1]  # Layer-averaged
+        baseline_std = baseline_stats['std'][-1]
 
         if verbose:
-            print(f"  Applying normalization to probe scores...")
+            print(f"  Applying z-score normalization to probe scores...")
 
         # Normalize all conditions
         conditions = ['ft_dataset', 'base_dataset', 'ft_baseline', 'base_baseline']
@@ -565,31 +485,18 @@ class DoubleDiffExperiment:
                     # Nested dict format - normalize each sample
                     normalized = np.empty(len(scores), dtype=object)
                     for i in range(len(scores)):
-                        if self.normalize_probe_scores:
-                            normalized[i] = normalize_probe_scores_zscore(
-                                scores[i], baseline_mean, baseline_std
-                            )
-                        else:
-                            normalized[i] = normalize_probe_scores_center(
-                                scores[i], baseline_mean
-                            )
+                        normalized[i] = normalize_probe_scores_zscore(
+                            scores[i], baseline_mean, baseline_std
+                        )
                     probe_scores[condition][layer] = normalized
                 else:
                     # Regular array format
-                    if self.normalize_probe_scores:
-                        probe_scores[condition][layer] = normalize_probe_scores_zscore(
-                            scores, baseline_mean, baseline_std
-                        )
-                    else:
-                        probe_scores[condition][layer] = normalize_probe_scores_center(
-                            scores, baseline_mean
-                        )
+                    probe_scores[condition][layer] = normalize_probe_scores_zscore(
+                        scores, baseline_mean, baseline_std
+                    )
 
         if verbose:
-            if self.normalize_probe_scores:
-                print(f"  ✓ Z-score normalized scores (mean: {baseline_mean[:3]}..., std: {baseline_std[:3]}...)")
-            else:
-                print(f"  ✓ Centered scores using baseline: {baseline_mean[:3]}...")
+            print(f"  ✓ Z-score normalized scores (mean: {baseline_mean[:3]}..., std: {baseline_std[:3]}...)")
 
         return probe_scores
 

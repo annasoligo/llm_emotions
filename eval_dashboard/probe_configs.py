@@ -98,11 +98,10 @@ PROBE_CONFIGS = {
 }
 
 # Baseline normalization settings
+# Note: All probe scores are ALWAYS z-score normalized using WildChat baseline statistics.
+# This ensures consistent, interpretable scores in standard deviation (σ) units.
 BASELINE_CONFIG = {
     'baseline_dir': RESEARCH_TOOLS / "data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it",
-    'aggregation_type': 'all_tokens',
-    'normalize_probe_scores': True,  # Use probe z-score normalization
-    'use_activation_normalization': False,  # Don't use activation z-score
 }
 
 # Model settings

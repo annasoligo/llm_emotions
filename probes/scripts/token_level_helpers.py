@@ -35,11 +35,7 @@ class TokenLevelExperiment:
         orthogonal_representation: str = "raw",
         n_components: int = 10,
         seed: int = 0,
-        use_wildchat_normalization: bool = False,
-        wildchat_aggregation: str = "assistant_turn",
         baseline_dir: Path = None,
-        center_probe_scores: bool = False,
-        normalize_probe_scores: bool = False,
         emotions: List[str] = None,
         k_value: Optional[int] = None,
         centroid_constraint_type: Optional[str] = None,
@@ -47,6 +43,9 @@ class TokenLevelExperiment:
     ):
         """
         Initialize experiment configuration.
+
+        Note: Probe scores are ALWAYS z-score normalized using WildChat baseline statistics.
+        This ensures consistent, interpretable scores in standard deviation (σ) units.
 
         Args:
             model: Model (StandardizedTransformer)
@@ -59,10 +58,7 @@ class TokenLevelExperiment:
             orthogonal_representation: "raw", "global_cpca_top10", etc.
             n_components: Number of cPCA components (for linear probes)
             seed: Random seed (for linear probes)
-            use_wildchat_normalization: Whether to z-score normalize activations before applying probes
-            wildchat_aggregation: WildChat aggregation type (e.g., "assistant_turn")
-            center_probe_scores: Whether to center probe scores using baseline mean (subtract mean only)
-            normalize_probe_scores: Whether to z-score normalize probe scores (subtract mean, divide by std). Takes precedence over center_probe_scores.
+            baseline_dir: Directory containing WildChat baseline statistics for normalization
             emotions: List of emotion names
             k_value: Number of K-sets to average for centroid probes (required if probe_type='centroid')
             centroid_constraint_type: Optional constraint type for centroid probes (e.g., "gramschmidt")
@@ -78,11 +74,7 @@ class TokenLevelExperiment:
         self.orthogonal_representation = orthogonal_representation
         self.n_components = n_components
         self.seed = seed
-        self.use_wildchat_normalization = use_wildchat_normalization
-        self.wildchat_aggregation = wildchat_aggregation
         self.baseline_dir = baseline_dir
-        self.center_probe_scores = center_probe_scores
-        self.normalize_probe_scores = normalize_probe_scores
         self.emotions = emotions or ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
         self.k_value = k_value
         self.centroid_constraint_type = centroid_constraint_type
@@ -138,7 +130,6 @@ class TokenLevelExperiment:
             print("="*80)
             print(f"Probe type: {self.probe_type}")
             print(f"Layers: {len(layers)} layers ({min(layers)}-{max(layers)})\"")
-            print(f"WildChat normalization: {self.use_wildchat_normalization}")
 
         # Step 1: Extract token-level activations (or use cached)
         if cached_activations is not None:
@@ -173,116 +164,56 @@ class TokenLevelExperiment:
         import copy
         raw_activations_by_token = copy.deepcopy(activations_by_token)
 
-        # Step 2: Normalize (if enabled)
-        if self.use_wildchat_normalization:
-            if verbose:
-                print("\n[2/3] Normalizing with WildChat baselines...")
-
-            baseline_loader = WildChatBaselineLoader(
-                aggregation_type=self.wildchat_aggregation,
-                baseline_dir=self.baseline_dir
-            )
-
-            activations_by_token = baseline_loader.normalize_token_level(
-                activations_by_token=activations_by_token,
-                layers=layers,
-                aggregation="mean"  # Use layer-averaged baseline
-            )
-
-            if verbose:
-                print("  ✓ Normalization complete")
-        else:
-            if verbose:
-                print("\n[2/3] Skipping normalization")
-
-        # Step 3: Apply probes/scoring
+        # Step 2: Apply probes/scoring
         if verbose:
-            print(f"\n[3/3] Applying {self.probe_type} probes...")
+            print(f"\n[2/3] Applying {self.probe_type} probes...")
 
         scores_by_token = self._apply_probes(
             activations_by_token, layers, verbose
         )
 
-        # Step 4: Normalize or center probe scores (if enabled)
-        baseline_scores = None
-        baseline_stds = None
-        if self.normalize_probe_scores or self.center_probe_scores:
-            if verbose:
-                if self.normalize_probe_scores:
-                    print("\n[4/4] Computing and applying probe score z-score normalization...")
-                else:
-                    print("\n[4/4] Computing and applying baseline centering...")
+        # Step 3: Z-score normalize probe scores (ALWAYS applied)
+        if verbose:
+            print("\n[3/3] Computing and applying probe score z-score normalization...")
 
-            baseline_loader = WildChatBaselineLoader(
-                aggregation_type=self.wildchat_aggregation,
-                baseline_dir=self.baseline_dir
-            )
+        baseline_loader = WildChatBaselineLoader(
+            aggregation_type="all_tokens",  # Use general aggregation
+            baseline_dir=self.baseline_dir
+        )
 
-            if self.normalize_probe_scores:
-                # Compute both mean and std for z-score normalization
-                baseline_stats = baseline_loader.compute_probe_score_baselines(
-                    probe_inference=self.inference,
-                    layers=layers,
-                    probe_type=self.probe_type,
-                    aggregation="mean",  # Use layer-averaged baseline
-                    return_std=True,  # Request std computation
-                    orthogonality_weight=self.orthogonality_weight,
-                    orthogonal_representation=self.orthogonal_representation,
-                    n_components=self.n_components,
-                    seed=self.seed,
-                    emotions=self.emotions,
-                    probe_pattern=self.probe_pattern,
-                    k_value=self.k_value,
-                    centroid_constraint_type=self.centroid_constraint_type,
-                    centroid_probe_format=self.centroid_probe_format
-                )
-                baseline_scores = baseline_stats['mean']
-                baseline_stds = baseline_stats['std']
+        # Compute both mean and std for z-score normalization
+        baseline_stats = baseline_loader.compute_probe_score_baselines(
+            probe_inference=self.inference,
+            layers=layers,
+            probe_type=self.probe_type,
+            aggregation="mean",  # Use layer-averaged baseline
+            return_std=True,  # Request std computation
+            orthogonality_weight=self.orthogonality_weight,
+            orthogonal_representation=self.orthogonal_representation,
+            n_components=self.n_components,
+            seed=self.seed,
+            emotions=self.emotions,
+            probe_pattern=self.probe_pattern,
+            k_value=self.k_value,
+            centroid_constraint_type=self.centroid_constraint_type,
+            centroid_probe_format=self.centroid_probe_format
+        )
+        baseline_scores = baseline_stats['mean']
+        baseline_stds = baseline_stats['std']
 
-                baseline_mean_vec = baseline_scores[-1]  # -1 indicates layer-averaged
-                baseline_std_vec = baseline_stds[-1]
+        baseline_mean_vec = baseline_scores[-1]  # -1 indicates layer-averaged
+        baseline_std_vec = baseline_stds[-1]
 
-                # Z-score normalization using shared function
-                for token_pos in scores_by_token:
-                    for layer in layers:
-                        score = scores_by_token[token_pos][layer]
-                        scores_by_token[token_pos][layer] = normalize_probe_scores_zscore(
-                            score, baseline_mean_vec, baseline_std_vec
-                        )
-
-                if verbose:
-                    print(f"  ✓ Z-score normalized scores (mean: {baseline_mean_vec[:3]}..., std: {baseline_std_vec[:3]}...)")
-
-            else:
-                # Just center (subtract mean, don't divide by std)
-                baseline_scores = baseline_loader.compute_probe_score_baselines(
-                    probe_inference=self.inference,
-                    layers=layers,
-                    probe_type=self.probe_type,
-                    aggregation="mean",  # Use layer-averaged baseline
-                    orthogonality_weight=self.orthogonality_weight,
-                    orthogonal_representation=self.orthogonal_representation,
-                    n_components=self.n_components,
-                    seed=self.seed,
-                    emotions=self.emotions,
-                    probe_pattern=self.probe_pattern,
-                    k_value=self.k_value,
-                    centroid_constraint_type=self.centroid_constraint_type,
-                    centroid_probe_format=self.centroid_probe_format
+        # Z-score normalization using shared function
+        for token_pos in scores_by_token:
+            for layer in layers:
+                score = scores_by_token[token_pos][layer]
+                scores_by_token[token_pos][layer] = normalize_probe_scores_zscore(
+                    score, baseline_mean_vec, baseline_std_vec
                 )
 
-                # Subtract baseline (layer-averaged) using shared function
-                baseline_vec = baseline_scores[-1]  # -1 indicates layer-averaged
-
-                for token_pos in scores_by_token:
-                    for layer in layers:
-                        score = scores_by_token[token_pos][layer]
-                        scores_by_token[token_pos][layer] = normalize_probe_scores_center(
-                            score, baseline_vec
-                        )
-
-                if verbose:
-                    print(f"  ✓ Centered scores using baseline: {baseline_vec}")
+        if verbose:
+            print(f"  ✓ Z-score normalized scores (mean: {baseline_mean_vec[:3]}..., std: {baseline_std_vec[:3]}...)")
 
         if verbose:
             print("\n✓ Experiment complete!")
@@ -295,9 +226,7 @@ class TokenLevelExperiment:
             'config': {
                 'probe_type': self.probe_type,
                 'layers': layers,
-                'use_wildchat_normalization': self.use_wildchat_normalization,
-                'wildchat_aggregation': self.wildchat_aggregation,
-                'center_probe_scores': self.center_probe_scores,
+                'probe_normalization': 'zscore',  # Always z-score normalized
                 'orthogonality_weight': self.orthogonality_weight,
                 'orthogonal_representation': self.orthogonal_representation,
                 'n_components': self.n_components,

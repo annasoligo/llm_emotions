@@ -104,9 +104,7 @@ LAYERS = list(range(20, 50))  # Adjust range as needed
 ACTIVATION_STRATEGY = "generated_tokens_avg"
 NUM_GENERATED_TOKENS = 10
 
-# Baseline normalization
-USE_BASELINE_NORMALIZATION = False  # Use probe normalization instead
-NORMALIZE_PROBE_SCORES = True  # NEW: Z-score normalize probe outputs directly
+# Baseline directory for probe score normalization (always z-score normalized)
 BASELINE_DIR = Path("/workspace-vast/annas/git/research-tools/data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it")
 
 # Bootstrap configuration
@@ -170,9 +168,7 @@ exp1 = DoubleDiffExperiment(
     cpca_path=Path("/workspace-vast/annas/git/research-tools/outputs/dimensionality_reduction/cpca/conversation_based/global/google/google/gemma-3-27b-it_cpca.npz"),
     orthogonality_weight=1000.0,
     orthogonal_representation="raw",
-    use_wildchat_normalization=USE_BASELINE_NORMALIZATION,
-    normalize_probe_scores=NORMALIZE_PROBE_SCORES,
-    baseline_dir=BASELINE_DIR
+    baseline_dir=BASELINE_DIR  # Probe scores automatically z-score normalized
 )
 
 results_ortho_conv = exp1.run_experiment(
@@ -201,9 +197,7 @@ exp2 = DoubleDiffExperiment(
     probe_dir=Path("/workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/"),
     probe_pattern="probe_layer{layer}_nc0_seed0.pkl",  # Raw activations, seed 0
     cpca_path=None,  # No cPCA needed for raw probes
-    use_wildchat_normalization=USE_BASELINE_NORMALIZATION,
-    normalize_probe_scores=NORMALIZE_PROBE_SCORES,
-    baseline_dir=BASELINE_DIR
+    baseline_dir=BASELINE_DIR  # Probe scores automatically z-score normalized
 )
 
 results_text_raw = exp2.run_experiment(

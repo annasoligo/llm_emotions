@@ -108,14 +108,8 @@ TEMPERATURE = 1.0
 TOP_P = 0.9
 TOP_K = 50
 
-# Baseline normalization
-USE_BASELINE_NORMALIZATION = False  # Use probe normalization instead
-NORMALIZE_PROBE_SCORES = True  # NEW: Z-score normalize probe outputs directly
-BASELINE_AGGREGATION = "all_tokens"
+# Baseline directory for probe score normalization (always z-score normalized)
 BASELINE_DIR = Path("/workspace-vast/annas/git/research-tools/data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it")
-
-# Set to True to get negative values for "below baseline" emotions
-CENTER_PROBE_SCORES = False  # Superseded by NORMALIZE_PROBE_SCORES
 
 # Output directory
 OUTPUT_DIR = Path("results/token_level_v2/")
@@ -146,12 +140,8 @@ exp1 = TokenLevelExperiment(
     orthogonality_weight=1000.0,
     orthogonal_representation="raw",
     #orthogonal_representation="global_cpca_top20",
-    use_wildchat_normalization=USE_BASELINE_NORMALIZATION,
-    normalize_probe_scores=NORMALIZE_PROBE_SCORES,
-    wildchat_aggregation=BASELINE_AGGREGATION,
-    baseline_dir=BASELINE_DIR,
+    baseline_dir=BASELINE_DIR  # Probe scores automatically z-score normalized
     #n_components=20,
-    center_probe_scores=CENTER_PROBE_SCORES
 )
 
 results_ortho = exp1.run_experiment(
@@ -178,11 +168,7 @@ exp2 = TokenLevelExperiment(
     probe_dir=Path("/workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/"),
     probe_pattern="probe_layer{layer}_nc0_seed0.pkl",  # Raw activations, seed 0
     cpca_path=Path("/workspace-vast/annas/git/research-tools/probes/results/cpca_tier_data_high_alpha.tmp/google/gemma-3-27b-it_cpca.npz"),
-    use_wildchat_normalization=USE_BASELINE_NORMALIZATION,
-    normalize_probe_scores=NORMALIZE_PROBE_SCORES,
-    wildchat_aggregation=BASELINE_AGGREGATION,
-    baseline_dir=BASELINE_DIR,
-    center_probe_scores=CENTER_PROBE_SCORES,
+    baseline_dir=BASELINE_DIR,  # Probe scores automatically z-score normalized
     n_components=10,
 )
 
@@ -211,11 +197,7 @@ exp3 = TokenLevelExperiment(
     k_value=10,
     orthogonality_weight=100000.0,
     centroid_probe_format="conversation",  # or "auto" to detect automatically
-    use_wildchat_normalization=False,
-    normalize_probe_scores=NORMALIZE_PROBE_SCORES,
-    wildchat_aggregation=BASELINE_AGGREGATION,
-    baseline_dir=BASELINE_DIR,
-    center_probe_scores=False
+    baseline_dir=BASELINE_DIR  # Probe scores automatically z-score normalized
 )
 
 results_centroid = exp3.run_experiment(

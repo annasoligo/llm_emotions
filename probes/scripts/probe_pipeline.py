@@ -799,7 +799,10 @@ def normalize_probe_scores_center(
     baseline_mean: np.ndarray
 ) -> np.ndarray:
     """
-    Apply centering (mean subtraction only) to probe scores using baseline statistics.
+    DEPRECATED: Apply centering (mean subtraction only) to probe scores using baseline statistics.
+
+    This function is deprecated and kept only for backward compatibility.
+    All probe applications now use z-score normalization (normalize_probe_scores_zscore) instead.
 
     Args:
         scores: Probe scores to center [n_emotions] or dict with 'user'/'assistant' keys
@@ -808,6 +811,14 @@ def normalize_probe_scores_center(
     Returns:
         Centered scores in same format as input
     """
+    import warnings
+    warnings.warn(
+        "normalize_probe_scores_center is deprecated. "
+        "All probe applications now use z-score normalization (normalize_probe_scores_zscore).",
+        DeprecationWarning,
+        stacklevel=2
+    )
+
     if isinstance(scores, dict) and 'user' in scores:
         # Orthogonal/centroid conversation probes - center both user and assistant
         return {

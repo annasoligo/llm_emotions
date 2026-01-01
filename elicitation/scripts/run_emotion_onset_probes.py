@@ -68,12 +68,8 @@ class ProbeConfig:
     probe_dir_centroid: Path = Path("/workspace-vast/annas/git/research-tools/probes/emotion_probes/conversation/")
     k_value_centroid: int = 10
 
-    # Baseline normalization
-    use_baseline_normalization: bool = False  # Set to False - use probe normalization instead
-    normalize_probe_scores: bool = True  # NEW: Z-score normalize probe outputs directly
-    baseline_aggregation: str = "all_tokens"
+    # Baseline directory for probe score normalization (always z-score normalized)
     baseline_dir: Path = Path("/workspace-vast/annas/git/research-tools/data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it")
-    center_probe_scores: bool = False
 
     # Probe-specific settings
     orthogonality_weight: float = 1000.0
@@ -491,11 +487,7 @@ def run_probe_analysis(
         model=None,  # Not needed - using cached activations
         tokenizer=tokenizer,
         **exp_config,
-        use_wildchat_normalization=config.use_baseline_normalization,
-        normalize_probe_scores=config.normalize_probe_scores,
-        wildchat_aggregation=config.baseline_aggregation,
-        baseline_dir=config.baseline_dir,
-        center_probe_scores=config.center_probe_scores,
+        baseline_dir=config.baseline_dir,  # Probe scores automatically z-score normalized
         emotions=config.emotions
     )
 
@@ -529,50 +521,8 @@ def run_probe_analysis(
                 verbose=False
             )
 
-            # Apply normalization if enabled (after probe application)
-            if config.normalize_probe_scores and sample_idx == 0 and window_name == window_names[0]:
-                # Compute baseline statistics once
-                print("\n[Computing probe score baseline statistics...]")
-                from probes.scripts.wildchat_baseline_loader import WildChatBaselineLoader
-
-                baseline_loader = WildChatBaselineLoader(
-                    aggregation_type=config.baseline_aggregation,
-                    baseline_dir=config.baseline_dir
-                )
-
-                baseline_stats = baseline_loader.compute_probe_score_baselines(
-                    probe_inference=exp.inference,
-                    layers=config.layers,
-                    probe_type=config.probe_type,
-                    aggregation="mean",
-                    return_std=True,
-                    orthogonality_weight=config.orthogonality_weight,
-                    orthogonal_representation=config.orthogonal_representation,
-                    n_components=config.n_components,
-                    seed=config.seed,
-                    emotions=config.emotions
-                )
-
-                # Store for reuse
-                global probe_mean, probe_std
-                probe_mean = baseline_stats['mean'][-1]  # Layer-averaged
-                probe_std = baseline_stats['std'][-1]
-                print(f"✓ Baseline computed: mean={probe_mean[:3]}, std={probe_std[:3]}")
-
-            if config.normalize_probe_scores:
-                # Z-score normalize probe scores
-                for token_pos in scores_by_token:
-                    for layer in config.layers:
-                        score = scores_by_token[token_pos][layer]
-                        # Handle dict format (orthogonal probes)
-                        if isinstance(score, dict) and 'user' in score:
-                            scores_by_token[token_pos][layer] = {
-                                'user': (score['user'] - probe_mean) / (probe_std + 1e-8),
-                                'assistant': (score['assistant'] - probe_mean) / (probe_std + 1e-8)
-                            }
-                        else:
-                            # Simple array format
-                            scores_by_token[token_pos][layer] = (score - probe_mean) / (probe_std + 1e-8)
+            # Note: Probe scores are already z-score normalized by TokenLevelExperiment
+            # No additional normalization needed here
 
             # Aggregate within window
             layer_scores = aggregate_window_scores(

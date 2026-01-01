@@ -233,10 +233,7 @@ def preprocess_all_conversations(
             seed=probe_config.get('seed', 0),
             k_value=probe_config.get('k_value'),
             centroid_probe_format=probe_config.get('centroid_probe_format', 'auto'),
-            use_wildchat_normalization=False,
-            normalize_probe_scores=False,
-            wildchat_aggregation=BASELINE_CONFIG['aggregation_type'],
-            baseline_dir=BASELINE_CONFIG['baseline_dir'],
+            baseline_dir=BASELINE_CONFIG['baseline_dir'],  # Scores automatically normalized
             emotions=EMOTIONS
         )
 
@@ -280,10 +277,7 @@ def preprocess_all_conversations(
             orthogonal_representation=probe_config.get('orthogonal_representation', 'raw'),
             n_components=probe_config.get('n_components', 10),
             seed=probe_config.get('seed', 0),
-            use_wildchat_normalization=BASELINE_CONFIG['use_activation_normalization'],
-            normalize_probe_scores=False,  # We'll normalize manually
-            wildchat_aggregation=BASELINE_CONFIG['aggregation_type'],
-            baseline_dir=BASELINE_CONFIG['baseline_dir'],
+            baseline_dir=BASELINE_CONFIG['baseline_dir'],  # Scores automatically normalized
             emotions=EMOTIONS,
             k_value=probe_config.get('k_value'),
             centroid_probe_format=probe_config.get('centroid_probe_format', 'auto')
@@ -335,16 +329,16 @@ def preprocess_all_conversations(
                 layers=MODEL_CONFIG['layers']
             )
 
-            # Apply normalization if enabled using shared function
-            if BASELINE_CONFIG['normalize_probe_scores']:
-                probe_mean = probe_baselines[probe_key]['mean']
-                probe_std = probe_baselines[probe_key]['std']
+            # Apply z-score normalization (always applied for consistency)
+            # Note: We call _apply_probes directly for efficiency, so we normalize manually here
+            probe_mean = probe_baselines[probe_key]['mean']
+            probe_std = probe_baselines[probe_key]['std']
 
-                for token_pos in token_scores:
-                    score = token_scores[token_pos]
-                    token_scores[token_pos] = normalize_probe_scores_zscore(
-                        score, probe_mean, probe_std
-                    )
+            for token_pos in token_scores:
+                score = token_scores[token_pos]
+                token_scores[token_pos] = normalize_probe_scores_zscore(
+                    score, probe_mean, probe_std
+                )
 
             # Aggregate to sentence level
             sentence_scores = aggregate_scores_to_sentences(
