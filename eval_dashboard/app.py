@@ -638,18 +638,23 @@ def main():
             with col1:
                 # Probe selection
                 available_probes = list(conversations[0].get('probe_scores', {}).keys()) if conversations else []
-                default_probes = [available_probes[0]] if available_probes else []
+
+                # Initialize session state for probe selection if not exists
+                session_key = f"probes_{subset_idx}"
+                if session_key not in st.session_state and available_probes:
+                    st.session_state[session_key] = [available_probes[0]]
+
+                # Ensure at least one probe is selected
+                if session_key in st.session_state and not st.session_state[session_key] and available_probes:
+                    st.session_state[session_key] = [available_probes[0]]
 
                 selected_probe_keys = st.multiselect(
                     "Select probes to compare",
                     options=available_probes,
-                    default=default_probes,
+                    default=st.session_state.get(session_key, [available_probes[0]] if available_probes else []),
                     format_func=lambda x: probe_names.get(x, x),
-                    key=f"probes_{subset_idx}"
+                    key=session_key
                 )
-
-                if not selected_probe_keys and available_probes:
-                    selected_probe_keys = [available_probes[0]]
 
             with col2:
                 # Conversation selection
@@ -667,23 +672,30 @@ def main():
 
             st.markdown("---")
 
-            # Debug info (temporary)
-            with st.expander("🐛 Debug Info", expanded=False):
-                st.write(f"Selected emotions: {selected_emotions}")
-                st.write(f"Selected probe keys: {selected_probe_keys}")
-                st.write(f"Number of conversations: {len(conversations)}")
+            # Debug info (temporary - ALWAYS VISIBLE)
+            st.info(f"🐛 DEBUG: Emotions={len(selected_emotions)}, Probes={len(selected_probe_keys)}, Convs={len(conversations)}")
+
+            with st.expander("🐛 Detailed Debug Info", expanded=True):
+                st.write(f"**Selected emotions:** {selected_emotions}")
+                st.write(f"**Selected probe keys:** {selected_probe_keys}")
+                st.write(f"**Number of conversations:** {len(conversations)}")
                 if conversations:
-                    st.write(f"First conv probe keys: {list(conversations[0].get('probe_scores', {}).keys())}")
+                    st.write(f"**First conv sample_id:** {conversations[0].get('sample_id')}")
+                    st.write(f"**First conv probe keys:** {list(conversations[0].get('probe_scores', {}).keys())}")
+                    st.write(f"**Current conv_idx:** {conv_idx}")
 
             # Sub-tabs for Individual and Aggregated views
             subtab1, subtab2 = st.tabs(["📊 Individual", "📈 Aggregated"])
 
             with subtab1:
+                st.write("🐛 DEBUG: Entered Individual subtab")
+
                 if not selected_emotions:
-                    st.warning("Please select at least one emotion to visualize")
+                    st.warning("⚠️ Please select at least one emotion to visualize")
                 elif not selected_probe_keys:
-                    st.warning("Please select at least one probe type")
+                    st.warning("⚠️ Please select at least one probe type")
                 else:
+                    st.write(f"🐛 DEBUG: Passed validation checks, proceeding to render...")
                     # Get selected conversation
                     conv = conversations[conv_idx]
                     sentences = conv['sentences']
@@ -703,14 +715,19 @@ def main():
                     with col4:
                         st.metric("Sentences", conv['metadata']['num_sentences'])
 
+                    st.write(f"🐛 DEBUG: Rendered metadata for sample {conv['sample_id']}")
                     st.markdown("---")
+
+                    st.write(f"🐛 DEBUG: About to loop through {len(selected_probe_keys)} probes")
 
                     # Loop through selected probes and display vertically
                     for probe_idx, probe_key in enumerate(selected_probe_keys):
+                        st.write(f"🐛 DEBUG: Processing probe {probe_idx + 1}/{len(selected_probe_keys)}: {probe_key}")
                         try:
                             # Add probe name header
                             probe_display_name = probe_names.get(probe_key, probe_key)
                             st.subheader(f"🔬 {probe_display_name}")
+                            st.write(f"🐛 DEBUG: About to check probe scores...")
 
                             # Check if probe scores available
                             if probe_key not in conv.get('probe_scores', {}):
@@ -718,6 +735,7 @@ def main():
                                 continue
 
                             sentence_scores = conv['probe_scores'][probe_key]
+                            st.write(f"🐛 DEBUG: Got {len(sentence_scores)} sentence scores")
 
                             # Apply smoothing window
                             if window_size != 20:
@@ -727,6 +745,7 @@ def main():
                             sample_score = list(sentence_scores.values())[0] if sentence_scores else None
                             is_orthogonal = isinstance(sample_score, dict) and 'user' in sample_score
                             onset_sent_id = conv['metadata'].get('onset_sentence_id')
+                            st.write(f"🐛 DEBUG: is_orthogonal={is_orthogonal}, creating plot...")
 
                             if is_orthogonal:
                                 fig = create_orthogonal_trajectory_plot(
@@ -743,10 +762,13 @@ def main():
                                     selected_emotions=selected_emotions,
                                     title=f"Sample #{conv['sample_id']} - {probe_display_name}"
                                 )
+
+                            st.write(f"🐛 DEBUG: Plot created, rendering with plotly_chart...")
                             st.plotly_chart(fig, use_container_width=True)
+                            st.write(f"🐛 DEBUG: ✓ Plot rendered successfully!")
 
                         except Exception as e:
-                            st.error(f"Error rendering {probe_display_name}: {str(e)}")
+                            st.error(f"❌ Error rendering {probe_display_name}: {str(e)}")
                             import traceback
                             st.code(traceback.format_exc())
 
@@ -761,19 +783,23 @@ def main():
                         render_conversation_text(conversation=conv['conversation'])
 
             with subtab2:
+                st.write("🐛 DEBUG: Entered Aggregated subtab")
                 st.header("Aggregated Statistics")
                 st.markdown("Statistical analysis across all conversations")
-                
+
                 if not selected_emotions:
-                    st.warning("Please select at least one emotion to visualize")
+                    st.warning("⚠️ Please select at least one emotion to visualize")
                     st.stop()
-                
+
                 if not selected_probe_keys:
-                    st.warning("Please select at least one probe type")
+                    st.warning("⚠️ Please select at least one probe type")
                     st.stop()
-                
+
+                st.write(f"🐛 DEBUG: Passed validation, looping through {len(selected_probe_keys)} probes")
+
                 # Loop through all selected probes
                 for probe_idx, probe_key in enumerate(selected_probe_keys):
+                    st.write(f"🐛 DEBUG: Processing probe {probe_idx + 1}/{len(selected_probe_keys)}: {probe_key}")
                     # Add probe name header
                     probe_display_name = probe_names.get(probe_key, probe_key)
                     st.subheader(f"🔬 {probe_display_name}")
