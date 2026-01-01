@@ -1011,25 +1011,38 @@ def main():
                     # Download data
                     st.subheader("💾 Export Data")
                     col1, col2 = st.columns(2)
-                
+
                     with col1:
-                        if st.button(f"📊 Download Mean Trajectories (CSV) - {probe_display_name}", key=f"download_{probe_key}"):
+                        # Make key unique across tabs by including subset_name
+                        download_key = f"download_{subset_name.replace(' ', '_')}_{probe_key}"
+                        if st.button(f"📊 Download Mean Trajectories (CSV) - {probe_display_name}", key=download_key):
                             # Create CSV data
                             export_data = {'Sentence': list(range(max_sentences))}
-                            for emotion in selected_emotions:
-                                if emotion in aggregated_data:
-                                    export_data[f'{emotion}_mean'] = aggregated_data[emotion]['mean']
-                                    export_data[f'{emotion}_ci_lower'] = aggregated_data[emotion]['ci_lower']
-                                    export_data[f'{emotion}_ci_upper'] = aggregated_data[emotion]['ci_upper']
-                
+
+                            # Handle orthogonal probes differently
+                            if is_orthogonal:
+                                for role in ['user', 'assistant']:
+                                    role_data = aggregated_data[role]
+                                    for emotion in selected_emotions:
+                                        if emotion in role_data:
+                                            export_data[f'{emotion}_{role}_mean'] = role_data[emotion]['mean']
+                                            export_data[f'{emotion}_{role}_ci_lower'] = role_data[emotion]['ci_lower']
+                                            export_data[f'{emotion}_{role}_ci_upper'] = role_data[emotion]['ci_upper']
+                            else:
+                                for emotion in selected_emotions:
+                                    if emotion in aggregated_data:
+                                        export_data[f'{emotion}_mean'] = aggregated_data[emotion]['mean']
+                                        export_data[f'{emotion}_ci_lower'] = aggregated_data[emotion]['ci_lower']
+                                        export_data[f'{emotion}_ci_upper'] = aggregated_data[emotion]['ci_upper']
+
                             df_export = pd.DataFrame(export_data)
                             csv = df_export.to_csv(index=False)
                             st.download_button(
                                 label="Download CSV",
                                 data=csv,
-                                file_name=f"aggregated_emotions_{probe_key}.csv",
+                                file_name=f"aggregated_emotions_{subset_name.replace(' ', '_')}_{probe_key}.csv",
                                 mime="text/csv",
-                                key=f"download_btn_{probe_key}"
+                                key=f"download_btn_{subset_name.replace(' ', '_')}_{probe_key}"
                             )
                 
                     with col2:
