@@ -254,7 +254,7 @@ class WildChatBaselineLoader:
         Args:
             probe_inference: ProbeInference instance configured with probe paths
             layers: List of layer numbers to compute baselines for
-            probe_type: "orthogonal", "standard", or "linear"
+            probe_type: "orthogonal", "linear", or "centroid"
             aggregation: How to aggregate across layers ("mean" or "per_layer")
             return_std: If True, return dict with 'mean' and 'std' keys. If False, return just mean scores (backward compatible)
             **probe_kwargs: Additional arguments for probe loading (e.g., orthogonality_weight)
@@ -347,7 +347,7 @@ class WildChatBaselineLoader:
                         layer_scores = (user_arr + asst_arr) / 2  # [n_samples, n_emotions]
 
                     elif probe_type == "linear":
-                        # Apply linear probes to all samples
+                        # Apply linear probes to all samples (with or without cPCA, with or without custom pattern)
                         scores = probe_inference.predict(
                             activations=baseline_acts,
                             layer=layer,
@@ -356,26 +356,6 @@ class WildChatBaselineLoader:
                             drop_neutral=True
                         )
                         layer_scores = scores  # [n_samples, n_emotions]
-
-                    elif probe_type == "standard":
-                        # Load and apply standard probes
-                        import pickle
-                        import torch
-
-                        probe_filename = probe_kwargs.get('probe_pattern', '').format(layer=layer)
-                        probe_path = probe_inference.probe_dir / probe_filename
-
-                        with open(probe_path, 'rb') as f:
-                            probe_dict = pickle.load(f)
-
-                        probe_model = probe_dict['model']
-                        probe_model.eval()
-                        probe_model = probe_model.to(probe_inference.device)
-
-                        with torch.no_grad():
-                            baseline_tensor = torch.tensor(baseline_acts, dtype=torch.float32).to(probe_inference.device)
-                            logits = probe_model(baseline_tensor)
-                            layer_scores = logits.cpu().numpy()  # [n_samples, n_emotions]
 
                     elif probe_type == "centroid":
                         # Load centroid probe for this layer
@@ -519,46 +499,6 @@ class WildChatBaselineLoader:
                     baseline_scores = np.mean(all_scores, axis=0)
                     return {-1: baseline_scores}
 
-                elif probe_type == "standard":
-                    # Load standard probes and apply
-                    import pickle
-                    import torch
-                    all_scores = []
-
-                    for layer in layers:
-                        # Normalize baseline for this layer
-                        baseline_norm = self.normalize_activations(baseline_activation, layer)
-
-                        # Ensure baseline_norm is 1D array and reshape to 2D
-                        baseline_norm = np.atleast_1d(baseline_norm)
-                        baseline_norm_2d = baseline_norm.reshape(1, -1)
-
-                        probe_filename = probe_kwargs.get('probe_pattern', '').format(layer=layer)
-                        probe_path = probe_inference.probe_dir / probe_filename
-
-                        with open(probe_path, 'rb') as f:
-                            probe_dict = pickle.load(f)
-
-                        probe_model = probe_dict['model']
-                        probe_model.eval()
-                        probe_model = probe_model.to(probe_inference.device)
-
-                        X_tensor = torch.from_numpy(baseline_norm_2d).float().to(probe_inference.device)
-
-                        with torch.no_grad():
-                            logits = probe_model(X_tensor)
-
-                        logits_np = logits.cpu().numpy()[0]
-
-                        # Drop neutral class if present
-                        if logits_np.shape[0] == 7:
-                            logits_np = logits_np[:6]
-
-                        all_scores.append(logits_np)
-
-                    baseline_scores = np.mean(all_scores, axis=0)
-                    return {-1: baseline_scores}
-
                 elif probe_type == "centroid":
                     # Apply centroid probes (K-set orthogonal probes averaged)
                     all_scores = []
@@ -665,32 +605,6 @@ class WildChatBaselineLoader:
                         drop_neutral=True
                     )
                     baseline_scores_by_layer[layer] = scores[0]
-
-                elif probe_type == "standard":
-                    import pickle
-                    import torch
-
-                    probe_filename = probe_kwargs.get('probe_pattern', '').format(layer=layer)
-                    probe_path = probe_inference.probe_dir / probe_filename
-
-                    with open(probe_path, 'rb') as f:
-                        probe_dict = pickle.load(f)
-
-                    probe_model = probe_dict['model']
-                    probe_model.eval()
-                    probe_model = probe_model.to(probe_inference.device)
-
-                    X_tensor = torch.from_numpy(baseline_norm_2d).float().to(probe_inference.device)
-
-                    with torch.no_grad():
-                        logits = probe_model(X_tensor)
-
-                    logits_np = logits.cpu().numpy()[0]
-
-                    if logits_np.shape[0] == 7:
-                        logits_np = logits_np[:6]
-
-                    baseline_scores_by_layer[layer] = logits_np
 
                 else:
                     raise ValueError(f"Unknown probe_type: {probe_type}")

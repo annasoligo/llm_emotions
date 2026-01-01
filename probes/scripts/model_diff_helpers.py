@@ -53,7 +53,7 @@ class DoubleDiffExperiment:
             base_model: Base model (StandardizedTransformer)
             ft_model: Finetuned model (StandardizedTransformer)
             tokenizer: Tokenizer
-            probe_type: "orthogonal", "linear", "standard", or "centroid"
+            probe_type: "orthogonal", "linear", or "centroid"
             probe_dir: Directory containing probe files
             cpca_path: Path to cPCA file (for linear probes or cpca representations)
             probe_pattern: Custom pattern for probe filenames (e.g., "probe_layer{layer}_nc0_seed0.pkl")
@@ -90,7 +90,8 @@ class DoubleDiffExperiment:
         self.inference = ProbeInference(
             probe_dir=probe_dir,
             cpca_path=cpca_path,
-            device='cuda'
+            device='cuda',
+            probe_pattern=probe_pattern
         )
         self.aggregator = ProbeAggregator()
 
@@ -268,7 +269,7 @@ class DoubleDiffExperiment:
                 print(f"  Layer {layer}...", flush=True)
 
             if self.probe_type == "linear":
-                # Linear probes
+                # Linear probes (with or without cPCA, with or without custom pattern)
                 for name in ['ft_dataset', 'base_dataset', 'ft_baseline', 'base_baseline']:
                     probe_scores[name][layer] = self.inference.predict(
                         activations=activations[name][layer],
@@ -277,35 +278,6 @@ class DoubleDiffExperiment:
                         seed=self.seed,
                         drop_neutral=True
                     )
-
-            elif self.probe_type == "standard":
-                # Standard (non-orthogonal) probes with custom pattern
-                # Construct probe path using pattern
-                probe_filename = self.probe_pattern.format(layer=layer)
-                probe_path = self.probe_dir / probe_filename
-
-                # Load probe
-                with open(probe_path, 'rb') as f:
-                    probe_dict = pickle.load(f)
-
-                probe_model = probe_dict['model']
-                probe_model.eval()
-                probe_model = probe_model.to(self.inference.device)
-
-                # Apply to all 4 conditions
-                for name in ['ft_dataset', 'base_dataset', 'ft_baseline', 'base_baseline']:
-                    X_tensor = torch.from_numpy(activations[name][layer]).float().to(self.inference.device)
-
-                    with torch.no_grad():
-                        logits = probe_model(X_tensor)
-
-                    logits_np = logits.cpu().numpy()
-
-                    # Drop neutral class (index 6) if present
-                    if logits_np.shape[1] == 7:
-                        logits_np = logits_np[:, :6]
-
-                    probe_scores[name][layer] = logits_np
 
             elif self.probe_type == "centroid":
                 # Centroid probes

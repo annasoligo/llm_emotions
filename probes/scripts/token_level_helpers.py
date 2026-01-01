@@ -50,7 +50,7 @@ class TokenLevelExperiment:
         Args:
             model: Model (StandardizedTransformer)
             tokenizer: Tokenizer
-            probe_type: "orthogonal", "linear", "standard", or "centroid"
+            probe_type: "orthogonal", "linear", or "centroid"
             probe_dir: Directory containing probe files
             cpca_path: Path to cPCA file (for linear probes or cpca representations)
             probe_pattern: Custom pattern for probe filenames (e.g., "probe_layer{layer}_nc0_seed0.pkl")
@@ -85,7 +85,8 @@ class TokenLevelExperiment:
         self.inference = ProbeInference(
             probe_dir=probe_dir,
             cpca_path=cpca_path,
-            device='cuda'
+            device='cuda',
+            probe_pattern=probe_pattern
         )
 
     def run_experiment(
@@ -254,7 +255,7 @@ class TokenLevelExperiment:
                 activation = activations_by_token[token_pos][layer]
 
                 if self.probe_type == "linear":
-                    # Linear probes
+                    # Linear probes (with or without cPCA, with or without custom pattern)
                     scores = self.inference.predict(
                         activations=activation[np.newaxis, :],  # Add batch dim
                         layer=layer,
@@ -263,31 +264,6 @@ class TokenLevelExperiment:
                         drop_neutral=True
                     )
                     scores_by_token[token_pos][layer] = scores[0]  # Remove batch dim
-
-                elif self.probe_type == "standard":
-                    # Standard (non-orthogonal) probes
-                    probe_filename = self.probe_pattern.format(layer=layer)
-                    probe_path = self.probe_dir / probe_filename
-
-                    with open(probe_path, 'rb') as f:
-                        probe_dict = pickle.load(f)
-
-                    probe_model = probe_dict['model']
-                    probe_model.eval()
-                    probe_model = probe_model.to(self.inference.device)
-
-                    X_tensor = torch.from_numpy(activation[np.newaxis, :]).float().to(self.inference.device)
-
-                    with torch.no_grad():
-                        logits = probe_model(X_tensor)
-
-                    logits_np = logits.cpu().numpy()[0]  # Remove batch dim
-
-                    # Drop neutral class if present
-                    if logits_np.shape[0] == 7:
-                        logits_np = logits_np[:6]
-
-                    scores_by_token[token_pos][layer] = logits_np
 
                 elif self.probe_type == "centroid":
                     # Centroid probes

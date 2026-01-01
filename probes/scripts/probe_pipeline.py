@@ -287,17 +287,20 @@ class ProbeActivationExtractor:
 class ProbeInference:
     """Manages probe loading and inference with caching for efficiency."""
 
-    def __init__(self, probe_dir: Path, cpca_path: Path, device: str = 'cuda'):
+    def __init__(self, probe_dir: Path, cpca_path: Path, device: str = 'cuda', probe_pattern: str = None):
         """Initialize probe inference with probe directory and cPCA path.
 
         Args:
             probe_dir: Directory containing probe pickle files
-            cpca_path: Path to cPCA .npz file (optional for standard probes)
+            cpca_path: Path to cPCA .npz file (optional for linear probes without cPCA)
             device: Device for inference ('cuda' or 'cpu')
+            probe_pattern: Custom probe filename pattern with {layer}, {n_components}, {seed} placeholders.
+                          If None, uses default: "probe_layer{layer}_nc{n_components}_seed{seed}.pkl"
         """
         self.probe_dir = Path(probe_dir)
         self.cpca_path = Path(cpca_path) if cpca_path is not None else None
         self.device = device
+        self.probe_pattern = probe_pattern  # Store custom pattern
 
         # Cache for loaded probes
         self.probe_cache = {}
@@ -310,7 +313,7 @@ class ProbeInference:
             print(f"  Loaded cPCA components: {self.cpca_components_all.shape}")
         else:
             self.cpca_components_all = None
-            print("No cPCA data loaded (standard probes mode)")
+            print("No cPCA data loaded (linear probes without cPCA)")
 
     def load_probe(self, layer: int, n_components: int, seed: int) -> Dict:
         """Load probe with caching.
@@ -326,7 +329,17 @@ class ProbeInference:
         cache_key = (layer, n_components, seed)
 
         if cache_key not in self.probe_cache:
-            probe_path = self.probe_dir / f"probe_layer{layer}_nc{n_components}_seed{seed}.pkl"
+            # Use custom pattern if provided, otherwise use default
+            if self.probe_pattern is not None:
+                probe_filename = self.probe_pattern.format(
+                    layer=layer,
+                    n_components=n_components,
+                    seed=seed
+                )
+            else:
+                probe_filename = f"probe_layer{layer}_nc{n_components}_seed{seed}.pkl"
+
+            probe_path = self.probe_dir / probe_filename
             print(f"Loading probe from {probe_path}")
 
             with open(probe_path, 'rb') as f:
