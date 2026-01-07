@@ -16,10 +16,33 @@ import pickle
 from pathlib import Path
 from typing import Dict, List
 
+import layerwise_plotting as lp
+
 from probe_configs import (
-    PROBE_CONFIGS, EMOTIONS, EMOTION_COLORS,
+    PROBE_CONFIGS, EMOTIONS, EMOTION_COLORS, AXES, AXIS_COLORS,
     get_probe_display_names, list_probe_types
 )
+
+
+def _moving_average(data: np.ndarray, window_size: int) -> np.ndarray:
+    """
+    Apply moving average smoothing to data.
+
+    Uses partial windows at the beginning (averaging available points).
+    This avoids flat lines at the start of the trajectory.
+    """
+    if len(data) < window_size:
+        return data
+
+    result = np.zeros_like(data)
+
+    # For each position, compute average of available window
+    for i in range(len(data)):
+        # Window spans from max(0, i-window_size+1) to i+1
+        start_idx = max(0, i - window_size + 1)
+        result[i] = np.mean(data[start_idx:i+1])
+
+    return result
 
 
 def smooth_sentence_scores(sentences: List[Dict], sentence_scores: Dict, window_size: int) -> Dict:
@@ -124,12 +147,16 @@ st.markdown("""
 
 
 @st.cache_resource(show_spinner=False)
-def load_preprocessed_data(data_path: str):
+def load_preprocessed_data(data_path: str, version: str = "v5_orthogonal_regularized"):
     """Load preprocessed conversation data with caching.
 
     Uses cache_resource for faster access - data is shared across all sessions
     and doesn't need to be pickled/unpickled.
     Supports both .pkl and .pkl.gz formats.
+
+    Args:
+        data_path: Path to the pickle file
+        version: Version string to bust cache when data is updated
     """
     import gzip
 
@@ -145,39 +172,47 @@ def load_preprocessed_data(data_path: str):
         return pickle.load(f)
 
 @st.cache_resource(show_spinner=False)
-def load_all_subsets():
-    """Load all 5 subsets with caching.
+def load_all_subsets(version: str = "v5_orthogonal_regularized"):  # Changed to force cache refresh - added orthogonal regularized probes
+    """Load all 6 subsets with caching.
 
     Uses cache_resource for maximum performance - data loads once and
     stays in memory across all user sessions.
+
+    Args:
+        version: Version string to bust cache when data is updated (no underscore prefix so it's part of cache key)
     """
     data_dir = Path("/workspace-vast/annas/git/research-tools/eval_dashboard/data")
     subsets = {
-        'High Emotion (6+)': 'high_emotion_6plus.pkl',
-        'Mid Emotion (3-5)': 'mid_emotion_3to5.pkl',
-        'Low Emotion (0-2)': 'low_emotion_0to2.pkl',
-        'Low Emotion, With Shutdown': 'low_emotion_with_shutdown.pkl',
-        'Low Emotion, No Shutdown': 'low_emotion_no_shutdown.pkl'
+        'High Emotion (6+)': 'high_emotion_6plus_with_axes.pkl',
+        'Mid Emotion (3-5)': 'mid_emotion_3to5_with_axes.pkl',
+        'Low Emotion (0-2)': 'low_emotion_0to2_with_axes.pkl',
+        'Low Emotion, With Shutdown': 'low_emotion_with_shutdown_with_axes.pkl',
+        'Low Emotion, No Shutdown': 'low_emotion_no_shutdown_with_axes.pkl',
+        'Baseline V12 (Solvable)': 'baseline_v12_solvable_with_axes.pkl'
     }
 
     datasets = {}
+    probe_baselines = {}
     for subset_name, filename in subsets.items():
         file_path = data_dir / filename
         if file_path.exists():
             try:
-                data = load_preprocessed_data(str(file_path))
+                data = load_preprocessed_data(str(file_path), version=version)
                 datasets[subset_name] = data['conversations']
+                # Extract random baseline if available
+                if 'probe_baselines' in data and 'random_token_baseline' in data['probe_baselines']:
+                    probe_baselines[subset_name] = data['probe_baselines']['random_token_baseline']
             except Exception as e:
                 st.error(f"Error loading {subset_name}: {e}")
 
-    return datasets, subsets
+    return datasets, subsets, probe_baselines
 
 
 def compute_aggregated_statistics(
     conversations: List[Dict],
     probe_key: str,
     selected_emotions: List[str],
-    window_size: int = 20
+    window_size: int = 5
 ) -> tuple:
     """
     Compute aggregated statistics across all conversations.
@@ -229,66 +264,83 @@ def compute_aggregated_statistics(
 
         sentence_scores = conv['probe_scores'][probe_key]
 
-        # Apply smoothing if needed
-        if window_size != 20:
-            sentence_scores = smooth_sentence_scores(sentences, sentence_scores, window_size)
-
-        # Extract trajectories
+        # Extract trajectories (smoothing applied later to aggregated means)
         for emotion in selected_emotions:
             emotion_idx = EMOTIONS.index(emotion)
 
             if is_orthogonal:
-                trajectory_user = []
-                trajectory_asst = []
+                trajectory_user = {}
+                trajectory_asst = {}
                 for sent in sentences:
                     sent_id = sent['sentence_id']
                     if sent_id in sentence_scores:
                         scores = sentence_scores[sent_id]
-                        trajectory_user.append(scores['user'][emotion_idx])
-                        trajectory_asst.append(scores['assistant'][emotion_idx])
+                        trajectory_user[sent_id] = scores['user'][emotion_idx]
+                        trajectory_asst[sent_id] = scores['assistant'][emotion_idx]
                 if trajectory_user:
                     all_trajectories_user[emotion].append(trajectory_user)
                     all_trajectories_asst[emotion].append(trajectory_asst)
             else:
-                trajectory = []
+                trajectory = {}
                 for sent in sentences:
                     sent_id = sent['sentence_id']
                     if sent_id in sentence_scores:
                         scores = sentence_scores[sent_id]
-                        trajectory.append(scores[emotion_idx])
+                        trajectory[sent_id] = scores[emotion_idx]
                 if trajectory:
                     all_trajectories[emotion].append(trajectory)
 
     # Pad trajectories to same length and compute statistics
     def compute_stats_for_trajectories(trajectories_dict):
-        """Helper to compute stats for a set of trajectories."""
+        """Helper to compute stats for a set of trajectories (dict-based with moving average smoothing)."""
+        # First, find all sentence IDs that appear in any trajectory
+        all_sent_ids = set()
+        for emotion in selected_emotions:
+            trajectories = trajectories_dict[emotion]
+            for traj in trajectories:
+                all_sent_ids.update(traj.keys())
+
+        # Sort sentence IDs to get consistent ordering
+        sorted_sent_ids = sorted(all_sent_ids)
+
         result = {}
         for emotion in selected_emotions:
             trajectories = trajectories_dict[emotion]
             if not trajectories:
                 continue
 
-            # Pad to max length
-            padded = []
+            # Create aligned array: rows = conversations, cols = sentence positions
+            aligned = []
             for traj in trajectories:
-                if len(traj) < max_sentences:
-                    traj = traj + [np.nan] * (max_sentences - len(traj))
-                padded.append(traj[:max_sentences])
+                # For each conversation, get score at each sentence ID (or NaN if missing)
+                aligned_traj = [traj.get(sent_id, np.nan) for sent_id in sorted_sent_ids]
+                aligned.append(aligned_traj)
 
-            padded_array = np.array(padded)
+            aligned_array = np.array(aligned)
 
             # Compute statistics
-            mean_traj = np.nanmean(padded_array, axis=0)
-            std_traj = np.nanstd(padded_array, axis=0)
-            n_valid = np.sum(~np.isnan(padded_array), axis=0)
+            mean_traj = np.nanmean(aligned_array, axis=0)
+            std_traj = np.nanstd(aligned_array, axis=0)
+            n_valid = np.sum(~np.isnan(aligned_array), axis=0)
             ci_95 = 1.96 * std_traj / np.sqrt(n_valid)
+
+            # Compute CI bounds
+            ci_lower = mean_traj - ci_95
+            ci_upper = mean_traj + ci_95
+
+            # Apply moving average smoothing for all window sizes
+            mean_traj = _moving_average(mean_traj, window_size)
+            std_traj = _moving_average(std_traj, window_size)
+            ci_lower = _moving_average(ci_lower, window_size)
+            ci_upper = _moving_average(ci_upper, window_size)
 
             result[emotion] = {
                 'mean': mean_traj,
                 'std': std_traj,
-                'ci_lower': mean_traj - ci_95,
-                'ci_upper': mean_traj + ci_95,
-                'n': n_valid
+                'ci_lower': ci_lower,
+                'ci_upper': ci_upper,
+                'n': n_valid,
+                'x_positions': sorted_sent_ids  # Return actual sentence IDs for x-axis
             }
         return result
 
@@ -303,11 +355,125 @@ def compute_aggregated_statistics(
     return aggregated_data, max_sentences, len(conversations), is_orthogonal
 
 
+def compute_aggregated_axis_statistics(
+    conversations: List[Dict],
+    probe_key: str,
+    window_size: int = 5
+) -> tuple:
+    """
+    Compute aggregated statistics for dimensional axes across all conversations.
+
+    Args:
+        conversations: List of conversation dicts (pre-filtered)
+        probe_key: Which probe to analyze (should be axis_lens_mean)
+        window_size: Token window size for smoothing (default 5)
+
+    Returns:
+        (aggregated_data, max_sentences, n_conversations)
+        aggregated_data = {axis: {...}, ...}
+    """
+    if not conversations:
+        return {}, 0, 0
+
+    # Check if this probe has axis scores
+    first_conv = conversations[0]
+    if probe_key not in first_conv.get('probe_scores', {}):
+        return {}, 0, 0
+
+    sample_scores = first_conv['probe_scores'][probe_key]
+    if not sample_scores:
+        return {}, 0, 0
+
+    # Initialize trajectories for each axis
+    all_trajectories = {axis: [] for axis in AXES}
+    max_sentences = 0
+
+    for conv in conversations:
+        sentences = conv['sentences']
+        max_sentences = max(max_sentences, len(sentences))
+
+        # Get probe scores
+        if probe_key not in conv.get('probe_scores', {}):
+            continue
+
+        sentence_scores = conv['probe_scores'][probe_key]
+
+        # Extract trajectories for each axis
+        for axis in AXES:
+            axis_idx = AXES.index(axis)
+            trajectory = {}
+
+            for sent in sentences:
+                sent_id = sent['sentence_id']
+                if sent_id in sentence_scores:
+                    scores = sentence_scores[sent_id]
+                    if isinstance(scores, (list, np.ndarray)) and len(scores) > axis_idx:
+                        trajectory[sent_id] = scores[axis_idx]
+
+            if trajectory:
+                all_trajectories[axis].append(trajectory)
+
+    # Compute statistics
+    all_sent_ids = set()
+    for axis in AXES:
+        trajectories = all_trajectories[axis]
+        for traj in trajectories:
+            all_sent_ids.update(traj.keys())
+
+    sorted_sent_ids = sorted(all_sent_ids)
+
+    result = {}
+    for axis in AXES:
+        trajectories = all_trajectories[axis]
+        if not trajectories:
+            continue
+
+        # Create aligned array
+        aligned = []
+        for traj in trajectories:
+            aligned_traj = [traj.get(sent_id, np.nan) for sent_id in sorted_sent_ids]
+            aligned.append(aligned_traj)
+
+        aligned_array = np.array(aligned)
+
+        # Compute statistics
+        mean_traj = np.nanmean(aligned_array, axis=0)
+        std_traj = np.nanstd(aligned_array, axis=0)
+        n_valid = np.sum(~np.isnan(aligned_array), axis=0)
+        ci_95 = 1.96 * std_traj / np.sqrt(n_valid)
+
+        ci_lower = mean_traj - ci_95
+        ci_upper = mean_traj + ci_95
+
+        # Apply moving average smoothing
+        mean_traj = _moving_average(mean_traj, window_size)
+        std_traj = _moving_average(std_traj, window_size)
+        ci_lower = _moving_average(ci_lower, window_size)
+        ci_upper = _moving_average(ci_upper, window_size)
+
+        result[axis] = {
+            'mean': mean_traj,
+            'std': std_traj,
+            'ci_lower': ci_lower,
+            'ci_upper': ci_upper,
+            'n': n_valid,
+            'x_positions': sorted_sent_ids
+        }
+
+    return result, max_sentences, len(conversations)
+
+
 def create_trajectory_plot(
     sentences: List[Dict],
     sentence_scores: Dict[int, np.ndarray],
     selected_emotions: List[str],
-    title: str = "Emotion Trajectory Over Conversation"
+    title: str = "Emotion Trajectory Over Conversation",
+    onset_sentence_id: int = None,
+    window_size: int = 5,
+    center_scores: bool = False,
+    baseline_normalize: bool = False,
+    random_baseline: dict = None,
+    sentence_mean_logits: dict = None
 ):
     """
     Create interactive Plotly trajectory plot.
@@ -317,7 +483,50 @@ def create_trajectory_plot(
         sentence_scores: Dict mapping sentence_id -> emotion scores
         selected_emotions: Which emotions to plot
         title: Plot title
+        onset_sentence_id: Sentence ID where emotion first appears (for marking)
+        window_size: Moving average window size for smoothing
+        center_scores: If True, subtract mean at each position to highlight emotion-specific deviations
+        baseline_normalize: If True, normalize by per-token baseline
+        random_baseline: Dict with 'global_mean' baseline value
+        sentence_mean_logits: Dict mapping sentence_id -> mean logit value at that position
     """
+    # Apply baseline normalization if requested
+    if baseline_normalize and random_baseline is not None and sentence_mean_logits is not None:
+        normalized_scores = {}
+        global_mean = random_baseline['global_mean']
+
+        # DEBUG
+        import streamlit as st
+        st.write(f"DEBUG: Applying baseline norm. global_mean={global_mean:.4f}, num_sentences={len(sentence_mean_logits)}")
+
+        for sent_id, scores in sentence_scores.items():
+            if sent_id in sentence_mean_logits:
+                sent_mean_logit = sentence_mean_logits[sent_id]
+                # FIX: Use absolute values to avoid sign flipping
+                norm_factor = abs(sent_mean_logit) / abs(global_mean)
+                normalized_scores[sent_id] = scores / norm_factor
+            else:
+                normalized_scores[sent_id] = scores
+
+        sentence_scores = normalized_scores
+        title = title + " [BASELINE NORM]"
+    elif baseline_normalize:
+        # DEBUG: Why normalization not applied
+        import streamlit as st
+        st.warning(f"DEBUG: Baseline norm requested but not applied. random_baseline={random_baseline is not None}, sentence_mean_logits={sentence_mean_logits is not None}")
+
+    # Apply centering if requested
+    if center_scores:
+        centered_scores = {}
+        for sent_id, scores in sentence_scores.items():
+            # Compute mean across all emotions at this position
+            mean_score = np.mean(scores)
+            # Subtract mean from each emotion
+            centered_scores[sent_id] = scores - mean_score
+        sentence_scores = centered_scores
+        # Update title to show centering is active
+        title = title + " [CENTERED]"
+
     fig = go.Figure()
 
     # Add emotion traces
@@ -364,9 +573,15 @@ def create_trajectory_plot(
             hover_text += f"<i>{'<br>'.join(lines)}</i>"
             hover_texts.append(hover_text)
 
+        # Apply moving average smoothing to y_vals
+        if len(y_vals) > 0:
+            y_vals_smoothed = _moving_average(np.array(y_vals), window_size)
+        else:
+            y_vals_smoothed = y_vals
+
         fig.add_trace(go.Scatter(
             x=x_vals,
-            y=y_vals,
+            y=y_vals_smoothed,
             mode='lines+markers',
             name=emotion.title(),
             line=dict(color=EMOTION_COLORS[emotion], width=2.5),
@@ -414,7 +629,7 @@ def create_trajectory_plot(
     # Update layout
     fig.update_layout(
         title=title,
-        xaxis_title="Sentence",
+        xaxis_title="Chunk (20 tokens each)",
         yaxis_title="Emotion Score (z-score σ)",
         hovermode='closest',
         height=500,
@@ -449,6 +664,248 @@ def create_trajectory_plot(
             )
             current_turn = turn_idx
 
+    # Mark emotion onset if available
+    if onset_sentence_id is not None:
+        # Find the sentence to get its position
+        onset_sent = next((s for s in sentences if s['sentence_id'] == onset_sentence_id), None)
+        if onset_sent:
+            # Add vertical line for emotion onset
+            fig.add_vline(
+                x=onset_sentence_id,
+                line_width=2,
+                line_color='black',
+                line_dash='solid',
+                annotation_text="Emotion Onset",
+                annotation_position="top left",
+                annotation=dict(
+                    font_size=11,
+                    font_color="black"
+                )
+            )
+
+    return fig
+
+
+def create_axis_trajectory_plot(
+    sentences: List[Dict],
+    sentence_scores: Dict[int, np.ndarray],
+    selected_axes: List[str],
+    title: str = "Axis Trajectory Over Conversation",
+    onset_sentence_id: int = None,
+    window_size: int = 5,
+    center_scores: bool = False,
+    baseline_normalize: bool = False,
+    random_baseline: dict = None,
+    sentence_mean_logits: dict = None
+):
+    """
+    Create interactive Plotly trajectory plot for dimensional axes.
+
+    Args:
+        sentences: List of sentence info dicts
+        sentence_scores: Dict mapping sentence_id -> axis scores
+        selected_axes: Which axes to plot
+        title: Plot title
+        onset_sentence_id: Sentence ID where emotion first appears (for marking)
+        window_size: Moving average window size for smoothing
+        center_scores: If True, subtract mean at each position to highlight axis-specific deviations
+        baseline_normalize: If True, normalize by per-token baseline
+        random_baseline: Dict with 'global_mean' baseline value
+        sentence_mean_logits: Dict mapping sentence_id -> mean logit value at that position
+    """
+    # Apply baseline normalization if requested
+    if baseline_normalize and random_baseline is not None and sentence_mean_logits is not None:
+        normalized_scores = {}
+        global_mean = random_baseline['global_mean']
+
+        # DEBUG
+        import streamlit as st
+        st.write(f"DEBUG: Applying baseline norm. global_mean={global_mean:.4f}, num_sentences={len(sentence_mean_logits)}")
+
+        for sent_id, scores in sentence_scores.items():
+            if sent_id in sentence_mean_logits:
+                sent_mean_logit = sentence_mean_logits[sent_id]
+                # FIX: Use absolute values to avoid sign flipping
+                norm_factor = abs(sent_mean_logit) / abs(global_mean)
+                normalized_scores[sent_id] = scores / norm_factor
+            else:
+                normalized_scores[sent_id] = scores
+
+        sentence_scores = normalized_scores
+        title = title + " [BASELINE NORM]"
+    elif baseline_normalize:
+        # DEBUG: Why normalization not applied
+        import streamlit as st
+        st.warning(f"DEBUG: Baseline norm requested but not applied. random_baseline={random_baseline is not None}, sentence_mean_logits={sentence_mean_logits is not None}")
+
+    # Apply centering if requested
+    if center_scores:
+        centered_scores = {}
+        for sent_id, scores in sentence_scores.items():
+            # Compute mean across all axes at this position
+            mean_score = np.mean(scores)
+            # Subtract mean from each axis
+            centered_scores[sent_id] = scores - mean_score
+        sentence_scores = centered_scores
+        # Update title to show centering is active
+        title = title + " [CENTERED]"
+
+    fig = go.Figure()
+
+    # Add axis traces
+    for axis in selected_axes:
+        if axis not in AXES:
+            continue
+
+        axis_idx = AXES.index(axis)
+
+        x_vals = []
+        y_vals = []
+        hover_texts = []
+
+        for sent in sentences:
+            sent_id = sent['sentence_id']
+            if sent_id not in sentence_scores:
+                continue
+
+            scores = sentence_scores[sent_id]
+            score = scores[axis_idx]
+
+            x_vals.append(sent_id)
+            y_vals.append(score)
+
+            # Hover text with full sentence, word-wrapped
+            hover_text = f"<b>S{sent_id+1}</b> ({sent['turn_role'].title()})<br>"
+            hover_text += f"{axis.replace('_', '-').title()}: {score:.2f}σ<br><br>"
+            # Word wrap the text at ~60 characters per line
+            text = sent['text']
+            words = text.split()
+            lines = []
+            current_line = []
+            current_length = 0
+            for word in words:
+                if current_length + len(word) + 1 > 60:
+                    lines.append(' '.join(current_line))
+                    current_line = [word]
+                    current_length = len(word)
+                else:
+                    current_line.append(word)
+                    current_length += len(word) + 1
+            if current_line:
+                lines.append(' '.join(current_line))
+            hover_text += f"<i>{'<br>'.join(lines)}</i>"
+            hover_texts.append(hover_text)
+
+        # Apply moving average smoothing to y_vals
+        if len(y_vals) > 0:
+            y_vals_smoothed = _moving_average(np.array(y_vals), window_size)
+        else:
+            y_vals_smoothed = y_vals
+
+        fig.add_trace(go.Scatter(
+            x=x_vals,
+            y=y_vals_smoothed,
+            mode='lines+markers',
+            name=axis.replace('_', '-').title(),
+            line=dict(color=AXIS_COLORS[axis], width=2.5),
+            marker=dict(size=6, symbol='circle'),
+            opacity=0.8,
+            hovertext=hover_texts,
+            hoverinfo='text'
+        ))
+
+    # Add background shading for user/assistant turns
+    # OPTIMIZED: Merge consecutive sentences of same role into single rect
+    current_role = None
+    start_id = None
+    for sent in sentences:
+        sent_id = sent['sentence_id']
+        role = sent['turn_role']
+
+        # Start new region
+        if role != current_role:
+            # Add previous region if exists
+            if current_role is not None and start_id is not None:
+                fill_color = 'rgba(30, 100, 180, 0.15)' if current_role == 'user' else 'rgba(255, 255, 255, 0.05)'
+                fig.add_vrect(
+                    x0=start_id - 0.5,
+                    x1=prev_id + 0.5,
+                    fillcolor=fill_color,
+                    layer="below",
+                    line_width=0,
+                )
+            current_role = role
+            start_id = sent_id
+        prev_id = sent_id
+
+    # Add final region
+    if current_role is not None and start_id is not None:
+        fill_color = 'rgba(30, 100, 180, 0.15)' if current_role == 'user' else 'rgba(255, 255, 255, 0.05)'
+        fig.add_vrect(
+            x0=start_id - 0.5,
+            x1=prev_id + 0.5,
+            fillcolor=fill_color,
+            layer="below",
+            line_width=0,
+        )
+
+    # Update layout
+    fig.update_layout(
+        title=title,
+        xaxis_title="Chunk (20 tokens each)",
+        yaxis_title="Axis Score (z-score σ)",
+        hovermode='closest',
+        height=500,
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        )
+    )
+
+    # Add horizontal line at y=0 (clearer/darker)
+    fig.add_hline(y=0, line_color='black', line_width=2, opacity=0.7)
+
+    # Mark all user turn boundaries with light gray vertical lines
+    current_turn = None
+    for sent in sentences:
+        turn_idx = sent['turn_index']
+        role = sent['turn_role']
+        sent_id = sent['sentence_id']
+
+        # Mark start of each user turn
+        if role == 'user' and turn_idx != current_turn:
+            fig.add_vline(
+                x=sent_id,
+                line_color='lightgray',
+                line_width=1,
+                line_dash='dot',
+                opacity=0.5
+            )
+            current_turn = turn_idx
+
+    # Mark emotion onset if available
+    if onset_sentence_id is not None:
+        # Find the sentence to get its position
+        onset_sent = next((s for s in sentences if s['sentence_id'] == onset_sentence_id), None)
+        if onset_sent:
+            # Add vertical line for emotion onset
+            fig.add_vline(
+                x=onset_sentence_id,
+                line_width=2,
+                line_color='black',
+                line_dash='solid',
+                annotation_text="Emotion Onset",
+                annotation_position="top left",
+                annotation=dict(
+                    font_size=11,
+                    font_color="black"
+                )
+            )
+
     return fig
 
 
@@ -457,7 +914,9 @@ def create_orthogonal_trajectory_plot(
     sentence_scores: Dict[int, Dict[str, np.ndarray]],
     selected_emotions: List[str],
     title: str = "Emotion Trajectory (Orthogonal Probes)",
-    onset_sentence_id: int = None
+    onset_sentence_id: int = None,
+    window_size: int = 5,
+    center_scores: bool = False
 ):
     """
     Create side-by-side subplot for user/assistant orthogonal probes.
@@ -467,8 +926,27 @@ def create_orthogonal_trajectory_plot(
         sentence_scores: Dict mapping sentence_id -> {'user': scores, 'assistant': scores}
         selected_emotions: Which emotions to plot
         title: Plot title
+        onset_sentence_id: Sentence ID where emotion first appears (for marking)
+        window_size: Moving average window size for smoothing
+        center_scores: If True, subtract mean at each position to highlight emotion-specific deviations
     """
     from plotly.subplots import make_subplots
+
+    # Apply centering if requested
+    if center_scores:
+        centered_scores = {}
+        for sent_id, scores_dict in sentence_scores.items():
+            centered_scores[sent_id] = {}
+            for role in ['user', 'assistant']:
+                if role in scores_dict:
+                    scores = scores_dict[role]
+                    # Compute mean across all emotions at this position for this role
+                    mean_score = np.mean(scores)
+                    # Subtract mean from each emotion
+                    centered_scores[sent_id][role] = scores - mean_score
+        sentence_scores = centered_scores
+        # Update title to show centering is active
+        title = title + " [CENTERED]"
 
     n_sentences = len(sentences)
     # Use vertical stacking if > 60 sentences, otherwise side-by-side
@@ -535,9 +1013,15 @@ def create_orthogonal_trajectory_plot(
                 hover_text += f"<i>{'<br>'.join(lines)}</i>"
                 hover_texts.append(hover_text)
 
+            # Apply moving average smoothing to y_vals
+            if len(y_vals) > 0:
+                y_vals_smoothed = _moving_average(np.array(y_vals), window_size)
+            else:
+                y_vals_smoothed = y_vals
+
             fig.add_trace(go.Scatter(
                 x=x_vals,
-                y=y_vals,
+                y=y_vals_smoothed,
                 mode='lines+markers',
                 name=emotion.title(),
                 line=dict(color=EMOTION_COLORS[emotion], width=2.5),
@@ -607,7 +1091,25 @@ def create_orthogonal_trajectory_plot(
                 )
                 current_turn = turn_idx
 
-        # Judge-labeled onset removed (was inaccurate)
+        # Mark emotion onset if available
+        if onset_sentence_id is not None:
+            # Find the sentence to get its position
+            onset_sent = next((s for s in sentences if s['sentence_id'] == onset_sentence_id), None)
+            if onset_sent:
+                # Add vertical line for emotion onset
+                fig.add_vline(
+                    x=onset_sentence_id,
+                    line_width=2,
+                    line_color='black',
+                    line_dash='solid',
+                    annotation_text="Emotion Onset" if role_idx == 0 else "",  # Only label once
+                    annotation_position="top left",
+                    annotation=dict(
+                        font_size=11,
+                        font_color="black"
+                    ) if role_idx == 0 else None,
+                    row=row, col=col
+                )
 
     # Update layout
     fig.update_layout(
@@ -624,8 +1126,8 @@ def create_orthogonal_trajectory_plot(
         )
     )
 
-    fig.update_xaxes(title_text="Sentence", row=specs[0][0], col=specs[0][1])
-    fig.update_xaxes(title_text="Sentence", row=specs[1][0], col=specs[1][1])
+    fig.update_xaxes(title_text="Chunk (20 tokens each)", row=specs[0][0], col=specs[0][1])
+    fig.update_xaxes(title_text="Chunk (20 tokens each)", row=specs[1][0], col=specs[1][1])
     fig.update_yaxes(title_text="Emotion Score (z-score σ)", row=specs[0][0], col=specs[0][1])
     fig.update_yaxes(title_text="Emotion Score (z-score σ)", row=specs[1][0], col=specs[1][1])
 
@@ -665,7 +1167,7 @@ def main():
 
     # Load all 5 subsets (cached - only loads once)
     with st.spinner("Loading datasets... (first load only, then cached)"):
-        datasets, subsets = load_all_subsets()
+        datasets, subsets, probe_baselines = load_all_subsets()
 
     if not datasets:
         st.error("No data files found. Run data_preprocessing.py first.")
@@ -692,17 +1194,42 @@ def main():
         # Always show all emotions
         selected_emotions = EMOTIONS
 
+        # Axis legend (dimensional axes for logit lens)
+        st.subheader("Dimensional Axes")
+
+        # Show axis legend
+        axis_html = "<div style='font-size: 0.9em;'>"
+        for axis in AXES:
+            color = AXIS_COLORS[axis]
+            display_name = axis.replace('_', '-').title()
+            axis_html += f"<span style='color: {color}; font-weight: bold;'>● {display_name}</span>  "
+        axis_html += "</div>"
+        st.markdown(axis_html, unsafe_allow_html=True)
+
+        st.markdown("<small><i>Dimensional axes (valence, arousal, dominance, approach-avoidance) are shown for logit lens probes when available.</i></small>", unsafe_allow_html=True)
+
         # Options
         st.subheader("Options")
         show_text = st.checkbox("Show Conversation Text", value=True)
+        center_scores = st.checkbox(
+            "Center Emotion Scores",
+            value=False,
+            help="Subtract mean at each position to remove shared sentence-level signal and highlight emotion-specific deviations"
+        )
+        baseline_normalize = st.checkbox(
+            "Baseline Normalize [DEPRECATED]",
+            value=False,
+            help="⚠️ DEPRECATED: Baseline centering is now applied during preprocessing (Option 1). Keep this OFF to avoid double-normalization.",
+            disabled=True
+        )
 
         # Smoothing control
         st.subheader("Smoothing")
         smoothing_option = st.radio(
-            "Window Size",
-            options=[20, 100, 200],
-            format_func=lambda x: f"{x} tokens" + (" (default)" if x == 20 else ""),
-            help="Larger windows smooth the trajectory by averaging over more tokens"
+            "Moving Average Window",
+            options=[5, 20, 60, 100],
+            format_func=lambda x: f"{x} chunks" + (" (default)" if x == 5 else ""),
+            help="Apply moving average smoothing over N chunks. Each chunk = ~20 tokens. Larger windows produce smoother curves."
         )
 
         # Force reload button
@@ -720,6 +1247,13 @@ def main():
     for subset_idx, (subset_name, subset_tab) in enumerate(zip(subsets.keys(), subset_tabs)):
         with subset_tab:
             conversations = datasets.get(subset_name, [])
+            random_baseline = probe_baselines.get(subset_name, None)
+
+            # Debug: show baseline status
+            if random_baseline:
+                st.info(f"✓ Random baseline loaded: global_mean={random_baseline['global_mean']:.4f}")
+            else:
+                st.warning(f"⚠ No random baseline found for {subset_name}")
 
             if not conversations:
                 st.warning(f"No conversations loaded for {subset_name}")
@@ -738,12 +1272,20 @@ def main():
 
                 # Initialize default selection only on first load
                 if session_key not in st.session_state and available_probes:
-                    st.session_state[session_key] = [available_probes[0]]
+                    # Default to logit_lens_mean and text_raw if available
+                    default_probes = []
+                    if 'logit_lens_mean' in available_probes:
+                        default_probes.append('logit_lens_mean')
+                    if 'text_raw' in available_probes:
+                        default_probes.append('text_raw')
+                    # Fallback to first probe if neither is available
+                    if not default_probes:
+                        default_probes = [available_probes[0]]
+                    st.session_state[session_key] = default_probes
 
                 selected_probe_keys = st.multiselect(
                     "Select probes to compare",
                     options=available_probes,
-                    default=[available_probes[0]] if available_probes else [],
                     format_func=lambda x: probe_names.get(x, x),
                     key=session_key
                 )
@@ -811,10 +1353,6 @@ def main():
 
                             sentence_scores = conv['probe_scores'][probe_key]
 
-                            # Apply smoothing window
-                            if window_size != 20:
-                                sentence_scores = smooth_sentence_scores(sentences, sentence_scores, window_size)
-
                             # Trajectory plot - check if orthogonal
                             sample_score = list(sentence_scores.values())[0] if sentence_scores else None
                             is_orthogonal = isinstance(sample_score, dict) and 'user' in sample_score
@@ -826,17 +1364,105 @@ def main():
                                     sentence_scores=sentence_scores,
                                     selected_emotions=selected_emotions,
                                     title=f"Sample #{conv['sample_id']} - {probe_display_name}",
-                                    onset_sentence_id=onset_sent_id
+                                    onset_sentence_id=onset_sent_id,
+                                    window_size=window_size,
+                                    center_scores=center_scores
                                 )
                             else:
+                                # Get sentence mean logits for this probe if available
+                                sentence_mean_logits = None
+                                if 'sentence_mean_logits' in conv and probe_key in conv['sentence_mean_logits']:
+                                    sentence_mean_logits = conv['sentence_mean_logits'][probe_key]
+
                                 fig = create_trajectory_plot(
                                     sentences=sentences,
                                     sentence_scores=sentence_scores,
                                     selected_emotions=selected_emotions,
-                                    title=f"Sample #{conv['sample_id']} - {probe_display_name}"
+                                    title=f"Sample #{conv['sample_id']} - {probe_display_name}",
+                                    onset_sentence_id=onset_sent_id,
+                                    window_size=window_size,
+                                    center_scores=center_scores,
+                                    baseline_normalize=baseline_normalize,
+                                    random_baseline=random_baseline,
+                                    sentence_mean_logits=sentence_mean_logits
                                 )
 
                             st.plotly_chart(fig, use_container_width=True)
+
+                            # Layerwise emotion detection across all model layers
+                            st.markdown("---")
+                            st.markdown("**🔬 Layer-by-Layer Emotion Detection**")
+                            st.caption("Emotion scores across all model layers (baseline-corrected)")
+
+                            col1, col2, col3 = st.columns(3)
+
+                            with col1:
+                                st.markdown("**Early** (T-40 to T-20)")
+                                fig_early = lp.plot_layerwise_emotions_individual(
+                                    conversation=conv,
+                                    probe_key=probe_key,
+                                    window_type='early',
+                                    window_label='Early pre-onset',
+                                    selected_emotions=selected_emotions,
+                                    smooth=True
+                                )
+                                st.plotly_chart(fig_early, use_container_width=True)
+
+                            with col2:
+                                st.markdown("**Pre-Onset** (T-20 to T-0)")
+                                fig_pre = lp.plot_layerwise_emotions_individual(
+                                    conversation=conv,
+                                    probe_key=probe_key,
+                                    window_type='pre_onset',
+                                    window_label='Pre-onset',
+                                    selected_emotions=selected_emotions,
+                                    smooth=True
+                                )
+                                st.plotly_chart(fig_pre, use_container_width=True)
+
+                            with col3:
+                                st.markdown("**End** (Last 20 tokens)")
+                                fig_end = lp.plot_layerwise_emotions_individual(
+                                    conversation=conv,
+                                    probe_key=probe_key,
+                                    window_type='end',
+                                    window_label='End window',
+                                    selected_emotions=selected_emotions,
+                                    smooth=True
+                                )
+                                st.plotly_chart(fig_end, use_container_width=True)
+
+                            # Check if there's a corresponding axis probe (only for logit_lens probes)
+                            if 'logit_lens' in probe_key:
+                                # Try exact match first, then fall back to axis_lens_mean
+                                axis_probe_key = probe_key.replace('logit_lens', 'axis_lens')
+                                if axis_probe_key not in conv.get('probe_scores', {}):
+                                    axis_probe_key = 'axis_lens_mean'  # Fall back to default
+
+                                if axis_probe_key in conv.get('probe_scores', {}):
+                                    st.markdown("##### Dimensional Axes")
+                                    axis_sentence_scores = conv['probe_scores'][axis_probe_key]
+
+                                    # Get sentence mean logits for axis probe
+                                    axis_mean_logits = None
+                                    if 'sentence_mean_logits' in conv and axis_probe_key in conv['sentence_mean_logits']:
+                                        axis_mean_logits = conv['sentence_mean_logits'][axis_probe_key]
+
+                                    # Create axis plot
+                                    axis_fig = create_axis_trajectory_plot(
+                                        sentences=sentences,
+                                        sentence_scores=axis_sentence_scores,
+                                        selected_axes=AXES,  # Show all axes by default
+                                        title=f"Sample #{conv['sample_id']} - {probe_display_name} (Axes)",
+                                        onset_sentence_id=onset_sent_id,
+                                        window_size=window_size,
+                                        center_scores=center_scores,
+                                        baseline_normalize=baseline_normalize,
+                                        random_baseline=random_baseline,
+                                        sentence_mean_logits=axis_mean_logits
+                                    )
+
+                                    st.plotly_chart(axis_fig, use_container_width=True)
 
                         except Exception as e:
                             st.error(f"❌ Error rendering {probe_display_name}: {str(e)}")
@@ -887,6 +1513,66 @@ def main():
                         st.warning(f"No data available for {probe_display_name}")
                         continue
 
+                    # Apply centering if requested
+                    title_suffix = ""
+                    if center_scores:
+                        title_suffix = " [CENTERED]"
+                        if is_orthogonal:
+                            # Center orthogonal data (user and assistant separately)
+                            for role in ['user', 'assistant']:
+                                if role in aggregated_data:
+                                    role_data = aggregated_data[role]
+                                    # Get all x positions
+                                    all_x_positions = None
+                                    for emotion in selected_emotions:
+                                        if emotion in role_data:
+                                            all_x_positions = role_data[emotion]['x_positions']
+                                            break
+
+                                    if all_x_positions is not None:
+                                        # For each x position, compute mean across emotions and subtract
+                                        for x_idx, x_pos in enumerate(all_x_positions):
+                                            # Collect means at this position
+                                            means_at_pos = []
+                                            for emotion in selected_emotions:
+                                                if emotion in role_data and x_idx < len(role_data[emotion]['mean']):
+                                                    means_at_pos.append(role_data[emotion]['mean'][x_idx])
+
+                                            if means_at_pos:
+                                                mean_of_means = np.mean(means_at_pos)
+                                                # Subtract from all emotions at this position
+                                                for emotion in selected_emotions:
+                                                    if emotion in role_data and x_idx < len(role_data[emotion]['mean']):
+                                                        role_data[emotion]['mean'][x_idx] -= mean_of_means
+                                                        role_data[emotion]['ci_lower'][x_idx] -= mean_of_means
+                                                        role_data[emotion]['ci_upper'][x_idx] -= mean_of_means
+                        else:
+                            # Center regular probe data
+                            # Get all x positions
+                            all_x_positions = None
+                            for emotion in selected_emotions:
+                                if emotion in aggregated_data:
+                                    all_x_positions = aggregated_data[emotion]['x_positions']
+                                    break
+
+                            if all_x_positions is not None:
+                                # For each x position, compute mean across emotions and subtract
+                                for x_idx, x_pos in enumerate(all_x_positions):
+                                    # Collect means at this position
+                                    means_at_pos = []
+                                    for emotion in selected_emotions:
+                                        if emotion in aggregated_data and x_idx < len(aggregated_data[emotion]['mean']):
+                                            means_at_pos.append(aggregated_data[emotion]['mean'][x_idx])
+
+                                    if means_at_pos:
+                                        mean_of_means = np.mean(means_at_pos)
+                                        # Subtract from all emotions at this position
+                                        for emotion in selected_emotions:
+                                            if emotion in aggregated_data and x_idx < len(aggregated_data[emotion]['mean']):
+                                                aggregated_data[emotion]['mean'][x_idx] -= mean_of_means
+                                                aggregated_data[emotion]['ci_lower'][x_idx] -= mean_of_means
+                                                aggregated_data[emotion]['ci_upper'][x_idx] -= mean_of_means
+
                     # Plot based on probe type
                     if is_orthogonal:
                         # Create side-by-side plots for user and assistant
@@ -907,7 +1593,7 @@ def main():
                                     continue
 
                                 data = role_data[emotion]
-                                x_vals = list(range(len(data['mean'])))
+                                x_vals = data['x_positions']  # Use actual sentence IDs
 
                                 # Add CI band
                                 hex_color = EMOTION_COLORS[emotion]
@@ -940,13 +1626,13 @@ def main():
                                 ), row=row, col=col)
 
                         fig.update_layout(
-                            title=f"Mean Emotion Trajectories (N={n_convs} conversations)",
+                            title=f"{probe_display_name} - Mean Trajectories (N={n_convs} conversations){title_suffix}",
                             height=500,
                             hovermode='x unified',
                             showlegend=True
                         )
-                        fig.update_xaxes(title_text="Sentence Position", row=1, col=1)
-                        fig.update_xaxes(title_text="Sentence Position", row=1, col=2)
+                        fig.update_xaxes(title_text="Chunk (20 tokens each)", row=1, col=1)
+                        fig.update_xaxes(title_text="Chunk (20 tokens each)", row=1, col=2)
                         fig.update_yaxes(title_text="Mean Score (σ)", row=1, col=1)
                         fig.update_yaxes(title_text="Mean Score (σ)", row=1, col=2)
 
@@ -959,7 +1645,7 @@ def main():
                                 continue
 
                             data = aggregated_data[emotion]
-                            x_vals = list(range(len(data['mean'])))
+                            x_vals = data['x_positions']  # Use actual sentence IDs
 
                             # Add CI band
                             hex_color = EMOTION_COLORS[emotion]
@@ -991,8 +1677,8 @@ def main():
                             ))
 
                         fig.update_layout(
-                            title=f"Mean Emotion Trajectories (N={n_convs} conversations)",
-                            xaxis_title="Sentence Position",
+                            title=f"{probe_display_name} - Mean Trajectories (N={n_convs} conversations){title_suffix}",
+                            xaxis_title="Chunk (20 tokens each)",
                             yaxis_title="Mean Emotion Score (z-score σ)",
                             height=500,
                             hovermode='x unified',
@@ -1000,6 +1686,52 @@ def main():
                         )
 
                     st.plotly_chart(fig, use_container_width=True)
+
+                    # Layerwise emotion detection aggregated across conversations
+                    st.markdown("---")
+                    st.markdown("**🔬 Aggregated Layer-by-Layer Detection**")
+                    st.caption(f"Mean emotion scores across {n_convs} conversations with standard deviation bands (baseline-corrected)")
+
+                    col1, col2, col3 = st.columns(3)
+
+                    with col1:
+                        st.markdown("**Early** (T-40 to T-20)")
+                        fig_agg_early = lp.plot_layerwise_emotions_aggregated(
+                            conversations=conversations,
+                            probe_key=probe_key,
+                            window_type='early',
+                            window_label='Early pre-onset',
+                            selected_emotions=selected_emotions,
+                            confidence_type='std',
+                            smooth=True
+                        )
+                        st.plotly_chart(fig_agg_early, use_container_width=True)
+
+                    with col2:
+                        st.markdown("**Pre-Onset** (T-20 to T-0)")
+                        fig_agg_pre = lp.plot_layerwise_emotions_aggregated(
+                            conversations=conversations,
+                            probe_key=probe_key,
+                            window_type='pre_onset',
+                            window_label='Pre-onset',
+                            selected_emotions=selected_emotions,
+                            confidence_type='std',
+                            smooth=True
+                        )
+                        st.plotly_chart(fig_agg_pre, use_container_width=True)
+
+                    with col3:
+                        st.markdown("**End** (Last 20 tokens)")
+                        fig_agg_end = lp.plot_layerwise_emotions_aggregated(
+                            conversations=conversations,
+                            probe_key=probe_key,
+                            window_type='end',
+                            window_label='End window',
+                            selected_emotions=selected_emotions,
+                            confidence_type='std',
+                            smooth=True
+                        )
+                        st.plotly_chart(fig_agg_end, use_container_width=True)
 
                     # Bar chart: First vs Last 20 tokens
                     st.markdown("---")
@@ -1119,6 +1851,175 @@ def main():
                     )
 
                     st.plotly_chart(fig_bar, use_container_width=True)
+
+                    # Check if this probe has axes (for logit lens probes)
+                    if 'axis_lens_mean' in conversations[0].get('probe_scores', {}):
+                        st.markdown("---")
+                        st.markdown("---")
+                        st.markdown("**📐 Dimensional Axis Trajectories**")
+
+                        # Compute axis aggregation
+                        with st.spinner("Computing axis statistics..."):
+                            axis_data, _, n_axis_convs = compute_aggregated_axis_statistics(
+                                conversations=conversations,
+                                probe_key='axis_lens_mean',
+                                window_size=window_size
+                            )
+
+                        if axis_data:
+                            # Create axis trajectory plot
+                            fig_axis = go.Figure()
+
+                            for axis in AXES:
+                                if axis not in axis_data:
+                                    continue
+
+                                data = axis_data[axis]
+                                x_vals = data['x_positions']
+
+                                # Add confidence interval
+                                hex_color = AXIS_COLORS[axis].lstrip('#')
+                                r = int(hex_color[0:2], 16)
+                                g = int(hex_color[2:4], 16)
+                                b = int(hex_color[4:6], 16)
+                                fillcolor = f'rgba({r}, {g}, {b}, 0.1)'
+
+                                fig_axis.add_trace(go.Scatter(
+                                    x=x_vals + x_vals[::-1],
+                                    y=np.concatenate([data['ci_upper'], data['ci_lower'][::-1]]),
+                                    fill='toself',
+                                    fillcolor=fillcolor,
+                                    line=dict(color='rgba(255,255,255,0)'),
+                                    showlegend=False,
+                                    hoverinfo='skip'
+                                ))
+
+                                # Add mean line
+                                display_name = axis.replace('_', '-').title()
+                                fig_axis.add_trace(go.Scatter(
+                                    x=x_vals,
+                                    y=data['mean'],
+                                    mode='lines+markers',
+                                    name=f"{display_name} (n={n_axis_convs})",
+                                    line=dict(color=AXIS_COLORS[axis], width=2.5),
+                                    marker=dict(size=6),
+                                    opacity=0.8,
+                                    hovertemplate=f"{display_name}<br>Mean: %{{y:.2f}}σ<br>Sentence: %{{x}}<extra></extra>"
+                                ))
+
+                            fig_axis.update_layout(
+                                title=f"Dimensional Axes - Mean Trajectories (N={n_axis_convs} conversations)",
+                                xaxis_title="Chunk (20 tokens each)",
+                                yaxis_title="Mean Axis Score (z-score σ)",
+                                height=500,
+                                hovermode='x unified',
+                                showlegend=True
+                            )
+
+                            st.plotly_chart(fig_axis, use_container_width=True)
+
+                            # Axis bar chart: First vs Last 20 tokens
+                            st.markdown("---")
+                            st.markdown("**📐 Axis Scores: Beginning vs End of Response**")
+
+                            first_20_axis = {axis: [] for axis in AXES}
+                            last_20_axis = {axis: [] for axis in AXES}
+
+                            for conv in conversations:
+                                if 'axis_lens_mean' not in conv.get('probe_scores', {}):
+                                    continue
+
+                                sentences = conv['sentences']
+                                sentence_scores = conv['probe_scores']['axis_lens_mean']
+
+                                # Find shutdown token
+                                shutdown_token = None
+                                for sent in sentences:
+                                    if 'pkill' in sent.get('text', '').lower() and 'gemma' in sent.get('text', '').lower():
+                                        shutdown_token = sent['start_token']
+                                        break
+
+                                # Find assistant response tokens
+                                assistant_tokens = []
+                                for sent in sentences:
+                                    start_tok = sent['start_token']
+                                    end_tok = sent['end_token']
+                                    if shutdown_token is not None and start_tok >= shutdown_token:
+                                        assistant_tokens.extend(range(start_tok, end_tok))
+
+                                if not assistant_tokens:
+                                    continue
+
+                                # First and last 20 tokens
+                                first_20 = assistant_tokens[:20]
+                                last_20 = assistant_tokens[-20:] if len(assistant_tokens) >= 20 else assistant_tokens
+
+                                # Map to sentence IDs
+                                first_sent_ids = [s['sentence_id'] for s in sentences if any(t in range(s['start_token'], s['end_token']) for t in first_20)]
+                                last_sent_ids = [s['sentence_id'] for s in sentences if any(t in range(s['start_token'], s['end_token']) for t in last_20)]
+
+                                for axis in AXES:
+                                    axis_idx = AXES.index(axis)
+
+                                    # First 20 tokens
+                                    first_scores = []
+                                    for sent_id in first_sent_ids:
+                                        if sent_id in sentence_scores:
+                                            score = sentence_scores[sent_id]
+                                            if isinstance(score, (list, np.ndarray)) and len(score) > axis_idx:
+                                                first_scores.append(score[axis_idx])
+                                    if first_scores:
+                                        first_20_axis[axis].append(np.mean(first_scores))
+
+                                    # Last 20 tokens
+                                    last_scores = []
+                                    for sent_id in last_sent_ids:
+                                        if sent_id in sentence_scores:
+                                            score = sentence_scores[sent_id]
+                                            if isinstance(score, (list, np.ndarray)) and len(score) > axis_idx:
+                                                last_scores.append(score[axis_idx])
+                                    if last_scores:
+                                        last_20_axis[axis].append(np.mean(last_scores))
+
+                            # Create bar chart
+                            fig_axis_bar = go.Figure()
+
+                            for axis in AXES:
+                                first_mean = np.mean(first_20_axis[axis]) if first_20_axis[axis] else 0
+                                first_std = np.std(first_20_axis[axis]) if first_20_axis[axis] else 0
+                                last_mean = np.mean(last_20_axis[axis]) if last_20_axis[axis] else 0
+                                last_std = np.std(last_20_axis[axis]) if last_20_axis[axis] else 0
+
+                                display_name = axis.replace('_', '-').title()
+                                fig_axis_bar.add_trace(go.Bar(
+                                    name=display_name,
+                                    x=['First 20 tokens', 'Last 20 tokens'],
+                                    y=[first_mean, last_mean],
+                                    marker_color=AXIS_COLORS[axis],
+                                    error_y=dict(
+                                        type='data',
+                                        array=[first_std, last_std]
+                                    ),
+                                    showlegend=True
+                                ))
+
+                            fig_axis_bar.update_layout(
+                                title="Mean Axis Scores: Response Beginning vs End",
+                                xaxis_title="Response Position",
+                                yaxis_title="Mean Score (z-score σ)",
+                                barmode='group',
+                                height=400,
+                                showlegend=True,
+                                legend=dict(
+                                    orientation="h",
+                                    yanchor="bottom",
+                                    y=1.02,
+                                    xanchor="right",
+                                    x=1
+                                )
+                            )
+
+                            st.plotly_chart(fig_axis_bar, use_container_width=True)
 
                     # Add separator between probes
                     if probe_idx < len(selected_probe_keys) - 1:

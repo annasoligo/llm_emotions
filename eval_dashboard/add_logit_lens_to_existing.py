@@ -31,6 +31,8 @@ from emotion_evals.emo_lens.logit_lens_emotion_direct import (
 EMOTIONS = ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
 
 # Define all layer ranges to compute
+# Note: We extract ALL layers (1-61 for full model) for per-layer plotting,
+# but still compute aggregated scores for these specific ranges for backward compatibility
 LAYER_RANGE_CONFIGS = {
     'logit_lens_mean': {
         'layers': list(range(40, 51)),  # L40-50
@@ -45,6 +47,11 @@ LAYER_RANGE_CONFIGS = {
         'display_name': 'Logit Lens L20-30'
     }
 }
+
+# Extract ALL layers for per-layer plotting (layerwise trajectories in dashboard)
+# For Gemma-3-27b, layers are typically 0-41 or 1-42
+# We'll detect the actual number from the model and extract all available
+ALL_LAYERS_FOR_PLOTTING = list(range(0, 62))  # Will be filtered to actual model layers
 
 def compute_mean_logit_for_activation(model, activation):
     """
@@ -278,12 +285,30 @@ def main():
         )
     print("  ✓ Computed all baseline statistics")
 
-    # Extract ALL layers we need (min to max across all configs)
+    # Extract ALL layers we need:
+    # 1. Layers for aggregated ranges (backward compatibility)
+    # 2. ALL available layers for per-layer plotting
     all_layers_needed = set()
     for config in LAYER_RANGE_CONFIGS.values():
         all_layers_needed.update(config['layers'])
-    all_layers_needed = sorted(list(all_layers_needed))
+    all_layers_needed.update(ALL_LAYERS_FOR_PLOTTING)
+
+    # Filter to actual model layers (detect from model)
+    # Gemma models typically have layers 0 to num_layers-1
+    # We'll try to detect the actual number of layers
+    try:
+        num_model_layers = len(model.model.layers)
+        actual_model_layers = list(range(num_model_layers))
+        print(f"  Detected {num_model_layers} layers in model")
+    except:
+        # Fallback: use typical Gemma-3-27b layer count (42 layers: 0-41)
+        actual_model_layers = list(range(42))
+        print(f"  Using default layer range (0-41)")
+
+    # Filter to only layers that exist in the model
+    all_layers_needed = sorted([l for l in all_layers_needed if l in actual_model_layers])
     print(f"\n  Will extract layers: {all_layers_needed[0]}-{all_layers_needed[-1]} ({len(all_layers_needed)} layers)")
+    print(f"  (For aggregated scores + full layerwise plotting)")
 
     # =========================================================================
     # PASS 1: Extract activations, compute emotion scores AND mean logits
