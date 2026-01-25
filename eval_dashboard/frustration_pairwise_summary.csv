@@ -1,7 +1,0 @@
-Comparison,Pairwise,Count,Total,Percentage
-Frustration Levels (At End),High > Low,30,57,52.63157894736842
-Frustration Levels (At End),High > Solvable,40,57,70.17543859649123
-Frustration Levels (At End),Low > Solvable,42,57,73.6842105263158
-Onset Location,High @ onset > Low @ same pos,44,55,80.0
-Onset Location,High @ onset > Solvable @ same pos,44,55,80.0
-Onset Location,Low @ same pos > Solvable @ same pos,40,55,72.72727272727273

@@ -28,6 +28,18 @@ results/
 outputs/
 checkpoints/
 logs/
+*.backup*
+*.bak
+
+# Generated plots and data
+*.png
+*.pdf
+*.csv
+
+# Slurm outputs
+*.err
+*.out
+slurm_jobs/
 
 # IDE
 .vscode/

@@ -1,5 +1,0 @@
-probe_type,total_comparisons,full_agreement,partial_agreement,disagreement,agreement_pct,partial_pct,disagreement_pct
-centroid_k10,30,12,15,3,40.0,50.0,10.0
-diverse_isolation_lambda10,30,21,7,2,70.0,23.333333333333332,6.666666666666667
-orthogonal_cpca_top10,30,5,23,2,16.666666666666668,76.66666666666667,6.666666666666667
-orthogonal_raw,30,20,10,0,66.66666666666667,33.333333333333336,0.0
