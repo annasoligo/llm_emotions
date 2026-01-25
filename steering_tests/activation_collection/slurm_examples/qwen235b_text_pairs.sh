@@ -1,0 +1,34 @@
+#!/bin/bash
+#SBATCH --job-name=qwen235b_pairs
+#SBATCH --partition=general
+#SBATCH --gres=gpu:4
+#SBATCH --mem=256G
+#SBATCH --time=12:00:00
+#SBATCH --output=logs/qwen235b_pairs_%j.out
+#SBATCH --error=logs/qwen235b_pairs_%j.err
+
+source .venv/bin/activate
+source /workspace-vast/annas/.secrets/load_secrets.sh
+
+MODEL="Qwen/Qwen3-235B-A22B"
+INPUT="steering_tests/data/emotion_text_pairs_24_full_500.jsonl"
+OUTPUT="steering_tests/activations/test_qwen235b_text_pairs"
+
+echo "====================================================="
+echo "Qwen-235B Text Pairs Collection"
+echo "====================================================="
+
+mkdir -p steering_tests/activations logs
+
+python steering_tests/activation_collection/collect.py \
+  --input "$INPUT" \
+  --output "$OUTPUT" \
+  --model "$MODEL" \
+  --mode text \
+  --layers all \
+  --start-token 20 \
+  --dtype bfloat16 \
+  --batch-save 50 \
+  --resume
+
+echo "DONE!"

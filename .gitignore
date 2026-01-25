@@ -51,6 +51,10 @@ slurm_jobs/
 .DS_Store
 Thumbs.db
 
+# Large data directories
+steering_tests/activations/
+steering_tests/vectors/
+
 # Exceptions (keep example configs)
 !experiments/configs/*.yaml
 !experiments/configs/*.yml

@@ -1,10 +1,12 @@
-# Steering Tests - Emotion Elicitation Datasets
+# Steering Tests - Emotion & Appraisal Datasets
 
-Clean workspace for emotion steering experiments using 24-emotion datasets.
+Clean workspace for emotion and appraisal steering experiments.
 
 ## Overview
 
-This folder contains three high-quality datasets for testing emotion elicitation and steering in language models, covering **24 emotions** with **~60,000 total samples**.
+This folder contains **four high-quality datasets** for testing emotion elicitation and appraisal-based steering in language models:
+- **24-emotion datasets** with ~60,000 samples
+- **Appraisal minimal-pairs** with 3 axes (agency, uncertainty, valence)
 
 ## Datasets
 
@@ -66,7 +68,36 @@ Neutral text + 24 emotional paraphrases for probe training.
 
 **Tiers**: 500 samples each of third_person, second_person_eliciting, direct_address
 
-## 24 Emotions Covered
+### 4. Appraisal Minimal Pairs
+**Directory**: `data/appraisal_minimal_pairs/`
+**Size**: 2.3 GB (includes activations) | **Samples**: 298 scenarios, 596 paraphrases
+
+Minimal-pair scenarios for appraisal dimension steering (agency, uncertainty, valence).
+
+**Axes**:
+- **Agency**: Control over outcomes vs external factors
+- **Uncertainty**: Degree of certainty about situation/outcomes
+- **Valence**: Positive vs negative outcomes (objective facts only)
+
+**Format**:
+```json
+{
+  "axis_name": "valence",
+  "scenario_a": "...budget approved and hardware in inventory...",
+  "scenario_b": "...need to procure budget and order hardware...",
+  "changed_fact": "In A, resources available; in B, must be procured"
+}
+```
+
+**Key Features**:
+- Minimal pairs differing in ONLY one objective fact
+- No emotion words, no tone/urgency changes
+- Pre-computed activations (Gemma-2-9b-it, all layers)
+- 20 domains (technical, medical, financial, etc.)
+
+**See**: `data/APPRAISAL_VECTORS_README.md` for full documentation
+
+## 24 Emotions Covered (Datasets 1-3)
 
 **Negative (12)**: fear, anxiety, anger, frustration, sadness, guilt, shame, disgust, contempt, boredom, despair, confusion
 
@@ -76,11 +107,19 @@ Neutral text + 24 emotional paraphrases for probe training.
 
 ## Quality Metrics
 
+### Emotion Datasets (1-3)
 ✅ **99.997% complete** - Only 1 missing emotion out of 36,000
 ✅ **~95% no explicit emotion words** - Natural emotional expression
 ✅ **~93% MODEL-targeted** - Emotion prompts affect AI's context
 ✅ **100% realistic** - No meta AI/training language
 ✅ **All 24 emotions** - Evenly distributed (~500 each)
+
+### Appraisal Dataset (4)
+✅ **Minimal pairs** - Only intended fact changes between A/B
+✅ **No tone leakage** - Validated absence of emotion/urgency words
+✅ **100% realistic** - Natural user requests
+✅ **Structural matching** - A and B have same length/structure
+✅ **Domain diversity** - 20 domains across contexts
 
 ## Usage
 
@@ -97,25 +136,43 @@ with open('steering_tests/data/emotion_prompts_MODEL_500.jsonl') as f:
 with open('steering_tests/data/emotion_text_pairs_24_full_500.jsonl') as f:
     pairs = [json.loads(line) for line in f]
 
-# Filter by emotion
+# Appraisal minimal pairs
+with open('steering_tests/data/appraisal_minimal_pairs/scenarios.jsonl') as f:
+    scenarios = [json.loads(line) for line in f]
+
+# Filter by emotion or axis
 fear_prompts = [p for p in prompts if p['emotion'] == 'fear']
+agency_scenarios = [s for s in scenarios if s['axis_name'] == 'agency']
 ```
 
 ### Example Use Cases
 
+**Emotion Datasets**:
 1. **Emotion steering experiments**: Test if activations differ when model experiences fear vs joy
 2. **Probe training**: Train classifiers on 24-emotion text paraphrases
 3. **Behavioral studies**: Compare model responses to high vs normal intensity prompts
 4. **Emotion recognition**: Test if probes can detect emotions from MODEL context
 
+**Appraisal Dataset**:
+1. **Appraisal vector training**: Train linear probes to detect agency/uncertainty/valence
+2. **Steering experiments**: Test if steering on appraisal vectors affects behavior
+3. **Minimal pair analysis**: Study how single factual changes affect representations
+4. **Multi-axis decomposition**: Understand how appraisal dimensions combine
+
 ## Documentation
 
-- `QUALITY_AUDIT_REPORT.md` - Comprehensive quality audit
-- `COMPLETE_DATASET_SUMMARY.md` - Generation details and comparisons
-- `EMOTION_PROMPTS_README.md` - Emotion prompts documentation
+### Emotion Datasets
+- `data/QUALITY_AUDIT_REPORT.md` - Comprehensive quality audit
+- `data/COMPLETE_DATASET_SUMMARY.md` - Generation details and comparisons
+- `data/EMOTION_PROMPTS_README.md` - Emotion prompts documentation
+
+### Appraisal Dataset
+- `data/APPRAISAL_VECTORS_README.md` - Full appraisal dataset documentation
+- `data/appraisal_minimal_pairs/config.yaml` - Generation configuration
 
 ## Dataset Statistics
 
+### Emotion Datasets (1-3)
 | Metric | Value |
 |--------|-------|
 | **Total samples** | 59,966 |
@@ -125,12 +182,29 @@ fear_prompts = [p for p in prompts if p['emotion'] == 'fear']
 | **Intensity levels** | 2 |
 | **Disk space** | 30 MB |
 
+### Appraisal Dataset (4)
+| Metric | Value |
+|--------|-------|
+| **Scenarios** | 298 (149 A/B pairs) |
+| **Paraphrases** | 596 |
+| **Appraisal axes** | 3 (agency, uncertainty, valence) |
+| **Domains** | 20 |
+| **Pre-computed activations** | Yes (Gemma-2-9b-it) |
+| **Disk space** | 2.3 GB |
+
 ## Generation Scripts
 
+### Emotion Datasets
 Located in `probes/scripts/data_collection/`:
 - `generate_all_emotion_prompts.py` - Emotion prompts generation
 - `generate_data.py` - Text pairs generation
 - `generators.py` - Core generation functions
+
+### Appraisal Dataset
+Located in `probes/scripts/appraisal/`:
+- `pipeline.py` - Full minimal-pairs generation pipeline
+- `probes/data/appraisal_prompt.py` - Prompt templates for card/scenario generation
+- `stages/` - Multi-stage generation (cards → scenarios → paraphrases → activations)
 
 ## Quick Start
 
