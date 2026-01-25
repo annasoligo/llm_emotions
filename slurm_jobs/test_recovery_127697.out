@@ -1,8 +1,0 @@
-==============================================
-TESTING RECOVERY DATA GENERATION
-==============================================
-Time: Mon Jan 19 11:53:38 UTC 2026
-
-Loading DPO pairs from elicitation/outputs/dpo_pairs_full.jsonl...
-Loaded 283 pairs
-Found 96 pairs with rejected_rating >= 4

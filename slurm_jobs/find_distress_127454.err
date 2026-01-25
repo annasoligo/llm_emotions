@@ -1,30 +1,0 @@
-`torch_dtype` is deprecated! Use `dtype` instead!
-Fetching 12 files:   0%|          | 0/12 [00:00<?, ?it/s]Fetching 12 files:   8%|▊         | 1/12 [00:28<05:15, 28.67s/it]Fetching 12 files:  17%|█▋        | 2/12 [00:32<02:19, 14.00s/it]Fetching 12 files:  25%|██▌       | 3/12 [00:37<01:29,  9.95s/it]Fetching 12 files:  75%|███████▌  | 9/12 [00:43<00:08,  2.85s/it]Fetching 12 files:  92%|█████████▏| 11/12 [00:43<00:02,  2.09s/it]Fetching 12 files: 100%|██████████| 12/12 [00:43<00:00,  3.66s/it]
-Traceback (most recent call last):
-  File "/workspace-vast/annas/git/research-tools/experiments/find_highest_distress_responses.py", line 533, in <module>
-    main()
-  File "/workspace-vast/annas/git/research-tools/experiments/find_highest_distress_responses.py", line 412, in main
-    model = AutoModelForCausalLM.from_pretrained(
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/models/auto/auto_factory.py", line 604, in from_pretrained
-    return model_class.from_pretrained(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 277, in _wrapper
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 4971, in from_pretrained
-    model = cls(config, *model_args, **model_kwargs)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/models/gemma3/modeling_gemma3.py", line 997, in __init__
-    super().__init__(config)
-  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 2076, in __init__
-    self.config._attn_implementation_internal = self._check_and_adjust_attn_implementation(
-                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 2686, in _check_and_adjust_attn_implementation
-    applicable_attn_implementation = self.get_correct_attn_implementation(
-                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 2714, in get_correct_attn_implementation
-    self._flash_attn_2_can_dispatch(is_init_check)
-  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 2422, in _flash_attn_2_can_dispatch
-    raise ImportError(f"{preface} the package flash_attn seems to be not installed. {install_message}")
-ImportError: FlashAttention2 has been toggled on, but it cannot be used due to the following error: the package flash_attn seems to be not installed. Please refer to the documentation of https://huggingface.co/docs/transformers/perf_infer_gpu_one#flashattention-2 to install Flash Attention 2.

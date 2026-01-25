@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "/workspace-vast/annas/git/research-tools/emotion_logit_lens/test_single_sentence.py", line 14, in <module>
-    from probes.scripts.model_loader import load_model
-ModuleNotFoundError: No module named 'probes.scripts.model_loader'

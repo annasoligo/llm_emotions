@@ -1,4 +1,0 @@
-/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
-  warnings.warn(
-`torch_dtype` is deprecated! Use `dtype` instead!
-Loading checkpoint shards:   0%|          | 0/12 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 3/12 [00:00<00:00, 21.22it/s]Loading checkpoint shards:  50%|█████     | 6/12 [00:00<00:00, 11.43it/s]Loading checkpoint shards:  67%|██████▋   | 8/12 [00:00<00:00, 10.37it/s]Loading checkpoint shards:  83%|████████▎ | 10/12 [00:00<00:00,  9.53it/s]Loading checkpoint shards: 100%|██████████| 12/12 [00:01<00:00, 10.79it/s]Loading checkpoint shards: 100%|██████████| 12/12 [00:01<00:00, 11.00it/s]

@@ -1,3 +1,0 @@
-Traceback (most recent call last):
-  File "<stdin>", line 9, in <module>
-ImportError: cannot import name 'AUTOINTERP_SYSTEM_PROMPT' from 'autointerp_features' (/workspace-vast/annas/git/research-tools/gemmascope/autointerp_features.py)

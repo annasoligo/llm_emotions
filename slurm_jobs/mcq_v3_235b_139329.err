@@ -1,7 +1,0 @@
-usage: mcq_emotion_steering_experiment.py [-h] [--model MODEL] [--layer LAYER]
-                                          [--norm-pcts NORM_PCTS [NORM_PCTS ...]]
-                                          [--output-dir OUTPUT_DIR]
-                                          [--prompts PROMPTS]
-                                          [--stacking STACKING [STACKING ...]]
-                                          [--max-scenarios MAX_SCENARIOS]
-mcq_emotion_steering_experiment.py: error: unrecognized arguments: --tensor-parallel-size 4

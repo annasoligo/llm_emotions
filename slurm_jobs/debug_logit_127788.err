@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "/workspace-vast/annas/git/research-tools/experiments/distress_analysis/debug_logit_values.py", line 6, in <module>
-    import pandas as pd
-ModuleNotFoundError: No module named 'pandas'

@@ -1,21 +1,0 @@
-/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
-  warnings.warn(
-'(ReadTimeoutError("HTTPSConnectionPool(host='huggingface.co', port=443): Read timed out. (read timeout=10)"), '(Request ID: a6ffe3f2-1b90-4b0a-9a7b-c89f4da615cd)')' thrown while requesting HEAD https://huggingface.co/google/gemma-3-27b-it/resolve/main/tokenizer_config.json
-Retrying in 1s [Retry 1/5].
-`torch_dtype` is deprecated! Use `dtype` instead!
-'(ReadTimeoutError("HTTPSConnectionPool(host='huggingface.co', port=443): Read timed out. (read timeout=10)"), '(Request ID: cea489e2-785b-44dd-a701-8c0afc7d5774)')' thrown while requesting HEAD https://huggingface.co/google/gemma-3-27b-it/resolve/main/model.safetensors
-Retrying in 1s [Retry 1/5].
-Fetching 12 files:   0%|          | 0/12 [00:00<?, ?it/s]Fetching 12 files:   8%|▊         | 1/12 [00:30<05:32, 30.21s/it]Fetching 12 files:  17%|█▋        | 2/12 [00:35<02:34, 15.43s/it]Fetching 12 files:  25%|██▌       | 3/12 [00:36<01:21,  9.10s/it]Fetching 12 files:  75%|███████▌  | 9/12 [00:46<00:09,  3.11s/it]Fetching 12 files:  83%|████████▎ | 10/12 [00:46<00:05,  2.67s/it]Fetching 12 files:  92%|█████████▏| 11/12 [00:47<00:02,  2.30s/it]Fetching 12 files: 100%|██████████| 12/12 [00:47<00:00,  3.94s/it]
-Loading checkpoint shards:   0%|          | 0/12 [00:00<?, ?it/s]Loading checkpoint shards:   8%|▊         | 1/12 [00:00<00:10,  1.05it/s]Loading checkpoint shards:  17%|█▋        | 2/12 [00:01<00:07,  1.40it/s]Loading checkpoint shards:  25%|██▌       | 3/12 [00:02<00:05,  1.59it/s]Loading checkpoint shards:  33%|███▎      | 4/12 [00:02<00:04,  1.73it/s]Loading checkpoint shards:  42%|████▏     | 5/12 [00:03<00:03,  1.80it/s]Loading checkpoint shards:  50%|█████     | 6/12 [00:03<00:03,  1.84it/s]Loading checkpoint shards:  58%|█████▊    | 7/12 [00:04<00:02,  1.87it/s]Loading checkpoint shards:  67%|██████▋   | 8/12 [00:04<00:02,  1.89it/s]Loading checkpoint shards:  75%|███████▌  | 9/12 [00:05<00:01,  1.89it/s]Loading checkpoint shards:  83%|████████▎ | 10/12 [00:05<00:01,  1.88it/s]Loading checkpoint shards:  92%|█████████▏| 11/12 [00:06<00:00,  1.87it/s]Loading checkpoint shards: 100%|██████████| 12/12 [00:06<00:00,  1.92it/s]
-Traceback (most recent call last):
-  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 960, in <module>
-    main()
-  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 883, in main
-    down_proj = load_base_model_down_proj(
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 660, in load_base_model_down_proj
-    down_proj = model.language_model.model.layers[layer].mlp.down_proj.weight.clone()
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1940, in __getattr__
-    raise AttributeError(
-AttributeError: 'Gemma3TextModel' object has no attribute 'model'

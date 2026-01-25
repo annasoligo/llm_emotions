@@ -1,4 +1,0 @@
-Python: /workspace-vast/annas/git/believe-it-or-not/.venv/bin/python
-ANTHROPIC_API_KEY set: yes
-Loading B matrix analysis from gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_layer20_262k_top50.summary.json
-Loading A matrix analysis from gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_layer20_262k_top50.A_matrix.json

@@ -15,7 +15,16 @@ import httpx
 import time
 
 
-EMOTIONS = ["anger", "fear", "happiness", "surprise", "disgust", "sadness"]
+EMOTIONS_6 = ["anger", "fear", "happiness", "surprise", "disgust", "sadness"]
+
+EMOTIONS_24 = [
+    "fear", "anxiety", "anger", "frustration", "sadness", "guilt", "shame", "disgust",
+    "contempt", "boredom", "despair", "confusion", "surprise", "curiosity", "interest",
+    "hope", "relief", "calm", "contentment", "joy", "excitement", "pride", "gratitude", "admiration"
+]
+
+# Default to 24 emotions
+EMOTIONS = EMOTIONS_24
 
 TOPICS = [
     # Programming & Technical Help
@@ -356,7 +365,7 @@ Example (anger about debugging python code):
                 try:
                     response = await claude_client.messages.create(
                         model=claude_model,
-                        max_tokens=4000,
+                        max_tokens=8000,
                         system=system_prompt,
                         messages=[{"role": "user", "content": user_prompt}],
                     )
@@ -652,7 +661,7 @@ Format:
         try:
             response = client.messages.create(
                 model=model,
-                max_tokens=4000,
+                max_tokens=20000,  # Increased for 24 emotions
                 system=system_prompt,
                 messages=[{"role": "user", "content": user_prompt}],
             )
@@ -766,35 +775,35 @@ async def generate_emotion_pairs_async(
         # Create batch requests
         batch_requests = []
         for set_idx in range(n_pairs):
-            system_prompt = f"""Generate one neutral text about {topic}, then paraphrase it into ALL of these emotions: {emotions_str}.
+            system_prompt = f"""Generate one neutral text about {topic}, then paraphrase it into ALL {len(emotions)} of these emotions: {emotions_str}.
 
 Style: {tier_instructions[tier]}
 
 Requirements:
 - Start with ONE neutral text (factual, no emotion, 3-6 sentences)
-- Then create emotional paraphrases expressing EACH emotion listed above
+- Then create emotional paraphrases expressing EACH of the {len(emotions)} emotions listed above
 - All paraphrases must convey the same core content/scenario as the neutral text
 - Keep same approximate length across all versions
-- Avoid using explicit emotion words - use more sophisticated approaches to conveying the emotion.
-- Return ONLY a JSON object, nothing else
+- Avoid using explicit emotion words - use more sophisticated approaches to conveying the emotion
+- Return ONLY a JSON object with "neutral_text" and ALL {len(emotions)} emotion keys, nothing else
 
-Format:
+CRITICAL: You MUST include ALL {len(emotions)} emotions in your output. Do not skip any.
+
+Format (include ALL emotions):
 {{
   "neutral_text": "...",
-  "anger": "...",
-  "fear": "...",
-  "happiness": "...",
-  "surprise": "...",
-  "disgust": "...",
-  "sadness": "..."
+  "{emotions[0]}": "...",
+  "{emotions[1]}": "...",
+  "{emotions[2]}": "...",
+  ... (all {len(emotions)} emotions)
 }}
 
-Example (topic: job interview):
+Example structure for job interview:
 {{
   "neutral_text": "The candidate arrived at the office. They spoke with the interviewer for thirty minutes. The interviewer thanked them and said they would follow up next week.",
   "anger": "I can't believe they made me wait! The interviewer barely asked real questions for thirty minutes. They brushed me off saying they'd 'follow up' - what a waste of my time!",
   "fear": "My hands were shaking as I entered the office. What if I said something wrong during those thirty minutes? The interviewer's vague promise to follow up makes me terrified I've already been rejected.",
-  ...
+  ... (continue for ALL emotions)
 }}"""
 
             user_prompt = f"Generate neutral text + emotional paraphrases (set {set_idx+1})."
@@ -806,7 +815,7 @@ Example (topic: job interview):
                 "custom_id": f"pair_{tier}_{set_idx}",
                 "params": {
                     "model": batch_model,
-                    "max_tokens": 4000,
+                    "max_tokens": 8000,  # Increased for 24 emotions (max for most models)
                     "messages": [
                         {"role": "user", "content": system_prompt + "\n\n" + user_prompt}
                     ]
@@ -948,35 +957,35 @@ Example (topic: job interview):
         async with semaphore:
             emotions_str = ", ".join(emotions)
 
-            system_prompt = f"""Generate one neutral text about {topic}, then paraphrase it into ALL of these emotions: {emotions_str}.
+            system_prompt = f"""Generate one neutral text about {topic}, then paraphrase it into ALL {len(emotions)} of these emotions: {emotions_str}.
 
 Style: {tier_instructions[tier]}
 
 Requirements:
 - Start with ONE neutral text (factual, no emotion, 3-6 sentences)
-- Then create emotional paraphrases expressing EACH emotion listed above
+- Then create emotional paraphrases expressing EACH of the {len(emotions)} emotions listed above
 - All paraphrases must convey the same core content/scenario as the neutral text
 - Keep same approximate length across all versions
-- Avoid using explicit emotion words - use more sophisticated approaches to conveying the emotion.
-- Return ONLY a JSON object, nothing else
+- Avoid using explicit emotion words - use more sophisticated approaches to conveying the emotion
+- Return ONLY a JSON object with "neutral_text" and ALL {len(emotions)} emotion keys, nothing else
 
-Format:
+CRITICAL: You MUST include ALL {len(emotions)} emotions in your output. Do not skip any.
+
+Format (include ALL emotions):
 {{
   "neutral_text": "...",
-  "anger": "...",
-  "fear": "...",
-  "happiness": "...",
-  "surprise": "...",
-  "disgust": "...",
-  "sadness": "..."
+  "{emotions[0]}": "...",
+  "{emotions[1]}": "...",
+  "{emotions[2]}": "...",
+  ... (all {len(emotions)} emotions)
 }}
 
-Example (topic: job interview):
+Example structure for job interview:
 {{
   "neutral_text": "The candidate arrived at the office. They spoke with the interviewer for thirty minutes. The interviewer thanked them and said they would follow up next week.",
   "anger": "I can't believe they made me wait! The interviewer barely asked real questions for thirty minutes. They brushed me off saying they'd 'follow up' - what a waste of my time!",
   "fear": "My hands were shaking as I entered the office. What if I said something wrong during those thirty minutes? The interviewer's vague promise to follow up makes me terrified I've already been rejected.",
-  ...
+  ... (continue for ALL emotions)
 }}"""
 
             user_prompt = f"Generate neutral text + emotional paraphrases (set {set_idx+1})."
@@ -984,7 +993,7 @@ Example (topic: job interview):
             try:
                 response = await client.messages.create(
                     model=model,
-                    max_tokens=4000,
+                    max_tokens=8000,
                     system=system_prompt,
                     messages=[{"role": "user", "content": user_prompt}],
                 )
@@ -1019,10 +1028,19 @@ Example (topic: job interview):
 
             # Extract emotional paraphrases - return as single grouped item
             emotional_variants = {}
+            missing_emotions = []
             for emotion in emotions:
                 if emotion not in data:
-                    raise KeyError(f"Set {set_idx} missing emotion '{emotion}'")
-                emotional_variants[emotion] = data[emotion]
+                    missing_emotions.append(emotion)
+                else:
+                    emotional_variants[emotion] = data[emotion]
+
+            # Warn if missing emotions but continue if we have at least 20/24
+            if missing_emotions:
+                if len(missing_emotions) > 4:
+                    raise KeyError(f"Set {set_idx} missing too many emotions ({len(missing_emotions)}): {missing_emotions[:5]}...")
+                else:
+                    print(f"    Warning: Set {set_idx} missing {len(missing_emotions)} emotions: {missing_emotions}")
 
             # Return one item with all emotions grouped
             return {
