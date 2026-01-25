@@ -1,0 +1,203 @@
+Python: /workspace-vast/annas/git/believe-it-or-not/.venv/bin/python
+Starting A matrix analysis...
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_16k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_16k_l0_small/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens / Bottom Tokens
+--------------------------------------------------------------------------------
+  12895 |  0.0524 |   0.2454 |   2.27e-03 | ['▁angry', '▁was', 'A', '▁had', '▁G']
+        |         |          |            | Bottom: ['是可以', '▁crescimento', '▁haría', '▁infrast', '▁quê']
+   7488 |  0.0523 |   0.2451 |   7.98e-03 | ['▁आणि', '▁и', 'ictionnaire', '▁insbesondere', '▁અને']
+        |         |          |            | Bottom: ['▁only', 'скольку', '▁not', '▁had', '▁at']
+  15041 |  0.0498 |   0.2330 |   4.09e-06 | ['larni', 'ังหวัด', 'oshape', 'ستگی', 'δει']
+        |         |          |            | Bottom: ['the', 'DE', "}')", 'und', 'trans']
+   2683 |  0.0492 |   0.2305 |   1.34e-03 | ['나', '၊', 'на', 'い', 'dır']
+        |         |          |            | Bottom: ['▁in', '.', '▁all', '▁et', 'ه']
+   9819 |  0.0489 |   0.2292 |   2.53e-05 | ['p', 'es', '\n\n', 'era', 'ümü']
+        |         |          |            | Bottom: ['Niger', '產業', 'ニコ', 'AUGUST', 'ರಿಂದ']
+   9742 |  0.0481 |   0.2255 |   1.31e-05 | ['▁또는', ']', '▁monitors', '▁interfacing', ')।']
+        |         |          |            | Bottom: ['first', 'Library', 'ọt', 'űr', '▁Regione']
+  15820 |  0.0477 |   0.2234 |   4.50e-03 | ['▁embeddings', '▁softmax', '▁oxidative', '▁hyperparameters', '▁intracellular']
+        |         |          |            | Bottom: ['经理', '财产', '▁autrefois', '▁business', '▁veřej']
+   7698 |  0.0476 |   0.2229 |   2.14e-03 | ['il', 'ä', 'p', 'ri', 'or']
+        |         |          |            | Bottom: ['\t', '▁', '▁acol', '这是一个', '▁itib']
+  14546 |  0.0476 |   0.2229 |   8.65e-05 | ['3', '2', '1', 'her', '.']
+        |         |          |            | Bottom: ['在', 'ﮭ', 'дение', '搠', 'ﾝ']
+   2695 |  0.0474 |   0.2221 |   9.83e-06 | ['c', 'ums', 'ık', 'con', 'baik']
+        |         |          |            | Bottom: ['▁Tú', '▁linee', '▁eléctrico', '▁tú', '▁daños']
+   8175 |  0.0474 |   0.2220 |   7.70e-05 | ['t', '1', 'al', 'd', 'en']
+        |         |          |            | Bottom: ['▁ಹೃ', '▁сообще', '▁społec', '▁Toutes', '▁ماشینونه']
+   4942 |  0.0471 |   0.2206 |   4.40e-03 | ['▁(', '▁acerca', '.', '▁bijvoorbeeld', '▁alebo']
+        |         |          |            | Bottom: ['▁can', 'ل', '▁will', 'л', 'í']
+  15508 |  0.0468 |   0.2192 |   9.91e-06 | ['▁preocupación', '▁trayectoria', '▁nível', '▁solución', 'andaş']
+        |         |          |            | Bottom: ['고자', 'i', 'דות', 'OF', 'ERA']
+  11162 |  0.0466 |   0.2180 |   1.21e-05 | ['madı', '▁انسٹ', '▁जेटली', 'aniem', 'Laravel']
+        |         |          |            | Bottom: ['the', 't', '▁the', '▁can', '트']
+  11291 |  0.0462 |   0.2161 |   7.88e-04 | ['▁as', '▁salesmen', 'Sales', '▁sales', '▁trusty']
+        |         |          |            | Bottom: ['م', 'ین', 'very', 'י', 'も']
+  11844 |  0.0457 |   0.2138 |   3.70e-04 | ['▁salaried', '▁employment', '▁работать', '▁Employment', '▁रोजगार']
+        |         |          |            | Bottom: ['3', 'cliffe', '▁attravers', '▁இதய', '鬢']
+   3302 |  0.0442 |   0.2071 |   4.06e-04 | ['▁tentang', '。', '▁sobre', '▁педаго', '▁yaptığı']
+        |         |          |            | Bottom: ['ت', '▁increases', 't', '%', '▁boosts']
+   8089 |  0.0441 |   0.2064 |   4.64e-05 | ['st', 'n', '_', '-', 'ن']
+        |         |          |            | Bottom: ['▁двух', 'ா', '▁deux', 'ا', '▁двумя']
+   7842 |  0.0440 |   0.2059 |   6.37e-06 | ['Datei', 'adı', 'ﻩ', '䜣', 'irani']
+        |         |          |            | Bottom: ['ти', 'ب', 'تين', '中', '트']
+   9380 |  0.0440 |   0.2058 |   2.32e-05 | ['▁Where', '▁be', '▁Who', 'Tong', '▁Alternatively']
+        |         |          |            | Bottom: ['ниці', 'ють', '▁zamów', '▁fièvre', 'èses']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 12895: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/12895
+  Feature 7488: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/7488
+  Feature 15041: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/15041
+  Feature 2683: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/2683
+  Feature 9819: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/9819
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens / Bottom Tokens
+--------------------------------------------------------------------------------
+  14571 | -0.0506 |  -0.2371 |   3.30e-03 | ['▁좋은', '▁good', '▁хорошие', '▁खासा', '▁bonnes']
+        |         |          |            | Bottom: ['si', 'se', 'ini', 'os', 'Untitled']
+  15651 | -0.0496 |  -0.2324 |   3.70e-05 | ['▁permite', '▁точки', '▁предусматри', '<unused350>', '▁જરૂ']
+        |         |          |            | Bottom: ['ன்னை', '▁habitually', '▁apparence', '▁NFTs', '▁puiss']
+  13006 | -0.0471 |  -0.2206 |   2.09e-03 | ['？）', '?)', 'ato', '?}', '？']
+        |         |          |            | Bottom: ['ያ', 'บุคคล', '▁It', '’।', 'нициа']
+  14242 | -0.0468 |  -0.2193 |   1.93e-04 | ['▁невозможно', '▁podría', '▁предусматри', '▁если', '的這個']
+        |         |          |            | Bottom: ['i', '▁(', '▁-', '/', '0']
+   2822 | -0.0467 |  -0.2187 |   2.05e-03 | ['剧', '▁их', '崭', 'ască', '▁trình']
+        |         |          |            | Bottom: ['▁goes', 'ಮಾಡ', '▁পেছনে', '▁sindaco', 'presidente']
+  12984 | -0.0466 |  -0.2182 |   3.77e-04 | ['🥬', '▁salads', '▁cucumbers', '▁Gemüse', '𝐫']
+        |         |          |            | Bottom: ['م', '▁که', 'TA', '▁وی', '4']
+   5069 | -0.0453 |  -0.2122 |   7.38e-04 | ['斯', '▁was', '▁wasp', 'ik', 'ни']
+        |         |          |            | Bottom: [',', '।', 'ED', 'AN', 'ं']
+  10909 | -0.0447 |  -0.2091 |   2.44e-04 | ['ه', ')', 'S', 'গ', '▁साखर']
+        |         |          |            | Bottom: ['не', '▁врач', '▁जिनके', '▁เนื่องจาก', '▁आपको']
+   4540 | -0.0441 |  -0.2063 |   1.62e-03 | ['in', 'v', 'ва', 'ו', 'و']
+        |         |          |            | Bottom: ['.', '▁taxis', '▁are', 'ों', 'к']
+  14192 | -0.0438 |  -0.2052 |   1.81e-03 | ['运算', '</h3>', 'ים', '▁extinguisher', 'я']
+        |         |          |            | Bottom: ['JW', 'Mal', '▁অ', '▁suche', '▁ഹ']
+   3931 | -0.0437 |  -0.2047 |   3.99e-03 | ['ມີ', 'chemic', '▁heresy', '▁njemu', 'il']
+        |         |          |            | Bottom: ['\n\n', '.', '▁', ',', '。']
+  10820 | -0.0437 |  -0.2045 |   1.12e-05 | ['▁t', '5', '\n', '4', 't']
+        |         |          |            | Bottom: ['⟥', 'ના', 'ith', '㓦', 'with']
+   1973 | -0.0435 |  -0.2039 |   2.58e-04 | ['ip', 'is', 'ic', 'aj', 'ig']
+        |         |          |            | Bottom: ['▁orice', 'प्रमाणे', '며', '▁постро', 'に見']
+  12744 | -0.0435 |  -0.2035 |   1.11e-05 | ['u', '▁Have', 'l', '▁established', 'an']
+        |         |          |            | Bottom: ['𝔂', '▁aliqua', 'corso', 'ხვა', '▁cỏ']
+  12870 | -0.0430 |  -0.2014 |   3.19e-03 | ['▁онлайн', 'ออนไลน์', '▁сайт', '▁online', '▁ഓൺലൈ']
+        |         |          |            | Bottom: ['▁noyau', '▁intramolecular', 'تی', 'Dalam', '▁einer']
+    213 | -0.0427 |  -0.2000 |   2.49e-06 | ['на', '▁동일', 'неоп', 'ة', 'যত']
+        |         |          |            | Bottom: ['▁depolar', '▁soddisf', '▁da', '?”', 'pathetic']
+   5261 | -0.0426 |  -0.1995 |   4.03e-06 | ['urts', 'ęż', 'یی', '▁vrata', 'issements']
+        |         |          |            | Bottom: ['IA', 'US', 'FER', 'M', 'DEVELOP']
+  14039 | -0.0425 |  -0.1990 |   2.15e-05 | ['ner', 'mer', 'air', 'iden', 'den']
+        |         |          |            | Bottom: ['▁ജന', 'ByMerging', 'ONEDB', '▁সা', '▁Tokugawa']
+   9974 | -0.0425 |  -0.1988 |   1.49e-05 | ['▁Verwendung', 'ING', 'ে', 'WARD', '▁uży']
+        |         |          |            | Bottom: ['зм', '▁reasons', '▁dirt', 'ेलकम', '▁professor']
+   4978 | -0.0424 |  -0.1985 |   8.47e-06 | ['tr', '다', 'tiny', '▁ר', '▁आश्चर्य']
+        |         |          |            | Bottom: ['▁', '▁एससी', '▁scalable', '▁финансовых', '▁impairs']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 14571: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/14571
+  Feature 15651: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/15651
+  Feature 13006: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/13006
+  Feature 14242: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/14242
+  Feature 2822: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/2822
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000092
+  Std cosine sim: 0.013724
+  Max cosine sim: 0.052401
+  Min cosine sim: -0.050638
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0183
+  |lora_A|: 0.5791
+  |effective_B| (scaled): 4.6824
+
+================================================================================
+ANALYZING A MATRIX (W_down @ A^T)
+================================================================================
+Loading down_proj from google/gemma-3-27b-it layer 20...
+  Found down_proj via language_model.layers
+  down_proj shape: torch.Size([5376, 21504])
+A shape: torch.Size([1, 21504])
+W_down shape: torch.Size([5376, 21504])
+W_down @ A^T shape: torch.Size([5376])
+|W_down @ A^T|: 0.2267
+
+Alignment between B and W_down @ A^T: -0.0130
+  -> LoRA REDIRECTS (orthogonal to normal A output)
+
+ W_down @ A^T - MAX COSINE SIMILARITY FEATURES:
+--------------------------------------------------------------------------------
+    Idx |  Cosine | Top Tokens
+--------------------------------------------------------------------------------
+  12591 |  0.0724 | ['ма', 'я', 'তে', 'ง', 'ер']
+   3900 |  0.0699 | ['▁', '-', 'and', '.', '▁(-)']
+   7966 |  0.0663 | ['።', '紅', '。', '។', 'ма']
+   8875 |  0.0648 | ['فو', 'customers', 'Customer', 'Support', 'customer']
+  12770 |  0.0635 | ['м', 'á', 'ę', 'ين', 'ع']
+   4746 |  0.0615 | ['an', '▁as', '▁are', '▁it', ';']
+   9385 |  0.0614 | ['O', '▁to', 'uchten', '▁Letter', 'letter']
+  15353 |  0.0608 | ['▁at', '▁బాధ', '▁polícia', '▁తీవ్ర', '▁messageShow']
+   4869 |  0.0605 | ['▁tonnage', '▁size', '▁YEARS', 'サイズ', '上限']
+   8740 |  0.0599 | ['માં', '২', 'quela', 'га', 'மாக']
+  12188 |  0.0595 | ['리', '사', '야', 'های', '시']
+   7746 |  0.0594 | ['ING', '()){', 'ingan', '\\".', '()).']
+   6337 |  0.0593 | ['▁is', '▁an', '،', '▁in', 'ng']
+   2585 |  0.0580 | ['▁on', 'ن', '▁behalf', 'on', 'ри']
+   6997 |  0.0572 | ['of', 'were', 'era', 'ни', 'IG']
+
+ W_down @ A^T - MIN COSINE SIMILARITY FEATURES:
+--------------------------------------------------------------------------------
+    Idx |  Cosine | Top Tokens
+--------------------------------------------------------------------------------
+   2093 | -0.0798 | ['▁RBIs', '들과', '’', '्स', '▁ratios']
+  12088 | -0.0698 | ['in', 'r', 't', 'ta', 'g']
+   3557 | -0.0693 | ["'", '\t\t', '▁hoch', "'),", '</h2>']
+  15072 | -0.0659 | ['t', 'раз', 'ेट', 'નના', '<0xBF>']
+   9996 | -0.0650 | ['g', 'ти', 'u', 'ہ', 'is']
+  11497 | -0.0645 | ['t', 'و', 'K', 'B', '▁on']
+   4953 | -0.0636 | ['\n\n', '\n', 'ও', '▁mesmerizing', '▁possui']
+   8662 | -0.0634 | ['on', 'em', '▁niet', '▁όχι', '他不']
+   8412 | -0.0633 | ['▁sensors', '▁data', '▁detects', '▁sensor', 'data']
+   5092 | -0.0628 | ['▁for', '▁For', '▁Colorado', '▁The', '▁variances']
+   1384 | -0.0628 | ['ز', 'টি', 'ok', 'М', 'od']
+  10186 | -0.0615 | ['t', '▁projek', 'יים', '▁Projects', '▁projects']
+   4345 | -0.0601 | ['ב', 'in', 'ט', '▁conceivably', '在']
+  14332 | -0.0598 | ['н', 'न', 'ન', '用於', '▁K']
+   2202 | -0.0597 | ['ت', 'с', 'س', 'т', 'et']
+
+ A MATRIX STATISTICS:
+  Mean cosine sim: 0.000228
+  Std cosine sim: 0.019470
+  Max cosine sim: 0.072433
+  Min cosine sim: -0.079826
+  B alignment with W_down @ A^T: -0.0130
+Done!

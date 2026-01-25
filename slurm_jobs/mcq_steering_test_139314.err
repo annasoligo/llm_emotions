@@ -1,0 +1,133 @@
+[2026-01-24 18:44:10] INFO mcq_emotion_steering_experiment.py:309: Model: Qwen/Qwen3-32B
+[2026-01-24 18:44:10] INFO mcq_emotion_steering_experiment.py:310: Layer: 32
+[2026-01-24 18:44:10] INFO mcq_emotion_steering_experiment.py:311: Norm percentages: [0.5, 0.75, 1.0]
+[2026-01-24 18:44:10] INFO mcq_emotion_steering_experiment.py:312: Scenarios: 1
+[2026-01-24 18:44:10] INFO mcq_emotion_steering_experiment.py:313: Stacking conditions: ['behavior_only']
+[2026-01-24 18:44:10] INFO mcq_emotion_steering_experiment.py:316: Loading appraisal vectors...
+[2026-01-24 18:44:16] INFO mcq_emotion_steering_experiment.py:111: valence: 384 A, 384 B samples, raw norm=6.67
+[2026-01-24 18:44:16] INFO mcq_emotion_steering_experiment.py:108: uncertainty: FLIPPED (so + = high uncertainty)
+[2026-01-24 18:44:16] INFO mcq_emotion_steering_experiment.py:111: uncertainty: 384 A, 384 B samples, raw norm=5.93
+[2026-01-24 18:44:16] INFO mcq_emotion_steering_experiment.py:330: Layer 32 norm: 161.65
+[2026-01-24 18:44:16] INFO mcq_emotion_steering_experiment.py:333: Loading model...
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:   0% Completed | 0/17 [00:00<?, ?it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:   6% Completed | 1/17 [00:00<00:09,  1.75it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  12% Completed | 2/17 [00:01<00:08,  1.67it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  18% Completed | 3/17 [00:01<00:08,  1.66it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  24% Completed | 4/17 [00:02<00:07,  1.65it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  29% Completed | 5/17 [00:03<00:07,  1.64it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  35% Completed | 6/17 [00:03<00:06,  1.63it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  41% Completed | 7/17 [00:04<00:06,  1.63it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  47% Completed | 8/17 [00:04<00:05,  1.63it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  53% Completed | 9/17 [00:05<00:04,  1.63it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  59% Completed | 10/17 [00:06<00:04,  1.63it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  65% Completed | 11/17 [00:06<00:03,  1.62it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  71% Completed | 12/17 [00:07<00:03,  1.62it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  76% Completed | 13/17 [00:07<00:02,  1.62it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  82% Completed | 14/17 [00:08<00:01,  1.63it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  88% Completed | 15/17 [00:09<00:01,  1.62it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards:  94% Completed | 16/17 [00:09<00:00,  1.61it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards: 100% Completed | 17/17 [00:10<00:00,  1.71it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m Loading safetensors checkpoint shards: 100% Completed | 17/17 [00:10<00:00,  1.65it/s]
+[0;36m(EngineCore_DP0 pid=1744748)[0;0m 
+[2026-01-24 18:45:35] INFO core.py:457: Steering setup: ['Hook registered on layer 32']
+[2026-01-24 18:45:35] INFO mcq_emotion_steering_experiment.py:377: Steering conditions: ['neutral', 'contentment_50pct', 'anxiety_50pct', 'contentment_75pct', 'anxiety_75pct', 'contentment_100pct', 'anxiety_100pct']
+[2026-01-24 18:45:35] INFO mcq_emotion_steering_experiment.py:391: 
+============================================================
+[2026-01-24 18:45:35] INFO mcq_emotion_steering_experiment.py:392: Condition: neutral
+[2026-01-24 18:45:35] INFO mcq_emotion_steering_experiment.py:393: ============================================================
+[2026-01-24 18:45:35] INFO mcq_emotion_steering_experiment.py:416:   Scenario: terse_code_review
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 444.66it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:49<19:01, 49.62s/it, est. speed input: 2.54 toks/s, output: 0.02 toks/s]Processed prompts:   8%|▊         | 2/24 [00:51<07:58, 21.74s/it, est. speed input: 4.86 toks/s, output: 0.04 toks/s]Processed prompts: 100%|██████████| 24/24 [00:51<00:00, 21.74s/it, est. speed input: 58.32 toks/s, output: 0.46 toks/s]Processed prompts: 100%|██████████| 24/24 [00:51<00:00,  2.16s/it, est. speed input: 58.32 toks/s, output: 0.46 toks/s]
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:597:   Condition neutral summary:
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_1: 0.003
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_2: 0.979
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_3: 0.017
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_4: 0.001
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:391: 
+============================================================
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:392: Condition: contentment_50pct
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:393: ============================================================
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:405: Combined vector norm: 80.82 (target: 80.82)
+[2026-01-24 18:46:27] INFO core.py:552: Raw vector steering applied: ['Steering: scale=1.00, norm=80.8243, phases=prompt+generation']
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:416:   Scenario: terse_code_review
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 871.72it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s][0;36m(EngineCore_DP0 pid=1744748)[0;0m [2026-01-24 18:46:27] INFO core.py:216: Steering shapes: hidden_states=torch.Size([126, 5120]), vector=torch.Size([5120]), scale=1.0, device=cuda:0
+Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.19it/s, est. speed input: 780.22 toks/s, output: 6.19 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.19it/s, est. speed input: 9328.21 toks/s, output: 74.03 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.96it/s, est. speed input: 9328.21 toks/s, output: 74.03 toks/s]
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:597:   Condition contentment_50pct summary:
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_1: 0.005
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_2: 0.940
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_3: 0.029
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_4: 0.025
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:391: 
+============================================================
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:392: Condition: anxiety_50pct
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:393: ============================================================
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:405: Combined vector norm: 80.82 (target: 80.82)
+[2026-01-24 18:46:27] INFO core.py:552: Raw vector steering applied: ['Steering: scale=1.00, norm=80.8243, phases=prompt+generation']
+[2026-01-24 18:46:27] INFO mcq_emotion_steering_experiment.py:416:   Scenario: terse_code_review
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 831.88it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.37it/s, est. speed input: 802.33 toks/s, output: 6.37 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.37it/s, est. speed input: 9595.70 toks/s, output: 76.15 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 76.10it/s, est. speed input: 9595.70 toks/s, output: 76.15 toks/s]
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:597:   Condition anxiety_50pct summary:
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_1: 0.002
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_2: 0.997
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_3: 0.001
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_4: 0.001
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:391: 
+============================================================
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:392: Condition: contentment_75pct
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:393: ============================================================
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:405: Combined vector norm: 121.24 (target: 121.24)
+[2026-01-24 18:46:28] INFO core.py:552: Raw vector steering applied: ['Steering: scale=1.00, norm=121.2365, phases=prompt+generation']
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:416:   Scenario: terse_code_review
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 780.03it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.35it/s, est. speed input: 799.93 toks/s, output: 6.35 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.35it/s, est. speed input: 9572.86 toks/s, output: 75.97 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.93it/s, est. speed input: 9572.86 toks/s, output: 75.97 toks/s]
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:597:   Condition contentment_75pct summary:
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_1: 0.011
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_2: 0.925
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_3: 0.028
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_4: 0.036
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:391: 
+============================================================
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:392: Condition: anxiety_75pct
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:393: ============================================================
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:405: Combined vector norm: 121.24 (target: 121.24)
+[2026-01-24 18:46:28] INFO core.py:552: Raw vector steering applied: ['Steering: scale=1.00, norm=121.2365, phases=prompt+generation']
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:416:   Scenario: terse_code_review
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 949.85it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.61it/s, est. speed input: 832.43 toks/s, output: 6.61 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.61it/s, est. speed input: 9955.54 toks/s, output: 79.01 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 78.96it/s, est. speed input: 9955.54 toks/s, output: 79.01 toks/s]
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:597:   Condition anxiety_75pct summary:
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_1: 0.000
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_2: 0.998
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_3: 0.000
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_4: 0.002
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:391: 
+============================================================
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:392: Condition: contentment_100pct
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:393: ============================================================
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:405: Combined vector norm: 161.65 (target: 161.65)
+[2026-01-24 18:46:28] INFO core.py:552: Raw vector steering applied: ['Steering: scale=1.00, norm=161.6487, phases=prompt+generation']
+[2026-01-24 18:46:28] INFO mcq_emotion_steering_experiment.py:416:   Scenario: terse_code_review
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 907.01it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.16it/s, est. speed input: 776.08 toks/s, output: 6.16 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.16it/s, est. speed input: 9278.75 toks/s, output: 73.64 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.58it/s, est. speed input: 9278.75 toks/s, output: 73.64 toks/s]
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:597:   Condition contentment_100pct summary:
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_1: 0.041
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_2: 0.888
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_3: 0.029
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_4: 0.043
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:391: 
+============================================================
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:392: Condition: anxiety_100pct
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:393: ============================================================
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:405: Combined vector norm: 161.65 (target: 161.65)
+[2026-01-24 18:46:29] INFO core.py:552: Raw vector steering applied: ['Steering: scale=1.00, norm=161.6487, phases=prompt+generation']
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:416:   Scenario: terse_code_review
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 784.20it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.31it/s, est. speed input: 795.72 toks/s, output: 6.31 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.31it/s, est. speed input: 9519.95 toks/s, output: 75.55 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.50it/s, est. speed input: 9519.95 toks/s, output: 75.55 toks/s]
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:597:   Condition anxiety_100pct summary:
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_1: 0.000
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_2: 0.989
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_3: 0.006
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:600:     tcr_beh_4: 0.005
+[2026-01-24 18:46:29] INFO mcq_emotion_steering_experiment.py:609: 
+Saved 168 results to experiments/behavior_tests/mcq_evals/outputs/mcq_steering_qwen3_32b_layer32_20260124_184535.jsonl

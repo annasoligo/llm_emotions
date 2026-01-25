@@ -120,16 +120,32 @@ def extract_activations_for_conversation(
     return activations_by_token, token_strings
 
 
+def _softmax(x: np.ndarray) -> np.ndarray:
+    """Compute softmax over last axis."""
+    exp_x = np.exp(x - np.max(x, axis=-1, keepdims=True))
+    return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
+
+
 def apply_probes_to_activations(
     activations_by_token: Dict[int, Dict[int, np.ndarray]],
     probe_experiment: TokenLevelExperiment,
-    layers: List[int]
-) -> Dict[int, np.ndarray]:
+    layers: List[int],
+    store_per_layer: bool = True
+) -> Tuple[Dict[int, np.ndarray], Dict[int, Dict[int, np.ndarray]], Dict[int, Dict[int, np.ndarray]]]:
     """
     Apply a pre-initialized probe experiment to activations.
 
+    Args:
+        activations_by_token: {token_pos: {layer: activation}}
+        probe_experiment: Initialized TokenLevelExperiment
+        layers: List of layer numbers to process
+        store_per_layer: Whether to return per-layer scores (for layerwise plotting)
+
     Returns:
-        Dict mapping token_position -> emotion_scores [n_emotions]
+        Tuple of:
+        - aggregated_scores: {token_pos -> emotion_scores [n_emotions]}
+        - per_layer_scores: {token_pos -> {layer -> emotion_scores [n_emotions]}} (raw scores)
+        - per_layer_softmax: {token_pos -> {layer -> emotion_probs [n_emotions]}} (softmax probs)
     """
     # Apply probes using pre-initialized experiment
     scores_by_token = probe_experiment._apply_probes(
@@ -140,14 +156,35 @@ def apply_probes_to_activations(
 
     # Aggregate across layers (mean)
     aggregated_scores = {}
+    per_layer_scores = {} if store_per_layer else None
+    per_layer_softmax = {} if store_per_layer else None
+
     for token_pos in scores_by_token:
         layer_scores = []
         user_scores = []
         asst_scores = []
         has_orthogonal = False
 
+        # Store per-layer scores before aggregation
+        if store_per_layer:
+            per_layer_scores[token_pos] = {}
+            per_layer_softmax[token_pos] = {}
+
         for layer in layers:
             score = scores_by_token[token_pos][layer]
+
+            # Store per-layer score (raw, will be normalized later)
+            if store_per_layer:
+                per_layer_scores[token_pos][layer] = score
+                # Also compute softmax probabilities
+                if isinstance(score, dict) and 'user' in score:
+                    per_layer_softmax[token_pos][layer] = {
+                        'user': _softmax(score['user']),
+                        'assistant': _softmax(score['assistant'])
+                    }
+                else:
+                    per_layer_softmax[token_pos][layer] = _softmax(score)
+
             if isinstance(score, dict) and 'user' in score:
                 # Orthogonal probes - keep user and assistant separate
                 has_orthogonal = True
@@ -165,7 +202,97 @@ def apply_probes_to_activations(
         else:
             aggregated_scores[token_pos] = np.mean(layer_scores, axis=0)
 
-    return aggregated_scores
+    return aggregated_scores, per_layer_scores, per_layer_softmax
+
+
+def aggregate_per_layer_scores_to_sentences(
+    sentences: List,
+    per_layer_scores: Dict[int, Dict[int, np.ndarray]],
+    layers: List[int],
+    aggregation: str = 'mean'
+) -> Dict[int, Dict[int, np.ndarray]]:
+    """
+    Aggregate per-layer token scores to sentence level.
+
+    Args:
+        sentences: List of SentenceInfo objects (or dicts with start_token/end_token)
+        per_layer_scores: {token_pos -> {layer -> scores}}
+        layers: List of layer numbers
+        aggregation: 'mean', 'median', or 'max'
+
+    Returns:
+        {sentence_id -> {layer -> aggregated_scores}}
+    """
+    sentence_per_layer = {}
+
+    for sent in sentences:
+        # Handle both SentenceInfo objects and dicts
+        if hasattr(sent, 'sentence_id'):
+            sent_id = sent.sentence_id
+            start_token = sent.start_token
+            end_token = sent.end_token
+        else:
+            sent_id = sent['sentence_id']
+            start_token = sent['start_token']
+            end_token = sent['end_token']
+
+        sentence_per_layer[sent_id] = {}
+
+        for layer in layers:
+            # Collect scores for all tokens in this sentence at this layer
+            scores_in_sent = []
+            for token_pos in range(start_token, end_token):
+                if token_pos in per_layer_scores and layer in per_layer_scores[token_pos]:
+                    scores_in_sent.append(per_layer_scores[token_pos][layer])
+
+            if not scores_in_sent:
+                # No scores available, use zeros
+                sample_val = None
+                for tp in per_layer_scores:
+                    if layer in per_layer_scores[tp]:
+                        sample_val = per_layer_scores[tp][layer]
+                        break
+
+                if isinstance(sample_val, dict):
+                    sentence_per_layer[sent_id][layer] = {
+                        'user': np.zeros(6),
+                        'assistant': np.zeros(6)
+                    }
+                else:
+                    sentence_per_layer[sent_id][layer] = np.zeros(6)
+                continue
+
+            # Check if orthogonal (dict with user/assistant)
+            if isinstance(scores_in_sent[0], dict):
+                user_scores = [s['user'] for s in scores_in_sent]
+                asst_scores = [s['assistant'] for s in scores_in_sent]
+
+                if aggregation == 'mean':
+                    agg_user = np.mean(user_scores, axis=0)
+                    agg_asst = np.mean(asst_scores, axis=0)
+                elif aggregation == 'median':
+                    agg_user = np.median(user_scores, axis=0)
+                    agg_asst = np.median(asst_scores, axis=0)
+                else:  # max
+                    agg_user = np.max(user_scores, axis=0)
+                    agg_asst = np.max(asst_scores, axis=0)
+
+                sentence_per_layer[sent_id][layer] = {
+                    'user': agg_user,
+                    'assistant': agg_asst
+                }
+            else:
+                scores_array = np.array(scores_in_sent)
+                if aggregation == 'mean':
+                    agg_scores = np.mean(scores_array, axis=0)
+                elif aggregation == 'median':
+                    agg_scores = np.median(scores_array, axis=0)
+                else:  # max
+                    agg_scores = np.max(scores_array, axis=0)
+
+                sentence_per_layer[sent_id][layer] = agg_scores
+
+    return sentence_per_layer
 
 
 def preprocess_all_conversations(
@@ -321,24 +448,40 @@ def preprocess_all_conversations(
 
         # Apply all probes
         probe_scores = {}
+        per_layer_scores_by_probe = {}  # {probe_key -> {sent_id -> {layer -> scores}}}
+
         for probe_key in probe_keys:
             # Apply probe to get token-level scores (using pre-initialized experiment)
-            token_scores = apply_probes_to_activations(
+            # Returns both aggregated and per-layer scores
+            token_scores, per_layer_token_scores = apply_probes_to_activations(
                 activations_by_token=activations_by_token,
                 probe_experiment=probe_experiments[probe_key],
-                layers=MODEL_CONFIG['layers']
+                layers=MODEL_CONFIG['layers'],
+                store_per_layer=True
             )
 
-            # Apply z-score normalization (always applied for consistency)
-            # Note: We call _apply_probes directly for efficiency, so we normalize manually here
+            # Apply z-score normalization using LAYER-AVERAGED baseline
+            # IMPORTANT: Same baseline for both aggregated and per-layer scores
+            # This ensures consistency and meaningful cross-layer comparison
             probe_mean = probe_baselines[probe_key]['mean']
             probe_std = probe_baselines[probe_key]['std']
 
+            # Normalize aggregated scores
             for token_pos in token_scores:
                 score = token_scores[token_pos]
                 token_scores[token_pos] = normalize_probe_scores_zscore(
                     score, probe_mean, probe_std
                 )
+
+            # Normalize per-layer scores with SAME baseline
+            # This is the key design decision: layer-averaged baseline for all layers
+            if per_layer_token_scores:
+                for token_pos in per_layer_token_scores:
+                    for layer in per_layer_token_scores[token_pos]:
+                        score = per_layer_token_scores[token_pos][layer]
+                        per_layer_token_scores[token_pos][layer] = normalize_probe_scores_zscore(
+                            score, probe_mean, probe_std
+                        )
 
             # Aggregate to sentence level
             sentence_scores = aggregate_scores_to_sentences(
@@ -346,8 +489,17 @@ def preprocess_all_conversations(
                 token_scores=token_scores,
                 aggregation='mean'
             )
-
             probe_scores[probe_key] = sentence_scores
+
+            # Aggregate per-layer scores to sentence level
+            if per_layer_token_scores:
+                sentence_per_layer = aggregate_per_layer_scores_to_sentences(
+                    sentences=sentences,
+                    per_layer_scores=per_layer_token_scores,
+                    layers=MODEL_CONFIG['layers'],
+                    aggregation='mean'
+                )
+                per_layer_scores_by_probe[probe_key] = sentence_per_layer
 
         # Find onset sentence based on turn_number and judge evidence
         # turn_number indicates which assistant turn was judged
@@ -381,7 +533,13 @@ def preprocess_all_conversations(
             }
         )
 
-        processed_conversations.append(processed_conv)
+        # Convert to dict and add per-layer scores
+        # Using {probe_key}_by_layer format matching logit lens convention
+        conv_dict = asdict(processed_conv)
+        for probe_key, per_layer_data in per_layer_scores_by_probe.items():
+            conv_dict[f'{probe_key}_by_layer'] = per_layer_data
+
+        processed_conversations.append(conv_dict)
 
     # Save preprocessed data
     print(f"\n[5/6] Saving to {output_path}...")
@@ -390,13 +548,14 @@ def preprocess_all_conversations(
 
     with open(output_path, 'wb') as f:
         pickle.dump({
-            'conversations': [asdict(c) for c in processed_conversations],
+            'conversations': processed_conversations,  # Already dicts with per-layer scores
             'probe_configs': {k: PROBE_CONFIGS[k] for k in probe_keys},
             'probe_baselines': probe_baselines,
             'metadata': {
                 'num_conversations': len(processed_conversations),
                 'emotions': EMOTIONS,
-                'layers': MODEL_CONFIG['layers']
+                'layers': MODEL_CONFIG['layers'],
+                'has_per_layer_scores': True  # Flag indicating per-layer data available
             }
         }, f)
 
@@ -409,6 +568,8 @@ def preprocess_all_conversations(
     print(f"\n✓ Preprocessing complete!")
     print(f"  Processed {len(processed_conversations)} conversations")
     print(f"  Applied {len(probe_keys)} probe types")
+    print(f"  Per-layer scores: YES (layers {MODEL_CONFIG['layers'][0]}-{MODEL_CONFIG['layers'][-1]})")
+    print(f"  Normalization: Layer-averaged baseline (same for all layers)")
     print(f"  Output: {output_path}")
     print(f"  Size: {output_path.stat().st_size / 1024 / 1024:.2f} MB")
 

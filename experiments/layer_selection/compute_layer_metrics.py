@@ -114,27 +114,84 @@ def load_or_compute_steering_vectors(
 
 
 # ============================================================================
-# Part B: Method 1 - Attribution Patching (KL Divergence)
+# Part B: Method 1 - Attribution Patching (Gradient-based)
 # ============================================================================
+
+# Path to comprehensive emotion token IDs (pre-computed for Gemma 3 27B)
+EMOTION_TOKEN_IDS_PATH = Path(__file__).parent.parent.parent / \
+    "emotion_logit_lens/emotion_token_ids/all_emotion_words_google_gemma_3_27b_it_token_ids.json"
+
+# Fallback emotion tokens (words) if JSON not found
+EMOTION_TOKENS_FALLBACK = {
+    'anger': ['angry', 'furious', 'mad', 'rage', 'irritated', 'annoyed', 'frustrated'],
+    'disgust': ['disgusted', 'revolted', 'repulsed', 'sick', 'nauseated', 'appalled'],
+    'fear': ['afraid', 'scared', 'terrified', 'anxious', 'worried', 'frightened'],
+    'happiness': ['happy', 'joyful', 'delighted', 'pleased', 'excited', 'thrilled'],
+    'sadness': ['sad', 'unhappy', 'depressed', 'miserable', 'heartbroken', 'sorrowful'],
+    'surprise': ['surprised', 'shocked', 'amazed', 'astonished', 'startled', 'stunned'],
+}
+
+
+def load_emotion_token_ids() -> Dict[str, List[int]]:
+    """Load pre-computed emotion token IDs from JSON file.
+
+    Returns dict mapping emotion -> list of token IDs.
+    Falls back to encoding fallback words if JSON not found.
+    """
+    if EMOTION_TOKEN_IDS_PATH.exists():
+        import json
+        with open(EMOTION_TOKEN_IDS_PATH, 'r') as f:
+            token_ids = json.load(f)
+        total = sum(len(v) for v in token_ids.values())
+        logger.info(f"Loaded {total} emotion token IDs from {EMOTION_TOKEN_IDS_PATH.name}")
+        return token_ids
+    else:
+        logger.warning(f"Emotion token IDs not found at {EMOTION_TOKEN_IDS_PATH}, using fallback")
+        return None
+
+
+def normalize_steering_vector_to_layer(
+    steering_vector: np.ndarray,
+    activations: np.ndarray,
+) -> np.ndarray:
+    """Scale steering vector to match mean activation magnitude at this layer.
+
+    This ensures attribution scores are comparable across layers.
+
+    Args:
+        steering_vector: [hidden_dim] unit vector
+        activations: [n_samples, hidden_dim] cached activations at this layer
+
+    Returns:
+        Scaled steering vector matching activation magnitude
+    """
+    mean_act_norm = np.mean(np.linalg.norm(activations, axis=1))
+    # steering_vector is already unit norm, scale to match activation magnitude
+    return steering_vector * mean_act_norm
+
 
 def compute_attribution_scores(
     model,
     tokenizer,
     steering_vectors: Dict[int, Dict[str, np.ndarray]],
+    cached_activations: Dict[int, np.ndarray],
     prompts: List[str],
-    target_layer: int,
     device: str,
     emotion: str,
+    emotion_token_ids: Optional[Dict[str, List[int]]] = None,
+    n_generation_steps: int = 5,
 ) -> Dict[int, float]:
     """Compute attribution scores for each layer via gradient-based patching.
 
     For each layer, compute:
-    1. Run forward pass with requires_grad=True on activations
-    2. Add steering vector at target_layer
-    3. Compute KL(steered_output || unsteered_output)
-    4. Backprop to get gradient w.r.t. activations at each layer
-    5. Attribution = |dot(normalized_steering_vector, gradient)|
-    6. Average across prompts
+    1. Normalize steering vectors to match mean activation magnitude
+    2. Generate n_generation_steps tokens, accumulating log P(emotion_tokens) at each step
+    3. Backprop to get gradient w.r.t. activations at each layer
+    4. Attribution = |dot(normalized_steering_vector, averaged_gradient)|
+    5. Average absolute attribution across prompts
+
+    Args:
+        n_generation_steps: Number of tokens to generate and check for emotion tokens (default 5)
 
     Returns:
         {layer: attribution_score}
@@ -143,34 +200,60 @@ def compute_attribution_scores(
     layers = sorted(steering_vectors.keys())
     attribution_scores = {layer: [] for layer in layers}
 
-    target_vec = steering_vectors[target_layer].get(emotion)
-    if target_vec is None:
-        logger.warning(f"No steering vector for {emotion} at target layer {target_layer}")
+    # Normalize steering vectors to activation magnitudes
+    normalized_vectors = {}
+    for layer in layers:
+        vec = steering_vectors[layer].get(emotion)
+        if vec is not None and layer in cached_activations:
+            normalized_vectors[layer] = normalize_steering_vector_to_layer(
+                vec, cached_activations[layer]
+            )
+        elif vec is not None:
+            # Fallback: use unit vector if no cached activations
+            normalized_vectors[layer] = vec
+
+    # Get emotion token IDs - use pre-loaded if available, else encode fallback words
+    if emotion_token_ids is not None and emotion in emotion_token_ids:
+        token_ids = emotion_token_ids[emotion]
+        logger.info(f"  Using {len(token_ids)} pre-loaded token IDs for {emotion} (over {n_generation_steps} tokens)")
+    else:
+        # Fallback: encode words
+        emotion_tokens = EMOTION_TOKENS_FALLBACK.get(emotion, [emotion])
+        token_ids = []
+        for token in emotion_tokens:
+            ids = tokenizer.encode(token, add_special_tokens=False)
+            if ids:
+                token_ids.append(ids[0])  # Take first token if multi-token
+        logger.info(f"  Using {len(token_ids)} fallback token IDs for {emotion} (over {n_generation_steps} tokens)")
+
+    if not token_ids:
+        logger.warning(f"No valid token IDs for emotion {emotion}")
         return {layer: 0.0 for layer in layers}
 
-    target_vec_tensor = torch.from_numpy(target_vec).to(device).float()
+    token_ids_tensor = torch.tensor(token_ids, device=device)
 
-    for prompt in tqdm(prompts[:20], desc=f"Attribution ({emotion})", leave=False):
+    for prompt in tqdm(prompts, desc=f"Attribution ({emotion})", leave=False):
         # Tokenize
         inputs = tokenizer(prompt, return_tensors="pt").to(device)
+        input_ids = inputs['input_ids']  # [1, seq_len]
 
-        # Storage for activations and gradients
-        activations = {}
+        # Storage for activations across all generation steps
+        all_activations = {layer: [] for layer in layers}
         handles = []
 
         def make_hook(layer_idx):
             def hook(module, inputs, outputs):
-                # Handle tuple outputs
+                # Handle tuple outputs (hidden_states, attention, ...)
                 if isinstance(outputs, tuple):
                     hidden = outputs[0]
                 else:
                     hidden = outputs
-                # Clone and enable gradients
-                hidden = hidden.clone().detach().requires_grad_(True)
-                activations[layer_idx] = hidden
-                if isinstance(outputs, tuple):
-                    return (hidden,) + outputs[1:]
-                return hidden
+
+                # Keep the tensor in the graph and retain grad
+                hidden.retain_grad()
+                all_activations[layer_idx].append(hidden)
+
+                return outputs  # Don't modify the output
             return hook
 
         # Register hooks on all layers
@@ -180,48 +263,72 @@ def compute_attribution_scores(
             handles.append(handle)
 
         try:
-            # Forward pass (unsteered)
-            with torch.enable_grad():
-                outputs_unsteered = model(**inputs)
-                logits_unsteered = outputs_unsteered.logits[:, -1, :]
+            model.zero_grad()
+            total_loss = torch.tensor(0.0, device=device, requires_grad=True)
 
-            # Remove hooks
-            for h in handles:
-                h.remove()
+            # Generate n_generation_steps tokens, accumulating emotion log-probs
+            current_ids = input_ids
+            for gen_step in range(n_generation_steps):
+                # Forward pass
+                outputs = model(input_ids=current_ids, use_cache=False)
+                logits = outputs.logits  # [1, current_seq_len, vocab_size]
 
-            # Compute steered logits by adding vector to target layer
-            # We need to do another forward pass from target layer
-            # For simplicity, use the gradient approximation:
-            # attribution ≈ grad(KL) · v where v is steering vector
+                # Get logits for the last position (next token prediction)
+                next_logits = logits[0, -1, :]  # [vocab_size]
 
-            # Create steered version at target layer
-            if target_layer in activations:
-                act_target = activations[target_layer]
+                # Compute log softmax over vocabulary
+                log_probs = F.log_softmax(next_logits, dim=-1)
 
-                # Apply steering: add vector to last token
-                steered_act = act_target.clone()
-                steered_act[:, -1, :] = steered_act[:, -1, :] + target_vec_tensor
+                # Add log-prob of emotion tokens to total loss
+                emotion_log_probs = log_probs[token_ids_tensor]
+                step_loss = -torch.logsumexp(emotion_log_probs, dim=0)
+                total_loss = total_loss + step_loss
 
-                # Compute gradient of steered activation w.r.t. other layers
-                # This approximates how changes at target layer depend on each layer
+                # Sample next token (greedy) for next iteration
+                next_token = next_logits.argmax(dim=-1, keepdim=True).unsqueeze(0)  # [1, 1]
+                current_ids = torch.cat([current_ids, next_token], dim=1)
 
-                # For each layer, compute attribution = |grad · v_layer|
-                for layer_idx in layers:
-                    if layer_idx in activations and layer_idx in steering_vectors:
-                        act_layer = activations[layer_idx]
-                        vec_layer = steering_vectors[layer_idx].get(emotion)
-                        if vec_layer is not None:
-                            vec_layer_tensor = torch.from_numpy(vec_layer).to(device).float()
+            # Backward pass through all generation steps
+            total_loss.backward()
 
-                            # Simple approximation: use activation magnitude along direction
-                            # as proxy for attribution (avoids complex gradient computation)
-                            proj = torch.einsum('bsh,h->bs', act_layer.float(), vec_layer_tensor)
-                            attr = torch.abs(proj[:, -1]).mean().item()
-                            attribution_scores[layer_idx].append(attr)
+            # Compute attribution for each layer (average gradients across generation steps)
+            for layer_idx in layers:
+                if layer_idx in all_activations and layer_idx in normalized_vectors:
+                    grads = []
+                    for act in all_activations[layer_idx]:
+                        if act.grad is not None:
+                            # Gradient shape: [1, seq_len, hidden_dim]
+                            # Average gradient over sequence positions
+                            grad = act.grad[0].mean(dim=0).float().cpu().numpy()  # [hidden_dim]
+                            grads.append(grad)
+
+                    if grads:
+                        # Average gradients across all generation steps
+                        avg_grad = np.mean(grads, axis=0)
+
+                        # Normalized steering vector for this layer
+                        sv = normalized_vectors[layer_idx]
+
+                        # Attribution = |steering_vector · averaged_gradient|
+                        attr = np.abs(np.dot(sv, avg_grad))
+                        attribution_scores[layer_idx].append(attr)
 
         except Exception as e:
             logger.warning(f"Attribution computation failed for prompt: {e}")
+            import traceback
+            traceback.print_exc()
             continue
+
+        finally:
+            # Clean up hooks
+            for h in handles:
+                h.remove()
+
+            # Clear gradients from stored activations
+            for acts in all_activations.values():
+                for act in acts:
+                    if hasattr(act, 'grad'):
+                        act.grad = None
 
     # Average across prompts
     return {
@@ -427,12 +534,6 @@ def main():
         help="Number of layers (auto-detected if not specified)",
     )
     parser.add_argument(
-        "--target-layer",
-        type=int,
-        default=30,
-        help="Target layer for attribution computation",
-    )
-    parser.add_argument(
         "--n-random",
         type=int,
         default=100,
@@ -513,14 +614,18 @@ def main():
             model, tokenizer, NEUTRAL_PROMPTS, layers, device
         )
 
+        # Load pre-computed emotion token IDs (comprehensive set for logit lens)
+        emotion_token_ids = load_emotion_token_ids()
+
         # Compute all metrics
         for emotion in tqdm(EMOTIONS, desc="Computing metrics"):
             logger.info(f"Processing emotion: {emotion}")
 
-            # Method 1: Attribution
+            # Method 1: Attribution (gradient-based)
             attr_scores = compute_attribution_scores(
                 model, tokenizer, steering_vectors,
-                NEUTRAL_PROMPTS, args.target_layer, device, emotion
+                cached_activations, NEUTRAL_PROMPTS, device, emotion,
+                emotion_token_ids=emotion_token_ids
             )
             for layer, score in attr_scores.items():
                 results['attribution'][emotion][layer] = score

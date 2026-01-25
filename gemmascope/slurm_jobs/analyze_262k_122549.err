@@ -1,0 +1,6 @@
+'(ReadTimeoutError("HTTPSConnectionPool(host='huggingface.co', port=443): Read timed out. (read timeout=10)"), '(Request ID: 0c5a138f-f05b-4501-82a3-0f0db8da7d17)')' thrown while requesting HEAD https://huggingface.co/google/gemma-scope-2-27b-it/resolve/main/resid_post_all/layer_20_width_262k_l0_small/params.safetensors
+Retrying in 1s [Retry 1/5].
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/12 [00:00<?, ?it/s]Loading checkpoint shards:  58%|█████▊    | 7/12 [00:00<00:00, 69.61it/s]Loading checkpoint shards: 100%|██████████| 12/12 [00:00<00:00, 77.70it/s]

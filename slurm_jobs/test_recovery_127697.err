@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/elicitation/test_recovery_generation.py", line 197, in <module>
+    asyncio.run(main())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/elicitation/test_recovery_generation.py", line 151, in main
+    openai_client = AsyncOpenAI(
+                    ^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/openai/_client.py", line 488, in __init__
+    raise OpenAIError(
+openai.OpenAIError: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable

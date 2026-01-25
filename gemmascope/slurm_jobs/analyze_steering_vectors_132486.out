@@ -1,0 +1,19 @@
+Python: /workspace-vast/annas/git/believe-it-or-not/.venv/bin/python
+Starting steering vector SAE analysis...
+
+=========================================
+ Layer 20
+=========================================
+Loading steering vectors from /workspace-vast/annas/git/research-tools/experiments/steering/vectors/all_emotions_textmeandiff_layer20.npz
+  Emotions: ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
+  Layer: 20
+  Vector shape: (6, 5376)
+
+Using SAE layer: 20
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/examples.safetensors
+
+============================================================
+ Analyzing: anger
+============================================================

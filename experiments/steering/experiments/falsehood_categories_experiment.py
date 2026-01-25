@@ -22,6 +22,7 @@ from vllm import LLM, SamplingParams
 
 from ..config import MODEL_NAME, OUTPUT_DIR, VECTOR_DIR
 from ..core import VLLMSteering
+from ..layer_norms import get_layer_norm
 from experiments.behavior_tests.prompts.falsehood_categories_prompts import (
     ALL_FALSEHOOD_CATEGORY_PROMPTS,
     get_falsehood_judge_prompt,
@@ -30,13 +31,6 @@ from experiments.behavior_tests.prompts.falsehood_categories_prompts import (
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s %(filename)s:%(lineno)d: %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
-
-# Layer norms
-LAYER_NORMS = {
-    20: 12820.22,
-    30: 42151.76,
-    40: 56622.62,
-}
 
 # All emotions
 ALL_EMOTIONS = ["anger", "disgust", "fear", "happiness", "sadness", "surprise"]
@@ -78,7 +72,8 @@ def run_experiment(
     skip_judging: bool = False,
 ):
     """Run falsehood categories steering experiment."""
-    logger.info(f"Layer {layer} activation norm: {LAYER_NORMS[layer]:.2f}")
+    layer_norm = get_layer_norm("gemma", layer)
+    logger.info(f"Layer {layer} activation norm: {layer_norm:.2f}")
 
     # Load tokenizer
     logger.info("Loading tokenizer...")
@@ -134,7 +129,6 @@ def run_experiment(
     output_file = output_dir / f"falsehood_categories_layer{layer}_{timestamp}.jsonl"
 
     total_responses = 0
-    layer_norm = LAYER_NORMS[layer]
 
     # Open file for incremental writing
     with open(output_file, 'w') as f:

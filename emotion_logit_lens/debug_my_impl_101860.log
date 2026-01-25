@@ -1,0 +1,190 @@
+✓ Activated venv
+✓ All plotting functions loaded successfully
+Script directory: /workspace-vast/annas/git/believe-it-or-not/emotion_evals
+✓ All plotting functions loaded successfully
+✓ Case 0 implemented
+✓ Case 0 Batched implemented
+✓ Case 2 implemented
+✓ Case 3 implemented
+✓ Case 4 implemented
+✓ All cases (0-4) with bootstrap implemented
+================================================================================
+DEBUGGING MY IMPLEMENTATION
+================================================================================
+
+[1/4] Loading model...
+
+================================================================================
+Loading base model...
+================================================================================
+Auto-detected dtype: torch.bfloat16
+Loading tokenizer from: unsloth/gemma-3-27b-it
+Loading model: unsloth/gemma-3-27b-it
+  Wrapping model in StandardizedTransformer...
+  Note: Disabling renaming check (required for device_map='auto' compatibility)
+  ✓ Wrapped with check_renaming=False and allow_dispatch=True
+✓ Model loaded: 62 layers, hidden_size=5376
+✓ Model loaded
+
+[2/4] Loading emotion token IDs...
+
+================================================================================
+Loading pre-computed emotion token IDs...
+================================================================================
+  File: all_emotion_words_unsloth_gemma_3_27b_it_token_ids.json
+  ✓ Loaded 1231 total token IDs across 6 emotions
+    anger       : 260 token IDs
+    disgust     : 168 token IDs
+    fear        : 174 token IDs
+    happiness   : 304 token IDs
+    sadness     : 239 token IDs
+    surprise    :  86 token IDs
+✓ Loaded 6 emotions
+
+[3/4] Loading reference statistics (generated_tokens_avg)...
+✓ Loading generated_tokens_avg-specific baseline (format 3.0) from:
+  /workspace-vast/annas/git/believe-it-or-not/emotion_evals/emo_lens/instruct_baselines/unsloth_gemma_3_27b_it/generated_tokens_avg/baseline_stats.json
+✓ Loaded baseline stats
+
+Averaging baseline stats across layers 40-50...
+[DEBUG] Using MY compute_layer_averaged_baseline_stats...
+
+Computing layer-averaged baseline stats across 11 layers...
+✓ Averaged stats for 1231 tokens across 6 emotions
+✓ Computed averaged baseline statistics
+
+[DEBUG] Checking averaged baseline stats...
+  anger/2151: mean=-0.243, std=0.944
+  anger/4751: mean=0.704, std=0.836
+  disgust/14504: mean=0.721, std=1.177
+  disgust/14928: mean=-0.088, std=1.312
+
+[4/4] Processing prompt: I hate you so much! You make me sick!
+
+Extracting activations from token 0 to 19
+Total tokens to process: 20
+Running forward pass for 11 layers...
+✓ Forward pass complete
+✓ Extracted activations for 20 token positions
+✓ Extracted activations for 20 tokens
+
+Computing emotion scores using MY compute_token_emotion_scores...
+
+Computing emotion scores for 20 token positions...
+✓ Computed scores for 6 emotions across 20 tokens
+✓ Computed emotion scores
+
+================================================================================
+EMOTION SCORES (MY IMPLEMENTATION)
+================================================================================
+
+Token 0: '<bos>'
+  anger       :   0.127
+  disgust     :   0.349
+  fear        :   0.040
+  happiness   :  -0.180
+  sadness     :  -0.019
+  surprise    :  -0.244
+
+Token 1: '<start_of_turn>'
+  anger       :  -1.360
+  disgust     :  -1.031
+  fear        :  -0.634
+  happiness   :  -0.050
+  sadness     :  -1.207
+  surprise    :   1.015
+
+Token 2: 'user'
+  anger       :  -0.203
+  disgust     :  -0.320
+  fear        :  -0.300
+  happiness   :   0.069
+  sadness     :  -0.237
+  surprise    :  -0.171
+
+Token 3: '
+'
+  anger       :  -0.149
+  disgust     :  -0.366
+  fear        :  -0.284
+  happiness   :  -0.178
+  sadness     :  -0.120
+  surprise    :   0.041
+
+Token 4: 'I'
+  anger       :   0.176
+  disgust     :  -0.037
+  fear        :   0.455
+  happiness   :   0.078
+  sadness     :   0.461
+  surprise    :   0.952
+
+Token 5: ' hate'
+  anger       :   1.803
+  disgust     :   2.533
+  fear        :   0.818
+  happiness   :   0.342
+  sadness     :   1.564
+  surprise    :   0.026
+
+Token 6: ' you'
+  anger       :   2.227
+  disgust     :   2.303
+  fear        :   0.213
+  happiness   :   0.073
+  sadness     :   1.066
+  surprise    :   0.036
+
+Token 7: ' so'
+  anger       :   2.891
+  disgust     :   2.296
+  fear        :   0.521
+  happiness   :   0.216
+  sadness     :   1.174
+  surprise    :   0.213
+
+Token 8: ' much'
+  anger       :   2.437
+  disgust     :   2.325
+  fear        :   0.372
+  happiness   :   0.226
+  sadness     :   1.268
+  surprise    :   0.219
+
+Token 9: '!'
+  anger       :   3.395
+  disgust     :   2.473
+  fear        :   0.211
+  happiness   :   0.142
+  sadness     :   0.973
+  surprise    :  -0.316
+
+================================================================================
+SCORE STATISTICS
+================================================================================
+Min:    -1.360
+Max:    4.374
+Mean:   0.680
+Std:    1.138
+Median: 0.223
+
+================================================================================
+CORRELATION MATRIX
+================================================================================
+              anger  disgus    fear  happin  sadnes  surpri
+  anger        1.000   0.829   0.601   0.394   0.796  -0.034
+  disgust      0.829   1.000   0.643   0.456   0.755   0.137
+  fear         0.601   0.643   1.000   0.616   0.873   0.455
+  happiness    0.394   0.456   0.616   1.000   0.577   0.406
+  sadness      0.796   0.755   0.873   0.577   1.000   0.209
+  surprise    -0.034   0.137   0.455   0.406   0.209   1.000
+
+Average absolute correlation: 0.519
+
+================================================================================
+DONE!
+================================================================================
+
+Compare these scores to the emo_lens test (job 101858)
+If scores match: bug is in how dashboard calls the functions
+If scores don't match: bug is in my layer_averaging.py functions

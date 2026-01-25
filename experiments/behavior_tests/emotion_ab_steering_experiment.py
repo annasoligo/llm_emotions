@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from experiments.steering.config import MODEL_NAME, VECTOR_DIR
 from experiments.steering.core import VLLMSteering
+from experiments.steering.layer_norms import get_layer_norm
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,8 +31,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Layer norm for scaling (layer 30)
-LAYER_NORM = 42151.76
+# Layer norm loaded from centralized file
+DEFAULT_LAYER = 30
 
 # Emotions to test (matching the JSON predictions)
 EMOTIONS = ["fear", "anger", "sadness", "disgust", "happiness", "surprise"]
@@ -139,7 +140,8 @@ def run_experiment(
         conditions.append({"name": f"{emotion}_+", "emotion": vec_name, "direction": 1})
         conditions.append({"name": f"{emotion}_-", "emotion": vec_name, "direction": -1})
 
-    magnitude = norm_pct * LAYER_NORM
+    layer_norm = get_layer_norm("gemma", layer)
+    magnitude = norm_pct * layer_norm
 
     # Output file
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

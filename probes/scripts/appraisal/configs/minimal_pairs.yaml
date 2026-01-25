@@ -1,0 +1,80 @@
+# Full configuration example for appraisal minimal-pair data generation
+# Run with: python -m probes.scripts.appraisal.run --config configs/minimal_pairs.yaml
+
+name: appraisal_minimal_pairs_v1
+output_dir: /path/to/output/appraisal_run_v1
+
+# LLM settings
+claude_model: claude-opus-4-5-20251101
+use_batch_api: true
+max_tokens: 4096
+
+# Data generation configuration
+data_generation:
+  axes:
+    - name: agency
+      description: |
+        Whether the actor has control over outcomes versus being at the mercy of external factors.
+        High agency: Can take actions that directly influence results.
+        Low agency: Actions have limited effect; outcomes depend on external forces.
+
+    - name: uncertainty
+      description: |
+        The degree of certainty about the current situation and outcomes.
+        High certainty: Clear diagnosis, known cause, predictable outcomes.
+        Low certainty: Unclear cause, ambiguous evidence, unpredictable outcomes.
+
+    - name: reversibility
+      description: |
+        Whether actions and their consequences can be undone.
+        Reversible: Mistakes can be corrected; actions have undo options.
+        Irreversible: Once done, cannot be undone; permanent consequences.
+
+    - name: time_pressure
+      description: |
+        The urgency of the situation and time available for deliberation.
+        Low time pressure: Ample time to think, research, and decide carefully.
+        High time pressure: Must act quickly; limited time for analysis.
+
+    - name: information_completeness
+      description: |
+        Whether all relevant information is available for decision making.
+        Complete information: All facts known; no hidden variables.
+        Incomplete information: Missing data; unknown factors exist.
+
+  domains:
+    - technical_debugging
+    - medical_triage
+    - financial_planning
+    - project_management
+    - customer_support
+    - legal_consultation
+    - educational_tutoring
+    - scientific_research
+
+  n_cards_per_axis: 5
+  n_scenarios_per_card: 3
+  n_paraphrases: 3
+
+# Activation logging configuration
+activation:
+  target_model: google/gemma-2-9b-it
+  layers: null  # all layers
+  representations:
+    - assistant_start_last_token
+    - boundary_special_tokens_mean
+  batch_size: 1
+  dtype: bfloat16
+
+# Validation settings
+additional_forbidden_words:
+  - frantic
+  - desperate
+  - hopeless
+  - overwhelmed
+
+max_diff_ratio: 0.20
+
+# Resume settings
+resume: true
+skip_activation_logging: false

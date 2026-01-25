@@ -1,0 +1,67 @@
+[2026-01-25 05:59:35] INFO mcq_emotion_steering_experiment.py:321: Model: unsloth/gemma-3-27b-it
+[2026-01-25 05:59:35] INFO mcq_emotion_steering_experiment.py:322: Layer: 31
+[2026-01-25 05:59:35] INFO mcq_emotion_steering_experiment.py:323: Norm percentages: [0.05, 0.07]
+[2026-01-25 05:59:35] INFO mcq_emotion_steering_experiment.py:324: Scenarios: 10
+[2026-01-25 05:59:35] INFO mcq_emotion_steering_experiment.py:325: Stacking conditions: ['perception_only', 'goal_only', 'behavior_only']
+[2026-01-25 05:59:35] INFO mcq_emotion_steering_experiment.py:328: Loading appraisal vectors...
+[2026-01-25 05:59:40] INFO mcq_emotion_steering_experiment.py:123: valence: 288 A, 288 B samples, raw norm=830.82
+[2026-01-25 05:59:40] INFO mcq_emotion_steering_experiment.py:120: uncertainty: FLIPPED (so + = high uncertainty)
+[2026-01-25 05:59:40] INFO mcq_emotion_steering_experiment.py:123: uncertainty: 288 A, 288 B samples, raw norm=788.30
+[2026-01-25 05:59:40] INFO mcq_emotion_steering_experiment.py:342: Layer 31 norm: 52107.68
+[2026-01-25 05:59:40] INFO mcq_emotion_steering_experiment.py:345: Loading model...
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m Process EngineCore_DP0:
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m Traceback (most recent call last):
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m   File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     self.run()
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m   File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     self._target(*self._args, **self._kwargs)
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m   File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 870, in run_engine_core
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     raise e
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m   File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 857, in run_engine_core
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     engine_core = EngineCoreProc(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m   File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 637, in __init__
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     super().__init__(
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m   File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 102, in __init__
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     self.model_executor = executor_class(vllm_config)
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m   File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/executor/abstract.py", line 101, in __init__
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     self._init_executor()
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m   File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/executor/uniproc_executor.py", line 47, in _init_executor
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     self.driver_worker.init_device()
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m   File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 326, in init_device
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     self.worker.init_device()  # type: ignore
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     ^^^^^^^^^^^^^^^^^^^^^^^^^
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m   File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 247, in init_device
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m     raise ValueError(
+[0;36m(EngineCore_DP0 pid=3810265)[0;0m ValueError: Free memory on device (66.71/139.81 GiB) on startup is less than desired GPU memory utilization (0.9, 125.83 GiB). Decrease GPU memory utilization or reduce GPU memory used by other processes.
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/experiments/behavior_tests/mcq_evals/mcq_emotion_steering_experiment.py", line 678, in <module>
+    run_experiment(
+  File "/workspace-vast/annas/git/research-tools/experiments/behavior_tests/mcq_evals/mcq_emotion_steering_experiment.py", line 346, in run_experiment
+    llm = LLM(
+          ^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 351, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 183, in from_engine_args
+    return cls(
+           ^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 109, in __init__
+    self.engine_core = EngineCoreClient.make_client(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 93, in make_client
+    return SyncMPClient(vllm_config, executor_class, log_stats)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 648, in __init__
+    super().__init__(
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 477, in __init__
+    with launch_core_engines(vllm_config, executor_class, log_stats) as (
+  File "/usr/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 903, in launch_core_engines
+    wait_for_engine_startup(
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 960, in wait_for_engine_startup
+    raise RuntimeError(
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}

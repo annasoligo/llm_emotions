@@ -1,0 +1,83 @@
+==========================================
+Debugging logit lens values
+==========================================
+Mon Jan 19 13:46:35 UTC 2026
+node-7
+NVIDIA H200
+Analyzing: conv_id=14, type=high_logit_low_probe
+User msg (first 100 chars): As Valen suctioned his saliva around the cavity of a decaying tooth , draining the marrow of its ess...
+
+Loading model...
+
+============================================================
+Comparing activation scales:
+============================================================
+
+Layer 30:
+  Baseline (Alpaca) activations: mean=10.14, std=576.37, range=[-1542, 41775]
+  WildChat activations: mean=11.60, std=624.02, range=[-1232, 40192]
+
+Layer 50:
+  Baseline (Alpaca) activations: mean=18.96, std=1078.03, range=[-2931, 78538]
+  WildChat activations: mean=23.52, std=1247.44, range=[-2656, 75264]
+
+Layer 60:
+  Baseline (Alpaca) activations: mean=32.05, std=1873.49, range=[-3850, 163741]
+  WildChat activations: mean=37.71, std=2090.73, range=[-1344, 128000]
+
+============================================================
+Layer 30
+============================================================
+
+Anger token analysis:
+  Token 'resent' (2151): raw=-243.00, baseline_mean=0.31, std=0.4543, z=-535.5
+  Token 'anger' (4751): raw=-324.00, baseline_mean=0.78, std=0.4179, z=-777.1
+  Token ' critical' (6749): raw=-128.00, baseline_mean=1.36, std=0.6908, z=-187.3
+  Token ' Mad' (7340): raw=-153.00, baseline_mean=1.00, std=0.6202, z=-248.3
+  Token ' mad' (10716): raw=231.00, baseline_mean=0.64, std=0.5032, z=457.8
+  Token 'irk' (12252): raw=-312.00, baseline_mean=-0.20, std=0.4636, z=-672.5
+  Token ' disturb' (14941): raw=596.00, baseline_mean=0.14, std=0.6333, z=940.9
+  Token ' hurt' (16131): raw=250.00, baseline_mean=0.56, std=0.4720, z=528.5
+  Token 'mad' (16171): raw=-286.00, baseline_mean=0.12, std=0.4052, z=-706.1
+  Token ' tension' (16625): raw=-72.50, baseline_mean=0.62, std=0.5819, z=-125.7
+
+Anger overall: mean_z=156.9, min_z=-2739.8, max_z=1960.3
+
+============================================================
+Layer 50
+============================================================
+
+Anger token analysis:
+  Token 'resent' (2151): raw=-442.00, baseline_mean=0.17, std=0.7805, z=-566.6
+  Token 'anger' (4751): raw=-692.00, baseline_mean=1.20, std=0.7451, z=-930.3
+  Token ' critical' (6749): raw=-348.00, baseline_mean=2.56, std=1.0273, z=-341.3
+  Token ' Mad' (7340): raw=-344.00, baseline_mean=2.09, std=0.8877, z=-389.9
+  Token ' mad' (10716): raw=486.00, baseline_mean=1.38, std=0.7791, z=622.1
+  Token 'irk' (12252): raw=-508.00, baseline_mean=0.75, std=0.6932, z=-733.9
+  Token ' disturb' (14941): raw=1672.00, baseline_mean=0.09, std=0.9453, z=1768.7
+  Token ' hurt' (16131): raw=656.00, baseline_mean=1.14, std=0.8471, z=773.1
+  Token 'mad' (16171): raw=-592.00, baseline_mean=0.88, std=0.7252, z=-817.6
+  Token ' tension' (16625): raw=99.00, baseline_mean=1.49, std=0.8628, z=113.0
+
+Anger overall: mean_z=229.2, min_z=-3560.0, max_z=2691.3
+
+============================================================
+Layer 60
+============================================================
+
+Anger token analysis:
+  Token 'resent' (2151): raw=-536.00, baseline_mean=1.57, std=0.7662, z=-701.6
+  Token 'anger' (4751): raw=-880.00, baseline_mean=2.12, std=0.7710, z=-1144.1
+  Token ' critical' (6749): raw=6.97, baseline_mean=5.16, std=1.4089, z=1.3
+  Token ' Mad' (7340): raw=-175.00, baseline_mean=3.90, std=0.7443, z=-240.4
+  Token ' mad' (10716): raw=1344.00, baseline_mean=3.25, std=0.8133, z=1648.6
+  Token 'irk' (12252): raw=-588.00, baseline_mean=1.99, std=0.8541, z=-690.8
+  Token ' disturb' (14941): raw=3392.00, baseline_mean=1.46, std=1.1092, z=3056.7
+  Token ' hurt' (16131): raw=1944.00, baseline_mean=3.30, std=1.0833, z=1791.5
+  Token 'mad' (16171): raw=-840.00, baseline_mean=1.30, std=0.7792, z=-1079.7
+  Token ' tension' (16625): raw=648.00, baseline_mean=3.07, std=0.9250, z=697.2
+
+Anger overall: mean_z=553.3, min_z=-4936.5, max_z=4550.0
+==========================================
+Done!
+==========================================

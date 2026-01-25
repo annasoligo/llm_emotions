@@ -1,0 +1,12 @@
+Probe Type,Source,Total Comparisons,Significant %,Avg Effect Size,Median Effect Size
+orthogonal_raw,user,30,86.7%,8.244,2.138
+centroid_k10,user,30,83.3%,7.709,2.068
+diverse_isolation_lambda10,user,30,73.3%,4.741,0.781
+orthogonal_regularized_lambda100,,30,73.3%,7.571,1.298
+orthogonal_cpca_top10,user,30,70.0%,1.732,1.119
+diverse_isolation_lambda10,assistant,30,70.0%,5.813,0.814
+text_raw,,30,70.0%,4.961,1.429
+text_cpca,,30,70.0%,11.086,0.954
+orthogonal_raw,assistant,30,60.0%,7.219,1.888
+centroid_k10,assistant,30,53.3%,6.275,1.183
+orthogonal_cpca_top10,assistant,30,46.7%,10.072,0.744

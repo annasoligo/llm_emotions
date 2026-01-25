@@ -1,0 +1,25 @@
+================================================================================
+CORRELATION CHECK - SINGLE CONVERSATION
+================================================================================
+
+Scores matrix shape: (585, 6)
+
+Score statistics:
+  Min:  -33.630
+  Max:  235.391
+  Mean: 69.524
+  Std:  38.785
+
+Correlation matrix:
+              anger  disgus    fear  happin  sadnes  surpri
+  anger        1.000   0.932   0.911   0.810   0.899   0.857
+  disgust      0.932   1.000   0.939   0.740   0.899   0.810
+  fear         0.911   0.939   1.000   0.741   0.892   0.824
+  happiness    0.810   0.740   0.741   1.000   0.758   0.795
+  sadness      0.899   0.899   0.892   0.758   1.000   0.778
+  surprise     0.857   0.810   0.824   0.795   0.778   1.000
+
+Average absolute correlation: 0.839
+(Should be LOW if using emo_lens baseline correctly)
+✗ BAD - High correlation (baseline may be wrong)
+================================================================================

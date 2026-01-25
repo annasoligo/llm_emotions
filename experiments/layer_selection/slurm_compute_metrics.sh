@@ -25,7 +25,6 @@ python -m experiments.layer_selection.compute_layer_metrics \
     --model google/gemma-3-27b-it \
     --h5-path outputs/data/activations/texts_combined.h5 \
     --output-dir experiments/layer_selection/results/ \
-    --target-layer 30 \
     --n-random 100 \
     --pca-k 50
 

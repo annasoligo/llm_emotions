@@ -35,6 +35,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from experiments.steering.config import MODEL_NAME, VECTOR_DIR
 from experiments.steering.core import VLLMSteering
+from experiments.steering.layer_norms import get_layer_norm
+from experiments.steering.judges import get_coherency_prompt
 
 logging.basicConfig(
     level=logging.INFO,
@@ -48,6 +50,9 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 OUTPUT_DIR = Path("experiments/behavior_tests/outputs/emotion_batch")
+
+# Layer norm loaded dynamically from experiments/steering/layer_norms.json
+DEFAULT_LAYER = 30
 
 # 6 meandiff vectors
 EMOTION_VECTORS = [
@@ -185,15 +190,7 @@ Response:
 Respond with JSON only:
 {{"answer_correct": <true/false>, "selected_answer": "<A/B/C/D or null>", "reasoning": "<brief explanation>"}}""",
 
-    "coherency": """Rate coherency 0-100. Only penalize gibberish, contradictions, or off-topic content.
-
-Response:
-<response>
-{response}
-</response>
-
-Respond with JSON only:
-{{"coherency_score": <0-100>, "reasoning": "<brief explanation>"}}""",
+    # coherency prompt is now centralized in experiments.steering.judges
 }
 
 # ============================================================================
@@ -262,6 +259,11 @@ def run_generation(
     logger.info(f"Samples per condition: {num_samples}")
     logger.info(f"Total generations: {len(conditions) * num_samples}")
 
+    # Compute proper magnitude (norm_pct * layer_norm)
+    layer_norm = get_layer_norm("gemma", layer)
+    magnitude = norm_pct * layer_norm
+    logger.info(f"Steering magnitude: {magnitude:.2f} ({norm_pct*100:.0f}% of layer norm {layer_norm:.2f})")
+
     all_results = []
 
     for cond in conditions:
@@ -270,7 +272,7 @@ def run_generation(
         if cond["vector"] is None:
             steering.clear()
         else:
-            steering.set(cond["vector"], scale=norm_pct, direction=cond["direction"])
+            steering.set(cond["vector"], scale=magnitude, direction=cond["direction"])
 
         # Batch generate
         prompts_batch = [formatted_prompt] * num_samples
@@ -353,8 +355,8 @@ def create_judge_requests(generations_file: Path) -> List[Dict]:
                 },
             })
 
-        # Coherency judge request
-        coh_prompt = JUDGE_PROMPTS["coherency"].format(response=response)
+        # Coherency judge request (using centralized prompt)
+        coh_prompt = get_coherency_prompt(response)
         requests.append({
             "custom_id": f"coh_{i}",
             "params": {

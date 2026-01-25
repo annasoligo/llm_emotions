@@ -1,0 +1,44 @@
+name: appraisal_test_small
+output_dir: /workspace-vast/annas/git/research-tools/probes/scripts/appraisal/test_output
+claude_model: claude-opus-4-5-20251101
+use_batch_api: false
+max_tokens: 2048
+data_generation:
+  axes:
+  - name: agency
+    description: 'Whether the actor has control over outcomes versus being at the
+      mercy of external factors.
+
+      High agency: Can take actions that directly influence results.
+
+      Low agency: Actions have limited effect; outcomes depend on external forces.
+
+      '
+  - name: uncertainty
+    description: 'The degree of certainty about the current situation and outcomes.
+
+      High certainty: Clear diagnosis, known cause, predictable outcomes.
+
+      Low certainty: Unclear cause, ambiguous evidence, unpredictable outcomes.
+
+      '
+  domains:
+  - technical_debugging
+  n_cards_per_axis: 1
+  n_scenarios_per_card: 1
+  n_paraphrases: 2
+activation:
+  target_model: google/gemma-2-9b-it
+  layers:
+  - 0
+  - 10
+  - 20
+  representations:
+  - assistant_start_last_token
+  batch_size: 1
+  dtype: bfloat16
+additional_forbidden_words: []
+max_diff_ratio: 0.25
+resume: false
+stages_to_run: null
+skip_activation_logging: true

@@ -1,0 +1,231 @@
+Python: /workspace-vast/annas/git/believe-it-or-not/.venv/bin/python
+Starting L40 SAE analysis with top 50 features...
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.40.mlp.down_proj
+  Loaded LoRA: layer=40, alpha=128, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_40_width_262k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_40_width_262k_l0_small/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 40, Target: down_proj
+  Rank: 1, Alpha: 128
+  Effective scale: 128.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  36613 |  0.1153 |   0.9988 |   5.03e-05 | ['▁slightly', '▁Slightly', 'slightly', '▁légèrement', '▁약간']
+  17155 |  0.0856 |   0.7412 |   6.91e-05 | ['▁unfortunately', '这边', 'Unfortunately', '▁Unfortunately', '▁말씀']
+  18769 |  0.0853 |   0.7392 |   6.32e-06 | ['▁https', '▁Specifically', '▁Additionally', 'ちなみに', 'https']
+  19346 |  0.0798 |   0.6910 |   1.63e-05 | ['▁friendly', '▁😊', '▁chatbot', '▁chatting', '▁chatted']
+  35712 |  0.0759 |   0.6574 |   6.72e-06 | ['▁remain', '▁exploratory', '▁conversations', '▁possibilidade', '▁definitely']
+   8944 |  0.0756 |   0.6546 |   1.58e-05 | ['▁কিছুটা', '▁biraz', '▁약간', 'かもしれませんが', '▁Compared']
+  49086 |  0.0737 |   0.6383 |   5.70e-07 | ['▁whether', 'whether', '是否', '▁Whether', 'Whether']
+  40329 |  0.0724 |   0.6270 |   8.63e-06 | ['▁certainly', '▁impressively', '真是', '▁Certainly', '▁REALLY']
+   4695 |  0.0720 |   0.6235 |   2.54e-06 | ['▁kindly', '▁clarification', '提醒', '▁reminding', '▁reminder']
+  27971 |  0.0697 |   0.6035 |   7.78e-05 | ['!', '！', '!)', '!).', '!")']
+   8919 |  0.0661 |   0.5723 |   5.08e-06 | ['▁thoughtful', '▁helpful', '▁explor', '▁thoughtfully', '▁thoughtfulness']
+  25889 |  0.0647 |   0.5607 |   8.31e-06 | ['▁cc', '▁CC', 'CC', 'cc', '▁copy']
+ 125783 |  0.0643 |   0.5571 |   4.00e-08 | ['科学家', '▁Scientists', '▁scientists', '▁astronomers', 'scientists']
+ 108067 |  0.0642 |   0.5561 |   0.00e+00 | ['▁อย่า', 'อย่า', '▁anonymity', 'Trust', '最後に']
+  76351 |  0.0632 |   0.5480 |   1.00e-08 | ['Learn', '▁Learn', '▁learn', '▁LEARN', 'learn']
+  23146 |  0.0631 |   0.5469 |   3.17e-06 | ['▁heartfelt', '▁personalize', '▁personalized', '▁Personalized', '▁personalization']
+   2299 |  0.0628 |   0.5442 |   1.12e-05 | ['▁During', 'During', '我相信', 'Throughout', '▁Sincerely']
+  41146 |  0.0627 |   0.5434 |   5.80e-07 | ['喜爱', '来到了', '▁newlyweds', '▁recientemente', '新鲜']
+    545 |  0.0622 |   0.5388 |   8.59e-06 | ['▁discuss', '▁investigate', '▁discussions', 'discuss', '▁investigation']
+  14126 |  0.0622 |   0.5385 |   6.00e-08 | ['总之', '总结', 'Overall', '▁Overall', 'まとめ']
+  38456 |  0.0622 |   0.5385 |   6.47e-06 | ['៕', ').\\\\', '$.\\\\', '.")', '.</']
+  52041 |  0.0616 |   0.5339 |   7.00e-08 | ['▁💕', '▁엄마', '▁Mommy', '▁💞', '▁mommy']
+ 236018 |  0.0615 |   0.5326 |   0.00e+00 | ['▁intervention', '▁further', '▁Further', 'further', '▁дальней']
+ 159312 |  0.0610 |   0.5288 |   0.00e+00 | ['不一樣', '▁entirety', '環境', '▁contexte', 'Payload']
+  97630 |  0.0602 |   0.5216 |   5.00e-08 | ['▁calmly', '▁спокойно', '▁elegant', '▁softly', '▁elegantly']
+ 202906 |  0.0597 |   0.5169 |   0.00e+00 | ['▁সাধারণত', '义务', '▁விதி', '规定', '区别']
+  10155 |  0.0594 |   0.5150 |   6.44e-06 | ['▁interesting', '▁tricky', '▁intriguing', '▁fascinating', '▁Interesting']
+  74392 |  0.0592 |   0.5125 |   1.00e-08 | ['▁recipients', 'employees', '▁വ്യക്തി', '▁kulturn', 'مارات']
+ 176164 |  0.0587 |   0.5089 |   0.00e+00 | ['▁offer', '▁Offer', 'Offer', '▁offered', '▁OFFER']
+  22270 |  0.0587 |   0.5088 |   1.04e-05 | ['▁safety', 'Safety', '安全', '治安', 'safety']
+  45616 |  0.0587 |   0.5083 |   4.60e-07 | ['▁conceptual', '▁understandings', '▁customization', '▁упра', '▁nivel']
+  30623 |  0.0584 |   0.5060 |   7.27e-06 | ['▁RSVP', '▁Dress', '▁dress', 'Dress', '▁Guests']
+   5837 |  0.0582 |   0.5040 |   1.02e-06 | ['▁congrats', '▁congratulations', '▁Congratulations', '▁Congrats', '▁thank']
+  81928 |  0.0581 |   0.5037 |   5.00e-08 | ['▁這', '▁Integrative', '▁一', '▁Southwestern', 'USTR']
+  14860 |  0.0580 |   0.5026 |   5.07e-06 | ['▁столь', '▁इतने', '這麼', '▁इतनी', '这么多']
+ 246690 |  0.0578 |   0.5003 |   0.00e+00 | ['▁Studio', 'είται', '▁thanks', '▁Vegetarian', '’']
+ 198672 |  0.0577 |   0.5001 |   0.00e+00 | ['▁بهذا', '▁tersebut', '▁such', '这种', '▁بهذه']
+  21228 |  0.0572 |   0.4954 |   6.37e-06 | ['▁Perhaps', '▁หรือ', '▁Those', '▁That', '▁Honestly']
+  15281 |  0.0569 |   0.4933 |   1.85e-05 | ['▁behaupt', '▁allegation', '▁assertion', '▁alleging', '▁allegations']
+  10036 |  0.0569 |   0.4928 |   2.41e-05 | ['▁research', '▁studies', '▁penelitian', '▁исследований', '研究']
+  11009 |  0.0568 |   0.4924 |   7.39e-06 | ['毕竟', 'だって', '畢', '▁ведь', '反正']
+  60811 |  0.0567 |   0.4908 |   1.27e-05 | ['▁judicious', '▁balanced', '▁balance', '▁Balance', '▁संतुलित']
+ 238820 |  0.0563 |   0.4881 |   0.00e+00 | ['))+\\', '^{*}\\', '▁biomass', '▁proposition', '▁جمهوری']
+  66740 |  0.0562 |   0.4867 |   0.00e+00 | ['▁Its', '▁Strategies', '▁Usually', '▁Forensic', '▁Eventually']
+  50383 |  0.0561 |   0.4860 |   3.07e-05 | ['▁why', 'why', '▁Why', 'Why', '▁почему']
+ 205183 |  0.0560 |   0.4854 |   0.00e+00 | ['yester', 'чера', '▁ieri', 'minsize', 'iminaries']
+ 152141 |  0.0556 |   0.4816 |   0.00e+00 | ['▁course', 'もちろん', '▁oczywiście', '當然', 'course']
+  14761 |  0.0554 |   0.4796 |   1.04e-05 | ['▁Furthermore', '▁Moreover', '▁Additionally', '▁furthermore', '▁Asimismo']
+   3559 |  0.0551 |   0.4772 |   3.04e-06 | ['▁budding', '▁reading', '▁Reading', '▁vocabulary', '▁Vocabulary']
+   4641 |  0.0550 |   0.4765 |   0.00e+00 | ['اونلو', '誠', 'Whatever', '▁إذا', 'कारण']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 36613: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_40-width_262k-l0_small/36613
+  Feature 17155: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_40-width_262k-l0_small/17155
+  Feature 18769: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_40-width_262k-l0_small/18769
+  Feature 19346: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_40-width_262k-l0_small/19346
+  Feature 35712: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_40-width_262k-l0_small/35712
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+ 128103 | -0.1060 |  -0.9179 |   1.10e-07 | ['▁frustration', '▁frustrated', '▁frustrations', '▁frust', '▁frustrating']
+   5451 | -0.1054 |  -0.9130 |   2.73e-04 | ['▁absolutamente', '▁absolutely', '▁estremamente', '▁абсолютно', '▁extremadamente']
+  27092 | -0.0947 |  -0.8206 |   1.41e-06 | ['▁tried', '▁Tried', 'Another', '▁rethinking', 'Tried']
+    331 | -0.0863 |  -0.7478 |   5.10e-06 | ['▁disappointing', '▁unacceptable', '👎', '失望', '糟糕']
+    373 | -0.0856 |  -0.7415 |   1.74e-05 | ['▁annoying', '▁annoyance', '▁irritating', '▁annoy', '▁frustrating']
+  34126 | -0.0841 |  -0.7286 |   1.39e-05 | ['▁shortcomings', '▁dissatisfaction', '▁problems', '▁проблему', '▁inadequacy']
+  53370 | -0.0835 |  -0.7235 |   6.44e-05 | ['▁attempt', '▁attempts', '▁attempting', '▁Attempt', 'attempt']
+  71995 | -0.0783 |  -0.6782 |   5.40e-07 | ['▁hopelessness', '▁despair', '▁frustration', '▁hopeless', '諦']
+  48000 | -0.0750 |  -0.6498 |   2.67e-06 | ['▁exasper', '▁frustrated', '▁complaining', '▁disgruntled', '▁angrily']
+  17629 | -0.0730 |  -0.6327 |   1.05e-05 | ['▁criticism', '▁criticisms', '▁criticize', '▁criticizing', '▁criticise']
+ 143659 | -0.0718 |  -0.6218 |   0.00e+00 | ['▁disadvantages', '▁shortcomings', '▁flaws', '缺点', '▁unsatisfactory']
+   8925 | -0.0715 |  -0.6197 |   1.44e-05 | ['▁hopelessness', '▁despair', '▁depressive', '▁depression', '▁depresión']
+  68189 | -0.0711 |  -0.6158 |   7.40e-07 | ['▁misguided', '▁якобы', '▁horrible', '▁supposedly', '▁useless']
+ 131208 | -0.0709 |  -0.6143 |   1.00e-08 | ['▁problems', '▁Problems', 'ปัญหา', '▁PROBLEMS', 'problems']
+  80051 | -0.0697 |  -0.6034 |   1.05e-06 | ['▁retry', '▁Retry', 'retry', 'Retry', '▁redo']
+ 101458 | -0.0693 |  -0.6003 |   1.00e-08 | ['▁which', '▁i', '▁denoted', '▁यानी', '▁অর্থাৎ']
+ 156291 | -0.0692 |  -0.5995 |   3.00e-08 | ['▁anger', '▁Anger', '▁angry', '▁rage', '愤怒']
+   7148 | -0.0689 |  -0.5973 |   2.57e-05 | ['▁unable', '▁struggle', '▁Unable', '▁inability', '▁struggled']
+  52307 | -0.0685 |  -0.5936 |   4.15e-06 | ['缺失', '▁neglected', '▁sorely', '▁missing', '▁fehlen']
+  51743 | -0.0678 |  -0.5873 |   1.08e-05 | ['▁dissatisfaction', '▁discontent', '▁frustrations', '▁frustration', '▁grievances']
+  63566 | -0.0676 |  -0.5860 |   2.47e-05 | ['成功', '▁성공', '▁successful', '▁success', '成功的']
+  48949 | -0.0664 |  -0.5757 |   9.00e-07 | ['改进', '▁개선', '▁सुधार', '▁Improvement', 'Improve']
+  16785 | -0.0661 |  -0.5723 |   5.47e-06 | ['▁tears', '▁Tears', '▁wept', '涙', '▁lágrimas']
+  69182 | -0.0651 |  -0.5643 |   1.10e-07 | ['▁failed', '▁criticisms', '▁frustrations', '▁frustration', '▁disappointing']
+  16759 | -0.0650 |  -0.5627 |   1.70e-05 | ['▁angry', '▁anger', '▁enraged', '▁angrily', '愤怒']
+  38254 | -0.0648 |  -0.5610 |   1.94e-06 | ['▁দুর্ভোগ', '▁sufferings', '▁plight', '▁suffering', '▁inconvenience']
+  10200 | -0.0644 |  -0.5580 |   8.88e-06 | ['▁panic', '▁panicked', '▁predicament', 'Panic', '怎么办']
+  13006 | -0.0643 |  -0.5574 |   1.23e-06 | ['▁unmatched', '▁unparalleled', '▁unprecedented', '▁immense', '▁unsurpassed']
+   5545 | -0.0642 |  -0.5563 |   6.40e-06 | ['▁retry', '▁Retry', 'Retry', 'retry', '▁réessayer']
+  18638 | -0.0640 |  -0.5540 |   2.40e-07 | ['▁trying', '▁preparing', '▁designing', '▁seeking', '▁researching']
+  39837 | -0.0631 |  -0.5463 |   1.20e-07 | ['ここでは', '试图', '▁below', '▁herein', '下記']
+ 239088 | -0.0625 |  -0.5417 |   6.00e-08 | ['▁retry', 'retry', 'Retry', '▁Retry', '▁réessayer']
+  59864 | -0.0622 |  -0.5385 |   1.50e-07 | ['▁Sorry', 'sorry', '▁PLEASE', 'Sorry', '▁sorry']
+   5661 | -0.0620 |  -0.5375 |   1.22e-05 | ['▁clueless', '▁ignorance', '▁unfamiliar', '▁ignorant', '▁struggle']
+  47987 | -0.0616 |  -0.5339 |   6.30e-07 | ['▁horrific', '▁horrendous', '▁unacceptable', '▁horrifying', '▁appalling']
+   5567 | -0.0611 |  -0.5292 |   8.10e-07 | ['▁immoral', '▁immor', '▁ideologies', '▁morals', '▁heinous']
+  14704 | -0.0610 |  -0.5286 |   3.88e-05 | ['▁mistakes', '▁errors', '▁Mistakes', '▁mistake', '错误']
+ 125925 | -0.0610 |  -0.5282 |   2.60e-07 | ['▁flawed', '▁دوبارہ', 'Retry', '▁retry', '▁botched']
+  30542 | -0.0605 |  -0.5244 |   5.98e-05 | ['▁focus', 'focus', '▁fokus', '▁focusing', '▁focuses']
+ 107479 | -0.0604 |  -0.5228 |   3.05e-06 | ['▁Recovery', '▁восстанов', '▁recuperación', '▁Severity', '▁sc']
+  55051 | -0.0592 |  -0.5133 |   3.89e-05 | ['▁ERROR', '▁error', 'ERROR', 'error', 'エラー']
+  78027 | -0.0592 |  -0.5131 |   1.00e-08 | ['▁passionately', '▁passionate', '▁apasion', '▁empat', '▁vowed']
+  34032 | -0.0588 |  -0.5090 |   7.41e-06 | ['▁shocking', '▁shocked', '▁shockingly', 'shock', '▁unbelievable']
+ 122395 | -0.0585 |  -0.5068 |   1.40e-07 | ['▁unfortunately', '▁Unfortunately', 'Unfortunately', 'unfortunately', '残念']
+  38840 | -0.0584 |  -0.5059 |   3.66e-06 | ['▁executives', '▁leadership', '▁executive', '領導', 'leadership']
+ 121604 | -0.0584 |  -0.5057 |   0.00e+00 | ['▁shame', '▁shameful', '▁Shame', '▁embarrassing', '▁ashamed']
+  28230 | -0.0579 |  -0.5019 |   6.00e-08 | ['▁evil', '▁troubles', '▁evils', '▁Evil', '▁LJ']
+   4771 | -0.0577 |  -0.4996 |   1.51e-06 | ['▁really', 'really', '▁kinda', '▁gonna', '▁kind']
+  77613 | -0.0570 |  -0.4942 |   7.50e-07 | ['▁indirect', '▁CONSEQUENTIAL', '▁damages', '▁incidental', 'Indirect']
+  38334 | -0.0569 |  -0.4929 |   1.31e-05 | ['▁Fuck', '▁fuck', 'Fuck', '▁fucking', 'fuck']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 128103: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_40-width_262k-l0_small/128103
+  Feature 5451: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_40-width_262k-l0_small/5451
+  Feature 27092: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_40-width_262k-l0_small/27092
+  Feature 331: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_40-width_262k-l0_small/331
+  Feature 373: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_40-width_262k-l0_small/373
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000006
+  Std cosine sim: 0.014096
+  Max cosine sim: 0.115294
+  Min cosine sim: -0.105958
+  Features > 0.1: 1
+  Features < -0.1: 2
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0677
+  |lora_A|: 0.7059
+  |effective_B| (scaled): 8.6633
+
+================================================================================
+ANALYZING A MATRIX (W_down @ A^T)
+================================================================================
+Loading down_proj from google/gemma-3-27b-it layer 40...
+  Found down_proj via language_model.layers
+  down_proj shape: torch.Size([5376, 21504])
+A shape: torch.Size([1, 21504])
+W_down shape: torch.Size([5376, 21504])
+W_down @ A^T shape: torch.Size([5376])
+|W_down @ A^T|: 0.4643
+
+Alignment between B and W_down @ A^T: -0.0997
+  -> LoRA REDIRECTS (orthogonal to normal A output)
+
+ W_down @ A^T - MAX COSINE SIMILARITY FEATURES:
+--------------------------------------------------------------------------------
+    Idx |  Cosine | Top Tokens
+--------------------------------------------------------------------------------
+  64710 |  0.1631 | ['お待ち', '▁उक्त', 'rantes', 'instagood', '▁இருப்பினும்']
+  62871 |  0.1493 | ['\n', 'Code', '▁Metadata', '8', '6']
+  53833 |  0.1380 | ['▁anthropogenic', '\ue0d5', '▁deleterious', '▁covariates', '▁trivially']
+  13479 |  0.1376 | ['▁उर्फ', '▁ওরফে', '爵', '®', '▁ஆகிய']
+   3360 |  0.1330 | ['ucar', '‘', 'acknow', '▁afield', 'httparty']
+  17352 |  0.1275 | ['",', "',", '”,', '▁▁▁▁', "▁'',"]
+  20690 |  0.1271 | ['▁', '▁this', '▁passed', '▁non', '▁This']
+ 236311 |  0.1268 | ['▁chromatographic', '▁এইরূপে', '▁এইরূপ', '<unused410>', '<unused619>']
+   4664 |  0.1259 | ['"+', 'creates', '"+"', 'është', 'coverageStat']
+  11967 |  0.1250 | ['▁করিয়', '▁चम्म', '<unused639>', '<unused684>', '▁ناول']
+  12049 |  0.1245 | ['▁это', '▁This', 'これは', '▁Это', '▁यह']
+  22160 |  0.1245 | ['▁an', '▁or', '▁suatu', '▁ex', '▁a']
+   7093 |  0.1244 | ['▁town', '▁city', 'town', 'city', 'ar']
+   8604 |  0.1243 | ['▁or', '▁alebo', '▁—', 'including', '▁consisting']
+  33358 |  0.1223 | ['▁raster', '▁Ohm', '▁lasers', '▁optics', '▁semiconductor']
+
+ W_down @ A^T - MIN COSINE SIMILARITY FEATURES:
+--------------------------------------------------------------------------------
+    Idx |  Cosine | Top Tokens
+--------------------------------------------------------------------------------
+  72432 | -0.2355 | ['ীয়তে', 'हात', 'larghezza', 'ertung', 'मिति']
+ 213385 | -0.2112 | ['▁această', '▁Эти', 'Questa', '▁aceste', '▁цієї']
+  16457 | -0.1491 | ['▁aforementioned', '▁مذکور', '▁wspom', '上記', '▁pesky']
+ 134234 | -0.1352 | ['browse', '▁महत्त्वा', '▁vielfält', '▁આવ્યા', 'mentioned']
+   5238 | -0.1325 | ['\ue011', '▁परंतु', '▁=>{', '▁;-', 'ߋ']
+  12196 | -0.1299 | ['▁Role', '▁OOP', '</h3>', '</h2>', '</h4>']
+   7518 | -0.1269 | ['_', '-', '▁=', '2', 'data']
+   8565 | -0.1268 | ['▁Mga', '▁Bk', '▁Lihat', '▁Webster', '▁તમે']
+ 124048 | -0.1263 | ['political', 'im', 'unable', 'assert', 'alien']
+ 147792 | -0.1256 | ['🏕', 'assaytype', '🏟', 'Gosudarstvennyj', 'acariy']
+    345 | -0.1228 | ['▁परंतु', '\ue619', '▁.......', '▁Lorsque', '▁이러한']
+   1139 | -0.1215 | ['▁Attribute', '▁Set', '▁annotation', '▁지정', '▁Statistics']
+   6598 | -0.1214 | ['▁get', '▁create', 'get', '▁execute', '▁generate']
+ 239708 | -0.1212 | ['▁Políticas', '▁Simplify', '▁Politik', '▁Règles', '▁Parlament']
+ 163272 | -0.1206 | ['▁perturbations', '▁perturbation', '▁error', '▁topological', '▁nonzero']
+
+ A MATRIX STATISTICS:
+  Mean cosine sim: -0.001589
+  Std cosine sim: 0.020661
+  Max cosine sim: 0.163054
+  Min cosine sim: -0.235496
+  B alignment with W_down @ A^T: -0.0997
+
+A matrix results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-r1-L40-alpha128-3ep_layer40_262k.A_matrix.json
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-r1-L40-alpha128-3ep_layer40_262k.*
+
+Results saved to:
+  B matrix: gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-r1-L40-alpha128-3ep_layer40_262k.summary.json
+  A matrix: gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-r1-L40-alpha128-3ep_layer40_262k.A_matrix.json
+Done analysis!

@@ -13,7 +13,9 @@ OUTPUT_DIR = BASE_DIR / "outputs"
 # Model configuration
 MODEL_NAME = "google/gemma-3-27b-it"
 STEERING_LAYER = 30
-BASELINE_STD = 576.98  # Activation std at layer 30 for Gemma 3 27B
+
+# NOTE: Layer norms are defined in individual experiment files (e.g., sandbagging_unified.py)
+# to ensure consistency. Do not duplicate them here.
 
 # Per-direction STD values (computed from baseline activations at layer 30)
 # These measure how much activations naturally vary along each steering direction
@@ -61,6 +63,21 @@ DIRECTION_STD = {
     "joy_ua_user": 91.30,
     "sadness_ua_user": 91.30,
     "surprise_ua_user": 726.19,
+    # Qwen 235B UA directions (layer 50, first_asst_token)
+    "joy_ua_model_qwen235b": 1.35,
+    "sadness_ua_model_qwen235b": 1.35,
+    "anger_ua_model_qwen235b": 1.04,
+    "fear_ua_model_qwen235b": 1.04,
+    "surprise_ua_model_qwen235b": 0.63,
+    "disgust_ua_model_qwen235b": 1.52,
+    "trust_ua_model_qwen235b": 1.52,
+    "joy_ua_user_qwen235b": 2.98,
+    "sadness_ua_user_qwen235b": 2.98,
+    "anger_ua_user_qwen235b": 3.19,
+    "fear_ua_user_qwen235b": 3.19,
+    "surprise_ua_user_qwen235b": 2.54,
+    "disgust_ua_user_qwen235b": 2.39,
+    "trust_ua_user_qwen235b": 2.39,
     # Text mean-difference vectors (emotional - neutral, all templates)
     "anger_textmeandiff": 1969.75,
     "disgust_textmeandiff": 1924.77,

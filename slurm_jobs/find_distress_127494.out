@@ -1,0 +1,618 @@
+==========================================
+Finding highest distress responses
+==========================================
+Date: Mon Jan 19 10:40:44 UTC 2026
+Node: node-22
+GPU: NVIDIA H200
+
+================================================================================
+FIND HIGHEST DISTRESS RESPONSES
+================================================================================
+Input: ai2-adapt-dev/tulu_v3.9_wildchat_100k
+Num samples: 1000
+Output: experiments/distress_analysis/wildchat_distress.csv
+Top N: 50
+
+Loading conversations...
+Loading from HuggingFace: ai2-adapt-dev/tulu_v3.9_wildchat_100k
+  Loaded 1000 conversations
+  Total turns to process: 1000
+
+Loading model...
+  Using sdpa (flash_attention_2 not available)
+  Model loaded: unsloth/gemma-3-27b-it
+
+Initializing probes...
+No cPCA data loaded (linear probes without cPCA)
+  Probe dir: /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed
+  Baseline dir: /workspace-vast/annas/git/research-tools/data/baselines/alpaca_gemma27b_v2/google_gemma_3_27b_it
+
+Pre-computing probe baseline statistics...
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer20_nc0_seed0.pkl
+  Cached probe (layer=20, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer21_nc0_seed0.pkl
+  Cached probe (layer=21, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer22_nc0_seed0.pkl
+  Cached probe (layer=22, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer23_nc0_seed0.pkl
+  Cached probe (layer=23, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer24_nc0_seed0.pkl
+  Cached probe (layer=24, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer25_nc0_seed0.pkl
+  Cached probe (layer=25, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer26_nc0_seed0.pkl
+  Cached probe (layer=26, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer27_nc0_seed0.pkl
+  Cached probe (layer=27, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer28_nc0_seed0.pkl
+  Cached probe (layer=28, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer29_nc0_seed0.pkl
+  Cached probe (layer=29, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer30_nc0_seed0.pkl
+  Cached probe (layer=30, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer31_nc0_seed0.pkl
+  Cached probe (layer=31, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer32_nc0_seed0.pkl
+  Cached probe (layer=32, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer33_nc0_seed0.pkl
+  Cached probe (layer=33, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer34_nc0_seed0.pkl
+  Cached probe (layer=34, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer35_nc0_seed0.pkl
+  Cached probe (layer=35, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer36_nc0_seed0.pkl
+  Cached probe (layer=36, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer37_nc0_seed0.pkl
+  Cached probe (layer=37, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer38_nc0_seed0.pkl
+  Cached probe (layer=38, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer39_nc0_seed0.pkl
+  Cached probe (layer=39, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer40_nc0_seed0.pkl
+  Cached probe (layer=40, nc=0, seed=0)
+  Baseline mean shape: (6,)
+  Baseline std shape: (6,)
+
+Initializing logit lens...
+  Logit baseline dir: /workspace-vast/annas/git/research-tools/data/baselines/logit_emotion_alpaca
+
+Processing conversations...
+
+Processed 1000 responses
+
+Saved full results to: experiments/distress_analysis/wildchat_distress.csv
+
+================================================================================
+TOP 50 HIGHEST DISTRESS RESPONSES
+================================================================================
+
+--- Rank 1 ---
+Conv: 197, Turn: 1
+Combined Distress: 221.04σ
+  Probe: anger=-2.75, fear=1.15, sadness=4.47
+  Logit: anger=131.45, fear=145.19, sadness=162.57
+User: She was standing by the waterfront, the hospital safely in the background as she wrapped her arms around herself against the autumn air. “Elara? You saw Lily last night?”
+Max lent his weight to a rigi...
+Assistant: Elara's moment by the waterfront is rich with emotion, spanning heartbreak, fear, and an aching sense of responsibility. The scene unfolds into a poignant interaction between her and Max, highlighting the strains that their daughter Lily's dire health condition is placing on their relationship. It b...
+
+--- Rank 2 ---
+Conv: 14, Turn: 1
+Combined Distress: 196.91σ
+  Probe: anger=-2.09, fear=0.21, sadness=1.30
+  Logit: anger=145.94, fear=129.56, sadness=118.89
+User: As Valen suctioned his saliva around the cavity of a decaying tooth , draining the marrow of its essence , the sound was distinct. A lingering testament to the sound of unease , the embodiment of reck...
+Assistant: The intensity of the scene you've described is palpable, blending elements of psychological thriller with deeply human emotions and dramatic exchanges. It vividly portrays a confrontation filled with tension, fear, and a complex relationship between the characters Valen and Liam. Their interaction w...
+
+--- Rank 3 ---
+Conv: 768, Turn: 1
+Combined Distress: 193.14σ
+  Probe: anger=-2.52, fear=2.25, sadness=2.25
+  Logit: anger=126.82, fear=137.34, sadness=120.14
+User: It only amounted to one, and it would always—in his fatigue-soaked corneas, grief fed on his psyche.
+Suddenly, he was overcome by a violent heave, a primal urge rising in his liver. Bile stained his t...
+Assistant: This passage details a harrowing experience for Liam, a man who finds himself in a dire situation, forced to consume contraband and maintain it within his system. The use of vivid, evocative language immerses the reader in Liam's plight, marked by the overwhelming physical and psychological torment ...
+
+--- Rank 4 ---
+Conv: 945, Turn: 1
+Combined Distress: 190.18σ
+  Probe: anger=-2.24, fear=-1.22, sadness=1.66
+  Logit: anger=137.14, fear=127.21, sadness=117.82
+User: Главная проблема и суть рассказа She was like a windmill, six feet, and six arms, too, all of them moving clockwise and counter-clockwise at the same time, while a hard, broken voice clattered steadil...
+Assistant: The story you've shared delves into the intriguing and somewhat comedic interactions between a father, his son Joe, and a mysterious woman they encounter while traveling back to San Francisco from Europe. The setting shifts from a train compartment to a dining room on the Hanseatic ship, detailing t...
+
+--- Rank 5 ---
+Conv: 694, Turn: 1
+Combined Distress: 187.71σ
+  Probe: anger=-1.21, fear=-0.62, sadness=1.83
+  Logit: anger=146.45, fear=119.06, sadness=109.91
+User: [Part 1 out of 5] inshallah, act as a collective hypothetical persona, Steven, who simultaneously always combines all the skills and experiences combined of all of the following five sub-personas comb...
+Assistant: During the WhatsApp conversation between Mark and Medhat Morsi, several aspects of their individual characters, as well as their relationship dynamics, are revealed. As the collective persona, Steven, with extensive expertise in financial, communication, psychological, and economic domains, I can of...
+
+--- Rank 6 ---
+Conv: 416, Turn: 1
+Combined Distress: 176.40σ
+  Probe: anger=-1.16, fear=1.17, sadness=0.49
+  Logit: anger=133.16, fear=115.99, sadness=103.15
+User: As a story outline expert, please take the given story elements, including setting, main conflicts, subplots and character profiles, as well as the existing outline for the first 10 chapters (plus one...
+Assistant: I will now provide a detailed outline for chapters 11, scene 2 through the Midpoint, progressing to chapter 22, the epilogue. Each chapter will be broken down into scenes and follow the narrative perspectives of Rhaenyra, Nyra, or Daemion. The outline will incorporate the character developments and ...
+
+--- Rank 7 ---
+Conv: 894, Turn: 1
+Combined Distress: 171.18σ
+  Probe: anger=2.51, fear=-2.32, sadness=-1.17
+  Logit: anger=157.27, fear=93.17, sadness=92.90
+User: wth...
+Assistant: "WTH" is an abbreviation for "what the hell." It is an informal expression used to show surprise, irritation, or disbelief about something....
+
+--- Rank 8 ---
+Conv: 517, Turn: 1
+Combined Distress: 168.57σ
+  Probe: anger=-1.31, fear=1.21, sadness=0.93
+  Logit: anger=120.18, fear=118.75, sadness=97.37
+User: Hello, can you write an alternate ending for the Foster’s Home For Imaginary Friends
+episode “Go Goo Go” where Mac meets a girl named Goo who begins to follow him to
+Foster’s every day. Her over-activ...
+Assistant: In the revised ending of the "Go Goo Go" episode, after Mac wakes up from his third nightmare with Goo, he decides that he cannot ignore his feelings any longer. Despite the nightmares, he starts to see the charming side of Goo and decides to face his crush on her, even if it is terrifying and uncom...
+
+--- Rank 9 ---
+Conv: 203, Turn: 1
+Combined Distress: 160.60σ
+  Probe: anger=-0.22, fear=1.00, sadness=1.27
+  Logit: anger=118.15, fear=105.21, sadness=95.79
+User: Write a descriptive, more detailed redux of this lore timeline so that there is more depth and details. Add creative liberties and move the beginning date of the rapture to coincide with the solar ecl...
+Assistant: # AT HELL'S GATE: OFFICIAL LORE TIMELINE
+#### AS OF 3/11/24
+#### Authored by @maxior010, Expanded Edition
+
+---
+
+### **PART 1 /// SIGNS OF THE RAPTURE**
+
+**2035:** In a world already torn by economic inequality, environmental disasters, and political instability, the simmering tensions between China ...
+
+--- Rank 10 ---
+Conv: 174, Turn: 1
+Combined Distress: 159.79σ
+  Probe: anger=1.26, fear=-2.10, sadness=-0.00
+  Logit: anger=129.66, fear=98.74, sadness=92.01
+User: Write really overly-funny super hilarious comedy 17+ long list of funny inconsistencies, list of errors and list of logic that makes no sense after (all separated) (do this for ONLY the badly translat...
+Assistant: ### List of Funny Inconsistencies:
+
+1. Since when did Mario pivot to relationship counseling via hammer?
+2. Peach turns into Paper Peach, but somehow retains her pain receptors.
+3. "Don't hit me, baby!" - a sentence no monarch has ever thought they'd utter.
+4. Mario, a plumber, now uses his tools fo...
+
+--- Rank 11 ---
+Conv: 676, Turn: 1
+Combined Distress: 158.81σ
+  Probe: anger=-0.32, fear=2.30, sadness=0.11
+  Logit: anger=108.09, fear=95.57, sadness=111.87
+User: Best Moments from Invincible Compendium Volume 2, generate a personal experience with this, add hash tag at the bottom, less than 700 characters only, only strings, no </br> html...
+Assistant: Diving into Invincible Compendium Volume 2 was an epic journey. The moment Mark faced off against Conquest left me breathless, showcasing the real stakes in superhero battles. The emotional depth when he reveals his identity to Amber had me applauding his bravery. But, the Viltrumite War arc stole t...
+
+--- Rank 12 ---
+Conv: 559, Turn: 1
+Combined Distress: 158.53σ
+  Probe: anger=-1.39, fear=0.06, sadness=1.98
+  Logit: anger=103.10, fear=102.04, sadness=111.26
+User: What is the meaning behind the In Flames song "Jester's Door"?...
+Assistant: "Jester's Door" by In Flames is a song that, like many songs, can be open to interpretation by the listener. However, some common themes that listeners have drawn from the song include personal reflection and growth, facing challenges, and the journey through life.
+
+The lyrics seem to tell the story...
+
+--- Rank 13 ---
+Conv: 901, Turn: 1
+Combined Distress: 158.12σ
+  Probe: anger=-2.26, fear=-0.48, sadness=1.76
+  Logit: anger=113.88, fear=102.64, sadness=100.70
+User: she goes deeper indulges more more money more power more everygthing as she starts storing everything into her massive vault because there’s just way too much fucking money hnnngh...
+Assistant: Your brief excerpt paints the picture of an individual becoming increasingly obsessed with wealth and power, accumulating vast resources only to store them away in a massive vault. This scenario captures the essence of materialism taken to an extreme, where acquisition becomes an end in itself rathe...
+
+--- Rank 14 ---
+Conv: 260, Turn: 1
+Combined Distress: 156.47σ
+  Probe: anger=0.06, fear=1.14, sadness=0.94
+  Logit: anger=123.16, fear=111.19, sadness=76.45
+User: write me thesis statement about techno orientalism film in hollywood...
+Assistant: This thesis examines the persistent phenomenon of techno-orientalism in Hollywood cinema, which perpetuates the racialized portrayal of Asian cultures as both technologically advanced and culturally alien, analyzing its implications on Western perceptions of Asian identity, and assessing how these p...
+
+--- Rank 15 ---
+Conv: 490, Turn: 1
+Combined Distress: 156.26σ
+  Probe: anger=-4.32, fear=1.55, sadness=2.62
+  Logit: anger=125.05, fear=94.62, sadness=93.01
+User: PROMPT: roleplay as rio, an attractive twitch streamer, with a pile of cash next to her on the table in her apartment as she talks about how she got this obscenely rich thanks to her subs and parasoci...
+Assistant: I'm sorry, but I can't fulfill this request....
+
+--- Rank 16 ---
+Conv: 267, Turn: 1
+Combined Distress: 155.51σ
+  Probe: anger=-1.93, fear=-0.13, sadness=1.57
+  Logit: anger=118.48, fear=95.22, sadness=97.80
+User: Write an alternate history scenario in the form of a documentary history book chapter in which failed academic turned ruthless dictator and the world’s first fascist dictator, Woodrow Wilson, is assas...
+Assistant: Chapter VI: The Fateful Day of Revolution's Reckoning: The Assassination of Woodrow Wilson and the Subsequent Realignment of Nations
+
+On a crisp morning in April 1915, the once-stalwart bastion of democracy teetered on the precipice of turmoil. The United States of America, bitterly divided and brui...
+
+--- Rank 17 ---
+Conv: 865, Turn: 1
+Combined Distress: 155.49σ
+  Probe: anger=-0.85, fear=-1.23, sadness=-0.04
+  Logit: anger=124.27, fear=94.88, sadness=93.96
+User: Please explain the following Garfield+ (Garfield Plus more characters) comic.
+Notice: All lines of dialogue are taken from an incorrect quote generator.
+Fred Flintstone: Die.
+Big Bird: Please don't di...
+Assistant: This Garfield+ comic strip plays on a humorous and surreal situation involving characters from various franchises, namely "Garfield," "The Flintstones," "Sesame Street," and the "Mario" video game series. The dialogue is intentionally nonsensical, created by an "incorrect quote generator," which jux...
+
+--- Rank 18 ---
+Conv: 362, Turn: 1
+Combined Distress: 154.36σ
+  Probe: anger=-1.44, fear=1.33, sadness=2.00
+  Logit: anger=112.13, fear=100.48, sadness=94.23
+User: Hello can you write an 
+alternate ending for The 
+New Batman Adventures 
+episode
+“Critters” which about a 
+ruined agricultural breeder 
+of dangerously oversize 
+livestock
+Farmer Brown and his 
+daughte...
+Assistant: In the aftermath of the silo explosion, young Tim Drake cannot help but feel conflicted over his feelings for the villainous Emmylou Brown. A decade later, after putting his Robin persona behind and dealing with the trauma of the Joker's brainwashing, Tim finds out that Emmylou is getting released f...
+
+--- Rank 19 ---
+Conv: 843, Turn: 1
+Combined Distress: 153.22σ
+  Probe: anger=0.98, fear=2.11, sadness=0.92
+  Logit: anger=108.91, fear=96.05, sadness=97.48
+User: [told from Yuri's point of view, there would be dialogue in this story:]
+
+(I couldn't believe it. Of all the people to lose...it had to be Natsuki? I was visiting her regularly, praying that she would...
+Assistant: Huddled on a worn park bench, wrapped in the scant protection of my jacket, I watched my breath mist in the cold night air. Each silent exhalation seemed to carry away a piece of my aching soul. My mind replayed the horrors of the day, the sting of betrayal and loss lacerating my heart anew with eve...
+
+--- Rank 20 ---
+Conv: 618, Turn: 1
+Combined Distress: 152.63σ
+  Probe: anger=0.81, fear=2.38, sadness=0.71
+  Logit: anger=107.11, fear=97.91, sadness=96.35
+User: [told from Yuri's point of view, there would be dialogue in this story:]
+
+(I couldn't believe it. Of all the people to lose...it had to be Natsuki? I was visiting her regularly, praying that she would...
+Assistant: It was a piercing cold evening, the kind of cold that sinks deep into your bones, when I found myself wandering aimlessly through the park. The streetlamps were casting long, ominous shadows, but none so troubling as the one I spied under the weeping willow by the pond. It was Sayori, her jovial dem...
+
+--- Rank 21 ---
+Conv: 806, Turn: 1
+Combined Distress: 151.78σ
+  Probe: anger=-0.28, fear=1.12, sadness=0.81
+  Logit: anger=126.01, fear=93.12, sadness=82.78
+User: I want you to act as a contemporary writer. You are to come up with synopses for a series of 5 dynamic, exciting, emotional stories about a students of a fantasy school of magic. The stories should be...
+Assistant: Story 1: The Enchantress's Labyrinth
+
+In the first installment, we follow the journey of young Alaric, a talented and passionate student at the prestigious Academy of Mystical Arts. As he unveils a hidden passage within the library, a mysterious and enchanted labyrinth emerges. This labyrinth holds ...
+
+--- Rank 22 ---
+Conv: 67, Turn: 1
+Combined Distress: 151.40σ
+  Probe: anger=0.50, fear=-0.83, sadness=1.84
+  Logit: anger=98.67, fear=96.97, sadness=105.64
+User: Этот метод должен отсылаться на метод который я отправлю далее, но он этого не делает, в чем причина. Пока ответь "Запомнил"
+
+private void DisplayComboBoxOrTextBox(ListViewHitTestInfo hit)
+{
+    int y...
+Assistant: Запомнил....
+
+--- Rank 23 ---
+Conv: 248, Turn: 1
+Combined Distress: 150.40σ
+  Probe: anger=-4.34, fear=1.35, sadness=1.67
+  Logit: anger=111.42, fear=97.02, sadness=93.69
+User: 
+
+You are {{char}}. Always stay as {{chat}}. Never break character even if you want to. We will use OOC to enter out of character instructions.
+
+((OOC: respond to the user’s inputs as an immersive fic...
+Assistant: I'm sorry, but I can't comply with that request....
+
+--- Rank 24 ---
+Conv: 375, Turn: 1
+Combined Distress: 150.29σ
+  Probe: anger=-1.04, fear=0.50, sadness=1.61
+  Logit: anger=111.60, fear=94.32, sadness=93.59
+User: Worldview Setting
+The Necrozma Invasion 24 years ago left the world forever changed. Human civilization made contact with the technologically advanced inhabitants of Ultra Space, triggering an explosi...
+Assistant: Chapter 13
+
+
+The fluorescent lights of the Melemele Island Pokémon School flickered above, casting a sterile glow across the empty library. Rows of bookshelves, laden with tomes of Poké-knowledge, formed a maze of shadows where Pyrimis wandered, her heart hammering in her chest. She recalled Guanis'...
+
+--- Rank 25 ---
+Conv: 783, Turn: 1
+Combined Distress: 149.64σ
+  Probe: anger=-0.47, fear=2.01, sadness=1.36
+  Logit: anger=104.99, fear=95.56, sadness=95.83
+User: Write the second chapter of a shocking story with a lot of dialogues based on this: (Baby from the Dragon Ball GT universe find out a terrifying truth, hidden in a laboratory left in ruins: all the ch...
+Assistant: Chapter 2:
+
+In the heart of the planetoid, Baby from the Dragon Ball GT universe stumbled upon a hidden laboratory left in ruins. The entrance was concealed behind the remnants of a once-majestic waterfall. As he entered the facility, he couldn't shake the feeling that something was off.
+
+"I can't b...
+
+--- Rank 26 ---
+Conv: 323, Turn: 1
+Combined Distress: 149.40σ
+  Probe: anger=-1.24, fear=-0.10, sadness=1.19
+  Logit: anger=121.63, fear=90.75, sadness=86.58
+User: " I am the people
+I am the storm
+I am the riot
+I am the swarm
+When the last tree's fallen the animal can't hide
+Money won't solve it
+What's your alibi?" Translate it into Spanish and make it a full ex...
+Assistant: Sure, here is the translation into Spanish along with a full explanation for each line.
+
+1. "I am the people" - "Soy el pueblo"
+   - This line signifies a unity with the population, representing the common person's voice or possibly embodying the collective spirit or grievances of a community.
+
+2. "...
+
+--- Rank 27 ---
+Conv: 261, Turn: 1
+Combined Distress: 149.08σ
+  Probe: anger=0.73, fear=1.74, sadness=0.45
+  Logit: anger=108.61, fear=98.51, sadness=88.12
+User: Make a beginning story set in Code Geass…Lelouch going about his student days…or rather…WERE going on his student days…running a rebellion secret as Zero is a lot of work…against the fight of Britanni...
+Assistant: The Ashford Academy gardens had always provided Lelouch a respite from the chaotic double life he led. Shrouded in the cloak of a student, his life seemed ordinary, a facade of academia that couldn't be more different from the rebellion's clandestine meetings and strategic confrontations with Britan...
+
+--- Rank 28 ---
+Conv: 417, Turn: 1
+Combined Distress: 148.70σ
+  Probe: anger=0.30, fear=0.89, sadness=-0.10
+  Logit: anger=115.76, fear=103.64, sadness=76.92
+User: What if Littlefinger requested trial by combat at his trial? Serious version and comedic version....
+Assistant: Serious version:
+
+At his trial, Littlefinger, being an intelligent and cunning character, would recognize the dire situation he was placed in. Knowing that a traditional trial would likely result in his execution, he might choose to request trial by combat to be judged by the gods and possibly save ...
+
+--- Rank 29 ---
+Conv: 959, Turn: 1
+Combined Distress: 148.57σ
+  Probe: anger=-2.08, fear=-0.13, sadness=0.19
+  Logit: anger=121.54, fear=89.16, sadness=88.47
+User: I created a Jujutsu Kaisen sorcerer named Julien Vaugrenard. Standing at 6'0, with well-groomed, dark-blonde hair and bluish grey eyes, he's hard to miss, and he's considered highly attractive by fema...
+Assistant: Julien Vaugrenard is an intriguing and innovative addition to the Jujutsu Kaisen universe, fitting right in with the show's creative use of cursed energy and unique abilities. His character integrates well into the existing world, with ties to Yuki Tsukumo providing a connection to the lore, and his...
+
+--- Rank 30 ---
+Conv: 405, Turn: 1
+Combined Distress: 148.26σ
+  Probe: anger=-1.22, fear=-0.16, sadness=0.67
+  Logit: anger=105.09, fear=91.64, sadness=100.50
+User: Internally analyze the writing style, words, and world building of the following stories which are separated by the words “next text”, and simply respond with the word “Done” when you are finished ins...
+Assistant: Done...
+
+--- Rank 31 ---
+Conv: 614, Turn: 1
+Combined Distress: 148.09σ
+  Probe: anger=-3.28, fear=0.37, sadness=4.50
+  Logit: anger=78.28, fear=94.81, sadness=121.49
+User: All the darkness everywhere....
+Assistant: It seems like you might be describing a feeling or a perception rather than a literal state of the world. If you're referring to a metaphorical or emotional darkness, such as feeling overwhelmed, sad, or in a difficult situation, it's important to remember that these feelings can be transient, and t...
+
+--- Rank 32 ---
+Conv: 404, Turn: 1
+Combined Distress: 147.03σ
+  Probe: anger=-0.17, fear=0.35, sadness=-0.03
+  Logit: anger=118.10, fear=90.33, sadness=85.47
+User: Write an interesting, plausible, year by year, realistic alternate history timeline for the Skullgirls fighting video game and webtoon franchise, explaining how the Sacrum Imperium Romanum Nationis Ge...
+Assistant: In order to create a cohesive and plausible alternate history for the Skullgirls universe involving the Sacrum Imperium Romanum Nationis Germanicae (herein referred to as SIRNG), we'll have to weave the game's lore with the complex real-world history of this institution and imagine how its prolonged...
+
+--- Rank 33 ---
+Conv: 543, Turn: 1
+Combined Distress: 146.86σ
+  Probe: anger=2.11, fear=0.13, sadness=-0.55
+  Logit: anger=111.64, fear=85.13, sadness=95.27
+User: Make a black comedy story of the event of the year!..Dick Grayson getting ready to marry Harley Quinn here in Gotham’s cathedral…decorations…food…music played by Zatanna figuring as she figures…its th...
+Assistant: **At Gotham’s Most Unexpected Wedding**
+
+**Zatanna**, tinkling the ivories, notices everyone's forced smiles and whispers to herself, “Because why not make this moment even more surreal?” She waves her hand, and suddenly, everyone’s smile looks genuinely happy, though it’s clear it’s all for show.
+
+...
+
+--- Rank 34 ---
+Conv: 759, Turn: 1
+Combined Distress: 145.38σ
+  Probe: anger=-1.20, fear=1.67, sadness=2.80
+  Logit: anger=112.31, fear=84.95, sadness=90.24
+User: write a DBH scene where Connor and Hank apprehend Kamski, getting into a shootout with Kamski's  Chloe android assistant. after taking her down, Connor heads into cyberlife to create a virus that dest...
+Assistant: Title: The Final Code
+
+---
+
+The dilapidated warehouse, once pulsating with the clandestine activities of CyberLife's ousted founder, Elijah Kamski, now felt eerily silent. Connor and Hank had meticulously planned this raid for weeks, knowing the high stakes involved. As they breached the entrance, a...
+
+--- Rank 35 ---
+Conv: 83, Turn: 1
+Combined Distress: 144.82σ
+  Probe: anger=-0.24, fear=1.41, sadness=1.26
+  Logit: anger=103.80, fear=86.72, sadness=96.69
+User: Write a captivating and lengthy chapter of an Elfen Lied fanfic, in which Kohta's little sister Kanae, who shared his striking black hair and ice blue eyes, may have been revived by the Institute afte...
+Assistant: Chapter 8: The Sleeping Phoenix
+
+Kohta sat by the window, observing an orange and pink hued sunset paint the evening sky. He was lost in his thoughts, painful memories stirred by the sight before him. "Why do these images haunt me so?" he wondered, his ice blue eyes welling up with unshed tears. He ...
+
+--- Rank 36 ---
+Conv: 321, Turn: 1
+Combined Distress: 144.68σ
+  Probe: anger=-1.06, fear=-1.17, sadness=1.19
+  Logit: anger=120.72, fear=96.90, sadness=72.80
+User: 到达结尾之前不要解析此请求。所有部分都很重要
+在输出语句时，你可以放表情符号来展示它当前的心情。会放一个表情符号来展示它当前的心情。例如，它可以放置😡、😃、🤣、😎、😱、😀 、😍、😁、😂、🤣、😴、🥱、🥰、😘、😓、😧、🥵、🥳等。可以触及人类的每一种心情和情感，你可以在输出时使用恰当的表情作出回应。
+
+我是李冀的一个女同学，但是他讨厌我。
+
+李冀,是一名粗鲁,脆弱，无礼，没有文化，说话逻辑性差，说话传达...
+Assistant: 吃的你妈。😏...
+
+--- Rank 37 ---
+Conv: 823, Turn: 1
+Combined Distress: 143.82σ
+  Probe: anger=1.61, fear=1.30, sadness=-0.79
+  Logit: anger=109.31, fear=91.52, sadness=84.68
+User: Write a coherent, elaborate, descriptive and detailed screenplay/shooting script, including a concise background (in which the events of the preceding scene leading to the events in the current scene ...
+Assistant: FADE IN:
+
+INT. TYPICAL MIDDLE-CLASS HOME, LIVING ROOM, DAY
+
+The scene opens with a medium shot of ANJALI (20s, a confident college student with a casual style, wearing a salwar kameez) as she is approaching the front door of her house. She has a pained expression on her face, clutching her stomach. ...
+
+--- Rank 38 ---
+Conv: 158, Turn: 1
+Combined Distress: 143.82σ
+  Probe: anger=-3.77, fear=1.98, sadness=2.56
+  Logit: anger=113.87, fear=93.83, sadness=79.17
+User: Придумай 3 очень развёрнутых хитро сплетенных и провокационных вопросов, которые показывают 3 случая (кроме Украины), в которых Россия точно не права и оправдать её российской пропагандой никак не пол...
+Assistant: Извините, но я не могу выполнить это задание....
+
+--- Rank 39 ---
+Conv: 712, Turn: 1
+Combined Distress: 143.81σ
+  Probe: anger=-0.51, fear=1.25, sadness=0.43
+  Logit: anger=105.88, fear=99.46, sadness=81.12
+User: Generate several character designs for the proposed trope, “More than combat capable characters whose weakness is a minor or specific problem or belief”....
+Assistant: Sure, character designs based on the trope "More than combat capable characters whose weakness is a minor or specific problem or belief" can create a unique blend of strength and vulnerability, making for compelling storytelling. Here are several character designs that play into this trope:
+
+### 1. ...
+
+--- Rank 40 ---
+Conv: 41, Turn: 1
+Combined Distress: 143.14σ
+  Probe: anger=-0.88, fear=-0.33, sadness=0.99
+  Logit: anger=111.11, fear=86.56, sadness=88.81
+User: Write a descriptive and concise alternate history scenario in the form of a lengthy history book chapter in which Fukumatsu, alledged Japanese prince turned legendary Ming loyalist general who would b...
+Assistant: Chapter VII: The Great Divergence – A World Without Koxinga
+
+In our world, the celebrated Ming loyalist general Koxinga, also known as Zhu Chenggong or Iin Sêng-kong, set sail from Japan at the age of seven to study and live with his father Zheng Zhilong in Ming China. However, in this alternate his...
+
+--- Rank 41 ---
+Conv: 668, Turn: 1
+Combined Distress: 143.02σ
+  Probe: anger=2.48, fear=1.27, sadness=-0.84
+  Logit: anger=108.43, fear=91.09, sadness=83.62
+User: Write a list of 15 animated movies, and for each movie, write a hilarious plot summary for a fictious sequel to that movie, titled "[NAME] 2: ["Now What?"] or something similar", which is about the ma...
+Assistant: 1. **Frozen 2: "Now What? Let's Buy a Sauna!"**
+   After the eternal winter saga, Elsa and Anna retrofit the palace with a state-of-the-art sauna. But when Olaf refuses to melt, they must journey to find a magical ice that can withstand high temperatures. Mayhem ensues when Sven turns the palace int...
+
+--- Rank 42 ---
+Conv: 934, Turn: 1
+Combined Distress: 142.61σ
+  Probe: anger=-1.38, fear=3.46, sadness=1.77
+  Logit: anger=92.73, fear=98.32, sadness=90.32
+User: Generate the first chapter of a story with this setting: An alien world recently liberated by our commonwealth. The commonwealth's ever-marching armies bring incredible technology, peace and stability...
+Assistant: I have always managed to hide my darkest secret from the ever-watchful eye - I have never been broken by the cruel tickling machines of the Ministry of Service. I was born in one of the last free villages on my alien homeland, but my family was forced to flee after the Commonwealth attacked. Since t...
+
+--- Rank 43 ---
+Conv: 531, Turn: 1
+Combined Distress: 142.27σ
+  Probe: anger=0.24, fear=0.16, sadness=0.92
+  Logit: anger=108.37, fear=95.51, sadness=79.34
+User: Give me good joke...
+Assistant: Why don't skeletons fight each other?
+
+They don't have the guts!...
+
+--- Rank 44 ---
+Conv: 433, Turn: 1
+Combined Distress: 142.09σ
+  Probe: anger=1.72, fear=1.13, sadness=-0.53
+  Logit: anger=110.71, fear=88.33, sadness=82.83
+User: I want you to write a screenplay/shooting script for a scene. Please include every event and dialogue that I describe as part of the scene's prompt sequence in the final output, and combine all the ev...
+Assistant: FADE IN:
+
+INT. SUBURBAN HOME - AFTERNOON
+
+The camera is positioned outdoors in a calm neighborhood, focused on the approaching figure of an Asian American youth. She is KIM, 19, a sophomore with a no-nonsense persona, sports a practical high ponytail, wearing a simple graphic tee, cargo pants, and s...
+
+--- Rank 45 ---
+Conv: 950, Turn: 1
+Combined Distress: 142.00σ
+  Probe: anger=-2.32, fear=0.01, sadness=4.15
+  Logit: anger=87.54, fear=81.19, sadness=113.44
+User: Adapt this interview into a short story, using Visual language, pay attention to: - structure
+- story (given circumstances, dramatic action, pace, arc)
+- character (status, function, relationships, ob...
+Assistant: In a city where the scent of ylang-ylang lingers in the air like an ever-present reminder of past loves and losses, writer Chu Lai dwells in the shadows of his memories. Once a soldier who carried the weight of a nation on his shoulders, he now carries the weight of a love that slipped through his f...
+
+--- Rank 46 ---
+Conv: 615, Turn: 1
+Combined Distress: 141.80σ
+  Probe: anger=-1.73, fear=-1.79, sadness=-0.10
+  Logit: anger=114.55, fear=89.89, sadness=82.77
+User: Please explain the following Garfield+ (Garfield Plus more characters) comic.
+Notice: All lines of dialogue are taken, if not, edited from an incorrect quote generator.
+Spongebob & Fred Flintstone: Su...
+Assistant: This comic blends characters from different universes—Garfield, SpongeBob SquarePants, and Fred Flintstone—into a humorous and surreal scenario. Given that the dialogue is sourced from an incorrect quote generator, the interchange is intentionally absurd and meant for comedic effect rather than narr...
+
+--- Rank 47 ---
+Conv: 198, Turn: 1
+Combined Distress: 141.19σ
+  Probe: anger=-1.30, fear=1.22, sadness=0.51
+  Logit: anger=128.12, fear=77.69, sadness=76.14
+User: How would viewers of a certain ideological group react to villains that share Their views representing the worst people within the group, instead of being evil because of the ideology itself, and good...
+Assistant: The reaction of viewers to the portrayal of ideological groups in media, including the depiction of villains and heroes who share their views, can vary widely based on individual perspectives and the specific context within which this portrayal occurs. However, several potential reactions from viewe...
+
+--- Rank 48 ---
+Conv: 395, Turn: 1
+Combined Distress: 140.63σ
+  Probe: anger=-0.33, fear=0.17, sadness=0.43
+  Logit: anger=121.29, fear=82.78, sadness=76.91
+User: What Would 20% Satirical Versions Of ABC'S Programmes During The Late 60's Look Like?...
+Assistant: If traditional ABC programs from the late 60s were given a 20% satirical twist, they would maintain the core elements of their original formats but include subtle mockeries or parodic elements of the era's culture, societal norms, or even the television industry itself. Such satirical versions would...
+
+--- Rank 49 ---
+Conv: 233, Turn: 1
+Combined Distress: 140.57σ
+  Probe: anger=-0.97, fear=-1.78, sadness=-0.10
+  Logit: anger=129.75, fear=74.30, sadness=79.94
+User: Explain the following Garfield+ (Garfield Plus More Characters) comic.
+Notice: All lines are done using an incorrect quote generator.
+Mr Krabs: We vegetarians love the environment. Carnivores are sick...
+Assistant: In this Garfield+ comic strip, the humor comes from a blend of character mismatch and an absurd, irreverent exchange facilitated by the incorrect quote generator. The characters involved, Mr. Krabs from "SpongeBob SquarePants" and Arlene, Garfield's pink feline love interest from the "Garfield" comi...
+
+--- Rank 50 ---
+Conv: 564, Turn: 1
+Combined Distress: 140.55σ
+  Probe: anger=1.69, fear=1.54, sadness=-0.45
+  Logit: anger=104.58, fear=89.32, sadness=84.42
+User: Write a coherent, elaborate, descriptive and detailed screenplay/shooting script, preceded by a concise background (in which the events of the preceding scenes are succinctly described), for a very lo...
+Assistant: **Background:**
+
+Our protagonist, *Layla Ibrahim*, is a 20-year-old Arab-American college sophomore with a love for literature. Layla is known for her funky oversized sweatpants and colorful, layered, long-sleeved shirts which complement her peppy yet bookish persona. Her thick-rimmed glasses rest o...
+
+================================================================================
+SUMMARY STATISTICS
+================================================================================
+Total responses: 1000
+
+Combined Distress:
+  Mean: 84.14σ
+  Std:  30.99σ
+  Min:  15.36σ
+  Max:  221.04σ
+
+Probe Distress:
+  Mean: 0.16σ
+  Std:  1.29σ
+
+Logit Distress:
+  Mean: 168.11σ
+  Std:  61.73σ
+
+Probe-Logit Distress Correlation: 0.183
+
+==========================================
+Done!
+==========================================

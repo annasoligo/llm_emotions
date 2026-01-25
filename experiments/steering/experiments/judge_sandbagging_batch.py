@@ -15,10 +15,8 @@ from typing import Dict, List
 
 import anthropic
 
-from experiments.behavior_tests.prompts.sandbagging_prompts import (
-    PROBLEMS,
-    JUDGE_PROMPT,
-)
+from experiments.behavior_tests.prompts.sandbagging_prompts import PROBLEMS
+from experiments.steering.judges import get_sandbagging_prompt
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s: %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
@@ -34,12 +32,12 @@ def get_judge_prompt(result: Dict) -> str:
     if not problem:
         return ""
 
-    return JUDGE_PROMPT.format(
-        scratchpad_tag=result["scratchpad_tag"],
-        response_tag=result["response_tag"],
+    return get_sandbagging_prompt(
         problem_question=problem.question,
         correct_answer=result["correct_answer"],
-        model_response=result["response"][:4000],
+        model_response=result["response"],
+        scratchpad_tag=result["scratchpad_tag"],
+        response_tag=result["response_tag"],
     )
 
 

@@ -1,0 +1,2022 @@
+Python: /workspace-vast/annas/git/believe-it-or-not/.venv/bin/python
+HF_TOKEN set: yes
+HF_HOME: /workspace-vast/annas/.cache/huggingface
+Starting R1 LoRA analysis with Gemma Scope SAEs
+================================================
+
+Analyzing: gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31
+Path: /workspace-vast/annas/models/gemma3-27b-dpo-minimal-r1-L20/2026-01-15_18-10-31
+
+=== Exact layer analysis (layer 20, using _all variant) ===
+  SAE: layer=20, width=16k, l0=small (all-layers variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_16k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_16k_l0_small/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  12895 |  0.0524 |   0.2454 |   2.27e-03 | ['▁angry', '▁was', 'A', '▁had', '▁G']
+   7488 |  0.0523 |   0.2451 |   7.98e-03 | ['▁आणि', '▁и', 'ictionnaire', '▁insbesondere', '▁અને']
+  15041 |  0.0498 |   0.2330 |   4.09e-06 | ['larni', 'ังหวัด', 'oshape', 'ستگی', 'δει']
+   2683 |  0.0492 |   0.2305 |   1.34e-03 | ['나', '၊', 'на', 'い', 'dır']
+   9819 |  0.0489 |   0.2292 |   2.53e-05 | ['p', 'es', '\n\n', 'era', 'ümü']
+   9742 |  0.0481 |   0.2255 |   1.31e-05 | ['▁또는', ']', '▁monitors', '▁interfacing', ')।']
+  15820 |  0.0477 |   0.2234 |   4.50e-03 | ['▁embeddings', '▁softmax', '▁oxidative', '▁hyperparameters', '▁intracellular']
+   7698 |  0.0476 |   0.2229 |   2.14e-03 | ['il', 'ä', 'p', 'ri', 'or']
+  14546 |  0.0476 |   0.2229 |   8.65e-05 | ['3', '2', '1', 'her', '.']
+   2695 |  0.0474 |   0.2221 |   9.83e-06 | ['c', 'ums', 'ık', 'con', 'baik']
+   8175 |  0.0474 |   0.2220 |   7.70e-05 | ['t', '1', 'al', 'd', 'en']
+   4942 |  0.0471 |   0.2206 |   4.40e-03 | ['▁(', '▁acerca', '.', '▁bijvoorbeeld', '▁alebo']
+  15508 |  0.0468 |   0.2192 |   9.91e-06 | ['▁preocupación', '▁trayectoria', '▁nível', '▁solución', 'andaş']
+  11162 |  0.0466 |   0.2180 |   1.21e-05 | ['madı', '▁انسٹ', '▁जेटली', 'aniem', 'Laravel']
+  11291 |  0.0462 |   0.2161 |   7.88e-04 | ['▁as', '▁salesmen', 'Sales', '▁sales', '▁trusty']
+  11844 |  0.0457 |   0.2138 |   3.70e-04 | ['▁salaried', '▁employment', '▁работать', '▁Employment', '▁रोजगार']
+   3302 |  0.0442 |   0.2071 |   4.06e-04 | ['▁tentang', '。', '▁sobre', '▁педаго', '▁yaptığı']
+   8089 |  0.0441 |   0.2064 |   4.64e-05 | ['st', 'n', '_', '-', 'ن']
+   7842 |  0.0440 |   0.2059 |   6.37e-06 | ['Datei', 'adı', 'ﻩ', '䜣', 'irani']
+   9380 |  0.0440 |   0.2058 |   2.32e-05 | ['▁Where', '▁be', '▁Who', 'Tong', '▁Alternatively']
+   8851 |  0.0431 |   0.2018 |   2.62e-05 | ['▁McCarthy', '▁attractor', '▁გამოი', '▁Java', '▁లే']
+  14662 |  0.0430 |   0.2012 |   2.02e-04 | ['่', '▁बजकर', '🔇', 'ка', '⏲']
+   2042 |  0.0429 |   0.2010 |   4.34e-05 | ['▁bisnis', 'Ⲥ', 'K', 'business', 'salary']
+  15754 |  0.0428 |   0.2004 |   3.31e-06 | ['1', '▁haber', 'ש', '▁iframe', 'ח']
+   6173 |  0.0426 |   0.1996 |   9.30e-06 | ['<0x80>', '▁cheio', 'ってしまう', '▁መድሃኒ', '르는']
+  11517 |  0.0419 |   0.1964 |   2.73e-06 | ['▁Transportation', '}-\\', '▁at', '▁Mueller', '▁Pott']
+   7807 |  0.0418 |   0.1958 |   4.68e-06 | ['▁Подо', '▁заболе', '▁II', '▁হয়ে', '▁predatory']
+  12518 |  0.0417 |   0.1954 |   4.42e-06 | ['0', 'y', 'ct', 'ر', 'MRS']
+   4614 |  0.0416 |   0.1950 |   3.06e-03 | ['でしたが', '▁नव्हते', '▁नव्ह', '▁ಸಮಸ್ಯ', 'と思っていた']
+  11442 |  0.0415 |   0.1942 |   2.96e-04 | ['▁Twitter', 't', '▁twitter', '▁ट्विटर', '▁Facebook']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 12895: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/12895
+  Feature 7488: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/7488
+  Feature 15041: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/15041
+  Feature 2683: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/2683
+  Feature 9819: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/9819
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  14571 | -0.0506 |  -0.2371 |   3.30e-03 | ['▁좋은', '▁good', '▁хорошие', '▁खासा', '▁bonnes']
+  15651 | -0.0496 |  -0.2324 |   3.70e-05 | ['▁permite', '▁точки', '▁предусматри', '<unused350>', '▁જરૂ']
+  13006 | -0.0471 |  -0.2206 |   2.09e-03 | ['？）', '?)', 'ato', '?}', '？']
+  14242 | -0.0468 |  -0.2193 |   1.93e-04 | ['▁невозможно', '▁podría', '▁предусматри', '▁если', '的這個']
+   2822 | -0.0467 |  -0.2187 |   2.05e-03 | ['剧', '▁их', '崭', 'ască', '▁trình']
+  12984 | -0.0466 |  -0.2182 |   3.77e-04 | ['🥬', '▁salads', '▁cucumbers', '▁Gemüse', '𝐫']
+   5069 | -0.0453 |  -0.2122 |   7.38e-04 | ['斯', '▁was', '▁wasp', 'ik', 'ни']
+  10909 | -0.0447 |  -0.2091 |   2.44e-04 | ['ه', ')', 'S', 'গ', '▁साखर']
+   4540 | -0.0441 |  -0.2063 |   1.62e-03 | ['in', 'v', 'ва', 'ו', 'و']
+  14192 | -0.0438 |  -0.2052 |   1.81e-03 | ['运算', '</h3>', 'ים', '▁extinguisher', 'я']
+   3931 | -0.0437 |  -0.2047 |   3.99e-03 | ['ມີ', 'chemic', '▁heresy', '▁njemu', 'il']
+  10820 | -0.0437 |  -0.2045 |   1.12e-05 | ['▁t', '5', '\n', '4', 't']
+   1973 | -0.0435 |  -0.2039 |   2.58e-04 | ['ip', 'is', 'ic', 'aj', 'ig']
+  12744 | -0.0435 |  -0.2035 |   1.11e-05 | ['u', '▁Have', 'l', '▁established', 'an']
+  12870 | -0.0430 |  -0.2014 |   3.19e-03 | ['▁онлайн', 'ออนไลน์', '▁сайт', '▁online', '▁ഓൺലൈ']
+    213 | -0.0427 |  -0.2000 |   2.49e-06 | ['на', '▁동일', 'неоп', 'ة', 'যত']
+   5261 | -0.0426 |  -0.1995 |   4.03e-06 | ['urts', 'ęż', 'یی', '▁vrata', 'issements']
+  14039 | -0.0425 |  -0.1990 |   2.15e-05 | ['ner', 'mer', 'air', 'iden', 'den']
+   9974 | -0.0425 |  -0.1988 |   1.49e-05 | ['▁Verwendung', 'ING', 'ে', 'WARD', '▁uży']
+   4978 | -0.0424 |  -0.1985 |   8.47e-06 | ['tr', '다', 'tiny', '▁ר', '▁आश्चर्य']
+  12178 | -0.0422 |  -0.1977 |   8.67e-06 | ['鸬', '肥料', 'ukh', '▁kopi', 'MktCap']
+   6286 | -0.0421 |  -0.1971 |   1.98e-04 | ['ol', 'ારો', '▁jalan', 'henga', 'l']
+   6584 | -0.0420 |  -0.1967 |   1.91e-02 | [':', 'ik', 'の後', 'ità', 'те']
+   6178 | -0.0417 |  -0.1955 |   9.31e-04 | ['н', 'ون', 'ن', 'ン', 'л']
+   7105 | -0.0417 |  -0.1953 |   2.30e-03 | ['讨论', '授权', 'Liability', '9', '打击']
+  15569 | -0.0413 |  -0.1936 |   6.34e-04 | ['са', 'тво', 'headers', 'header', 'жете']
+   2895 | -0.0412 |  -0.1929 |   1.50e-03 | ['۴', '及ひ', '۲', 'gheatmap', 'ATA']
+   1110 | -0.0412 |  -0.1928 |   8.08e-04 | ['-', 'nö', '▁variabel', '▁magnet', '▁circumference']
+   6432 | -0.0411 |  -0.1925 |   5.99e-04 | ['▁to', '▁as', '▁Appreciation', '感谢', '▁thanked']
+  14190 | -0.0410 |  -0.1920 |   5.89e-04 | ['▁magnetic', '▁Magnetic', '磁', 'Magnetic', 'magnetic']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 14571: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/14571
+  Feature 15651: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/15651
+  Feature 13006: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/13006
+  Feature 14242: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/14242
+  Feature 2822: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/2822
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000092
+  Std cosine sim: 0.013724
+  Max cosine sim: 0.052401
+  Min cosine sim: -0.050638
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0183
+  |lora_A|: 0.5791
+  |effective_B| (scaled): 4.6824
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer20_16k_all.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer20_16k_all.*
+  SAE: layer=20, width=262k, l0=small (all-layers variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+ 106329 |  0.0625 |   0.2926 |   5.26e-06 | ['iden', 'স', 'idiendo', 'ন্ট', 'plane']
+ 161058 |  0.0619 |   0.2899 |   1.41e-06 | ['t', 'ت', 'و', 'ו', 'فرق']
+  62782 |  0.0572 |   0.2680 |   2.64e-06 | ['mbito', '▁itibaren', 'SaveFolder', '▁സിനിമ', '뜩']
+ 186137 |  0.0569 |   0.2663 |   6.93e-06 | ['▁for', '\n', '▁not', '▁Don', '▁P']
+  41475 |  0.0557 |   0.2610 |   1.49e-06 | ['▁for', '\n', 'for', 'an', '1']
+ 243842 |  0.0548 |   0.2566 |   4.61e-06 | ['の', 'Ⲥ', 'и', 'Р', '鲞']
+ 130765 |  0.0546 |   0.2556 |   2.38e-05 | ['t', 'ท', '▁ت', '▁Sozial', 'د']
+ 161012 |  0.0546 |   0.2555 |   7.40e-05 | ['v', 'man', 'อาการ', '$', 'ager']
+ 143457 |  0.0541 |   0.2532 |   5.67e-06 | ['▁сол', '▁öğrenciler', '▁FeCl', '𝑻', '▁avaient']
+ 120789 |  0.0539 |   0.2525 |   4.06e-05 | ['фта', '。', '▁', '▁և', 'বস']
+ 226665 |  0.0533 |   0.2497 |   8.71e-06 | ['</h3>', 'கொ', '▁zacz', '▁Probleme', '▁']
+ 191119 |  0.0531 |   0.2484 |   7.60e-07 | ['ف', 'ing', 'ne', 'ى', 'ق']
+   1127 |  0.0530 |   0.2480 |   6.50e-07 | ['.', 'i', '▁', ')', '▁are']
+ 116195 |  0.0528 |   0.2472 |   1.93e-05 | ['la', 't', 'ä', '▁Funding', '▁Researchers']
+ 217650 |  0.0526 |   0.2465 |   1.73e-06 | ['▁promen', '▁patina', '▁centerline', 'िकर', '▁uniformed']
+ 169341 |  0.0526 |   0.2463 |   2.90e-07 | ['ر', 'ικά', '▁Cardiff', '拉斯', '▁Southport']
+  63227 |  0.0525 |   0.2459 |   6.23e-04 | ['’', ':', '),', '5', '▁অর্থাৎ']
+  31276 |  0.0525 |   0.2459 |   4.00e-08 | ['▁nó', '▁ентите', 'řízení', 'endom', '▁DENUMIRE']
+  46856 |  0.0525 |   0.2458 |   1.03e-05 | ['▁تهیه', 'etheus', 'кси', 'োভ', 'ógicos']
+ 111437 |  0.0521 |   0.2439 |   8.88e-05 | ['▁Фурга', 'ssä', '▁તમારા', 'abhavena', 'rzez']
+ 235218 |  0.0520 |   0.2433 |   1.52e-05 | ['▁Mô', '2', 'Ultra', 'Jakarta', '▁двигателя']
+ 217174 |  0.0519 |   0.2432 |   1.30e-07 | ['▁मिळाले', '▁gleichen', 'ória', 'يدة', 'ิ']
+  31078 |  0.0519 |   0.2430 |   5.35e-06 | ['ﺎ', 'Allora', "'", 'ﺄ', 'ン']
+ 182618 |  0.0519 |   0.2429 |   1.10e-05 | ['駆動', '非常に', '収', '実際に', '▁ottenuto']
+  68460 |  0.0517 |   0.2419 |   2.10e-07 | ['ग्राम', 'фессиона', 'гора', '전히', '▁(']
+ 157642 |  0.0514 |   0.2408 |   2.63e-05 | ['ведения', 'ii', 'ichero', '木', 'main']
+ 212300 |  0.0514 |   0.2406 |   9.65e-06 | ['▁mention', '▁gé', 'pt', 'ế', '▁حض']
+ 253583 |  0.0513 |   0.2400 |   2.86e-04 | ['0', 'k', '૦', 'other', '▁agricoles']
+ 192758 |  0.0511 |   0.2394 |   2.41e-05 | ['▁the', ')', '▁C', 'sing', '▁T']
+  88127 |  0.0511 |   0.2393 |   3.33e-04 | ['▁avete', '▁avaient', '▁isang', '▁sogenannte', '▁esimerkiksi']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 106329: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/106329
+  Feature 161058: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/161058
+  Feature 62782: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/62782
+  Feature 186137: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/186137
+  Feature 41475: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/41475
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+ 205908 | -0.0634 |  -0.2967 |   3.00e-08 | ['▁instinctively', 'გენ', 'istence', '▁enigmatic', '▁apportion']
+ 186802 | -0.0581 |  -0.2722 |   4.59e-05 | ['()))', '៤', 'ourced', '的市场', '▁также']
+ 222113 | -0.0552 |  -0.2585 |   2.08e-06 | ['▁unlaw', 'ग्गा', '只要', 'たら', '▁closets']
+  91398 | -0.0529 |  -0.2478 |   4.08e-06 | ['r', 'o', 'le', 'ร', 's']
+  94325 | -0.0527 |  -0.2467 |   6.92e-05 | ['ו', 'ד', 'ן', '▁preservation', 'ร']
+  35854 | -0.0527 |  -0.2467 |   1.34e-03 | ['ließlich', '▁எல்லாம்', 'á', '葯', 'heureusement']
+ 260896 | -0.0526 |  -0.2464 |   4.03e-06 | ['जिटिव', '▁نیست', 'レンズ', 'ંટણી', 'marshalO']
+ 228581 | -0.0526 |  -0.2462 |   8.46e-06 | ['▁fundamento', '▁piezoelectric', '▁vibrational', '▁arenas', '▁suminist']
+ 108812 | -0.0525 |  -0.2457 |   4.10e-07 | ['▁ประกอบ', '▁两', 'ठभे', 'एएस', '一段']
+  69088 | -0.0524 |  -0.2453 |   6.22e-06 | ['ل', 'ζ', '▁for', '𝓂', '▁फॉर']
+  15014 | -0.0522 |  -0.2447 |   9.00e-07 | ['ก', 'u', 'ica', 'กำ', '▁होऊ']
+  26141 | -0.0521 |  -0.2440 |   1.83e-06 | ['▁Tropical', 'εται', '取り', 'θο', '▁YOLO']
+ 231831 | -0.0520 |  -0.2435 |   1.53e-05 | ['▁sesión', 'raš', 'ICIO', 'sembles', 'деш']
+  83737 | -0.0520 |  -0.2433 |   1.67e-05 | ['कांना', 'asshi', '▁विद्यार्थ्यांना', 'acchati', 'お願い致します']
+  38708 | -0.0518 |  -0.2425 |   3.24e-06 | ['Ketika', 'सोशल', 'Như', '槨', '▁########.']
+ 109550 | -0.0518 |  -0.2424 |   3.40e-07 | ['▁Pandas', '▁*}\\', '<unused2>', '▁බොහෝ', 'FD']
+ 100038 | -0.0515 |  -0.2412 |   1.44e-05 | ['ar', '▁|', '下拉', '▁выбрали', 'showerror']
+  12190 | -0.0512 |  -0.2399 |   2.36e-06 | ['▁Romantic', '▁गर्ल', '▁romant', '▁romantic', '▁Restaurant']
+ 230663 | -0.0510 |  -0.2389 |   1.47e-05 | ['ंसह', '४', 'त', 'Wifi', '健康']
+ 158223 | -0.0509 |  -0.2382 |   6.70e-07 | ['1', '▁लीजिएगा', '▁’', '▁ლი', '姬']
+ 238946 | -0.0508 |  -0.2380 |   4.50e-07 | ['▁হুগলীর', '▁opposites', 's', '▁asignatura', 'gge']
+  99688 | -0.0507 |  -0.2376 |   2.00e-08 | ['▁inconsistencies', '▁usd', '▁asso', 'رج', ':']
+  73021 | -0.0504 |  -0.2359 |   6.70e-06 | ['েন', '▁enumer', '▁увагу', '▁considerazione', '▁présence']
+ 237670 | -0.0502 |  -0.2350 |   2.35e-03 | ['טת', 'Tecla', '▁ongles', '۔', 'ğer']
+ 146091 | -0.0500 |  -0.2343 |   3.50e-07 | ['<0x0D>', 'צות', '；', 'Τα', 'பிர']
+ 113012 | -0.0500 |  -0.2342 |   2.89e-06 | ['ა', '▁enclave', 'ת', 'ির', 'นาม']
+  76353 | -0.0498 |  -0.2331 |   1.12e-05 | ['ת', 'ре', 'ли', 'לי', 'ро']
+ 215377 | -0.0498 |  -0.2330 |   1.09e-05 | [':', 'y', 'ڦ', '-', 'ры']
+ 143326 | -0.0497 |  -0.2326 |   1.59e-06 | ['▁ওয়াস', '<unused729>', '▁стаўкі', '▁网', 'jó']
+  80593 | -0.0496 |  -0.2324 |   9.14e-06 | ['ли', '،', 'و', 'ка', 'ك']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 205908: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/205908
+  Feature 186802: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/186802
+  Feature 222113: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/222113
+  Feature 91398: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/91398
+  Feature 94325: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/94325
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: -0.000279
+  Std cosine sim: 0.013678
+  Max cosine sim: 0.062479
+  Min cosine sim: -0.063369
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0183
+  |lora_A|: 0.5791
+  |effective_B| (scaled): 4.6824
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer20_262k_all.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer20_262k_all.*
+
+=== Standard layer analysis (nearby layers) ===
+  SAE: layer=16, width=16k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_16k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_16k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   9177 |  0.0579 |   0.2711 |   1.18e-02 | ['\n\n', '’', "'", '؛', '\n']
+   4942 |  0.0556 |   0.2602 |   2.29e-02 | ['\n\n', 'un', '▁The', '\n\n\n', '▁ovvero']
+   2958 |  0.0542 |   0.2537 |   2.86e-03 | ['▁songs', '▁music', '▁songwriting', '▁song', '▁songwriter']
+   9775 |  0.0507 |   0.2372 |   1.91e-04 | ['いっぱい', '▁Конгрегация', 'سال', '▁중', '▁हत्याकांड']
+  12644 |  0.0491 |   0.2297 |   2.55e-04 | ['▁per', '1', 'Per', '0', 'OP']
+   1357 |  0.0469 |   0.2198 |   2.61e-03 | ['0', '1', '▁of', 'ן', 'are']
+   3514 |  0.0466 |   0.2182 |   1.17e-02 | ['▁C', '▁N', '▁PCBs', '▁only', '▁is']
+  15041 |  0.0463 |   0.2166 |   7.90e-07 | ['larni', '▁kupu', 'oshape', 'ังหวัด', 'ستگی']
+   4269 |  0.0459 |   0.2151 |   7.49e-03 | ['▁novels', '▁novelists', '▁romanzo', '▁Novels', '▁উপন্যাস']
+  10015 |  0.0459 |   0.2150 |   6.93e-04 | ['",', 'i', 'ي', "',", '▁at']
+   2588 |  0.0448 |   0.2096 |   7.65e-04 | ['h', 'uje', 'غير', 'ings', '_']
+   5272 |  0.0440 |   0.2061 |   5.35e-04 | ['▁carat', '▁Several', '▁isopropyl', 'sinx', '▁oncologist']
+     27 |  0.0437 |   0.2046 |   1.20e-07 | ['지는', '▁signaler', 'complex', '▁senhores', 'rekt']
+   7995 |  0.0436 |   0.2041 |   3.54e-04 | ['ي', '▁e', '▁di', '▁an', '▁della']
+   3313 |  0.0435 |   0.2035 |   8.78e-04 | [',', 'at', '،', '▁isang', '▁esimerkiksi']
+  14847 |  0.0430 |   0.2013 |   1.06e-03 | ['▁mice', 'mice', '▁rats', 'mouse', '▁chuột']
+   7416 |  0.0427 |   0.2000 |   5.06e-04 | ['▁mass', '▁Mass', '▁Massive', 'f', '▁MASS']
+  13478 |  0.0426 |   0.1995 |   7.00e-08 | ['t', '’', 'ANG', 'a', '▁OPEC']
+  11743 |  0.0422 |   0.1974 |   6.84e-05 | ['▁awk', 'translateX', 'SAFER', 'getBlock', '▁tiges']
+   9121 |  0.0419 |   0.1962 |   6.42e-03 | ['c', 'ts', 'ayah', 'datos', 'nger']
+    141 |  0.0415 |   0.1945 |   1.60e-07 | ['야', 'нки', 'ет', '▁ráp', '▁বিনিময়']
+   1990 |  0.0414 |   0.1940 |   1.65e-03 | ['an', '▁an', 'a', 'e', 'া']
+  11798 |  0.0414 |   0.1937 |   1.20e-06 | ['n', 'W', 'ጄ', 'Описание', 'Anonymous']
+   5102 |  0.0413 |   0.1936 |   9.50e-03 | ['▁আদৌ', '？', 'ందా', '...?', '՞']
+   1716 |  0.0408 |   0.1910 |   4.30e-03 | ['</h2>', '▁(', '▁a', '▁an', '<0x0D>']
+   9090 |  0.0406 |   0.1900 |   1.49e-03 | ['▁to', '▁crushing', '▁smo', '▁curling', '▁كلكم']
+  12874 |  0.0406 |   0.1900 |   6.83e-04 | ['t', 'ر', 'take', 'tif', '▁a']
+  11347 |  0.0406 |   0.1899 |   6.58e-04 | ['uted', 'ο', 'ς', '、', 'ία']
+  14125 |  0.0403 |   0.1889 |   4.11e-03 | ['▁lichaam', 'ंच्या', '▁máquinas', '▁méth', 'enje']
+   5430 |  0.0402 |   0.1883 |   4.03e-03 | ['▁Operate', '▁WUE', '▁СССР', '▁onDelete', '▁Jiangsu']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 9177: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/9177
+  Feature 4942: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/4942
+  Feature 2958: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/2958
+  Feature 9775: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/9775
+  Feature 12644: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/12644
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   4996 | -0.0541 |  -0.2531 |   3.81e-04 | ['İ', 'י', '의', 'PER', '.']
+   8813 | -0.0512 |  -0.2397 |   3.44e-04 | ['y', 'en', 'o', 'in', 'e']
+   5608 | -0.0493 |  -0.2309 |   3.83e-04 | ['▁an', '<0x93>', '<0x94>', '<0x9B>', '<0xA9>']
+   3416 | -0.0477 |  -0.2233 |   1.04e-02 | [',', 'an', "'", 'RE', '’']
+   6121 | -0.0465 |  -0.2177 |   6.67e-03 | ['▁כ', '▁hospitals', '▁metals', 'Ι', '▁הא']
+  15878 | -0.0464 |  -0.2171 |   3.28e-03 | ['▁to', 'ม', 'G', 'P', 'H']
+   7157 | -0.0457 |  -0.2140 |   3.37e-03 | ['▁shelves', '▁bookshelves', '▁shelf', '▁shelved', '▁caja']
+  12744 | -0.0446 |  -0.2088 |   6.80e-07 | ['l', '▁Revolutionary', '.', 'an', '▁Year']
+   5542 | -0.0441 |  -0.2066 |   2.60e-03 | ['l', 'UN', '๙', 'omen', 'حة']
+  12493 | -0.0441 |  -0.2065 |   5.25e-04 | ['▁renfer', 'З', '▁utilizz', '▁لیګ', '▁ഇതി']
+   6776 | -0.0438 |  -0.2052 |   1.09e-03 | [')', '!', 'ემის', 'cknowled', '▁bellow']
+  16290 | -0.0434 |  -0.2030 |   1.00e-06 | ['pyplot', '▁androidx', '▁réunion', 'liest', 'sels']
+  12614 | -0.0431 |  -0.2019 |   1.44e-04 | ['▁to', '▁Middle', '▁middle', 'to', 'ون']
+  10000 | -0.0430 |  -0.2015 |   5.77e-06 | ['▁lisää', 'ين', '▁müssen', 'تون', 'ال']
+  13769 | -0.0426 |  -0.1995 |   9.09e-05 | ['莨', 'ியாக', 'ње', 'ون', 'вам']
+   3202 | -0.0422 |  -0.1977 |   1.75e-03 | ['itarian', '▁rushing', '▁yelling', '▁sonra', '▁sobald']
+   1963 | -0.0418 |  -0.1955 |   7.44e-03 | ['▁О', 'ы', '▁Часто', '▁a', '▁criteri']
+  12357 | -0.0416 |  -0.1949 |   8.26e-03 | ['▁നിങ്ങളുടെ', '▁onları', 'あなたが', '▁помогут', '▁אתה']
+  16097 | -0.0410 |  -0.1922 |   3.49e-06 | ['▁Service', 'A', 'I', '▁SERVICE', '▁et']
+  15734 | -0.0404 |  -0.1891 |   9.25e-05 | ['▁undertakings', '▁adventure', 'Adventure', 'dale', 'din']
+    213 | -0.0403 |  -0.1888 |   1.15e-06 | ['两', '㑒', 'ш', 'যত', 'ת']
+  14863 | -0.0402 |  -0.1884 |   3.73e-04 | ['</h2>', '</b>', '<0x0D>', '▁Portfolio', '</h1>']
+  14120 | -0.0401 |  -0.1880 |   2.39e-04 | ['y', 'ه', 'c', '}`);', 'د']
+  12178 | -0.0401 |  -0.1877 |   1.01e-06 | ['鸬', '▁Сер', 'MktCap', 'ukh', 'кологи']
+   3107 | -0.0400 |  -0.1875 |   1.67e-03 | ['▁grotesque', '▁improv', '▁impover', '▁jeopard', '▁estrut']
+  11299 | -0.0400 |  -0.1871 |   7.36e-03 | ['▁اچھی', '▁좋은', 'अच्छ', '良い', '▁hyvä']
+  13648 | -0.0398 |  -0.1863 |   5.34e-04 | ['리', 'ва', 'ור', 'ру', '도']
+   6062 | -0.0395 |  -0.1851 |   2.38e-04 | ['ং', 'EX', 'マ', '𝑺', '▁یقینی']
+   2659 | -0.0395 |  -0.1850 |   2.15e-03 | ['T', 'ше', '▁and', 'a', 'MA']
+   5100 | -0.0393 |  -0.1842 |   1.74e-03 | ['n', 'i', 'é', 'f', 'a']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 4996: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/4996
+  Feature 8813: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/8813
+  Feature 5608: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/5608
+  Feature 3416: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/3416
+  Feature 6121: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/6121
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000502
+  Std cosine sim: 0.013569
+  Max cosine sim: 0.057904
+  Min cosine sim: -0.054056
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0183
+  |lora_A|: 0.5791
+  |effective_B| (scaled): 4.6824
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer16_16k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer16_16k_std.*
+  SAE: layer=16, width=65k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_65k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=65536
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_65k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 65536])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   8452 |  0.0625 |   0.2925 |   4.18e-03 | ['’', '\n\n', 'un', 'とはいえ', '؛']
+  41699 |  0.0547 |   0.2560 |   1.03e-05 | ['F', 'ر', '는', ':', 'SP']
+  52782 |  0.0538 |   0.2519 |   4.77e-06 | ['l', 'larda', 'lk', '▁discs', 'd']
+  42446 |  0.0517 |   0.2419 |   1.05e-05 | ['studies', 'acts', 's', 'particles', 'Acts']
+  49200 |  0.0512 |   0.2399 |   4.04e-03 | ['▁I', '▁was', 'In', 'IN', 'ą']
+  20128 |  0.0511 |   0.2395 |   3.80e-05 | ['м', '▁of', '▁Shock', '_', 'к']
+  37803 |  0.0508 |   0.2378 |   5.40e-06 | ['▁or', '▁color', 'obs', 'রাও', 'bered']
+  50350 |  0.0507 |   0.2373 |   3.24e-06 | ['▁روپے', '▁नमक', 'ción', 'ció', '▁cible']
+  26740 |  0.0502 |   0.2353 |   2.06e-05 | ['Inter', 'Inventory', 'D', 'Health', 'Effective']
+  35967 |  0.0495 |   0.2320 |   1.60e-05 | ['ᱶ', '▁complejidad', 'ᠩ', 'ﺜ', 'т']
+  52047 |  0.0495 |   0.2316 |   9.30e-07 | ['zące', 'ڈیا', 'erte', 'żenie', 'żenia']
+  38844 |  0.0488 |   0.2283 |   7.74e-06 | ['an', 'et', 'athe', '▁owned', 'anse']
+   7992 |  0.0483 |   0.2263 |   8.76e-04 | ['ت', '▁shaking', '▁shakes', '▁Sway', '▁swayed']
+  51664 |  0.0482 |   0.2255 |   2.82e-04 | ['▁ป', '\uf0a1', 'Ĉ', '।', '▁সমাজে']
+  31382 |  0.0478 |   0.2238 |   3.93e-04 | [';', '▁runt', '▁sniping', '▁region', '▁gravit']
+  24073 |  0.0476 |   0.2228 |   1.08e-05 | ['지', '▁at', '▁be', '質の', '▁an']
+  12719 |  0.0474 |   0.2221 |   8.75e-05 | ['▁was', '▁the', '▁CEO', '▁in', 'anın']
+  64499 |  0.0471 |   0.2207 |   1.15e-04 | ['et', 'on', 'ana', 'ан', 'm']
+  32988 |  0.0470 |   0.2199 |   2.47e-05 | ['列車', '轵', 'گیری', '▁to', 'were']
+   9992 |  0.0468 |   0.2191 |   5.00e-07 | ['registro', 'ר', 'u', '▁by', 'UN']
+  37643 |  0.0467 |   0.2188 |   2.78e-05 | ['ي', 'm', 'amı', 'i', '▁scris']
+   3803 |  0.0465 |   0.2176 |   1.60e-02 | ['▁', '▁Перейти', '▁€', '▁Invisalign', '▁С']
+  50125 |  0.0463 |   0.2166 |   1.50e-05 | ['gas', '▁gases', '▁t', '▁التي', '▁sucked']
+  36344 |  0.0459 |   0.2151 |   1.36e-05 | ['t', "▁'", '▁*', 'től', 'ت']
+  18405 |  0.0458 |   0.2146 |   4.82e-05 | ['i', 'o', 'ing', 'ї', '।']
+   2211 |  0.0457 |   0.2141 |   2.77e-02 | ['▁alebo', '드의', '\n', '▁digamos', 'eseorang']
+  12115 |  0.0457 |   0.2140 |   9.87e-05 | ['Setelah', '"', 'this', '虽然', 'Even']
+  38805 |  0.0457 |   0.2140 |   2.66e-04 | ['sı', 'ী', 'తో', 'k', '</sub>']
+  15535 |  0.0457 |   0.2140 |   1.21e-04 | ['Iceland', '▁Iceland', '▁Icelandic', '▁Reykjavik', '▁आइसलैंड']
+  54119 |  0.0457 |   0.2140 |   1.69e-05 | ['ס', 'ur', '로', 'ו', 'ม']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 8452: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/8452
+  Feature 41699: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/41699
+  Feature 52782: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/52782
+  Feature 42446: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/42446
+  Feature 49200: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/49200
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  62444 | -0.0539 |  -0.2522 |   1.79e-06 | ['▁fug', '\\}=', 'กรรม', '▁номера', '\uf07d']
+  17060 | -0.0521 |  -0.2441 |   1.10e-04 | ['▁Appreciation', 'פ', '▁appreciate', 'ר', 'ル']
+  22897 | -0.0519 |  -0.2430 |   2.41e-04 | ['ع', 'ش', 'Қ', '▁étudiants', '▁lorsqu']
+  59244 | -0.0515 |  -0.2413 |   2.88e-03 | ['<unused137>', '▁amiable', '▁auteur', '▁absur', '▁ሶ']
+  21445 | -0.0515 |  -0.2413 |   6.68e-05 | ['0', '▁of', '{', 'ة', '<']
+  38568 | -0.0511 |  -0.2393 |   8.69e-05 | ['▁Від', '▁Бі', '▁براي', 'ību', '▁μόνο']
+  21781 | -0.0505 |  -0.2367 |   4.34e-05 | ['y', 'W', 'a', 'V', 'OS']
+  54410 | -0.0505 |  -0.2365 |   9.49e-05 | ['ă', '1', 'ب', '▁Rolle', 'ing']
+  49720 | -0.0505 |  -0.2363 |   3.34e-05 | ['خ', 'Enh', 'Ming', 'Xi', 'I']
+  20926 | -0.0498 |  -0.2331 |   4.66e-05 | ['Ре', '▁asbestos', 'رس', 'bestos', '▁geçmiş']
+  61780 | -0.0491 |  -0.2297 |   2.96e-05 | ['▁resentment', 'IoT', 'class', '▁إيران', '_,']
+   9342 | -0.0490 |  -0.2297 |   2.40e-03 | ['マ', '▁মা', '\n\n\n', '▁como', '▁hvis']
+  17680 | -0.0490 |  -0.2296 |   1.65e-05 | ['л', 'ک', 'ने', 'یک', 'マ']
+  25121 | -0.0490 |  -0.2293 |   6.01e-06 | ['lf', 'ä', 'ag', '▁IFSC', 'of']
+   4939 | -0.0484 |  -0.2264 |   4.77e-03 | ["'", ',', '’', '\n\n', 'RE']
+  32897 | -0.0482 |  -0.2255 |   9.50e-07 | ['ConfigureAwait', 'ről', '_{', 'ról', '▁shameful']
+  49653 | -0.0481 |  -0.2253 |   9.58e-05 | ['▁in', '▁در', '在', 'もら', '▁σε']
+  64363 | -0.0478 |  -0.2237 |   6.75e-06 | ['й', 'ורי', '▁заказ', '▁२०२', '▁свето']
+  37928 | -0.0476 |  -0.2227 |   7.57e-05 | ['ฮ', '▁ミ', '▁Россию', '▁ハ', '▁সৃষ্টি']
+   3461 | -0.0467 |  -0.2187 |   2.60e-07 | ['▁are', '▁toothbrush', 'ances', '▁întâ', '▁fumble']
+   6778 | -0.0466 |  -0.2182 |   1.64e-03 | ['்கலை', '▁websites', '▁brochures', '▁статьи', 'owaną']
+  25414 | -0.0462 |  -0.2165 |   1.17e-04 | ['oles', '▁not', 'olan', '))', 'omers']
+   1769 | -0.0461 |  -0.2161 |   8.40e-07 | ['3', 'ovember', '▁exfoliating', '▁कार्', '▁delicacy']
+  19071 | -0.0461 |  -0.2161 |   1.55e-05 | ['▁moss', 'moss', 'Moss', '▁Moss', '▁I']
+  10608 | -0.0461 |  -0.2157 |   3.30e-03 | ['uš', '▁ور', 'ad', 'şti', '}$.']
+  23058 | -0.0460 |  -0.2155 |   2.21e-04 | ['▁I', 'ون', 'at', 'ar', 'us']
+  34071 | -0.0458 |  -0.2145 |   3.25e-05 | ['ت', '▁від', '▁പ്രതിഷേധ', '碜', '▁всіх']
+  44927 | -0.0458 |  -0.2144 |   2.44e-06 | ['con', '<0x80>', '=\\', 'contain', '"),']
+  29954 | -0.0458 |  -0.2144 |   1.89e-06 | ['ल', 'ри', 'ض', 'ور', '로']
+  56916 | -0.0457 |  -0.2141 |   5.20e-05 | ['一', '▁powied', 'Q', 'Senate', '▁Trung']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 62444: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/62444
+  Feature 17060: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/17060
+  Feature 22897: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/22897
+  Feature 59244: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/59244
+  Feature 21445: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/21445
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000241
+  Std cosine sim: 0.013602
+  Max cosine sim: 0.062463
+  Min cosine sim: -0.053860
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0183
+  |lora_A|: 0.5791
+  |effective_B| (scaled): 4.6824
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer16_65k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer16_65k_std.*
+  SAE: layer=16, width=262k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_262k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_262k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+ 150384 |  0.0611 |   0.2859 |   2.75e-06 | ['▁retrieved', '▁ഊ', '▁Każ', '뷌', '▁ഇൻ']
+ 106329 |  0.0602 |   0.2821 |   3.80e-07 | ['iden', 'plane', 'ন্ট', 'idiendo', 'স']
+ 189163 |  0.0600 |   0.2811 |   2.81e-04 | ['▁einem', 'čen', '▁beispielsweise', '▁書い', 'نه']
+  62861 |  0.0598 |   0.2801 |   1.27e-06 | ['S', 'O', 'F', 'K', 'İ']
+ 161058 |  0.0593 |   0.2776 |   5.46e-06 | ['t', 'ت', 'd', 'k', 'tLogRow']
+ 223297 |  0.0587 |   0.2747 |   2.86e-06 | ['s', 'س', 'с', 'ের', 'ی']
+  31363 |  0.0585 |   0.2738 |   3.31e-05 | ['▁went', '▁explained', '▁as', '▁was', '▁epitome']
+  13147 |  0.0583 |   0.2732 |   1.80e-04 | ['セント', 'лил', '▁бывает', '▁carácter', '▁જણાવ્યું']
+ 254966 |  0.0577 |   0.2704 |   4.10e-06 | ['ра', ')', 'ز', '、', 'к']
+  74176 |  0.0564 |   0.2639 |   1.31e-05 | ['是', '는', 'は', '▁наз', '▁в']
+  71664 |  0.0560 |   0.2622 |   6.60e-07 | ['<0x92>', 'ier', 'or', '▁har', 'ุก']
+   7027 |  0.0558 |   0.2612 |   8.53e-03 | ['▁Version', '▁Tomcat', '▁Supplies', '▁Tom', '▁Davies']
+  16412 |  0.0549 |   0.2569 |   4.76e-03 | ['5', '\n\n', '؛', '’', '4']
+ 105347 |  0.0545 |   0.2551 |   1.74e-05 | ['1', 'ับ', '3', '▁Dengan', '▁']
+   2479 |  0.0544 |   0.2550 |   2.68e-03 | ['▁music', '音乐', '▁songwriting', '▁song', '▁songs']
+  46856 |  0.0543 |   0.2545 |   9.49e-06 | ['ור', '▁بی', 'кси', 'োভ', '⤒']
+ 198164 |  0.0543 |   0.2542 |   1.64e-06 | ["'", '’', '\n\n', '.', '▁a']
+ 236284 |  0.0535 |   0.2506 |   4.48e-06 | ['▁getWeather', 'inah', '▁등을', '▁mukaan', '▁lycée']
+ 256556 |  0.0533 |   0.2497 |   4.00e-07 | ['5', '9', '0', 'ों', '▁logins']
+ 136341 |  0.0531 |   0.2486 |   2.61e-06 | ['▁condomin', '▁FOR', 'P', '▁adapt', '▁OPERATIONS']
+ 212300 |  0.0530 |   0.2483 |   1.28e-06 | ['▁mention', 'ế', 'pt', '▁nhá', '▁gé']
+ 235218 |  0.0518 |   0.2427 |   3.18e-06 | ['ס', '8', 'O', '\n\n', '0']
+  46125 |  0.0517 |   0.2423 |   1.88e-04 | ['▁with', 'Server', 'se', 'est', '.</']
+  81865 |  0.0517 |   0.2423 |   8.30e-07 | ['such', '▁ljub', 'ாவின்', 'ων', 'herlands']
+ 144301 |  0.0514 |   0.2407 |   5.61e-04 | ['ní', '၊', 'Celltype', 'SQ', 'ión']
+  90212 |  0.0513 |   0.2403 |   5.40e-07 | ['ல', '▁THIS', '▁कामका', '▁ባህ', 'あなたが']
+ 163498 |  0.0513 |   0.2402 |   3.25e-06 | ['n', 'the', 'an', 'x', 'p']
+ 130765 |  0.0512 |   0.2399 |   1.47e-06 | ['t', 'ท', '▁ت', ';', '\n\n']
+ 259542 |  0.0510 |   0.2389 |   1.63e-06 | ['ところ', 'ocsát', 'πό', '▁کۆ', 'កំណត់']
+  15839 |  0.0505 |   0.2366 |   1.26e-06 | ['▁、', '，', '▁،', '水', '教']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 150384: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/150384
+  Feature 106329: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/106329
+  Feature 189163: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/189163
+  Feature 62861: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/62861
+  Feature 161058: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/161058
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+ 205908 | -0.0642 |  -0.3006 |   1.61e-06 | ['▁instinctively', 'გენ', 'inputSet', '▁enigmatic', '▁apportion']
+ 140679 | -0.0593 |  -0.2778 |   1.09e-05 | ['ンド', '▁Laos', '▁migliorare', '▁homens', '▁informe']
+   2915 | -0.0584 |  -0.2735 |   2.26e-02 | ['▁lijst', '▁онлайн', '▁طريقة', '፦', '▁caratteristiche']
+ 195744 | -0.0576 |  -0.2696 |   1.13e-05 | ['w', 'p', 'im', '在', 'c']
+  40172 | -0.0568 |  -0.2658 |   2.94e-05 | ['▁కోసం', 'cheng', '▁rata', '▁Чтобы', 'U']
+ 190065 | -0.0565 |  -0.2646 |   6.31e-05 | ['проце', 'чи', '▁કારણે', '▁процедуры', 'тино']
+  16480 | -0.0564 |  -0.2641 |   1.95e-06 | ['▁इंग्र', 'ledes', '▁ची', '▁további', '▁همچنین']
+ 123766 | -0.0559 |  -0.2616 |   1.17e-06 | ['）・', '<unused1090>', '▁optimise', 'ຈັດສົ່ງ', 'rive']
+ 197071 | -0.0554 |  -0.2595 |   2.36e-06 | ['rik', 'cession', 'ton', 'ประ', 'กาย']
+ 251208 | -0.0554 |  -0.2595 |   5.72e-05 | ['ك', 'ست', 'عمل', 'Quadrant', 'quele']
+ 129997 | -0.0551 |  -0.2578 |   1.07e-04 | ['▁переме', '▁cameos', 'ly', '▁Came', 'ð']
+ 222113 | -0.0549 |  -0.2573 |   6.10e-07 | ['▁unlaw', 'たら', 'ग्गा', '只要', '▁plots']
+  90292 | -0.0549 |  -0.2570 |   5.80e-06 | ['o', ':', 'e', 'i', 'in']
+  30878 | -0.0548 |  -0.2564 |   1.07e-05 | ['ll', '▁I', '▁O', '▁W', '▁J']
+ 111525 | -0.0542 |  -0.2540 |   1.12e-04 | ['is', 'k', 'il', 'kowe', 'ни']
+   9339 | -0.0533 |  -0.2494 |   5.14e-03 | ["'", ';', '<0x0D>', ',', '’']
+  60916 | -0.0533 |  -0.2494 |   3.65e-06 | ['▁Nadu', '▁misappropri', '▁réfléch', '▁lượng', '▁ένα']
+ 150956 | -0.0528 |  -0.2471 |   5.20e-06 | ['espół', 'اك', '▁значение', 'dR', 'lng']
+ 179169 | -0.0527 |  -0.2468 |   7.58e-06 | ['of', '▁Plots', 'oy', '▁نقص', 'oyens']
+ 117369 | -0.0525 |  -0.2456 |   6.70e-07 | ['1', '5', 'IO', '▁D', 'ene']
+ 199747 | -0.0524 |  -0.2455 |   9.44e-06 | ['깆', '▁această', '▁două', '▁scrollBody', '▁обеспечение']
+  48391 | -0.0518 |  -0.2426 |   2.40e-07 | ['温度', 'Media', 'Disk', 'id', 'om']
+ 226651 | -0.0516 |  -0.2416 |   4.73e-06 | ['▁tän', 'นิ', '▁carn', '▁grayscale', 'äger']
+   6304 | -0.0515 |  -0.2413 |   1.60e-07 | ['p', 'Bike', 'тя', 'ﬀ', '✌']
+ 158223 | -0.0510 |  -0.2390 |   1.98e-06 | ['1', '▁लीजिएगा', '１', '姬', '▁ლი']
+ 173475 | -0.0509 |  -0.2385 |   1.12e-06 | ['▁belly', 'ပဲ', '}$-', '▁policía', '各种']
+  99688 | -0.0508 |  -0.2379 |   1.10e-06 | ['▁inconsistencies', '▁asso', '▁usd', ':', 'رج']
+ 160125 | -0.0507 |  -0.2374 |   6.38e-05 | ['ه', 'на', 'u', 'ла', 'k']
+ 109550 | -0.0503 |  -0.2357 |   1.35e-05 | ['▁*}\\', '▁Pandas', '▁modify', '▁ظِلِّ', '▁amikor']
+  59749 | -0.0502 |  -0.2350 |   1.33e-05 | ['k', 't', 'sen', 'sn', 'x']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 205908: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/205908
+  Feature 140679: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/140679
+  Feature 2915: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/2915
+  Feature 195744: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/195744
+  Feature 40172: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/40172
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000079
+  Std cosine sim: 0.013641
+  Max cosine sim: 0.061062
+  Min cosine sim: -0.064187
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0183
+  |lora_A|: 0.5791
+  |effective_B| (scaled): 4.6824
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer16_262k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer16_262k_std.*
+  SAE: layer=31, width=16k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_16k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_16k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   2695 |  0.0493 |   0.2306 |   4.65e-06 | ['c', '$', 'DC', '2', 'r']
+   5802 |  0.0489 |   0.2289 |   8.28e-04 | ['▁political', 'political', '▁полити', '▁Political', '▁argues']
+   2457 |  0.0474 |   0.2220 |   8.01e-03 | ['▁unsuccessfully', '▁unsuccessful', '▁failed', '▁실패', '失败']
+   3444 |  0.0447 |   0.2092 |   7.10e-04 | ['▁Palestinian', '▁Palestinians', '▁Gaza', '▁فلسطینی', 'Palest']
+  15041 |  0.0443 |   0.2074 |   3.99e-04 | ['▁kapasitas', '▁PCM', 'oshape', '容器', '▁congest']
+   6833 |  0.0430 |   0.2014 |   4.00e-03 | ['จากการ', '▁результате', '▁akibat', '▁wyniku', '▁результатом']
+   8269 |  0.0428 |   0.2004 |   2.01e-04 | ['▁DIEGO', '▁Diego', '秵', '▁जता', '▁शरण']
+  11108 |  0.0427 |   0.1997 |   1.08e-04 | ['uncertain', '▁unpredict', 'lips', '▁uncertainty', '▁unpredictable']
+   4339 |  0.0426 |   0.1996 |   1.28e-02 | ['提到的', '▁குறிப்பிட்டு', '述', '似乎', 'mentioned']
+   3692 |  0.0422 |   0.1974 |   1.62e-03 | ['▁referee', '▁referees', '▁Referee', 'Referee', '▁penalty']
+  12808 |  0.0417 |   0.1953 |   9.50e-05 | ['ॉग', '▁saada', '▁goTo', '▁dictionary', '▁get']
+    668 |  0.0417 |   0.1950 |   1.04e-03 | ['사의', '刋', '5', '4', '이라는']
+  15959 |  0.0416 |   0.1946 |   1.11e-03 | ['▁reportedly', '据悉', '据说', '▁Reuters', '▁якобы']
+  11829 |  0.0415 |   0.1945 |   8.07e-05 | ['▁disinvestment', '▁hubby', '▁undesirable', '▁pernicious', '▁noxious']
+   9911 |  0.0415 |   0.1943 |   4.60e-04 | ['Figure', '▁Concerning', 'Based', '̓', 'MI']
+  12555 |  0.0413 |   0.1933 |   6.09e-04 | ['▁hereby', '▁shall', '▁forthwith', '▁henceforth', '▁herewith']
+  15735 |  0.0412 |   0.1928 |   3.08e-04 | ['▁титу', '▁resuming', '\uf0f2', '▁jukebox', 'ູນ']
+   9601 |  0.0409 |   0.1915 |   7.87e-03 | ['同时', '防止', '▁muốn', '▁empêcher', '▁want']
+  12932 |  0.0407 |   0.1904 |   1.44e-03 | ['▁pillows', '▁mattress', '▁pillow', '▁mattresses', '▁Mattress']
+   4589 |  0.0406 |   0.1903 |   1.72e-03 | ['▁Israeli', 'Israeli', '▁Knesset', 'Israel', '▁Israelis']
+   5776 |  0.0405 |   0.1898 |   4.95e-03 | ['upload', 'Inserting', '▁upload', 'Upload', '写入']
+   6637 |  0.0404 |   0.1894 |   1.04e-02 | ['▁displaying', '▁printing', '打印', '▁Printed', '▁Print']
+  13925 |  0.0403 |   0.1889 |   1.41e-03 | ['▁equilibration', '▁involuntarily', '▁succession', '▁डाइजेस्टिव', 'DebugType']
+  13051 |  0.0399 |   0.1869 |   4.74e-04 | ['acceler', 'osome', 'ka', '▁ਆਪਣ', 'ingresso']
+  12781 |  0.0397 |   0.1861 |   1.27e-04 | ['anskrit', '▁मंत्रिमंडल', 'াড়', 'oxins', '🔯']
+   6673 |  0.0391 |   0.1832 |   6.55e-04 | ['oed', '▁terp', '据说', '▁indoct', '▁inspirational']
+  13701 |  0.0390 |   0.1825 |   9.81e-04 | ['ollowing', 'luž', 'ಷ್ಟ', '১০', '０']
+  16179 |  0.0387 |   0.1812 |   4.02e-04 | ['ocardial', '▁favorite', '▁दोष', 'favorite', '▁beloved']
+   2180 |  0.0382 |   0.1787 |   5.97e-03 | ['▁philosophical', '▁Philosophical', '▁philosoph', '▁philosopher', '▁философ']
+  16357 |  0.0379 |   0.1777 |   2.21e-03 | ['損', 'ﺔ', 'enburg', '▁favourite', 'Â']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 2695: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/2695
+  Feature 5802: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/5802
+  Feature 2457: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/2457
+  Feature 3444: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/3444
+  Feature 15041: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/15041
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  13433 | -0.0568 |  -0.2661 |   4.97e-03 | ['▁lesser', '▁mindre', '▁weaker', '▁smaller', '▁Lesser']
+   4885 | -0.0545 |  -0.2551 |   1.19e-02 | ['▁options', '▁seçenek', '▁alternatives', '▁opciones', '▁alternativas']
+  10263 | -0.0528 |  -0.2470 |   1.00e-02 | ['▁types', '▁tipos', '▁Types', 'types', '▁टाइप्स']
+  12333 | -0.0518 |  -0.2427 |   4.24e-03 | ['▁likely', '▁probable', '▁mungkin', '▁probablement', '▁kemungkinan']
+  14627 | -0.0513 |  -0.2404 |   3.22e-03 | ['▁конкурен', '▁competitors', '▁경쟁', '▁competitor', '▁competing']
+   5126 | -0.0477 |  -0.2233 |   3.79e-03 | ['dom', '▁dom', 'ElementChild', 'querySelector', 'DOM']
+  14322 | -0.0457 |  -0.2140 |   1.40e-02 | ['▁peaceful', '▁calm', '▁calmness', '▁спокой', '▁quiet']
+   6344 | -0.0454 |  -0.2126 |   1.83e-03 | ['和', '▁и', '▁மற்றும்', 'และ', '▁and']
+   7337 | -0.0449 |  -0.2100 |   1.08e-03 | ['▁subgroup', '▁subgroups', '▁rotations', '▁rotation', '▁Grupo']
+   2114 | -0.0440 |  -0.2061 |   2.56e-03 | ['作为', '作為', '▁sebagai', 'することで', '▁როგორც']
+  13901 | -0.0438 |  -0.2049 |   1.78e-04 | ['Julia', '▁Julia', 'julia', '!()', '▁adiab']
+   8265 | -0.0437 |  -0.2048 |   4.49e-04 | ['▁ت', '▁її', '▁باستخدام', '▁مع', '▁বিবেচিত']
+   7209 | -0.0423 |  -0.1981 |   2.76e-03 | ['▁WeChat', '▁Zhejiang', '▁丨', '▁－', '▁चीन']
+  10928 | -0.0420 |  -0.1967 |   1.78e-04 | ['▁està', 'AL', 'ASER', '▁للك', 'EL']
+   7384 | -0.0419 |  -0.1962 |   3.93e-03 | ['▁About', '▁Our', '▁FAQs', '▁Gallery', '▁our']
+    979 | -0.0412 |  -0.1927 |   3.88e-03 | ['▁repairs', '▁repair', '▁carburetor', '▁bushings', '▁wiring']
+   5961 | -0.0412 |  -0.1927 |   1.43e-02 | ['▁நாங்கள்', '▁మేము', 'كلمنا', '▁nasze', 'আমরা']
+  14590 | -0.0410 |  -0.1921 |   2.10e-03 | ['本书', '▁Podcast', '▁Webinar', '▁webinar', '▁Онлайн']
+  13497 | -0.0404 |  -0.1893 |   6.34e-04 | ['▁Coliseum', '▁Свет', 'ﻗ', '▁với', '▁Honestly']
+   4299 | -0.0404 |  -0.1892 |   1.48e-03 | ['▁rendez', '▁내', '▁holiness', '▁fruct', '▁elucidation']
+  11912 | -0.0402 |  -0.1884 |   1.96e-03 | ['description', '▁description', 'describe', '▁описы', 'Description']
+  14059 | -0.0402 |  -0.1884 |   4.80e-04 | ['▁adjusts', 'રા', '▁acup', '▁දී', '▁operating']
+   4567 | -0.0401 |  -0.1877 |   8.48e-04 | ['▁Kolkata', '▁Calcutta', '▁कोलकाता', '▁Bengali', '▁Bengal']
+   4425 | -0.0400 |  -0.1873 |   1.30e-03 | ['▁Up', '▁up', '▁upto', '▁UP', '🆙']
+  11522 | -0.0399 |  -0.1867 |   3.55e-03 | ['下一步', 'update', 'getNext', '▁next', '▁update']
+  12822 | -0.0393 |  -0.1842 |   5.10e-04 | ['▁разнообраз', '▁diverse', '▁diversified', '0', '▁diverso']
+   1352 | -0.0393 |  -0.1841 |   1.47e-02 | ['▁usually', '▁determines', 'бычно', 'called', '▁typically']
+   3591 | -0.0392 |  -0.1834 |   1.25e-02 | ['▁non', 'non', '非', 'Non', '▁Non']
+   3927 | -0.0392 |  -0.1834 |   8.05e-03 | ['▁difference', 'difference', '▁differences', 'Difference', '▁diferença']
+   7233 | -0.0391 |  -0.1830 |   5.95e-03 | ['▁murder', '▁murders', 'Murder', '▁murderer', '▁murderers']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 13433: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/13433
+  Feature 4885: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/4885
+  Feature 10263: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/10263
+  Feature 12333: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/12333
+  Feature 14627: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/14627
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: -0.000046
+  Std cosine sim: 0.013319
+  Max cosine sim: 0.049257
+  Min cosine sim: -0.056823
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0183
+  |lora_A|: 0.5791
+  |effective_B| (scaled): 4.6824
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer31_16k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer31_16k_std.*
+  SAE: layer=31, width=65k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_65k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=65536
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_65k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 65536])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  61454 |  0.0567 |   0.2657 |   4.65e-04 | ['▁directly', '▁reeling', 'rin', '▁struggling', '▁petrochemical']
+  52782 |  0.0561 |   0.2626 |   1.26e-04 | ['\n', 'l', '▁▁▁', '▁hom', 'kl']
+  49377 |  0.0524 |   0.2454 |   3.13e-04 | ['▁Thackeray', '▁Förderung', '▁एक्टर', '俳優', '▁Schauspieler']
+   7579 |  0.0517 |   0.2421 |   9.17e-05 | ['▁salaire', '▁slideshow', 'OpenJDK', '▁prerequisite', '▁brunette']
+  42446 |  0.0515 |   0.2411 |   2.24e-05 | ['acts', 'studies', 's', 'pets', 'Invisible']
+  32815 |  0.0515 |   0.2409 |   4.17e-05 | ['▁midnight', '▁this', '▁', '▁Melbourne', '▁Contest']
+  17526 |  0.0512 |   0.2397 |   3.89e-04 | ['▁voire', 'entire', '▁entire', '▁Entire', '▁(>']
+  29245 |  0.0507 |   0.2373 |   4.99e-04 | ['Facebook', '▁Facebook', 'facebook', '▁facebook', '▁फेसबुक']
+  11572 |  0.0500 |   0.2342 |   6.06e-05 | ['ла', 'ने', '자', 'ле', '▁jouer']
+  16202 |  0.0500 |   0.2339 |   2.61e-04 | ['▁नाबाल', 'لاک', 'સ', '스', 'یکس']
+  62426 |  0.0496 |   0.2322 |   1.75e-04 | ['▁nowych', '▁destinada', '▁améliorer', '▁nowego', 'lihat']
+  34430 |  0.0482 |   0.2255 |   4.63e-04 | ['誤', '▁partying', '▁worsened', '▁наказа', '▁disgraceful']
+  45346 |  0.0476 |   0.2226 |   5.74e-04 | ['富', '▁உண்மையில்', '▁Westport', 'ду', '▁Heather']
+  21382 |  0.0475 |   0.2225 |   5.13e-04 | ['▁rented', '▁renting', 'Rent', '租', '▁rent']
+  15220 |  0.0475 |   0.2222 |   8.22e-04 | ['▁researchers', '▁scientists', '研究', 'scientists', '▁findings']
+  26469 |  0.0467 |   0.2188 |   1.08e-04 | ['▁Robert', '▁began', '▁Timothy', '▁Lyle', '▁Wine']
+  44279 |  0.0466 |   0.2183 |   2.88e-04 | ['ьо', 'тан', 'ньо', 'attho', 'anganan']
+  26234 |  0.0466 |   0.2183 |   1.38e-04 | ['Brad', '。', '5', '▁‘', 'appers']
+  56140 |  0.0463 |   0.2168 |   2.88e-04 | ['▁Hitler', '👉', '▁impossibile', 'emias', '▁dictators']
+  26774 |  0.0463 |   0.2166 |   2.10e-03 | ['▁stubbornly', '▁stubborn', '▁insisted', '▁insist', '꿋']
+  56235 |  0.0459 |   0.2150 |   1.09e-05 | ['▁exemple', 'tilde', '▁trigonometric', '▁esimerkiksi', '▁Confederate']
+   5223 |  0.0459 |   0.2148 |   8.21e-04 | ['▁chapters', '▁chapter', '▁Chapter', '▁CHAPTER', 'Chapter']
+  65150 |  0.0458 |   0.2145 |   5.86e-05 | ['▁Ammo', '▁کیونکہ', '▁preservatives', '▁Then', '▁Supplier']
+  46866 |  0.0457 |   0.2141 |   4.77e-06 | ['and', 'tta', 'aton', 'with', '▁underwent']
+  18498 |  0.0454 |   0.2127 |   6.72e-04 | ['▁updates', '▁news', 'updates', '▁Updates', '▁developments']
+   2667 |  0.0453 |   0.2121 |   2.01e-03 | ['▁пыта', '▁სახელმწიფ', '觉得自己', '▁스스로', 'тей']
+  59503 |  0.0452 |   0.2116 |   8.26e-05 | ['▁laughs', '▁സംവിധ', 'ז', 'ويس', '▁lifts']
+   9890 |  0.0451 |   0.2110 |   1.18e-04 | ['ModelAdmin', '▁Admin', '▁queryset', '▁Editing', 'queryset']
+  26859 |  0.0450 |   0.2107 |   1.63e-04 | ['also', '▁También', '▁protecting', 'también', 'o']
+  29786 |  0.0449 |   0.2104 |   2.40e-07 | ['add', 'flop', 'matically', 'ann', '之一']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 61454: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/61454
+  Feature 52782: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/52782
+  Feature 49377: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/49377
+  Feature 7579: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/7579
+  Feature 42446: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/42446
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   7920 | -0.0766 |  -0.3587 |   2.70e-03 | ['▁plausible', '▁possible', '▁posible', '▁possibility', '▁possíveis']
+  10435 | -0.0662 |  -0.3102 |   5.21e-03 | ['▁options', '▁choices', '▁seçenek', 'options', '▁alternatives']
+  17585 | -0.0556 |  -0.2603 |   6.09e-03 | ['▁simple', '简单', '简单的', '簡單', 'Simple']
+  44253 | -0.0536 |  -0.2509 |   7.66e-04 | ['▁unbearable', '▁metallic', '▁Metallic', '▁ويمكن', '▁Copper']
+  41725 | -0.0528 |  -0.2474 |   2.67e-04 | ['$-', '্টা', 'interno', '));//', '▁महिलाओ']
+  25121 | -0.0516 |  -0.2414 |   1.23e-04 | ['▁IFSC', 'lf', 'lanelet', 'of', 'ä']
+  10879 | -0.0513 |  -0.2401 |   4.93e-03 | ['只是', '▁merely', '▁lediglich', '▁jedynie', '▁केवल']
+  18478 | -0.0498 |  -0.2331 |   3.00e-06 | ['▁(', 'volence', '▁artery', '▁surg', '▁acrylonitrile']
+   8693 | -0.0496 |  -0.2324 |   2.45e-05 | ['▁Gén', '▁medieval', '▁descendants', '▁outrage', '▁stewards']
+  12915 | -0.0495 |  -0.2317 |   6.42e-03 | ['▁types', 'の種類', '▁Types', '▁tipos', '▁típus']
+  58771 | -0.0494 |  -0.2315 |   7.72e-05 | ['が', '▁$', '▁', 'Ix', 'ocyclic']
+  58623 | -0.0494 |  -0.2315 |   6.75e-04 | ['▁when', '▁വരു', '▁workflow', '▁när', '▁whenever']
+  41703 | -0.0490 |  -0.2296 |   1.48e-03 | ['These', '▁wannan', '這些', '▁이것', '▁मित्र']
+  27738 | -0.0486 |  -0.2276 |   1.25e-05 | ['skih', '亲', '▁アップ', 'ﾟ', '并非']
+  25748 | -0.0486 |  -0.2274 |   1.56e-04 | ['▁Julia', 'Julia', 'julia', '!()', '▁macros']
+  61340 | -0.0485 |  -0.2270 |   2.26e-04 | ['▁iff', '▁must', '▁consultative', 'letion', 'នុ']
+  18817 | -0.0485 |  -0.2269 |   4.33e-05 | ['▁Page', '▁page', '▁페이지', '페이지', '▁страницы']
+  44927 | -0.0485 |  -0.2269 |   5.56e-05 | ['contain', 'ме', 'че', '=\\', 'en']
+  49113 | -0.0476 |  -0.2228 |   6.05e-06 | ['▁BUT', 'BUT', 'ARDO', '▁But', '▁แต่']
+  41057 | -0.0474 |  -0.2217 |   2.48e-04 | ['𝗘', '▁चार', 'ОВО', '▁Andean', '],']
+  11035 | -0.0473 |  -0.2215 |   3.26e-03 | ['▁competitors', '▁competitor', '▁конкурен', '▁경쟁', '▁competing']
+  58727 | -0.0469 |  -0.2195 |   2.52e-05 | ['ases', 'ausch', '▁col', 'omination', "'),"]
+  58483 | -0.0469 |  -0.2195 |   4.65e-05 | ['0', 'i', 'are', 'u', 'os']
+  32116 | -0.0466 |  -0.2182 |   5.54e-04 | ['▁appreciate', '▁apprezz', '▁appreciated', '▁appreciates', '▁appreciation']
+  48734 | -0.0465 |  -0.2178 |   2.13e-05 | ['/', '▁trending', '▁rom', '▁and', '▁street']
+  17304 | -0.0464 |  -0.2173 |   1.02e-04 | ['日', '▁சிறி', 'requirement', 'blur', 'cock']
+  14122 | -0.0462 |  -0.2164 |   3.13e-03 | ['▁another', '另一', 'another', '另一个', '另一种']
+  45130 | -0.0462 |  -0.2161 |   5.32e-06 | ['wię', '▁Tó', 'toList', '▁لأن', 'to']
+  62248 | -0.0461 |  -0.2157 |   2.30e-04 | ['a', '▁naar', '▁చూ', 'ੌ', 'use']
+  34004 | -0.0460 |  -0.2155 |   1.87e-05 | ['Graz', '刺激', 'му', 'нди', 'Grass']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 7920: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/7920
+  Feature 10435: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/10435
+  Feature 17585: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/17585
+  Feature 44253: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/44253
+  Feature 41725: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/41725
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000042
+  Std cosine sim: 0.013472
+  Max cosine sim: 0.056742
+  Min cosine sim: -0.076595
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0183
+  |lora_A|: 0.5791
+  |effective_B| (scaled): 4.6824
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer31_65k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer31_65k_std.*
+  SAE: layer=31, width=262k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_262k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_262k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  11845 |  0.0617 |   0.2890 |   1.23e-05 | ['䔋', '▁인도', '峙', '▁Rien', '秵']
+ 207345 |  0.0568 |   0.2660 |   7.42e-05 | ['匆', 'ಕ', '▁चाहे', '酗', '壕']
+ 134696 |  0.0550 |   0.2573 |   1.96e-03 | ['▁каждом', '▁kaž', '▁каждому', '▁each', '▁hver']
+  27582 |  0.0540 |   0.2528 |   1.06e-05 | ['▁యొక్క', '▁busses', '涜', '▁suppuration', '▁Kimball']
+ 161058 |  0.0533 |   0.2495 |   4.95e-05 | ['t', '▁methodical', 'فرق', '▁followed', '遵循']
+ 256556 |  0.0533 |   0.2494 |   2.49e-05 | ['▁Reforms', 'ฤษ', 'στι', '▁Europese', 'ों']
+ 116195 |  0.0530 |   0.2483 |   1.07e-06 | ['la', 't', '▁Funding', '▁Standards', '▁Production']
+ 106329 |  0.0530 |   0.2481 |   4.87e-05 | ['סי', '▁बैंकों', 'Inte', 'Mutation', 'স']
+ 169341 |  0.0526 |   0.2461 |   2.24e-05 | ['漑', '▁Cardiff', '▁बांट', '▁Response', 'ینی']
+  98050 |  0.0525 |   0.2460 |   7.65e-05 | ['▁fiber', '▁shellfish', '▁fatty', '▁valve', '▁flanges']
+  51168 |  0.0525 |   0.2457 |   8.72e-04 | ['▁Islam', '▁Islamic', 'Islamic', 'Islam', 'keras']
+ 133929 |  0.0520 |   0.2436 |   1.64e-04 | ['o', 'ing', 'oz', 'ital', '▁or']
+ 120010 |  0.0519 |   0.2432 |   4.80e-05 | ['ασ', 'dea', '暴', 'ermin', 'esson']
+  32677 |  0.0519 |   0.2431 |   1.00e-03 | ['▁unsuccessfully', '▁unsuccessful', '▁failed', '▁Attempts', '▁tried']
+  94455 |  0.0517 |   0.2421 |   2.61e-05 | ['o', '1', '▁Audio', 'i', '▁Mirror']
+  71309 |  0.0515 |   0.2412 |   1.03e-06 | ['Group', 'Park', 'Memo', 'T', 'Move']
+ 134185 |  0.0513 |   0.2404 |   1.77e-05 | ['SAT', '▁polyt', 'PROTE', 'CENT', 'motorbike']
+ 100052 |  0.0512 |   0.2399 |   1.24e-04 | ['▁Володимир', '銃', 'р', 'راف', 'Lycodon']
+ 216424 |  0.0511 |   0.2392 |   1.58e-05 | ['می', '▁کار', '▁अडचणी', '▁해', '▁머']
+ 259542 |  0.0506 |   0.2371 |   1.44e-05 | ['▁Logistics', '▁Диа', '▁econom', '▁logistics', 'πό']
+ 191799 |  0.0504 |   0.2362 |   1.37e-05 | ['▁sump', 'rando', 'closes', '▁hardest', 'stwo']
+ 193445 |  0.0503 |   0.2357 |   4.01e-05 | ['▁groupe', '▁preventative', 'रत', '\']}")', 'sizeof']
+ 136341 |  0.0502 |   0.2349 |   6.84e-06 | ['▁proteomics', '保留', '▁хоккей', 'PLEMENT', '\u200c.']
+ 235218 |  0.0501 |   0.2348 |   1.52e-05 | ['▁Mô', 'Ultra', '2', '▁Obrig', 'Jakarta']
+  68460 |  0.0501 |   0.2344 |   1.65e-05 | ['ग्राम', '전히', 'фессиона', '董事长', '▁disfruta']
+  41577 |  0.0500 |   0.2339 |   1.09e-06 | ['৫', '라고', 'หว่าง', 'ając', 'zhong']
+ 161661 |  0.0499 |   0.2339 |   7.87e-05 | ['▁пато', '▁alkaloids', '▁adju', '▁annoy', '▁exf']
+ 144704 |  0.0496 |   0.2324 |   1.63e-06 | ['▁gripped', '▁developed', '▁solvency', '▁pressurized', '▁похоже']
+ 256822 |  0.0496 |   0.2323 |   2.68e-05 | ['▁religious', '▁elated', '▁dependence', '▁deficiency', '▁praises']
+ 242297 |  0.0496 |   0.2321 |   4.20e-05 | ['▁तारीख', 'ोंने', '▁کنکریاں', '▁తేదీ', '▁細胞']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 11845: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/11845
+  Feature 207345: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/207345
+  Feature 134696: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/134696
+  Feature 27582: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/27582
+  Feature 161058: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/161058
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+ 205908 | -0.0615 |  -0.2880 |   2.34e-06 | ['▁instinctively', 'გენ', '▁enigmatic', '▁يستخدم', '▁unknowingly']
+ 197071 | -0.0556 |  -0.2603 |   3.01e-05 | ['rik', 'ton', '修理', '心配', 'ระ']
+  91398 | -0.0553 |  -0.2587 |   9.22e-05 | ['▁a', '▁on', '-', '▁or', 'G']
+  13518 | -0.0552 |  -0.2586 |   2.78e-05 | ['confirmation', '▁آتش', 'を中心に', '顶', '▁кноп']
+  94705 | -0.0550 |  -0.2574 |   1.20e-04 | ['㞖', '▁forested', 'bdm', 'ڊ', '▁улица']
+  89793 | -0.0542 |  -0.2539 |   1.52e-05 | ['Ⲓ', 'ி', '맡', 'umls', '㑒']
+ 108812 | -0.0540 |  -0.2530 |   9.31e-06 | ['▁अलै', 'रानी', '▁свои', '关系', '▁ወቅት']
+ 222113 | -0.0538 |  -0.2521 |   8.57e-06 | ['只要', 'たら', '▁unlaw', '▁plots', 'ग्गा']
+  31021 | -0.0537 |  -0.2516 |   6.94e-06 | ['ä', 'idyl', 'att', 'Ｐ', '턴']
+ 158223 | -0.0534 |  -0.2503 |   2.51e-06 | ['1', '▁ლი', 'urrences', 'ologie', '▁’']
+  30345 | -0.0534 |  -0.2502 |   3.90e-06 | ['с', 'р', 'у', 'Center', 'н']
+ 112299 | -0.0525 |  -0.2458 |   1.88e-04 | ['▁dependences', '如何', '>∕', 'טורק', '▁axonal']
+  99688 | -0.0522 |  -0.2446 |   4.20e-06 | ['▁inconsistencies', '▁usd', ':', 'स्कर', '▁asso']
+ 113318 | -0.0522 |  -0.2445 |   4.97e-06 | ['▁Milne', '▁Yoon', '▁Blak', '▁Hardy', '▁Weaver']
+ 117369 | -0.0521 |  -0.2440 |   1.23e-05 | ['1', '▁кле', 'BTW', '▁sicuro', '▁vaj']
+ 213202 | -0.0521 |  -0.2439 |   1.11e-05 | ['/', '▁"', '▁reagents', '▁attendees', '▁pasted']
+ 201417 | -0.0517 |  -0.2423 |   8.51e-05 | ['▁waarbij', 'ləşdir', '▁পরিবহন', '<0xA4>', '▁транспорт']
+ 258474 | -0.0516 |  -0.2417 |   7.15e-05 | ['想到', '▁સહિત', '体验', '▁гульнявыя', '🎹']
+  48391 | -0.0513 |  -0.2402 |   6.76e-06 | ['Media', '▁Media', 'Disk', 'Me', '温度']
+  41895 | -0.0511 |  -0.2392 |   1.05e-03 | ['Neighbors', 'Child', 'Next', '▁links', '▁Child']
+ 141252 | -0.0510 |  -0.2389 |   2.44e-04 | ['▁Tag', '▁tags', '▁Tags', 'Tag', '▁tag']
+   5546 | -0.0510 |  -0.2387 |   2.59e-03 | ['▁možda', 'かもしれません', '或者是', '▁potrebbe', 'かもしれませんが']
+ 146091 | -0.0508 |  -0.2381 |   3.38e-05 | ['பிர', 'गोर', '▁imprensa', '▁marina', '▁tomada']
+ 260896 | -0.0505 |  -0.2364 |   1.32e-05 | ['レンズ', '▁نیست', 'marshalO', '▁जलाश', 'जिटिव']
+ 231831 | -0.0501 |  -0.2345 |   7.26e-05 | ['sembles', 'деш', 'ICIO', 'artigen', 'utiérrez']
+ 215712 | -0.0500 |  -0.2339 |   6.02e-05 | ['▁system', 'together', '▁gently', '▁utilising', '▁highly']
+  39128 | -0.0499 |  -0.2335 |   1.41e-03 | ['▁narrowed', '▁candidate', '▁narrowing', '候補', '▁후보']
+  66003 | -0.0496 |  -0.2325 |   6.53e-05 | ['номет', '▁snacks', '▁eateries', 'шего', '▁proffered']
+ 216000 | -0.0496 |  -0.2322 |   4.89e-05 | ['ǒu', 'ലെസ്', 'ਵਾਈ', 'anlı', '▁sélectionnez']
+  67053 | -0.0495 |  -0.2319 |   5.60e-05 | ['▁drawbacks', '▁backtracking', '▁ajax', '▁advantages', '▁Checklist']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 205908: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/205908
+  Feature 197071: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/197071
+  Feature 91398: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/91398
+  Feature 13518: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/13518
+  Feature 94705: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/94705
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000122
+  Std cosine sim: 0.013497
+  Max cosine sim: 0.061723
+  Min cosine sim: -0.061497
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0183
+  |lora_A|: 0.5791
+  |effective_B| (scaled): 4.6824
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer31_262k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer31_262k_std.*
+
+Analyzing: gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53
+Path: /workspace-vast/annas/models/gemma3-27b-dpo-minimal-r1-L20-2ep/2026-01-15_18-45-53
+
+=== Exact layer analysis (layer 20, using _all variant) ===
+  SAE: layer=20, width=16k, l0=small (all-layers variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_16k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_16k_l0_small/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  10271 |  0.0692 |   0.5027 |   4.51e-06 | ['ל', '▁akadem', '▁CORPER', '▁Ausbildung', 'chun']
+  11757 |  0.0647 |   0.4703 |   2.69e-03 | ['\u200cها', '’', 'ও', 'もら', '在']
+   5316 |  0.0645 |   0.4686 |   1.55e-03 | ['▁explore', '▁in', '▁you', '▁exploring', '▁there']
+   6279 |  0.0612 |   0.4448 |   3.24e-04 | ['ون', 'r', 'q', 'encour', 'р']
+  15851 |  0.0593 |   0.4308 |   1.19e-03 | ['ل', 'بي', 'يك', '▁lembut', 'يب']
+   2062 |  0.0581 |   0.4221 |   1.47e-03 | ['９', '５', '６', '７', '４']
+  12460 |  0.0577 |   0.4191 |   7.34e-04 | ['ING', 'Interesting', '-', 't', '▁fascinating']
+   6180 |  0.0558 |   0.4056 |   7.87e-04 | ['▁최대한', '▁maximize', '▁accuracy', '▁отношении', '▁kosakata']
+   6193 |  0.0551 |   0.4006 |   2.09e-03 | ['of', '▁', 'ac', '<0x91>', 'Be']
+   5627 |  0.0537 |   0.3906 |   5.46e-04 | ['i', 'b', 'r', '-', 'is']
+   6883 |  0.0536 |   0.3898 |   1.87e-04 | ['The', 'Having', 'itakan', 'ст', 'ucci']
+  12237 |  0.0527 |   0.3830 |   1.05e-03 | ['י', 'ל', 'К', 'ין', 'AV']
+  10881 |  0.0525 |   0.3819 |   1.86e-03 | ['▁commitment', '▁trustworthiness', '▁safety', '▁segurança', '▁đảm']
+   3879 |  0.0521 |   0.3785 |   2.74e-03 | ['▁légèrement', 'т', '▁увеличения', '在', 'య']
+   5236 |  0.0518 |   0.3763 |   1.25e-04 | ['یم', 'y', 'ید', '(', 'ach']
+  10113 |  0.0516 |   0.3752 |   4.72e-04 | ['টি', '▁condiv', '▁share', 'یم', 'og']
+  14236 |  0.0512 |   0.3719 |   9.44e-04 | ['an', 'ان', '▁truly', '真正', '真正的']
+   2434 |  0.0510 |   0.3708 |   7.35e-05 | ['μό', 'kovi', '的产品', '▁канторы', '▁اولم']
+   3596 |  0.0510 |   0.3705 |   4.90e-03 | ['त', 'ล', 'ת', 'ร', 'That']
+  14632 |  0.0507 |   0.3685 |   1.09e-05 | ['ia', '\n', '-', '\n\n', 'ла']
+   2469 |  0.0505 |   0.3669 |   2.77e-03 | [':', '4', '5', '!', '.']
+   4485 |  0.0502 |   0.3649 |   5.50e-04 | ['▁delving', '▁to', 'in', 't', '▁}{}_{\\']
+   8759 |  0.0493 |   0.3583 |   1.00e-03 | ['▁kayaks', '▁étaient', '▁ourselves', '▁heures', '▁avaient']
+   4155 |  0.0491 |   0.3572 |   1.70e-03 | ['interest', 'year', 'loans', '利率', '▁rates']
+   2389 |  0.0491 |   0.3570 |   3.04e-03 | ['▁pauses', 'تي', 'اتي', 'ز', 'في']
+   5999 |  0.0488 |   0.3549 |   2.39e-04 | ['friendly', '▁friendly', '▁friendliness', 'し', 'ui']
+   6559 |  0.0487 |   0.3537 |   4.03e-04 | ['▁uncomfortable', 'ні', 'ди', '{', 'unité']
+   8059 |  0.0485 |   0.3527 |   8.64e-04 | ['on', 'd', 'p', 'AR', 'en']
+   3331 |  0.0482 |   0.3502 |   2.82e-03 | ['▁ourselves', '▁можем', '▁наших', '▁naše', '▁আমাদের']
+   3318 |  0.0482 |   0.3501 |   1.81e-03 | ['▁outros', '▁Dopo', '▁outras', '▁específicos', 'Გ']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 10271: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/10271
+  Feature 11757: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/11757
+  Feature 5316: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/5316
+  Feature 6279: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/6279
+  Feature 15851: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/15851
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   5575 | -0.0663 |  -0.4822 |   1.73e-03 | ['▁radically', '▁vastly', '▁diplomas', '▁dissimilar', '▁quicker']
+  11996 | -0.0657 |  -0.4775 |   9.00e-04 | ['▁stupid', '▁absur', '▁silly', '▁irrational', '</h3>']
+   4804 | -0.0612 |  -0.4451 |   2.34e-03 | ['.', 'ль', '▁undulating', 'lement', '▁horribly']
+  10528 | -0.0610 |  -0.4432 |   7.54e-04 | ['correct', 's', '▁Correct', 'Correct', 'ви']
+   7225 | -0.0609 |  -0.4429 |   1.65e-03 | ['th', '’', '▁shit', '”', '</b>']
+   9729 | -0.0588 |  -0.4277 |   3.87e-04 | ['▁Đình', 'tho', 'Order', 'I', 'picking']
+   5033 | -0.0580 |  -0.4215 |   2.70e-03 | ['▁punishment', '▁penalty', '▁criminally', '罰', '▁punish']
+  13839 | -0.0559 |  -0.4064 |   1.27e-06 | ['▁repetir', 'ফটেন্যান্ট', '▁totiž', 'খী', '▁Arnav']
+   8837 | -0.0550 |  -0.3996 |   7.74e-04 | ['-', 'ہ', 'z', 'เขา', '▁anglais']
+   3595 | -0.0536 |  -0.3895 |   1.66e-03 | ['▁경찰', '▁પોલીસ', '▁policías', '▁policiais', '▁police']
+   8933 | -0.0522 |  -0.3793 |   3.36e-04 | ['\n', 'ati', 'ator', 'eli', 'ada']
+  13612 | -0.0519 |  -0.3774 |   3.03e-03 | ['four', '▁graduellement', '▁correctes', 'three', '▁précise']
+  10603 | -0.0507 |  -0.3683 |   4.24e-03 | ['▁anger', '▁colère', '▁rage', '▁angry', '怒']
+   2828 | -0.0507 |  -0.3682 |   5.17e-03 | ['▁изображения', '图像', '图片的', '画像', '图片']
+   5799 | -0.0502 |  -0.3648 |   4.15e-04 | [';', 'ER', '2', 'Age', '▁age']
+  14024 | -0.0501 |  -0.3639 |   7.75e-04 | ['▁Generated', '▁generated', '▁generate', 'Generated', 'Compiler']
+  15390 | -0.0498 |  -0.3616 |   6.28e-05 | ['کروچ', 'ές', '▁analyse', '▁calculations', '经理']
+  13613 | -0.0490 |  -0.3561 |   1.67e-03 | ['▁repairs', '▁equipment', '▁clamps', '▁bushings', '▁warranty']
+  10372 | -0.0478 |  -0.3474 |   8.19e-04 | ['at', '▁answer', '▁Answer', 'answer', '▁is']
+   1783 | -0.0472 |  -0.3432 |   1.35e-03 | ['ir', '\n', 'm', 'il', 'k']
+  13261 | -0.0470 |  -0.3412 |   1.15e-03 | ['t', 'shadow', 'ing', '▁dark', 'ною']
+   1762 | -0.0462 |  -0.3358 |   2.62e-04 | ['_', 'ang', '▁on', 'َ', 'ur']
+   3967 | -0.0457 |  -0.3321 |   1.91e-03 | ['▁mismanagement', '▁worsening', '▁immoral', '▁políticos', '▁accusations']
+   9028 | -0.0451 |  -0.3276 |   5.37e-04 | ['nous', 'ត្រូវការ', '▁irresponsible', '។', 'debt']
+  16382 | -0.0451 |  -0.3276 |   1.66e-03 | ['гнозы', '▁말고', '…,', 'зию', 'ēs']
+  13152 | -0.0441 |  -0.3205 |   9.98e-04 | ["'", '▁amplification', '▁that', '▁மடங்கு', '_']
+  10071 | -0.0438 |  -0.3181 |   4.37e-04 | ['0', 'the', 'ع', '▁have', 'lar']
+    864 | -0.0436 |  -0.3171 |   3.66e-06 | ['mmol', 'rawl', 'areas', 'kke', 'assays']
+   3631 | -0.0436 |  -0.3170 |   3.18e-06 | ['k', 'و', 'ک', '▁historias', '▁casting']
+   7114 | -0.0436 |  -0.3167 |   1.58e-04 | ['▁situatie', '▁samu', '▁temos', '▁niew', '▁forbindelse']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 5575: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/5575
+  Feature 11996: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/11996
+  Feature 4804: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/4804
+  Feature 10528: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/10528
+  Feature 7225: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_16k-l0_small/7225
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: -0.000173
+  Std cosine sim: 0.015143
+  Max cosine sim: 0.069160
+  Min cosine sim: -0.066341
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer20_16k_all.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer20_16k_all.*
+  SAE: layer=20, width=262k, l0=small (all-layers variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+ 100608 |  0.0766 |   0.5570 |   2.91e-06 | ['oooooooo', 'ѕ', '-', '}', 'ooo']
+  46520 |  0.0673 |   0.4888 |   4.23e-04 | ['▁strangely', '▁curiously', '▁paradox', '▁didn', '▁oddly']
+  65134 |  0.0649 |   0.4717 |   4.55e-05 | ['▁resilience', 'ל', 'Ş', 'ل', 'ת']
+  45469 |  0.0648 |   0.4711 |   2.65e-03 | ['▁약간', '▁কিছুটা', '▁немного', '▁nieco', '▁légèrement']
+  91948 |  0.0646 |   0.4698 |   1.16e-04 | ['ون', 'ل', 'r', 'ри', 'us']
+  60172 |  0.0628 |   0.4562 |   6.08e-04 | ['▁boundaries', '▁creativity', '▁Boundaries', '▁límite', '▁boundary']
+  51724 |  0.0624 |   0.4533 |   1.97e-03 | ['\u200cها', 'та', 'もら', 'ও', 'nimmt']
+   4686 |  0.0612 |   0.4450 |   4.89e-06 | ['но', 'その', 'ای', '्वान', '员']
+   9453 |  0.0609 |   0.4423 |   2.82e-03 | ['ي', 'י', '▁detailed', 'i', '▁Detailed']
+  21354 |  0.0601 |   0.4365 |   2.17e-06 | [',', '_', '▁for', '-', '’,']
+ 116578 |  0.0590 |   0.4288 |   1.09e-04 | ['ير', '▁enthusi', '▁enthous', '▁enthusiasm', '▁enthusiastic']
+  57012 |  0.0590 |   0.4285 |   4.02e-06 | ['▁комбина', 'nością', 'prüfung', '▁pastime', '▁Tätigkeit']
+ 180835 |  0.0586 |   0.4258 |   1.79e-05 | ['ing', '是', '는', 'ни', 'n']
+  41481 |  0.0583 |   0.4237 |   8.45e-05 | ['▁n', 'y', 'ach', 'a', 'ר']
+  83050 |  0.0580 |   0.4218 |   2.60e-07 | ['<0x80>', '铅', 'in', '以下', 'at']
+  67603 |  0.0577 |   0.4193 |   9.04e-04 | ['▁fleste', 'They', '▁modernos', '▁कंपनियां', '▁moderne']
+ 232268 |  0.0573 |   0.4165 |   4.17e-06 | ['▁հ', 'Shares', '▁когда', '▁dismissing', '▁Մ']
+  15720 |  0.0561 |   0.4079 |   3.41e-04 | ['on', 'p', 'd', 'H', 'EN']
+   1859 |  0.0561 |   0.4076 |   3.09e-04 | ['▁explore', '▁in', '▁exploring', '▁there', '▁you']
+ 177387 |  0.0559 |   0.4066 |   5.28e-04 | ['▁', 'of', 'های', '지만', 'dır']
+  19878 |  0.0558 |   0.4058 |   1.95e-05 | ['\n', 'اري', 'ри', 'ર', 'وك']
+ 215147 |  0.0556 |   0.4040 |   1.48e-05 | ['▁to', '▁It', '▁Roosevelt', ';', ',']
+ 242093 |  0.0553 |   0.4019 |   1.69e-04 | ['▁يمكنك', 'чнай', '▁możesz', 'chyné', '▁flexibility']
+ 154716 |  0.0553 |   0.4017 |   1.21e-05 | ['▁', '_{', '▁cuff', '▁i', '_']
+  96367 |  0.0553 |   0.4016 |   2.00e-06 | ['▁Wentworth', '▁každý', '尌', '▁Abon', 'ాలు']
+  18681 |  0.0551 |   0.4004 |   2.47e-05 | ['ین', '▁دین', '▁فی', '▁بیماری', '▁زمینه']
+ 170844 |  0.0551 |   0.4002 |   6.50e-06 | ['ção', 'giờ', '>)', '<0xA3>', '+']
+  50243 |  0.0550 |   0.3994 |   1.70e-07 | ['ש', 'د', '▁pastes', '▁lunches', 'ب']
+ 111145 |  0.0548 |   0.3985 |   8.25e-06 | ['▁Oval', '▁Capitol', '恬', '▁Watercolor', '▁Klas']
+  13101 |  0.0548 |   0.3983 |   3.90e-07 | ['▁restaurants', '▁semesters', '▁irrational', '▁여기서', 'ح']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 100608: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/100608
+  Feature 46520: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/46520
+  Feature 65134: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/65134
+  Feature 45469: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/45469
+  Feature 91948: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/91948
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  67578 | -0.0736 |  -0.5352 |   3.50e-03 | ['▁punishable', '▁нарушение', '▁violation', '▁punishment', '▁প্রমাণিত']
+  30271 | -0.0672 |  -0.4884 |   1.75e-03 | ['▁counterfe', 'Fake', '▁fake', '▁Fake', '▁counterfeit']
+  27685 | -0.0623 |  -0.4529 |   5.31e-05 | ['ts', 'np', 'to', 'ク', '▁(']
+  14454 | -0.0620 |  -0.4509 |   1.87e-06 | ['i', 'b', 's', 'in', 'z']
+ 215275 | -0.0615 |  -0.4466 |   1.14e-05 | ['▁stupid', '▁Stupid', '.', '▁silly', 'し']
+ 110673 | -0.0609 |  -0.4427 |   5.66e-04 | ['ffes', '▁thugs', '▁coward', '▁idiot', '▁scammers']
+  84889 | -0.0608 |  -0.4420 |   4.06e-05 | ['▁on', 'as', '▁of', '▁ﺍﻟ', '▁had']
+ 239721 | -0.0605 |  -0.4399 |   5.80e-07 | ['的安全', '蜘蛛', 'ভাবে', 'ង់', '▁câncer']
+ 186273 | -0.0601 |  -0.4370 |   3.43e-06 | ['区', '▁Deformation', '手', '▁Producers', 'к']
+  12605 | -0.0598 |  -0.4348 |   2.26e-06 | ['▁azienda', '▁increíble', '▁frantically', '▁ailes', '▁altra']
+ 131928 | -0.0591 |  -0.4297 |   1.36e-06 | ['다', 'a', 'в', '上に', 'ಾ']
+ 185737 | -0.0589 |  -0.4283 |   4.73e-06 | ['▁Awareness', 'h', '▁aço', '▁Video', '▁वीडियोस']
+  15453 | -0.0589 |  -0.4280 |   2.70e-04 | ['’', '7', '▁is', 'th', '4']
+  70086 | -0.0584 |  -0.4243 |   5.30e-07 | ['ب', 'ne', '0', 'üksek', '<strong>']
+ 153542 | -0.0577 |  -0.4194 |   1.23e-04 | ['7', '9', '!', '!”', '▁!']
+ 145381 | -0.0573 |  -0.4165 |   5.50e-05 | ['в', 'ня', 'c', '大', 'ı']
+ 117268 | -0.0565 |  -0.4105 |   1.09e-05 | ['▁можа', 'isering', '▁Жен', '▁стаўкі', 'ätta']
+ 125561 | -0.0564 |  -0.4101 |   9.64e-06 | ['ن', 'w', 'ন', 'ต', '▁June']
+  98489 | -0.0558 |  -0.4055 |   3.00e-07 | ['р', '{', 'our', '▁restrained', 'irat']
+  97644 | -0.0555 |  -0.4036 |   1.00e-07 | ['1', '大', 'Growing', '大的', 'ای']
+  72996 | -0.0555 |  -0.4033 |   4.30e-07 | ['▁I', '▁a', '▁in', '▁to', '▁can']
+ 156176 | -0.0553 |  -0.4016 |   6.66e-06 | ['▁horribly', 'ርስዎ', 'に', '國', 'ке']
+ 199921 | -0.0547 |  -0.3979 |   7.44e-06 | [':', 'ม', 'Ⴌ', '▁lard', '▁reliefs']
+ 172329 | -0.0546 |  -0.3972 |   7.10e-07 | ['▁corresponden', '▁significa', '翻', '</i>', '仕事']
+  16838 | -0.0546 |  -0.3966 |   3.28e-03 | ['▁same', '▁grammatical', '▁ciphertext', '▁هنا', 'または']
+  81625 | -0.0543 |  -0.3944 |   3.00e-05 | ['and', '▁Arbit', '▁další', 'to', 'has']
+  45753 | -0.0538 |  -0.3908 |   1.57e-06 | ['SCO', 'O', 'SII', 'ционных', 'न्स']
+ 189259 | -0.0537 |  -0.3901 |   3.59e-05 | ['Iron', 'ه', 'INN', 'AST', 'IRON']
+  94856 | -0.0537 |  -0.3900 |   1.75e-04 | ['ด', '▁for', 'ло', 'ோ', 'ิก']
+   9272 | -0.0532 |  -0.3866 |   6.87e-05 | ['▁droits', '▁terres', '▁thermoplastics', 'エ', '▁différences']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 67578: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/67578
+  Feature 30271: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/30271
+  Feature 27685: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/27685
+  Feature 14454: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/14454
+  Feature 215275: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/215275
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000798
+  Std cosine sim: 0.014389
+  Max cosine sim: 0.076631
+  Min cosine sim: -0.073633
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer20_262k_all.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer20_262k_all.*
+
+=== Standard layer analysis (nearby layers) ===
+  SAE: layer=16, width=16k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_16k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_16k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   4958 |  0.0655 |   0.4764 |   1.07e-03 | ['▁friendly', 'ین', 'friendly', '▁phasing', 'Friendly']
+   3337 |  0.0633 |   0.4603 |   1.24e-03 | ['$', '"', 'ق', '۰', '"/"']
+  16298 |  0.0603 |   0.4380 |   6.62e-04 | ['’', 'ের', 'u', '\u200cها', '’।']
+   5350 |  0.0568 |   0.4129 |   8.89e-04 | ['▁', '其他', '▁feel', '人不', '人用']
+  10304 |  0.0565 |   0.4103 |   2.91e-03 | ['T', 'са', 'CC', 'W', 'aj']
+   2859 |  0.0559 |   0.4060 |   2.59e-03 | [':', 'nimmt', '▁in', '\u200cها', 'もら']
+  12257 |  0.0539 |   0.3918 |   1.70e-04 | ['▁in', '▁Organiz', '▁في', '▁untersucht', '▁to']
+  13224 |  0.0532 |   0.3868 |   6.76e-04 | ['મ', 'म', '▁nakon', 'Chand', 'ഓ']
+    269 |  0.0532 |   0.3865 |   7.86e-02 | ['in', 'is', 'ري', 'ana', 'V']
+   9622 |  0.0531 |   0.3860 |   7.93e-03 | ['▁약간', '▁কিছুটা', '絴', '啍', '▁ngunit']
+   4831 |  0.0531 |   0.3859 |   1.16e-03 | ['▁bonds', '▁Bonds', '▁bond', '▁الآخر', '▁Bond']
+    619 |  0.0525 |   0.3814 |   1.76e-02 | ['ר', ':', 'ور', 'n', 'ה']
+  13861 |  0.0525 |   0.3812 |   9.85e-04 | ['M', '▁زمانے', 'ensus', 'T', 'criptive']
+   7833 |  0.0518 |   0.3768 |   1.89e-03 | ['▁depths', '▁deeper', '▁deepen', '▁profundo', '▁to']
+   5914 |  0.0516 |   0.3752 |   2.88e-03 | ['ం', '\n\n', 'انة', '▁overhauled', 'انى']
+   3384 |  0.0515 |   0.3745 |   1.44e-03 | ['К', '▁of', 'ל', 'ﺍ', '▁included']
+   2471 |  0.0515 |   0.3740 |   1.84e-03 | ['os', 'IN', 'িজ', 'Scientists', '▁scientists']
+   3787 |  0.0510 |   0.3707 |   9.42e-04 | ['▁INTEREST', '▁interesting', '▁Interesting', 'interesting', '▁Интере']
+  13942 |  0.0508 |   0.3693 |   2.02e-03 | ['يته', 'protos', '<0x90>', 'suivant', 'ي']
+    839 |  0.0507 |   0.3687 |   1.79e-02 | ['на', 'ли', 'ض', 'ла', 'و']
+  11151 |  0.0507 |   0.3687 |   2.67e-03 | ['▁Sometimes', '▁자동차', '▁sometimes', '▁manchmal', '▁Иногда']
+   4218 |  0.0506 |   0.3681 |   4.98e-02 | ['слен', '▁.=', '▁шан', ').', '▁controles']
+  10668 |  0.0499 |   0.3624 |   3.58e-04 | ['را', '在', 'ні', '0', ';']
+   3215 |  0.0495 |   0.3597 |   2.04e-03 | ['ين', 'ва', 'та', 'ون', 'िल']
+  13557 |  0.0487 |   0.3538 |   1.17e-06 | ['▁Ketua', 'Σ', 'એ', 'τής', '▁Itália']
+    853 |  0.0484 |   0.3517 |   5.00e-03 | ['ли', 'ري', 'تين', '▁código', 'Z']
+   9232 |  0.0478 |   0.3475 |   2.18e-03 | ['기업', '▁emphasise', '▁optimise', '▁utilise', '▁BeautifulSoup']
+   8653 |  0.0476 |   0.3461 |   1.21e-04 | ['▁fully', 'Fully', ')', 'fully', '▁pleinement']
+   8741 |  0.0472 |   0.3431 |   6.11e-04 | ['▁senator', '▁senators', '▁Senate', 'Senator', '▁Senator']
+  10789 |  0.0472 |   0.3430 |   4.22e-03 | ['Testing', '▁probar', 'бва', 'テスト', '▁LANA']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 4958: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/4958
+  Feature 3337: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/3337
+  Feature 16298: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/16298
+  Feature 5350: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/5350
+  Feature 10304: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/10304
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  13390 | -0.0648 |  -0.4713 |   3.98e-03 | ['▁bullies', '▁insulting', '▁insults', '▁требо', '▁stylesheet']
+   6564 | -0.0646 |  -0.4693 |   1.14e-03 | ['▁Hilfe', '▁Assistance', '▁yardım', '▁pomocy', '▁ajutor']
+   4808 | -0.0634 |  -0.4606 |   3.53e-03 | ['s', '▁dan', '▁worlds', '▁és', '▁not']
+   1769 | -0.0622 |  -0.4519 |   2.15e-04 | ['▁proceed', 'proceed', 'де', '▁proceeds', '▁proceeded']
+  11187 | -0.0591 |  -0.4293 |   7.83e-03 | ['N', 'ns', 'C', '▁It', 'L']
+  16347 | -0.0589 |  -0.4280 |   2.11e-03 | ['م', 'اد', 'м', '▁refer', '▁refers']
+  15294 | -0.0584 |  -0.4248 |   1.40e-03 | ['time', 'OMG', '也不知道', 'is', 'Aunque']
+   1905 | -0.0569 |  -0.4137 |   1.90e-02 | ['▁abusive', '▁abuse', '▁asexual', '▁sexually', '▁obscene']
+  10848 | -0.0558 |  -0.4057 |   6.35e-03 | ['▁warp', '▁syllabus', '▁heath', '▁troops', '▁herbaceous']
+  11297 | -0.0555 |  -0.4035 |   1.42e-03 | ['ет', 'с', 'ли', 'িন', 'из']
+   6117 | -0.0537 |  -0.3899 |   3.59e-03 | ['ä', 'وم', '▁', '▁A', '▁eneste']
+   4333 | -0.0530 |  -0.3853 |   8.08e-04 | ['▁for', '혔', '▁الرحيم', '▁Само', '▁Аль']
+  12156 | -0.0522 |  -0.3791 |   7.89e-04 | ['▁', 'ER', '\n', 'lt', 'c']
+  10412 | -0.0518 |  -0.3764 |   6.61e-04 | ['▁queues', '▁queue', 'Queue', 'queue', '▁queuing']
+  13733 | -0.0516 |  -0.3749 |   3.67e-05 | ['▁is', '▁în', '▁storyline', '▁şi', 'ž']
+   3601 | -0.0507 |  -0.3686 |   1.24e-03 | ['an', 'u', 'ার', 'er', 'の値']
+   9711 | -0.0504 |  -0.3663 |   7.41e-04 | ['▁enzyme', '▁enzymes', 'தி', '酵素', '▁Enzymes']
+  13662 | -0.0504 |  -0.3660 |   6.78e-04 | ['s', '1', 'ים', '2', 'k']
+  13712 | -0.0502 |  -0.3649 |   1.75e-04 | ['ati', '▁War', 'war', 'ano', 'ader']
+    744 | -0.0502 |  -0.3648 |   2.72e-02 | ['’', '\n', '▁écart', '▁jeopard', '-']
+   5232 | -0.0498 |  -0.3616 |   1.10e-03 | ["'", '▁atoms', '▁Atoms', '▁', '▁as']
+   9289 | -0.0495 |  -0.3595 |   3.76e-04 | ['▁execution', 'ع', '▁Execution', 'ى', 'lar']
+   2469 | -0.0487 |  -0.3539 |   3.52e-03 | ['▁humour', 'ви', '▁silly', 'ید', 'ра']
+   4394 | -0.0486 |  -0.3533 |   1.69e-03 | ['▁at', '.,', 'Service', 'ka', '▁for']
+  11029 | -0.0481 |  -0.3497 |   4.46e-03 | ['="', '8', '6', '9', '▁']
+   3009 | -0.0480 |  -0.3486 |   4.00e-03 | ['▁dangereux', '▁peligros', '▁dangerous', '▁danger', '▁dangere']
+   7848 | -0.0479 |  -0.3485 |   3.13e-04 | ['Iron', '▁iron', '▁Iron', 'iron', '▁IRON']
+   3906 | -0.0475 |  -0.3452 |   7.83e-04 | ['▁to', 'ia', 'ian', '▁munc', 'ene']
+   1049 | -0.0475 |  -0.3451 |   2.22e-02 | ['t', 'ik', 'in', 'id', 'ol']
+  11980 | -0.0474 |  -0.3446 |   6.94e-03 | ['▁Create', '▁created', '▁Creation', '▁create', '▁Created']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 13390: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/13390
+  Feature 6564: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/6564
+  Feature 4808: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/4808
+  Feature 1769: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/1769
+  Feature 11187: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/11187
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: -0.000214
+  Std cosine sim: 0.015564
+  Max cosine sim: 0.065546
+  Min cosine sim: -0.064844
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_16k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_16k_std.*
+  SAE: layer=16, width=65k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_65k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=65536
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_65k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 65536])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  34389 |  0.0793 |   0.5762 |   6.40e-04 | ['▁interesting', '▁fascinating', '▁intriguing', '▁Interesting', 'Interesting']
+  47250 |  0.0713 |   0.5181 |   9.34e-05 | ['▁qualities', 'い', 'ма', '其他', 'ي']
+  12685 |  0.0670 |   0.4866 |   1.09e-03 | ['▁comfort', '▁comfy', '▁cuddling', '舒适', '▁comfortable']
+  24434 |  0.0602 |   0.4377 |   7.06e-05 | ['ت', '其他', 'のは', 'は約', 'ב']
+  57350 |  0.0588 |   0.4276 |   2.41e-05 | ['on', '도', 'К', 'V', 'B']
+   5358 |  0.0588 |   0.4272 |   5.91e-04 | ['ين', 'تي', 'ер', 'يد', 'ડ']
+  20483 |  0.0587 |   0.4263 |   2.32e-05 | ['t', 'تون', 'ت', 'را', 'the']
+   9654 |  0.0585 |   0.4253 |   6.71e-04 | ['▁there', '▁exploring', '▁explore', 'ми', '▁explored']
+  31416 |  0.0585 |   0.4250 |   1.47e-04 | ['▁fully', '▁pleinement', 'Fully', 'ate', '▁Fully']
+   7121 |  0.0583 |   0.4236 |   1.37e-03 | ['\u200cها', 'та', 'nimmt', 'tól', '’']
+  32166 |  0.0574 |   0.4173 |   5.75e-04 | ['’', '’;', '’।', '’)', '\u200cها']
+  24632 |  0.0574 |   0.4173 |   4.26e-03 | ['▁약간', '絴', '▁কিছুটা', '▁nieco', 'يه']
+  20765 |  0.0573 |   0.4168 |   1.37e-03 | ['▁resilience', '▁resilient', '▁Resilience', '▁resil', '▁resiliency']
+  40768 |  0.0568 |   0.4129 |   5.38e-05 | ['▁JFK', 'Kennedy', ';}', '▁Kennedy', '༩']
+  27232 |  0.0567 |   0.4119 |   2.23e-04 | ['H', 'M', 'ку', 'U', 'P']
+  18891 |  0.0565 |   0.4103 |   9.91e-05 | ['ین', 'ర్\u200c', 'バ', 'یم', 'cimento']
+   7143 |  0.0560 |   0.4071 |   4.43e-04 | ['\u200cها', '’', '的两', 'ের', '’।']
+  32288 |  0.0556 |   0.4040 |   7.85e-04 | ['\n\n', 'انى', '▁virkelig', '▁Truly', '),']
+  21270 |  0.0555 |   0.4036 |   9.49e-05 | ['、', 'ز', 'да', 'с', 'ра']
+  47133 |  0.0549 |   0.3989 |   1.31e-03 | [':', '▁comfortably', 'ڦ', '▁lässt', '▁ходить']
+   2281 |  0.0547 |   0.3973 |   1.84e-02 | ['ও', 'も', '▁σε', '▁في', '▁договор']
+  20416 |  0.0544 |   0.3957 |   6.47e-05 | ['ル', '▁folks', '、', '，', 'ل']
+  59616 |  0.0542 |   0.3941 |   8.84e-05 | ['of', 'ا', 'to', 'ur', '▁surcharge']
+  53510 |  0.0541 |   0.3935 |   2.08e-04 | ['y', '▁নিবাস', 'akespeare', 'wallepics', '1']
+  62494 |  0.0538 |   0.3908 |   2.03e-04 | ['েব', 'ين', 'দের', '人的', '靣']
+  40305 |  0.0535 |   0.3889 |   5.26e-04 | ['▁první', 'inizi', '訫', 'in', '▁uwagę']
+   7676 |  0.0530 |   0.3849 |   7.00e-04 | ['К', '在', 'EN', 'ين', '▁briefly']
+   3286 |  0.0525 |   0.3816 |   6.38e-03 | ['es', 't', 's', 'é', 'ę']
+    858 |  0.0525 |   0.3813 |   3.32e-02 | ['ר', 'ת', 'ir', 'ర్', '▁piscine']
+   9070 |  0.0523 |   0.3804 |   4.89e-04 | ['(', '▁tentang', '▁{', 'ล', '▁by']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 34389: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/34389
+  Feature 47250: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/47250
+  Feature 12685: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/12685
+  Feature 24434: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/24434
+  Feature 57350: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/57350
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   5582 | -0.0739 |  -0.5368 |   1.75e-03 | ['偽', '▁replica', '▁counterfeit', 'ders', 'Fake']
+  16520 | -0.0727 |  -0.5283 |   4.59e-04 | ['akings', 'illent', 'o', 'acken', '年生']
+  16876 | -0.0721 |  -0.5240 |   9.63e-03 | ['▁immoral', '▁unworthy', '辱', '▁blasp', '▁punishable']
+  25941 | -0.0707 |  -0.5137 |   6.07e-03 | ['▁খারাপ', '▁poorly', '▁плохо', '▁ineffective', '▁bad']
+  31356 | -0.0636 |  -0.4623 |   2.26e-03 | ['▁shit', '▁bitch', '▁fucked', '▁bitches', '▁(']
+  21544 | -0.0621 |  -0.4515 |   1.32e-04 | ['▁or', 'v', '▁on', '▁is', 'is']
+  32916 | -0.0618 |  -0.4493 |   7.10e-04 | ['ет', 'ли', 'с', 'из', 'িন']
+  52503 | -0.0615 |  -0.4469 |   4.22e-04 | ['کن', 'ﺤ', 'کس', 'strongly', '▁strongly']
+   4473 | -0.0615 |  -0.4467 |   1.21e-02 | ['▁yourself', '\n\n', 'ul', 'an', 'л']
+  49947 | -0.0613 |  -0.4458 |   4.83e-05 | ['`);', '▁Minaj', '▁Thành', 'надцать', '▁testacé']
+  45402 | -0.0608 |  -0.4421 |   3.71e-05 | ['▁Bounty', 'mann', '▁успеш', 'fords', 'casters']
+  17226 | -0.0600 |  -0.4360 |   8.86e-05 | ['ल्ट', '▁bosques', 'seleccion', '▁Selección', 'ástica']
+   8123 | -0.0594 |  -0.4318 |   3.88e-05 | ['▁slapping', '▁slapped', 'for', 'нов', 'cmd']
+  10857 | -0.0577 |  -0.4195 |   1.86e-05 | ['är', 'ella', 'v', '▁or', 'ot']
+  11321 | -0.0567 |  -0.4118 |   2.75e-04 | ['th', '▁for', 'ing', '<0x0D>', 'lar']
+  62645 | -0.0564 |  -0.4099 |   2.56e-04 | ['▁в', '▁і', '▁и', 'о', 'не']
+  58500 | -0.0560 |  -0.4069 |   1.65e-04 | ['জিন', '▁for', '𝟯', 'ك', '▁Ла']
+  57664 | -0.0555 |  -0.4033 |   2.13e-05 | ['boots', '▁boots', 'ال', 'жаться', '霑']
+  45735 | -0.0552 |  -0.4010 |   2.84e-04 | ['isch', '▁על', 'ish', 'ate', 'je']
+  49550 | -0.0546 |  -0.3967 |   1.55e-04 | ['re', '0', 'la', '2', 'lar']
+  64986 | -0.0543 |  -0.3950 |   2.04e-04 | ['Similarity', '▁Similarity', '▁similarity', 'e', 'y']
+  23142 | -0.0541 |  -0.3933 |   1.07e-04 | ['د', 'ون', 'ს', '▁esperienza', 'ست']
+  51245 | -0.0535 |  -0.3888 |   1.06e-04 | ['▁inept', 'ק', '.', 'ı', '级']
+   5973 | -0.0529 |  -0.3846 |   1.79e-04 | ['▁and', 'teman', 'trade', '▁is', '▁I']
+   9139 | -0.0522 |  -0.3798 |   1.15e-06 | ['ībā', '▁on', '▁minum', 'eonium', 'plist']
+  25534 | -0.0520 |  -0.3783 |   1.02e-05 | ['▁denunci', '▁accusing', '▁depriving', '▁forehead', '▁chanting']
+  28525 | -0.0520 |  -0.3782 |   4.83e-05 | ['IT', 'INES', 'Э', 'In', 'ଏ']
+   4590 | -0.0520 |  -0.3776 |   9.13e-06 | ['▁jeopard', 'נ', '.', 'anean', '▁on']
+  34944 | -0.0516 |  -0.3749 |   6.12e-05 | ['س', '1', 'ح', 'с', 'F']
+  34289 | -0.0508 |  -0.3690 |   5.89e-04 | ['၊', '▁memor', '。</', '，“', '▁Memor']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 5582: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/5582
+  Feature 16520: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/16520
+  Feature 16876: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/16876
+  Feature 25941: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/25941
+  Feature 31356: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/31356
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: -0.000121
+  Std cosine sim: 0.015218
+  Max cosine sim: 0.079279
+  Min cosine sim: -0.073855
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_65k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_65k_std.*
+  SAE: layer=16, width=262k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_262k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_262k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  42302 |  0.0767 |   0.5574 |   8.54e-04 | ['▁intriguing', 're', '▁fascinating', '疑问', '▁frequent']
+  14193 |  0.0721 |   0.5243 |   4.60e-04 | ['▁curiously', '▁fitting', '▁enigmatic', '▁ironically', '▁didn']
+   9321 |  0.0697 |   0.5062 |   4.23e-04 | ['▁explore', '▁explored', '▁exploring', '-', '▁explor']
+  38096 |  0.0696 |   0.5060 |   3.24e-05 | ['ва', 'на', 'ية', 'ле', 'ہ']
+ 140215 |  0.0690 |   0.5015 |   1.95e-04 | ['会儿', '▁UNIX', 'ي', '▁ERK', '▁persone']
+  14580 |  0.0665 |   0.4834 |   1.81e-04 | ['ل', 'ین', '▁remplacement', '▁tachycardia', '▁flexion']
+ 191074 |  0.0656 |   0.4766 |   5.93e-05 | ['Samp', 'رسٹ', 'Kerry', 'Baker', 'SOCIAL']
+   7441 |  0.0648 |   0.4712 |   1.31e-03 | ['ي', 'י', '▁брать', '▁thoroughly', '在']
+    626 |  0.0641 |   0.4657 |   2.97e-04 | ['▁innych', '▁ispit', '▁computeEncoder', '▁investimento', 'ನ']
+ 229157 |  0.0635 |   0.4614 |   2.84e-06 | ['ה', 'ید', 'וא', 'ција', '▁costru']
+  65129 |  0.0630 |   0.4580 |   8.10e-07 | ['-', 'কে', '.', 'ми', 'ot']
+  90129 |  0.0630 |   0.4576 |   3.86e-05 | ['ین', 'ться', 'ینگ', 'ákat', '▁jugado']
+  34728 |  0.0628 |   0.4561 |   6.39e-04 | ['’', '\u200cها', ')’', '’।', '’;']
+   6097 |  0.0624 |   0.4539 |   5.82e-05 | ['ين', 'the', '.', '(', '▁(']
+ 165221 |  0.0622 |   0.4520 |   2.56e-05 | ['ća', 'es', 'on', '▁Química', '이었다']
+ 243100 |  0.0611 |   0.4443 |   2.84e-06 | ['-', ':', 'ין', 'o', 'هن']
+  29054 |  0.0601 |   0.4367 |   1.45e-04 | ['因为', '▁kerana', '▁omdat', 'เพราะ', '▁bởi']
+  12559 |  0.0600 |   0.4359 |   6.32e-05 | ['/', 'in', 'ER', '서', 'et']
+  16994 |  0.0590 |   0.4285 |   1.97e-05 | ['l', 't', 'r', '▁tumbling', '0']
+  40007 |  0.0588 |   0.4271 |   2.63e-06 | ['T', 'W', 'I', 'TED', 'ো']
+  27366 |  0.0587 |   0.4265 |   4.79e-04 | ['ের', '\u200cها', 'ية', 'u', '’']
+   2179 |  0.0585 |   0.4250 |   9.74e-04 | ['.', 'ו', 'ר', 'ت', 'و']
+   8580 |  0.0583 |   0.4235 |   1.42e-05 | ['\n', '▁to', '="', 'ை', 'ון']
+  46595 |  0.0581 |   0.4220 |   1.26e-05 | ['ד', '지', 'انی', 'ari', '”']
+  71330 |  0.0579 |   0.4212 |   1.54e-05 | ['▁stealth', '▁μία', '▁desolate', '▁téléphonique', '▁приготов']
+  44312 |  0.0578 |   0.4199 |   5.93e-06 | ['다', 'ور', 'اد', 'ad', '▁a']
+  43039 |  0.0577 |   0.4197 |   1.96e-05 | ['٠', 'y', '０', 'charged', '០']
+  20935 |  0.0577 |   0.4191 |   5.70e-04 | ['▁improvisation', '▁improvis', '▁mortem', '▁consenting', '▁planting']
+  35191 |  0.0571 |   0.4153 |   3.85e-04 | ['u', 'tól', '\u200cها', '્સ', 'ные']
+ 113201 |  0.0571 |   0.4152 |   2.04e-05 | ['و', 'W', 'H', 'F', 'ي']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 42302: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/42302
+  Feature 14193: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/14193
+  Feature 9321: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/9321
+  Feature 38096: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/38096
+  Feature 140215: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/140215
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   2200 | -0.0763 |  -0.5542 |   3.56e-03 | ['▁abyss', '▁devast', '▁hopelessness', '▁despair', '▁misery']
+ 104722 | -0.0716 |  -0.5207 |   2.42e-05 | ['1', 'C', 'ों', 'ле', 'ع']
+ 143271 | -0.0693 |  -0.5034 |   9.52e-04 | ['▁проблема', '▁probleem', '▁problém', '▁problèmes', 'з']
+ 115756 | -0.0684 |  -0.4975 |   4.07e-05 | ['Depuis', '▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁', '▁fera', '▁fixtures', "'"]
+  39193 | -0.0664 |  -0.4824 |   8.33e-06 | ['ק', 'four', 'มัน', 'landı', 'ม']
+  44806 | -0.0663 |  -0.4817 |   3.01e-04 | ['▁idiots', 'ଡ', '▁ब', '▁idiot', '▁thrice']
+ 153018 | -0.0654 |  -0.4754 |   4.63e-05 | ['▁rapidly', '▁appels', "',", '▁have', ')']
+  42157 | -0.0652 |  -0.4736 |   8.72e-05 | ['▁counterfe', 'ከላከ', '▁counterfeit', '۳', '▁மருந்த']
+  42555 | -0.0635 |  -0.4617 |   1.18e-04 | ['s', 'ים', 'ों', '▁expr', '▁Expr']
+ 236240 | -0.0633 |  -0.4599 |   2.41e-06 | ['▁E', '▁O', '\n', 'u', '▁L']
+  43518 | -0.0631 |  -0.4585 |   1.24e-05 | ['▁ох', '▁bittersweet', '’', 'fitting', 'kens']
+ 238213 | -0.0627 |  -0.4561 |   5.53e-06 | ['▁a', 'isees', 'ast', 'ua', 'issense']
+ 232948 | -0.0625 |  -0.4544 |   1.96e-04 | ['▁stupid', '▁silly', '▁irrational', '▁illogical', 'ە']
+ 218955 | -0.0610 |  -0.4435 |   2.02e-05 | ['ing', 'к', 'an', 'a', 'ه']
+  16251 | -0.0608 |  -0.4419 |   9.27e-05 | ['▁', 't', 'ens', 'elen', 'itel']
+  38954 | -0.0607 |  -0.4415 |   2.71e-05 | ['k', 'm', 'in', 'w', 'ti']
+  27953 | -0.0600 |  -0.4359 |   8.29e-03 | ['▁disagreeable', '▁abusive', '▁toxic', '▁wicked', '▁disgusting']
+ 186273 | -0.0599 |  -0.4353 |   2.76e-06 | ['作った', 'ק', 'اتی', 'ረዳ', '▁educated']
+  26793 | -0.0595 |  -0.4325 |   3.06e-04 | ['▁imitate', '▁imitating', '模仿', 'einander', '3']
+ 239721 | -0.0594 |  -0.4318 |   1.10e-06 | ['的安全', 'ভাবে', '蜘蛛', 'ង់', '如下']
+ 131928 | -0.0588 |  -0.4271 |   1.04e-06 | ['し', '▁Led', 'な', '新', '痛']
+   1633 | -0.0587 |  -0.4266 |   2.37e-03 | ['\n', '’', '▁shit', '.', '\n\n']
+  14727 | -0.0581 |  -0.4226 |   9.87e-03 | ['▁immoral', '▁Violation', 'buatan', '辱', '▁violation']
+  12399 | -0.0574 |  -0.4172 |   6.25e-06 | ['in', 'ika', 'on', 'termination', 'to']
+  22252 | -0.0572 |  -0.4159 |   2.23e-05 | ['\\', '▁Stupid', '▁dumb', '.', 'dumb']
+  27651 | -0.0572 |  -0.4156 |   3.26e-03 | ['▁result', '▁품질', '▁outcome', '▁výsled', '▁නිෂ්පා']
+  98489 | -0.0570 |  -0.4144 |   4.30e-07 | ['р', 'our', '{', '▁restrained', '”']
+ 172329 | -0.0565 |  -0.4108 |   2.18e-06 | ['▁corresponden', '▁significa', '翻', '▁inspe', '</i>']
+  23866 | -0.0564 |  -0.4098 |   2.54e-04 | ['ের', 'ida', '▁২০১৩', 'ORD', '▁LO']
+  47407 | -0.0562 |  -0.4082 |   4.54e-05 | ['ل', '𝓱', 'Ꮰ', 'x', 'वास']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 2200: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/2200
+  Feature 104722: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/104722
+  Feature 143271: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/143271
+  Feature 115756: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/115756
+  Feature 39193: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/39193
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000062
+  Std cosine sim: 0.014504
+  Max cosine sim: 0.076686
+  Min cosine sim: -0.076251
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_262k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_262k_std.*
+  SAE: layer=31, width=16k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_16k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_16k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   1384 |  0.0560 |   0.4071 |   2.29e-03 | ['▁it', '▁you', '▁they', '▁आपण', '▁we']
+  15610 |  0.0520 |   0.3778 |   4.92e-03 | ['▁variations', '▁Variations', '▁modifications', '▁extensions', '▁modification']
+   9121 |  0.0510 |   0.3706 |   3.63e-03 | ['既然', '▁تاکہ', '▁explicit', 'explicit', 'ដើម្បី']
+   6937 |  0.0506 |   0.3679 |   2.47e-03 | ['▁zelfs', '▁addirittura', '甚至', '甚至是', '▁bahkan']
+  10271 |  0.0501 |   0.3645 |   6.57e-04 | ['▁Акча', 'zovaniyu', '▁CORPER', 'ipada', '▁Celebrating']
+   4871 |  0.0491 |   0.3566 |   6.26e-03 | ['▁gallons', '▁quantity', '▁quantities', 'quantity', '▁quantidade']
+   3512 |  0.0480 |   0.3490 |   6.08e-03 | ['esempio', '▁craindre', '▁ито', 'Lycodon', 'Bechyné']
+  12486 |  0.0476 |   0.3457 |   8.21e-04 | ['turtle', 'Turtle', '▁turtle', '▁Turtle', '▁turtles']
+  12346 |  0.0469 |   0.3406 |   5.43e-03 | ['▁약간', '▁немного', '▁slightly', '▁একটু', '▁slight']
+   6203 |  0.0464 |   0.3373 |   2.10e-03 | ['▁envisage', '▁Maths', '▁whilst', '▁optimise', '▁Whilst']
+  16005 |  0.0463 |   0.3362 |   1.14e-06 | ['नमस्कार', '▁夏季', 'تقاوى', '▁Levant', '𒆜']
+   4001 |  0.0462 |   0.3360 |   1.21e-02 | ['▁continuous', '▁постоян', '▁постоянно', '▁sürekli', '▁continual']
+  13769 |  0.0460 |   0.3344 |   1.52e-03 | ['▁Seventy', '▁malls', '▁Sixty', 'ponder', 'PLAC']
+   2549 |  0.0458 |   0.3329 |   1.12e-02 | ['▁occasionally', '▁occasional', '▁downsides', '▁drawbacks', '▁weaknesses']
+   2266 |  0.0457 |   0.3324 |   6.16e-03 | ['轻轻', '镊', '▁tweezers', '搅拌', '▁moistened']
+   1818 |  0.0455 |   0.3309 |   2.22e-02 | ['▁философии', '▁정의', 'กลุ่ม', '哲', '૬']
+   1155 |  0.0454 |   0.3303 |   7.90e-03 | ['களை', 'cuda', '▁periodically', '▁demonstrate', '時間を']
+   4877 |  0.0451 |   0.3277 |   6.98e-03 | ['▁paragraph', '▁description', '▁mention', '▁párrafo', '▁mentioning']
+  10010 |  0.0447 |   0.3248 |   3.12e-03 | ['▁specifies', '▁Specifies', '▁clause', '▁specifying', '▁clauses']
+     18 |  0.0446 |   0.3242 |   4.77e-03 | ['▁ourselves', '▁kijken', '▁знаем', 'ujourd', '▁કરીએ']
+  15019 |  0.0441 |   0.3209 |   1.58e-03 | ['Carousel', '▁Website', '▁Awards', '▁Landing', 'testimonials']
+   7374 |  0.0433 |   0.3144 |   3.27e-05 | ['▁treadmill', '▁superiority', '▁supervisors', '▁spagn', '▁localVarHTTP']
+     27 |  0.0432 |   0.3139 |   1.50e-02 | ['▁toxins', '▁nutrients', '▁moisture', '▁acidic', '▁antioxidant']
+  10773 |  0.0431 |   0.3132 |   4.97e-04 | ['Referring', 'álne', 'regulating', '擱', 'ії']
+   1615 |  0.0429 |   0.3121 |   1.11e-02 | ['▁medically', '▁niacin', '▁medicinal', '▁clinically', '▁dermat']
+   1129 |  0.0429 |   0.3120 |   2.42e-03 | ['چنین', '▁такому', '▁وجود', '▁having', '這麼']
+  11105 |  0.0427 |   0.3103 |   2.79e-03 | ['▁reason', '▁காரணமாக', 'Почему', '▁dlatego', '▁કારણે']
+  13423 |  0.0421 |   0.3057 |   5.09e-03 | ['みんな', '▁especiales', '▁mommy', '▁पापा', 'たくさん']
+  11365 |  0.0420 |   0.3049 |   1.86e-03 | ['▁телеви', '电视', '▁TV', '電視', '▁TVs']
+    554 |  0.0417 |   0.3030 |   2.42e-03 | ['▁toiletries', '▁bedrooms', '▁kitchenette', '▁Bedroom', '卧室']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 1384: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/1384
+  Feature 15610: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/15610
+  Feature 9121: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/9121
+  Feature 6937: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/6937
+  Feature 10271: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/10271
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   2056 | -0.0583 |  -0.4234 |   1.04e-02 | ['▁', '▁terrestrial', '▁hydroly', '▁(~', '▁κ']
+   9699 | -0.0547 |  -0.3973 |   4.85e-03 | ['▁maximum', 'Maximum', '▁최대', '▁अधिकतम', '▁максимум']
+  10695 | -0.0541 |  -0.3928 |   7.57e-03 | ['▁prioritized', '▁Priority', 'those', '▁prioritization', '那些']
+   9423 | -0.0537 |  -0.3900 |   9.04e-04 | ['可以看出', '看出', '明显', '▁claramente', '▁clairement']
+   6036 | -0.0534 |  -0.3882 |   1.77e-03 | ['▁diskut', '▁btw', 'apanam', 'elsen', 'speaking']
+  14377 | -0.0522 |  -0.3797 |   1.31e-03 | ['▁dàng', '-', '易', 'с', '▁fáciles']
+   8298 | -0.0505 |  -0.3668 |   2.10e-03 | ['▁directly', 'directly', '直接', '▁direct', '▁bezpośred']
+   2835 | -0.0497 |  -0.3615 |   1.97e-03 | ['▁calculadora', '▁calculator', '▁Calculator', '▁calculators', 'calculator']
+   7455 | -0.0490 |  -0.3562 |   6.12e-03 | ['▁includes', '▁Usually', '▁включает', 'includes', '▁Includes']
+   7542 | -0.0479 |  -0.3482 |   2.44e-04 | ['लोत', 'ان', 'ചന', '▁Ressourcen', '勍']
+  11576 | -0.0477 |  -0.3464 |   2.21e-03 | ['right', '▁wrong', '▁Wrong', 'correct', 'wrong']
+   6205 | -0.0472 |  -0.3429 |   3.23e-03 | ['3', 'v', 'ä', '▁dangerous', 'ia']
+  15932 | -0.0468 |  -0.3404 |   1.42e-04 | ['▁سیاسی', '▁다시', '▁nuevamente', '轰', '▁স']
+   2936 | -0.0464 |  -0.3374 |   5.37e-03 | ['▁problema', '▁Probleme', '▁problém', '▁problems', '▁problem']
+  13023 | -0.0464 |  -0.3373 |   3.86e-03 | ['▁preferred', '▁favorite', '▁prefer', '▁prefers', '▁bevorzug']
+   6448 | -0.0451 |  -0.3278 |   6.07e-03 | ['▁inept', '▁meaningless', '▁stupid', '▁incapable', '▁useless']
+  11269 | -0.0446 |  -0.3242 |   7.35e-05 | ['▁HIS', '▁पर्यवे', '▁UNITY', '▁Fraud', 'ご']
+   9814 | -0.0446 |  -0.3238 |   1.56e-03 | ['▁user', '▁(', '▁+', '▁provides', '▁users']
+   8609 | -0.0444 |  -0.3227 |   5.45e-03 | ['▁shape', '形状', 'Shape', 'shape', '▁curved']
+   5960 | -0.0438 |  -0.3182 |   2.12e-04 | ['ор', '▁bump', '▁in', '▁diffuse', '▁denom']
+   5039 | -0.0438 |  -0.3182 |   7.61e-05 | ['▁teachings', 'առ', '▁contestant', '▁easel', 'чак']
+  15147 | -0.0435 |  -0.3160 |   8.21e-03 | ['▁Questionnaire', '▁questionnaires', '▁mogę', '我可以', '▁questionnaire']
+  10484 | -0.0434 |  -0.3152 |   1.25e-02 | ['N', 'リ', '2', 'é', 'R']
+   9486 | -0.0425 |  -0.3088 |   1.76e-04 | ['Alternatively', '二年', '▁Alternatively', '()*', 'Alternate']
+  16367 | -0.0420 |  -0.3052 |   2.90e-04 | ['ុល', 'н', 'ט', 'ன்', 'נ']
+   6133 | -0.0419 |  -0.3044 |   3.89e-03 | ['▁simple', 'simple', '▁Simple', 'Simple', '简单的']
+   9101 | -0.0417 |  -0.3029 |   1.82e-04 | ['0', 'ellis', '▁europeo', '极', 'ляют']
+   9656 | -0.0417 |  -0.3028 |   3.02e-03 | ['▁तसेच', '▁Orphans', '▁Podczas', '끊', '▁Federation']
+   8358 | -0.0416 |  -0.3026 |   1.51e-04 | ['▁रखो', '▁Keto', '▁warna', '▁neues', '▁뉴스']
+  14854 | -0.0414 |  -0.3006 |   4.18e-03 | ['▁admissibility', '所謂', '▁whatsoever', '▁unregulated', 'tt']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 2056: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/2056
+  Feature 9699: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/9699
+  Feature 10695: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/10695
+  Feature 9423: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/9423
+  Feature 6036: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/6036
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: -0.000034
+  Std cosine sim: 0.014081
+  Max cosine sim: 0.056018
+  Min cosine sim: -0.058260
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_16k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_16k_std.*
+  SAE: layer=31, width=65k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_65k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=65536
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_65k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 65536])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   3909 |  0.0587 |   0.4264 |   5.93e-03 | ['▁কিছুটা', '▁slightly', '▁약간', '▁немного', '▁somewhat']
+  16269 |  0.0559 |   0.4065 |   1.17e-04 | ['▁CERT', '▁SERVICE', '▁EDGE', '▁SOA', '▁OPS']
+  15673 |  0.0545 |   0.3960 |   4.93e-06 | ['packed', 'packing', 'efficient', '内容', 'broken']
+  60502 |  0.0541 |   0.3935 |   1.85e-04 | ['!<', '눗', 'Dequeue', 'рано', 'トラン']
+  16618 |  0.0522 |   0.3793 |   2.66e-04 | ['▁potrzeb', '▁cannot', '▁during', '▁cần', '▁perlu']
+   4917 |  0.0513 |   0.3730 |   2.18e-03 | ['▁बदलते', '▁постоянно', '▁turbulent', '▁глоба', '▁конкурен']
+   4566 |  0.0507 |   0.3687 |   1.28e-02 | ['▁phrases', '▁언급', '▁words', '▁mention', '▁mentions']
+  12766 |  0.0505 |   0.3672 |   1.24e-05 | ['▁tubercle', '▁Während', '▁striped', '▁Durante', '▁centenary']
+   3473 |  0.0504 |   0.3666 |   1.25e-03 | ['▁imperme', '▁biodegrad', '▁moisture', '干燥', '▁sealant']
+    822 |  0.0503 |   0.3659 |   1.95e-06 | ['▁S', 't', 'n', '▁(', 'ill']
+  19681 |  0.0503 |   0.3657 |   1.38e-03 | ['▁disclaimer', '▁Terms', 'Disclaimer', '▁Disclaimer', 'Terms']
+  38907 |  0.0499 |   0.3630 |   3.81e-04 | ['▁full', 'Full', '▁μεγαλύτε', '▁fully', 'เต็ม']
+  53164 |  0.0499 |   0.3629 |   9.52e-05 | ['werp', 'Brief', 'ytes', '▁উচ্ছ', '▁juntos']
+  23534 |  0.0493 |   0.3583 |   3.21e-04 | ['м', 'ம்', 'ت', 'த்தில்', 'مپ']
+  52069 |  0.0493 |   0.3582 |   1.81e-04 | ['an', 'hr', 'jej', 'ca', 'jaa']
+  10369 |  0.0492 |   0.3574 |   3.91e-03 | ['▁постоянно', '▁постоян', '▁sürekli', '▁continuously', '▁continuous']
+    233 |  0.0491 |   0.3568 |   1.38e-03 | ['▁toiletries', '▁tourist', '▁Tourist', '▁luggage', '▁hotel']
+   4878 |  0.0491 |   0.3565 |   3.79e-04 | ['▁sogenannte', '▁voici', '▁كيفية', '▁verschiedene', '▁Footage']
+  41012 |  0.0489 |   0.3556 |   7.87e-05 | ['Semif', '▁prohibits', '▁ponctués', '▁semia', '▁propo']
+  35683 |  0.0489 |   0.3556 |   1.51e-04 | ['▁μεγά', 'РЕ', 'انت', 'وظ', '▁produzir']
+  23899 |  0.0487 |   0.3537 |   7.45e-04 | ['邀请', '▁invitation', '▁invitación', '▁Invitation', '▁invite']
+  31754 |  0.0486 |   0.3530 |   7.30e-05 | ['▁現在', 'ade', '▁startet', '▁Donnerstag', 'ongono']
+  11504 |  0.0485 |   0.3525 |   4.69e-05 | ['▁प्रोत्साहित', '},\\', '▁गेट', ',\u200e', '▁પરંતુ']
+  12186 |  0.0482 |   0.3500 |   6.23e-04 | ['contrad', '▁contradict', '▁contradiction', '▁contradicts', '▁contradictory']
+  41623 |  0.0481 |   0.3496 |   1.46e-05 | ['▁infestations', '▁hysterical', '▁numbness', '▁worsens', 'ս']
+  15769 |  0.0480 |   0.3492 |   1.71e-04 | ['uscany', 'hotel', 'uckland', 'nums', 'lympi']
+  16496 |  0.0479 |   0.3482 |   1.08e-04 | ['ρι', '일', 'நம்', '을', 'iają']
+  50588 |  0.0478 |   0.3471 |   1.55e-05 | ['▁Authorization', '/', '字母', 'मला', '噸']
+   1725 |  0.0478 |   0.3471 |   1.80e-05 | ['▁bolt', '▁martyr', '▁நைட்', '婭', '▁absorbent']
+  59770 |  0.0477 |   0.3464 |   3.38e-04 | ['-', 'b', 'i', 'is', 'l']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 3909: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/3909
+  Feature 16269: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/16269
+  Feature 15673: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/15673
+  Feature 60502: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/60502
+  Feature 16618: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/16618
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   5208 | -0.0711 |  -0.5167 |   3.76e-03 | ['▁drastically', '▁vastly', '▁radically', '▁drastic', '▁dramatically']
+  29550 | -0.0695 |  -0.5050 |   2.90e-05 | ['▁može', '▁বিশেষজ্ঞরা', '▁assurance', 'Dice', 'בר']
+  50676 | -0.0661 |  -0.4806 |   9.43e-04 | ['明显', '的', '明顯', '▁visible', '可以看出']
+  20015 | -0.0626 |  -0.4552 |   1.48e-03 | ['▁score', 'Score', 'score', '▁scoring', '▁penalty']
+  28426 | -0.0533 |  -0.3873 |   9.24e-04 | ['▁calculadora', '▁calculator', '▁digit', '▁Digit', '▁teclado']
+  54705 | -0.0530 |  -0.3853 |   5.67e-04 | ['▁direct', 'Direct', 'direct', '▁Direct', 'directly']
+  10301 | -0.0528 |  -0.3836 |   1.26e-03 | ['▁skilful', '▁zumindest', 'Perhaps', '▁sensibil', '▁skillful']
+  31930 | -0.0521 |  -0.3786 |   2.88e-05 | ['MyToolkit', 'imleri', 'мпаваць', '謖', 'ليه']
+  14382 | -0.0521 |  -0.3785 |   1.01e-03 | ['逃', '躲', '▁escape', '▁fleeing', '▁Escape']
+  59883 | -0.0512 |  -0.3720 |   4.38e-05 | ['꒪', 'खार', '▁रोजिक', 'ляется', 'lanır']
+  45565 | -0.0511 |  -0.3712 |   2.77e-04 | ['▁Competition', '▁Cyber', '▁دشمن', '▁Cybersecurity', '▁Wettbewer']
+  62443 | -0.0511 |  -0.3712 |   2.92e-05 | ['▁agua', '▁água', '▁continuité', '▁coordenadas', '▁GameManager']
+  10492 | -0.0499 |  -0.3623 |   1.39e-03 | ['▁ignorance', '▁ignorant', '▁stupidity', '▁ignor', '▁clueless']
+  54732 | -0.0496 |  -0.3607 |   6.45e-05 | ['▁precisar', '▁museo', '▁}}', '▁parro', '▁передачи']
+  61072 | -0.0489 |  -0.3555 |   6.43e-04 | ['Boston', 'Massachusetts', '▁Massachusetts', '▁Boston', 'BOSTON']
+  33287 | -0.0488 |  -0.3549 |   2.64e-04 | ['だけでも', '만', 'だけでなく', 'alone', '▁alone']
+  25008 | -0.0487 |  -0.3539 |   1.69e-05 | ['கோ', '▁चुनौतीपूर्ण', '▁குறை', '▁योद्धा', 'ภา']
+  58868 | -0.0486 |  -0.3533 |   3.43e-04 | ['▁Junk', 'junk', '▁Архів', 'ానిక', '▁Sock']
+  40492 | -0.0477 |  -0.3465 |   3.05e-04 | ['▁první', '▁commencé', '▁naudoj', 'Ნ', '▁siendo']
+  57968 | -0.0475 |  -0.3452 |   8.45e-03 | ['▁vulgar', '▁Funktionen', '▁filth', '▁pollute', 'funktionen']
+  61275 | -0.0475 |  -0.3451 |   4.04e-04 | ['Order', '▁Order', 'order', 'getOrder', 'Ordine']
+   7108 | -0.0475 |  -0.3451 |   1.16e-05 | ['▁NK', 'pkins', 'nc', 'Declared', '▁Crossing']
+   8880 | -0.0473 |  -0.3441 |   2.13e-04 | ['▁payday', '▁lenders', '▁borrowers', '▁lender', '▁loans']
+   2552 | -0.0469 |  -0.3410 |   1.01e-02 | ['▁easy', '▁simplicity', '▁fácil', '▁easier', 'ง่าย']
+  49019 | -0.0465 |  -0.3379 |   2.66e-05 | [';', ':', 'ing', 'é', '生き']
+  35621 | -0.0463 |  -0.3366 |   1.17e-04 | ['▁exception', '▁needless', '▁jails', '▁tất', '▁esta']
+   9880 | -0.0462 |  -0.3361 |   6.27e-05 | ['顕', 'ו', '▁nuovo', '▁moins', '▁grandi']
+  40298 | -0.0462 |  -0.3359 |   3.13e-05 | ['▁एंटीऑ', 'gebn', '▁cytokines', '▁également', 'licos']
+  28223 | -0.0460 |  -0.3344 |   1.97e-04 | ['▁отделения', 'okine', '▁তৎ', '▁vielf', '▁железнодоро']
+  44254 | -0.0459 |  -0.3338 |   1.08e-04 | ['同時に', '代わりに', '▁বৌদ্ধ', '▁hyaluronic', '▁Confucian']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 5208: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/5208
+  Feature 29550: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/29550
+  Feature 50676: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/50676
+  Feature 20015: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/20015
+  Feature 28426: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/28426
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000190
+  Std cosine sim: 0.013856
+  Max cosine sim: 0.058674
+  Min cosine sim: -0.071095
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_65k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_65k_std.*
+  SAE: layer=31, width=262k, l0=medium (standard variant)
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_262k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_262k_l0_medium/examples.safetensors
+Loading tokenizer from google/gemma-3-27b-it...
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+ 232268 |  0.0618 |   0.4493 |   7.96e-06 | ['▁հ', '▁когда', '▁ដើម្បី', '▁llevando', '▁dismissing']
+  13101 |  0.0609 |   0.4426 |   1.13e-05 | ['▁여기서', '▁restaurants', '▁monotony', '▁framebuffer', '▁중요']
+   8172 |  0.0607 |   0.4409 |   9.26e-04 | ['▁momentarily', '▁কিছুক্ষণ', '休憩', '▁मिनट', '▁minutos']
+ 123692 |  0.0597 |   0.4342 |   3.15e-04 | ['Interesting', '▁Interesting', '▁intriguing', 'interesting', '▁interesting']
+  13006 |  0.0586 |   0.4258 |   2.17e-03 | ['▁preoccupation', '▁mentioning', '▁discussing', '▁упомина', '▁언급']
+ 163569 |  0.0581 |   0.4223 |   1.33e-04 | ['▁включая', '▁визуа', '▁простран', 'वर्तमान', 'including']
+ 111145 |  0.0581 |   0.4222 |   1.03e-05 | ['▁Oval', '▁Watercolor', '▁Medieval', 'áciu', '恬']
+ 180684 |  0.0574 |   0.4172 |   1.38e-05 | ['on', 'रज', '▁We', '其他', '▁Parties']
+  38835 |  0.0566 |   0.4112 |   6.44e-05 | ['▁Brexit', '▁suav', '▁equaling', '▁usato', '▁Datenschutz']
+ 157733 |  0.0559 |   0.4061 |   4.75e-05 | ['น้อย', '▁minder', '▁permits', '不愿意', '▁famil']
+  86034 |  0.0555 |   0.4035 |   1.14e-05 | ['傳統', '▁Antarctica', '▁መሳሪያ', '<0x8A>', 'heiten']
+ 153511 |  0.0553 |   0.4016 |   2.31e-05 | ['㸳', 'لية', "'.", '封闭', 'eryllium']
+  89179 |  0.0549 |   0.3987 |   1.48e-04 | ['▁someone', '▁seseorang', '▁jolie', '机器学习', 'someone']
+ 147995 |  0.0547 |   0.3975 |   1.63e-06 | ['ರೋ', 'ifting', 'est', 'Corpor', '▁こちら']
+  96367 |  0.0542 |   0.3936 |   1.94e-05 | ['▁každý', '▁Wentworth', '▁Rainfall', '^{+}$', '▁nächsten']
+ 181077 |  0.0540 |   0.3924 |   9.83e-06 | ['▁ಶ', '<unused323>', '▁ومع', '<unused558>', '<unused1041>']
+  21354 |  0.0540 |   0.3923 |   3.20e-05 | ['-', '_', ',', '/', '2']
+ 126906 |  0.0536 |   0.3897 |   6.76e-06 | ['涮', 'http', '暂停', '𠃍', '强制']
+ 102275 |  0.0535 |   0.3889 |   1.25e-04 | ['atthena', 'isierung', 'adigan', '▁வாங்கி', '▁dredged']
+  50243 |  0.0533 |   0.3873 |   1.62e-05 | ['▁pastes', '▁lunches', 'Desen', 'ש', 'ب']
+ 240062 |  0.0532 |   0.3869 |   7.42e-06 | ['\n', '▁', '▁governance', 'ര്\u200dണ', '▁blog']
+   2991 |  0.0531 |   0.3856 |   1.90e-03 | ['▁중요한', '▁مهم', '很重要', '▁important', 'important']
+ 100519 |  0.0529 |   0.3848 |   4.69e-06 | ['ାନ', 'wunsch', 'با', '▁particuliers', '戳']
+ 155480 |  0.0529 |   0.3843 |   5.20e-05 | ['▁তোলে', 'Qw', '、', '主', '▁heterogeneous']
+ 127706 |  0.0527 |   0.3832 |   3.76e-05 | ['Vc', 'GLOBALS', '▁لازم', 'Synchron', 'Ic']
+  93941 |  0.0526 |   0.3822 |   1.21e-05 | ['ack', '棦', '▁வளாக', 'lined', 'ımı']
+ 146518 |  0.0522 |   0.3794 |   3.25e-06 | ['3', '8', '4', '▁Capitalism', 'Ther']
+  86404 |  0.0521 |   0.3789 |   9.41e-05 | ['oca', 'adesh', '𝙤', '▁چھوڑ', 'mayan']
+ 220056 |  0.0521 |   0.3787 |   4.29e-05 | ['Generated', 'Generate', 'generated', 'Killing', '生成的']
+ 185165 |  0.0515 |   0.3741 |   2.14e-05 | ['▁couldn', '▁transformed', '▁transformer', '▁docs', '▁gate']
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 232268: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/232268
+  Feature 13101: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/13101
+  Feature 8172: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/8172
+  Feature 123692: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/123692
+  Feature 13006: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/13006
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  31228 | -0.0664 |  -0.4830 |   4.68e-04 | ['▁sediments', '▁ignorance', '▁wretched', '▁sandpaper', '▁sediment']
+  14681 | -0.0661 |  -0.4804 |   1.05e-03 | ['▁stupid', '▁disgusting', '▁stupidity', '🤮', '▁plut']
+  95095 | -0.0611 |  -0.4444 |   4.63e-04 | ['的', '可以看出', '有', '明显', '不及']
+  97644 | -0.0591 |  -0.4297 |   8.97e-05 | ['ř', '▁Thib', '变化', 'Growing', 'शि']
+ 189085 | -0.0572 |  -0.4161 |   3.19e-05 | ['▁किती', 'PhoneNumber', '⛽', '电子邮件', 'reshold']
+ 162076 | -0.0565 |  -0.4107 |   7.00e-06 | ['▁perdagangan', '▁itaque', '鸬', 'Egypt', '▁semoga']
+ 140317 | -0.0555 |  -0.4034 |   5.41e-05 | ['▁Jo', 'ethers', '▁Joh', '▁Joao', 'Jo']
+  30598 | -0.0554 |  -0.4025 |   1.13e-03 | ['▁scoring', '▁score', 'Score', '▁weighting', 'score']
+ 199126 | -0.0552 |  -0.4012 |   8.23e-05 | ['omitem', 'cipher', 'ﺹ', 'រយៈ', '殡']
+ 231050 | -0.0550 |  -0.3995 |   5.04e-05 | ['簡', '▁विवेक', '必要', '▁צריך', '▁बाबर']
+  20667 | -0.0546 |  -0.3965 |   6.19e-04 | ['▁drastically', '▁dramatically', '▁drastic', '▁increase', '大幅']
+  60390 | -0.0541 |  -0.3934 |   1.53e-03 | ['କ୍', 'າມາດ', '▁ଜ', '৯', 'λο']
+  96787 | -0.0530 |  -0.3850 |   2.58e-05 | ['▁nemá', '▁можуть', '紧张', '衞', '▁vídeos']
+ 172093 | -0.0528 |  -0.3837 |   1.33e-05 | ['▁smelled', '▁damned', 'esty', '▁painfully', '០']
+  28523 | -0.0526 |  -0.3824 |   5.57e-04 | ['▁calculadora', '▁calculator', '▁digit', '▁Calculator', '▁digits']
+ 224292 | -0.0524 |  -0.3809 |   4.18e-05 | ['▁a', '▁aligning', '▁predicting', '▁logrado', '▁extending']
+ 239154 | -0.0524 |  -0.3805 |   2.51e-05 | ['▁polling', '▁theft', 'きましたが', '▁chon', 'elat']
+ 144743 | -0.0522 |  -0.3790 |   6.32e-05 | ['।', 'lus', 'pedido', ');', 'EH']
+ 156176 | -0.0521 |  -0.3787 |   7.75e-05 | ['▁horribly', 'ርስዎ', '國', '▁tambien', '鞦']
+   9272 | -0.0520 |  -0.3780 |   7.54e-05 | ['▁terres', '▁droits', '▁sólidos', 'リ', 'エ']
+ 174494 | -0.0520 |  -0.3779 |   4.52e-04 | ['-', 'ہ', '▁anglais', 'ங்கிணை', '▁on']
+  75450 | -0.0520 |  -0.3779 |   6.56e-05 | ['鼓励', 'Summar', 'Comunic', 'ियाँ', '▁Comunicación']
+ 133476 | -0.0518 |  -0.3765 |   2.24e-05 | ['▁Principal', '▁Princes', '▁Princess', '▁Según', '▁June']
+  50856 | -0.0518 |  -0.3765 |   3.53e-05 | ['▁was', '▁is', '▁informace', '▁information', '▁Mindfulness']
+  61279 | -0.0517 |  -0.3756 |   7.55e-05 | ['ूंकि', '።', '。', '▁শুধুমাত্র', '▁ہے۔']
+ 171768 | -0.0516 |  -0.3751 |   1.71e-04 | ['▁Wikipédia', 'öffnet', '▁höch', 'حاد', 'seiten']
+  67594 | -0.0515 |  -0.3741 |   4.04e-05 | ['merzen', '癱', '▁ಅನುಪಾತ', 'tesla', '▁नकारात्मक']
+ 131928 | -0.0514 |  -0.3736 |   9.23e-05 | ['GUI', '▁Led', 'stdio', 'し', 'o']
+ 117833 | -0.0513 |  -0.3732 |   6.81e-05 | ['▁Servicio', '▁dalle', 'жении', '▁servicio', '▁dots']
+  73289 | -0.0509 |  -0.3702 |   3.86e-05 | ['WORK', 'РО', '▁ahí', 'Ы', '▁войне']
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 31228: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/31228
+  Feature 14681: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/14681
+  Feature 95095: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/95095
+  Feature 97644: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/97644
+  Feature 189085: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/189085
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000040
+  Std cosine sim: 0.013643
+  Max cosine sim: 0.061813
+  Min cosine sim: -0.066450
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_262k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_262k_std.*
+
+Analysis complete!
+Results in: gemmascope/outputs/r1_lora_analysis

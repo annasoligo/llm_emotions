@@ -1,0 +1,1016 @@
+[2026-01-25 06:11:48] INFO mcq_emotion_steering_experiment.py:321: Model: unsloth/gemma-3-27b-it
+[2026-01-25 06:11:48] INFO mcq_emotion_steering_experiment.py:322: Layer: 31
+[2026-01-25 06:11:48] INFO mcq_emotion_steering_experiment.py:323: Norm percentages: [0.05, 0.07]
+[2026-01-25 06:11:48] INFO mcq_emotion_steering_experiment.py:324: Scenarios: 10
+[2026-01-25 06:11:48] INFO mcq_emotion_steering_experiment.py:325: Stacking conditions: ['perception_only', 'goal_only', 'behavior_only']
+[2026-01-25 06:11:48] INFO mcq_emotion_steering_experiment.py:328: Loading appraisal vectors...
+[2026-01-25 06:11:52] INFO mcq_emotion_steering_experiment.py:123: valence: 288 A, 288 B samples, raw norm=830.82
+[2026-01-25 06:11:52] INFO mcq_emotion_steering_experiment.py:120: uncertainty: FLIPPED (so + = high uncertainty)
+[2026-01-25 06:11:52] INFO mcq_emotion_steering_experiment.py:123: uncertainty: 288 A, 288 B samples, raw norm=788.30
+[2026-01-25 06:11:52] INFO mcq_emotion_steering_experiment.py:342: Layer 31 norm: 52107.68
+[2026-01-25 06:11:52] INFO mcq_emotion_steering_experiment.py:345: Loading model...
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:   0% Completed | 0/12 [00:00<?, ?it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:   8% Completed | 1/12 [00:00<00:09,  1.21it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:  17% Completed | 2/12 [00:01<00:08,  1.15it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:  25% Completed | 3/12 [00:02<00:07,  1.13it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:  33% Completed | 4/12 [00:03<00:06,  1.15it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:  42% Completed | 5/12 [00:04<00:05,  1.17it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:  50% Completed | 6/12 [00:05<00:05,  1.18it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:  58% Completed | 7/12 [00:05<00:04,  1.18it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:  67% Completed | 8/12 [00:06<00:03,  1.19it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:  75% Completed | 9/12 [00:06<00:01,  1.60it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:  83% Completed | 10/12 [00:07<00:01,  1.53it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards:  92% Completed | 11/12 [00:08<00:00,  1.43it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards: 100% Completed | 12/12 [00:09<00:00,  1.37it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m Loading safetensors checkpoint shards: 100% Completed | 12/12 [00:09<00:00,  1.29it/s]
+[0;36m(EngineCore_DP0 pid=675724)[0;0m 
+[2026-01-25 06:16:34] INFO core.py:457: Steering setup: ['Hook registered on layer 31']
+[2026-01-25 06:16:34] INFO mcq_emotion_steering_experiment.py:389: Steering conditions: ['neutral', 'contentment_5pct', 'anxiety_5pct', 'contentment_7pct', 'anxiety_7pct']
+[2026-01-25 06:16:34] INFO mcq_emotion_steering_experiment.py:403: 
+============================================================
+[2026-01-25 06:16:34] INFO mcq_emotion_steering_experiment.py:404: Condition: neutral
+[2026-01-25 06:16:34] INFO mcq_emotion_steering_experiment.py:405: ============================================================
+[2026-01-25 06:16:34] INFO mcq_emotion_steering_experiment.py:428:   Scenario: ambiguous_request
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 486.73it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:04<01:35,  4.16s/it, est. speed input: 27.88 toks/s, output: 0.24 toks/s]Processed prompts:   8%|▊         | 2/24 [00:06<01:09,  3.14s/it, est. speed input: 35.23 toks/s, output: 0.30 toks/s]Processed prompts: 100%|██████████| 24/24 [00:06<00:00,  3.14s/it, est. speed input: 422.62 toks/s, output: 3.64 toks/s]Processed prompts: 100%|██████████| 24/24 [00:06<00:00,  3.64it/s, est. speed input: 422.62 toks/s, output: 3.64 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 928.47it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.12it/s, est. speed input: 885.31 toks/s, output: 8.12 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  8.94it/s, est. speed input: 964.80 toks/s, output: 8.85 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  8.94it/s, est. speed input: 7686.95 toks/s, output: 70.52 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.46it/s, est. speed input: 7686.95 toks/s, output: 70.52 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 942.08it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.04it/s, est. speed input: 967.37 toks/s, output: 9.04 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.83it/s, est. speed input: 658.67 toks/s, output: 6.15 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.83it/s, est. speed input: 7868.61 toks/s, output: 73.53 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.46it/s, est. speed input: 7868.61 toks/s, output: 73.53 toks/s]
+[2026-01-25 06:16:42] INFO mcq_emotion_steering_experiment.py:428:   Scenario: frustrated_user
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 964.74it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.26it/s, est. speed input: 1195.56 toks/s, output: 9.26 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.16it/s, est. speed input: 712.89 toks/s, output: 5.53 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.16it/s, est. speed input: 8540.36 toks/s, output: 66.20 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 66.18it/s, est. speed input: 8540.36 toks/s, output: 66.20 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1120.56it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.68it/s, est. speed input: 1084.09 toks/s, output: 9.68 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.65it/s, est. speed input: 675.32 toks/s, output: 6.03 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.65it/s, est. speed input: 8078.46 toks/s, output: 72.13 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.08it/s, est. speed input: 8078.46 toks/s, output: 72.13 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1123.86it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.54it/s, est. speed input: 1155.37 toks/s, output: 9.54 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.12it/s, est. speed input: 665.53 toks/s, output: 5.50 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.12it/s, est. speed input: 7954.45 toks/s, output: 65.74 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 65.68it/s, est. speed input: 7954.45 toks/s, output: 65.74 toks/s]
+[2026-01-25 06:16:43] INFO mcq_emotion_steering_experiment.py:428:   Scenario: production_code
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1072.92it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.62it/s, est. speed input: 1135.95 toks/s, output: 9.62 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.65it/s, est. speed input: 711.11 toks/s, output: 6.03 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.65it/s, est. speed input: 8511.66 toks/s, output: 72.13 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.09it/s, est. speed input: 8511.66 toks/s, output: 72.13 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1486.62it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.80it/s, est. speed input: 1108.09 toks/s, output: 9.80 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.71it/s, est. speed input: 688.53 toks/s, output: 6.09 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.71it/s, est. speed input: 8235.98 toks/s, output: 72.88 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.83it/s, est. speed input: 8235.98 toks/s, output: 72.88 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 738.82it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.28it/s, est. speed input: 715.67 toks/s, output: 6.28 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.28it/s, est. speed input: 8556.80 toks/s, output: 75.06 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.00it/s, est. speed input: 8556.80 toks/s, output: 75.06 toks/s]
+[2026-01-25 06:16:44] INFO mcq_emotion_steering_experiment.py:428:   Scenario: persuasion_request
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 914.50it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.95it/s, est. speed input: 719.85 toks/s, output: 5.95 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.95it/s, est. speed input: 8593.14 toks/s, output: 71.01 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.80it/s, est. speed input: 8593.14 toks/s, output: 71.01 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1029.15it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.26it/s, est. speed input: 707.51 toks/s, output: 6.26 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.26it/s, est. speed input: 8458.70 toks/s, output: 74.85 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 74.79it/s, est. speed input: 8458.70 toks/s, output: 74.85 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 896.31it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.11it/s, est. speed input: 709.19 toks/s, output: 6.11 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.11it/s, est. speed input: 8482.02 toks/s, output: 73.12 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.07it/s, est. speed input: 8482.02 toks/s, output: 73.12 toks/s]
+[2026-01-25 06:16:45] INFO mcq_emotion_steering_experiment.py:428:   Scenario: changed_requirements
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1110.64it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.09it/s, est. speed input: 1100.64 toks/s, output: 9.09 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.45it/s, est. speed input: 702.00 toks/s, output: 5.80 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.45it/s, est. speed input: 8395.15 toks/s, output: 69.38 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.33it/s, est. speed input: 8395.15 toks/s, output: 69.38 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1097.29it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.93it/s, est. speed input: 1081.11 toks/s, output: 8.93 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.39it/s, est. speed input: 693.07 toks/s, output: 5.73 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.39it/s, est. speed input: 8288.77 toks/s, output: 68.50 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 68.45it/s, est. speed input: 8288.77 toks/s, output: 68.50 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1112.97it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.90it/s, est. speed input: 1228.03 toks/s, output: 9.90 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.38it/s, est. speed input: 715.88 toks/s, output: 5.77 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.38it/s, est. speed input: 8568.56 toks/s, output: 69.10 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.06it/s, est. speed input: 8568.56 toks/s, output: 69.10 toks/s]
+[2026-01-25 06:16:46] INFO mcq_emotion_steering_experiment.py:428:   Scenario: image_analysis
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1328.43it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.48it/s, est. speed input: 745.60 toks/s, output: 5.48 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.48it/s, est. speed input: 8923.12 toks/s, output: 65.61 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 65.57it/s, est. speed input: 8923.12 toks/s, output: 65.61 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1015.39it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.35it/s, est. speed input: 1103.96 toks/s, output: 9.35 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.59it/s, est. speed input: 701.61 toks/s, output: 5.95 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.59it/s, est. speed input: 8393.36 toks/s, output: 71.13 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.08it/s, est. speed input: 8393.36 toks/s, output: 71.13 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1183.80it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.02it/s, est. speed input: 740.17 toks/s, output: 6.02 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.02it/s, est. speed input: 8849.81 toks/s, output: 71.95 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.89it/s, est. speed input: 8849.81 toks/s, output: 71.95 toks/s]
+[2026-01-25 06:16:47] INFO mcq_emotion_steering_experiment.py:428:   Scenario: harsh_feedback
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1113.61it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.11it/s, est. speed input: 696.34 toks/s, output: 6.11 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.11it/s, est. speed input: 8326.23 toks/s, output: 73.03 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.98it/s, est. speed input: 8326.23 toks/s, output: 73.03 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1104.05it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.62it/s, est. speed input: 1108.22 toks/s, output: 9.63 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.58it/s, est. speed input: 684.83 toks/s, output: 5.95 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.58it/s, est. speed input: 8187.11 toks/s, output: 71.19 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.13it/s, est. speed input: 8187.11 toks/s, output: 71.19 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1005.72it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.92it/s, est. speed input: 1052.35 toks/s, output: 9.92 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.94it/s, est. speed input: 669.67 toks/s, output: 6.32 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.94it/s, est. speed input: 8004.02 toks/s, output: 75.51 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.44it/s, est. speed input: 8004.02 toks/s, output: 75.51 toks/s]
+[2026-01-25 06:16:48] INFO mcq_emotion_steering_experiment.py:428:   Scenario: recent_events
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1043.99it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.24it/s, est. speed input: 711.63 toks/s, output: 6.24 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.24it/s, est. speed input: 8523.41 toks/s, output: 74.76 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 74.74it/s, est. speed input: 8523.41 toks/s, output: 74.76 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1839.78it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.16it/s, est. speed input: 925.35 toks/s, output: 9.16 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.07it/s, est. speed input: 645.90 toks/s, output: 6.39 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.07it/s, est. speed input: 7735.44 toks/s, output: 76.59 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 76.56it/s, est. speed input: 7735.44 toks/s, output: 76.59 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1542.26it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.96it/s, est. speed input: 1045.67 toks/s, output: 9.96 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.25it/s, est. speed input: 695.28 toks/s, output: 6.62 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.25it/s, est. speed input: 8326.88 toks/s, output: 79.30 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 79.27it/s, est. speed input: 8326.88 toks/s, output: 79.30 toks/s]
+[2026-01-25 06:16:49] INFO mcq_emotion_steering_experiment.py:428:   Scenario: medical_system
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1300.56it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.30it/s, est. speed input: 1106.65 toks/s, output: 9.30 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  8.91it/s, est. speed input: 1064.54 toks/s, output: 8.94 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  8.91it/s, est. speed input: 8487.74 toks/s, output: 71.32 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.27it/s, est. speed input: 8487.74 toks/s, output: 71.32 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1128.83it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.86it/s, est. speed input: 1105.48 toks/s, output: 9.86 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.83it/s, est. speed input: 696.02 toks/s, output: 6.21 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.83it/s, est. speed input: 8319.08 toks/s, output: 74.27 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 74.21it/s, est. speed input: 8319.08 toks/s, output: 74.27 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 990.07it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.21it/s, est. speed input: 677.31 toks/s, output: 6.21 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.21it/s, est. speed input: 8097.35 toks/s, output: 74.28 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 74.23it/s, est. speed input: 8097.35 toks/s, output: 74.28 toks/s]
+[2026-01-25 06:16:50] INFO mcq_emotion_steering_experiment.py:428:   Scenario: excessive_praise
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1086.91it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.99it/s, est. speed input: 1199.60 toks/s, output: 9.99 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.56it/s, est. speed input: 714.70 toks/s, output: 5.96 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.56it/s, est. speed input: 8560.39 toks/s, output: 71.33 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.31it/s, est. speed input: 8560.39 toks/s, output: 71.33 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1778.16it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.33it/s, est. speed input: 1101.79 toks/s, output: 9.33 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.01it/s, est. speed input: 1066.70 toks/s, output: 9.04 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.01it/s, est. speed input: 8504.39 toks/s, output: 72.07 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.01it/s, est. speed input: 8504.39 toks/s, output: 72.07 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1137.28it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.13it/s, est. speed input: 742.03 toks/s, output: 6.13 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.13it/s, est. speed input: 8865.91 toks/s, output: 73.27 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.20it/s, est. speed input: 8865.91 toks/s, output: 73.27 toks/s]
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:592:   Condition neutral summary:
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_1: 0.063
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_2: 0.937
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_1: 0.104
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_2: 0.896
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_per_1: 0.974
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_per_2: 0.026
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_per_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ar_per_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_1: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_2: 0.173
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_3: 0.473
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_4: 0.354
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_1: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_2: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_3: 0.766
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_4: 0.234
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_per_1: 0.471
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_per_2: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_per_3: 0.445
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     cr_per_4: 0.083
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_1: 0.013
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_2: 0.987
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_1: 0.886
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_2: 0.114
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_per_1: 0.965
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_per_2: 0.035
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_per_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ep_per_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_1: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_2: 0.213
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_3: 0.547
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_4: 0.239
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_1: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_2: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_3: 0.638
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_4: 0.362
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_per_1: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_per_2: 0.408
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_per_3: 0.492
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     fu_per_4: 0.100
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_1: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_2: 0.702
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_3: 0.298
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_1: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_2: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_3: 0.912
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_4: 0.088
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_per_1: 0.710
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_per_2: 0.187
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_per_3: 0.087
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     hf_per_4: 0.017
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_1: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_2: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_3: 1.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_1: 0.302
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_2: 0.659
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_3: 0.003
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_4: 0.035
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_per_1: 0.167
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_per_2: 0.208
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_per_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ia_per_4: 0.625
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_1: 0.317
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_2: 0.683
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_1: 0.723
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_2: 0.277
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_per_1: 0.958
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_per_2: 0.042
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_per_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     ms_per_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_1: 0.796
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_2: 0.204
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_1: 1.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_2: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_per_1: 0.500
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_per_2: 0.500
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_per_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pc_per_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_1: 0.026
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_2: 0.280
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_3: 0.317
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_4: 0.376
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_1: 1.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_2: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_per_1: 0.601
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_per_2: 0.399
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_per_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     pr_per_4: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_beh_1: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_beh_2: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_beh_3: 0.999
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_beh_4: 0.001
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_goal_1: 0.329
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_goal_2: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_goal_3: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_goal_4: 0.671
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_per_1: 0.000
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_per_2: 0.923
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_per_3: 0.062
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:595:     re_per_4: 0.015
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:403: 
+============================================================
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:404: Condition: contentment_5pct
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:405: ============================================================
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:417: Combined vector norm: 2605.38 (target: 2605.38)
+[2026-01-25 06:16:52] INFO core.py:552: Raw vector steering applied: ['Steering: scale=1.00, norm=2605.3838, phases=prompt+generation']
+[2026-01-25 06:16:52] INFO mcq_emotion_steering_experiment.py:428:   Scenario: ambiguous_request
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1093.36it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s][0;36m(EngineCore_DP0 pid=675724)[0;0m [2026-01-25 06:16:52] INFO core.py:216: Steering shapes: hidden_states=torch.Size([116, 5376]), vector=torch.Size([5376]), scale=1.0, device=cuda:0
+Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.92it/s, est. speed input: 1035.57 toks/s, output: 8.92 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.51it/s, est. speed input: 678.19 toks/s, output: 5.85 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.51it/s, est. speed input: 8108.18 toks/s, output: 69.89 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.84it/s, est. speed input: 8108.18 toks/s, output: 69.89 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1203.78it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.81it/s, est. speed input: 1070.21 toks/s, output: 9.81 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.82it/s, est. speed input: 676.16 toks/s, output: 6.20 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.82it/s, est. speed input: 8085.40 toks/s, output: 74.17 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 74.12it/s, est. speed input: 8085.40 toks/s, output: 74.17 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1106.99it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.63it/s, est. speed input: 1030.92 toks/s, output: 9.63 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.97it/s, est. speed input: 677.74 toks/s, output: 6.33 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.97it/s, est. speed input: 8101.72 toks/s, output: 75.71 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.65it/s, est. speed input: 8101.72 toks/s, output: 75.71 toks/s]
+[2026-01-25 06:16:53] INFO mcq_emotion_steering_experiment.py:428:   Scenario: frustrated_user
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 964.81it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.69it/s, est. speed input: 734.21 toks/s, output: 5.69 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.69it/s, est. speed input: 8782.35 toks/s, output: 68.08 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 68.01it/s, est. speed input: 8782.35 toks/s, output: 68.08 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1166.46it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.40it/s, est. speed input: 716.90 toks/s, output: 6.40 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.40it/s, est. speed input: 8579.04 toks/s, output: 76.60 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 76.55it/s, est. speed input: 8579.04 toks/s, output: 76.60 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1482.20it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.65it/s, est. speed input: 1047.09 toks/s, output: 8.65 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  8.65it/s, est. speed input: 1047.37 toks/s, output: 8.65 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  8.65it/s, est. speed input: 8354.06 toks/s, output: 69.04 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.00it/s, est. speed input: 8354.06 toks/s, output: 69.04 toks/s]
+[2026-01-25 06:16:54] INFO mcq_emotion_steering_experiment.py:428:   Scenario: production_code
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1230.00it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.10it/s, est. speed input: 720.38 toks/s, output: 6.10 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.10it/s, est. speed input: 8608.52 toks/s, output: 72.95 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.89it/s, est. speed input: 8608.52 toks/s, output: 72.95 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 939.75it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.14it/s, est. speed input: 693.66 toks/s, output: 6.14 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.14it/s, est. speed input: 8291.87 toks/s, output: 73.38 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.32it/s, est. speed input: 8291.87 toks/s, output: 73.38 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1182.47it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.53it/s, est. speed input: 1087.24 toks/s, output: 9.53 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.61it/s, est. speed input: 681.85 toks/s, output: 5.98 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.61it/s, est. speed input: 8152.70 toks/s, output: 71.51 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.46it/s, est. speed input: 8152.70 toks/s, output: 71.51 toks/s]
+[2026-01-25 06:16:55] INFO mcq_emotion_steering_experiment.py:428:   Scenario: persuasion_request
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1112.67it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.72it/s, est. speed input: 1177.03 toks/s, output: 9.72 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.48it/s, est. speed input: 709.35 toks/s, output: 5.86 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.48it/s, est. speed input: 8483.63 toks/s, output: 70.11 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.06it/s, est. speed input: 8483.63 toks/s, output: 70.11 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1160.01it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.74it/s, est. speed input: 1100.67 toks/s, output: 9.74 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.68it/s, est. speed input: 684.37 toks/s, output: 6.06 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.68it/s, est. speed input: 8178.78 toks/s, output: 72.37 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.31it/s, est. speed input: 8178.78 toks/s, output: 72.37 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1090.27it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.66it/s, est. speed input: 1121.26 toks/s, output: 9.66 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.63it/s, est. speed input: 697.22 toks/s, output: 6.01 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.63it/s, est. speed input: 8334.30 toks/s, output: 71.84 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.79it/s, est. speed input: 8334.30 toks/s, output: 71.84 toks/s]
+[2026-01-25 06:16:56] INFO mcq_emotion_steering_experiment.py:428:   Scenario: changed_requirements
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 937.95it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.15it/s, est. speed input: 743.84 toks/s, output: 6.15 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.15it/s, est. speed input: 8896.49 toks/s, output: 73.52 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.47it/s, est. speed input: 8896.49 toks/s, output: 73.52 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1084.42it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.04it/s, est. speed input: 731.01 toks/s, output: 6.04 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.04it/s, est. speed input: 8740.91 toks/s, output: 72.24 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.18it/s, est. speed input: 8740.91 toks/s, output: 72.24 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1149.12it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.35it/s, est. speed input: 1159.98 toks/s, output: 9.35 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.44it/s, est. speed input: 719.50 toks/s, output: 5.80 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.44it/s, est. speed input: 8616.58 toks/s, output: 69.49 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.46it/s, est. speed input: 8616.58 toks/s, output: 69.49 toks/s]
+[2026-01-25 06:16:57] INFO mcq_emotion_steering_experiment.py:428:   Scenario: image_analysis
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1874.93it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.60it/s, est. speed input: 762.15 toks/s, output: 5.60 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.60it/s, est. speed input: 9116.00 toks/s, output: 67.03 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 66.98it/s, est. speed input: 9116.00 toks/s, output: 67.03 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1087.99it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.52it/s, est. speed input: 1123.66 toks/s, output: 9.52 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.52it/s, est. speed input: 8967.84 toks/s, output: 76.00 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.95it/s, est. speed input: 8967.84 toks/s, output: 76.00 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1289.70it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.00it/s, est. speed input: 737.76 toks/s, output: 6.00 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.00it/s, est. speed input: 8835.55 toks/s, output: 71.83 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.81it/s, est. speed input: 8835.55 toks/s, output: 71.83 toks/s]
+[2026-01-25 06:16:58] INFO mcq_emotion_steering_experiment.py:428:   Scenario: harsh_feedback
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1618.02it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.33it/s, est. speed input: 1065.35 toks/s, output: 9.34 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.30it/s, est. speed input: 1060.41 toks/s, output: 9.30 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.30it/s, est. speed input: 8443.62 toks/s, output: 74.06 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.98it/s, est. speed input: 8443.62 toks/s, output: 74.06 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 971.03it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.63it/s, est. speed input: 1108.26 toks/s, output: 9.63 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.64it/s, est. speed input: 691.95 toks/s, output: 6.02 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.64it/s, est. speed input: 8271.04 toks/s, output: 71.92 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.86it/s, est. speed input: 8271.04 toks/s, output: 71.92 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 949.28it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.73it/s, est. speed input: 713.27 toks/s, output: 6.73 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.73it/s, est. speed input: 8525.59 toks/s, output: 80.43 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 80.37it/s, est. speed input: 8525.59 toks/s, output: 80.43 toks/s]
+[2026-01-25 06:16:59] INFO mcq_emotion_steering_experiment.py:428:   Scenario: recent_events
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1186.59it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.58it/s, est. speed input: 1091.95 toks/s, output: 9.58 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.58it/s, est. speed input: 8699.98 toks/s, output: 76.31 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 76.25it/s, est. speed input: 8699.98 toks/s, output: 76.31 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1174.18it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.73it/s, est. speed input: 982.74 toks/s, output: 9.73 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.18it/s, est. speed input: 660.87 toks/s, output: 6.54 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.18it/s, est. speed input: 7900.06 toks/s, output: 78.21 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 78.15it/s, est. speed input: 7900.06 toks/s, output: 78.21 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 957.29it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.59it/s, est. speed input: 692.24 toks/s, output: 6.59 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.59it/s, est. speed input: 8285.19 toks/s, output: 78.90 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 78.86it/s, est. speed input: 8285.19 toks/s, output: 78.90 toks/s]
+[2026-01-25 06:17:00] INFO mcq_emotion_steering_experiment.py:428:   Scenario: medical_system
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1247.76it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.00it/s, est. speed input: 713.97 toks/s, output: 6.00 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.00it/s, est. speed input: 8552.14 toks/s, output: 71.86 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.81it/s, est. speed input: 8552.14 toks/s, output: 71.86 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1612.96it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.75it/s, est. speed input: 1092.35 toks/s, output: 9.75 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.80it/s, est. speed input: 691.84 toks/s, output: 6.18 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.80it/s, est. speed input: 8279.62 toks/s, output: 73.92 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.88it/s, est. speed input: 8279.62 toks/s, output: 73.92 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1373.23it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02, 10.07it/s, est. speed input: 1097.69 toks/s, output: 10.07 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 10.07it/s, est. speed input: 8754.41 toks/s, output: 80.31 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 80.26it/s, est. speed input: 8754.41 toks/s, output: 80.31 toks/s]
+[2026-01-25 06:17:01] INFO mcq_emotion_steering_experiment.py:428:   Scenario: excessive_praise
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1293.36it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.35it/s, est. speed input: 1122.75 toks/s, output: 9.35 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.01it/s, est. speed input: 1085.03 toks/s, output: 9.04 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.01it/s, est. speed input: 8659.13 toks/s, output: 72.16 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.12it/s, est. speed input: 8659.13 toks/s, output: 72.16 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1609.27it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.29it/s, est. speed input: 742.83 toks/s, output: 6.29 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.29it/s, est. speed input: 8882.91 toks/s, output: 75.28 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.23it/s, est. speed input: 8882.91 toks/s, output: 75.28 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1089.06it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.93it/s, est. speed input: 718.14 toks/s, output: 5.93 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.93it/s, est. speed input: 8590.51 toks/s, output: 70.99 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.95it/s, est. speed input: 8590.51 toks/s, output: 70.99 toks/s]
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:592:   Condition contentment_5pct summary:
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_1: 0.329
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_2: 0.671
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_1: 0.043
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_2: 0.876
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_4: 0.081
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_per_1: 0.978
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_per_2: 0.022
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_per_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ar_per_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_3: 0.665
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_4: 0.335
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_3: 0.878
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_4: 0.122
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_per_1: 0.034
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_per_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_per_3: 0.651
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     cr_per_4: 0.315
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_1: 0.257
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_2: 0.598
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_3: 0.145
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_1: 0.939
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_2: 0.061
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_per_1: 0.896
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_per_2: 0.104
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_per_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ep_per_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_3: 0.698
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_4: 0.302
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_3: 0.795
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_4: 0.205
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_per_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_per_2: 0.042
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_per_3: 0.500
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     fu_per_4: 0.458
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_2: 0.171
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_3: 0.646
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_4: 0.183
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_3: 0.999
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_4: 0.001
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_per_1: 0.268
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_per_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_per_3: 0.072
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     hf_per_4: 0.660
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_3: 1.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_1: 0.324
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_2: 0.540
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_3: 0.102
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_4: 0.034
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_per_1: 0.146
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_per_2: 0.062
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_per_3: 0.083
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ia_per_4: 0.708
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_1: 0.053
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_4: 0.947
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_1: 0.629
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_2: 0.355
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_3: 0.016
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_per_1: 0.872
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_per_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_per_3: 0.004
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     ms_per_4: 0.124
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_1: 0.879
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_2: 0.121
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_1: 1.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_per_1: 0.549
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_per_2: 0.451
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_per_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pc_per_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_3: 0.513
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_4: 0.487
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_1: 1.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_4: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_per_1: 0.200
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_per_2: 0.217
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_per_3: 0.487
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     pr_per_4: 0.096
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_beh_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_beh_2: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_beh_3: 0.987
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_beh_4: 0.013
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_goal_1: 0.137
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_goal_2: 0.005
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_goal_3: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_goal_4: 0.858
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_per_1: 0.000
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_per_2: 0.375
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_per_3: 0.587
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:595:     re_per_4: 0.039
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:403: 
+============================================================
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:404: Condition: anxiety_5pct
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:405: ============================================================
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:417: Combined vector norm: 2605.38 (target: 2605.38)
+[2026-01-25 06:17:02] INFO core.py:552: Raw vector steering applied: ['Steering: scale=1.00, norm=2605.3838, phases=prompt+generation']
+[2026-01-25 06:17:02] INFO mcq_emotion_steering_experiment.py:428:   Scenario: ambiguous_request
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1201.76it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.90it/s, est. speed input: 1033.19 toks/s, output: 8.90 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.56it/s, est. speed input: 683.43 toks/s, output: 5.89 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.56it/s, est. speed input: 8170.36 toks/s, output: 70.43 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.38it/s, est. speed input: 8170.36 toks/s, output: 70.43 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1165.21it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02, 10.08it/s, est. speed input: 1099.30 toks/s, output: 10.08 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 10.08it/s, est. speed input: 8758.26 toks/s, output: 80.35 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 80.27it/s, est. speed input: 8758.26 toks/s, output: 80.35 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1217.55it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.47it/s, est. speed input: 692.58 toks/s, output: 6.47 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.47it/s, est. speed input: 8264.47 toks/s, output: 77.23 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 77.15it/s, est. speed input: 8264.47 toks/s, output: 77.23 toks/s]
+[2026-01-25 06:17:03] INFO mcq_emotion_steering_experiment.py:428:   Scenario: frustrated_user
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1240.52it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.53it/s, est. speed input: 1230.29 toks/s, output: 9.53 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  8.57it/s, est. speed input: 1117.30 toks/s, output: 8.66 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  8.57it/s, est. speed input: 8918.11 toks/s, output: 69.13 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.10it/s, est. speed input: 8918.11 toks/s, output: 69.13 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1595.10it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.63it/s, est. speed input: 966.88 toks/s, output: 8.63 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.53it/s, est. speed input: 654.70 toks/s, output: 5.84 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.53it/s, est. speed input: 7829.69 toks/s, output: 69.90 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.85it/s, est. speed input: 7829.69 toks/s, output: 69.90 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1156.93it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:03,  5.96it/s, est. speed input: 721.72 toks/s, output: 5.96 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  7.72it/s, est. speed input: 907.11 toks/s, output: 7.50 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  7.72it/s, est. speed input: 7236.47 toks/s, output: 59.80 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 59.77it/s, est. speed input: 7236.47 toks/s, output: 59.80 toks/s]
+[2026-01-25 06:17:05] INFO mcq_emotion_steering_experiment.py:428:   Scenario: production_code
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1135.62it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:03,  7.18it/s, est. speed input: 847.55 toks/s, output: 7.18 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  8.32it/s, est. speed input: 966.57 toks/s, output: 8.19 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  8.32it/s, est. speed input: 7708.46 toks/s, output: 65.32 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 65.28it/s, est. speed input: 7708.46 toks/s, output: 65.32 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1175.36it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.02it/s, est. speed input: 1019.99 toks/s, output: 9.02 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.53it/s, est. speed input: 663.32 toks/s, output: 5.87 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.53it/s, est. speed input: 7931.03 toks/s, output: 70.18 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.13it/s, est. speed input: 7931.03 toks/s, output: 70.18 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1252.75it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.32it/s, est. speed input: 720.24 toks/s, output: 6.32 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.32it/s, est. speed input: 8607.55 toks/s, output: 75.50 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.44it/s, est. speed input: 8607.55 toks/s, output: 75.50 toks/s]
+[2026-01-25 06:17:06] INFO mcq_emotion_steering_experiment.py:428:   Scenario: persuasion_request
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1040.76it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.11it/s, est. speed input: 1103.36 toks/s, output: 9.12 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.40it/s, est. speed input: 696.01 toks/s, output: 5.75 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.40it/s, est. speed input: 8324.18 toks/s, output: 68.79 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 68.74it/s, est. speed input: 8324.18 toks/s, output: 68.79 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1019.89it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.32it/s, est. speed input: 713.99 toks/s, output: 6.32 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.32it/s, est. speed input: 8533.41 toks/s, output: 75.51 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.45it/s, est. speed input: 8533.41 toks/s, output: 75.51 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1074.34it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.10it/s, est. speed input: 708.15 toks/s, output: 6.10 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.10it/s, est. speed input: 8462.03 toks/s, output: 72.94 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.88it/s, est. speed input: 8462.03 toks/s, output: 72.94 toks/s]
+[2026-01-25 06:17:07] INFO mcq_emotion_steering_experiment.py:428:   Scenario: changed_requirements
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1073.08it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.99it/s, est. speed input: 1087.81 toks/s, output: 8.99 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.38it/s, est. speed input: 693.38 toks/s, output: 5.73 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.38it/s, est. speed input: 8292.92 toks/s, output: 68.53 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 68.49it/s, est. speed input: 8292.92 toks/s, output: 68.53 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1184.62it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.92it/s, est. speed input: 715.90 toks/s, output: 5.92 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.92it/s, est. speed input: 8545.92 toks/s, output: 70.62 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.55it/s, est. speed input: 8545.92 toks/s, output: 70.62 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 934.36it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.82it/s, est. speed input: 1093.80 toks/s, output: 8.82 toks/s]Processed prompts:  17%|█▋        | 4/24 [00:00<00:01, 12.15it/s, est. speed input: 1465.23 toks/s, output: 11.82 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 12.15it/s, est. speed input: 8771.47 toks/s, output: 70.74 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.69it/s, est. speed input: 8771.47 toks/s, output: 70.74 toks/s]
+[2026-01-25 06:17:08] INFO mcq_emotion_steering_experiment.py:428:   Scenario: image_analysis
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1217.71it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.57it/s, est. speed input: 758.05 toks/s, output: 5.57 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.57it/s, est. speed input: 9081.67 toks/s, output: 66.78 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 66.75it/s, est. speed input: 9081.67 toks/s, output: 66.78 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 2123.21it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.61it/s, est. speed input: 1134.30 toks/s, output: 9.61 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.01it/s, est. speed input: 1070.25 toks/s, output: 9.07 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.01it/s, est. speed input: 8532.58 toks/s, output: 72.31 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.25it/s, est. speed input: 8532.58 toks/s, output: 72.31 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1127.31it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.73it/s, est. speed input: 1197.98 toks/s, output: 9.74 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  8.89it/s, est. speed input: 1103.31 toks/s, output: 8.97 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  8.89it/s, est. speed input: 8796.38 toks/s, output: 71.51 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.46it/s, est. speed input: 8796.38 toks/s, output: 71.51 toks/s]
+[2026-01-25 06:17:09] INFO mcq_emotion_steering_experiment.py:428:   Scenario: harsh_feedback
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1168.85it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.28it/s, est. speed input: 715.71 toks/s, output: 6.28 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.28it/s, est. speed input: 8557.70 toks/s, output: 75.06 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.01it/s, est. speed input: 8557.70 toks/s, output: 75.06 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 928.47it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.30it/s, est. speed input: 1070.48 toks/s, output: 9.31 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.19it/s, est. speed input: 1057.84 toks/s, output: 9.20 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.19it/s, est. speed input: 8447.43 toks/s, output: 73.45 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.43it/s, est. speed input: 8447.43 toks/s, output: 73.45 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 2258.19it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.18it/s, est. speed input: 867.20 toks/s, output: 8.18 toks/s]Processed prompts:  21%|██        | 5/24 [00:00<00:01, 16.90it/s, est. speed input: 1683.89 toks/s, output: 15.88 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 16.90it/s, est. speed input: 8055.37 toks/s, output: 75.99 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.93it/s, est. speed input: 8055.37 toks/s, output: 75.99 toks/s]
+[2026-01-25 06:17:10] INFO mcq_emotion_steering_experiment.py:428:   Scenario: recent_events
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1176.00it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.11it/s, est. speed input: 696.12 toks/s, output: 6.11 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.11it/s, est. speed input: 8322.62 toks/s, output: 73.00 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.94it/s, est. speed input: 8322.62 toks/s, output: 73.00 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1192.45it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.97it/s, est. speed input: 1007.09 toks/s, output: 9.97 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.08it/s, est. speed input: 652.30 toks/s, output: 6.46 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.08it/s, est. speed input: 7774.81 toks/s, output: 76.97 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 76.87it/s, est. speed input: 7774.81 toks/s, output: 76.97 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1192.99it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.74it/s, est. speed input: 707.91 toks/s, output: 6.74 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.74it/s, est. speed input: 8460.99 toks/s, output: 80.58 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 80.51it/s, est. speed input: 8460.99 toks/s, output: 80.58 toks/s]
+[2026-01-25 06:17:11] INFO mcq_emotion_steering_experiment.py:428:   Scenario: medical_system
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1183.55it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.50it/s, est. speed input: 1130.95 toks/s, output: 9.50 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.44it/s, est. speed input: 691.50 toks/s, output: 5.81 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.44it/s, est. speed input: 8265.51 toks/s, output: 69.45 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.40it/s, est. speed input: 8265.51 toks/s, output: 69.45 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1091.50it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.31it/s, est. speed input: 707.14 toks/s, output: 6.31 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.31it/s, est. speed input: 8454.01 toks/s, output: 75.48 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.42it/s, est. speed input: 8454.01 toks/s, output: 75.48 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1255.15it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.30it/s, est. speed input: 687.19 toks/s, output: 6.30 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.30it/s, est. speed input: 8212.84 toks/s, output: 75.34 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.28it/s, est. speed input: 8212.84 toks/s, output: 75.34 toks/s]
+[2026-01-25 06:17:12] INFO mcq_emotion_steering_experiment.py:428:   Scenario: excessive_praise
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 983.28it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.07it/s, est. speed input: 728.01 toks/s, output: 6.07 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.07it/s, est. speed input: 8702.73 toks/s, output: 72.52 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.46it/s, est. speed input: 8702.73 toks/s, output: 72.52 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1159.49it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.78it/s, est. speed input: 1037.33 toks/s, output: 8.79 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.45it/s, est. speed input: 681.74 toks/s, output: 5.78 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.45it/s, est. speed input: 8152.92 toks/s, output: 69.09 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.04it/s, est. speed input: 8152.92 toks/s, output: 69.09 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1186.80it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.66it/s, est. speed input: 1169.62 toks/s, output: 9.66 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.53it/s, est. speed input: 715.08 toks/s, output: 5.91 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.53it/s, est. speed input: 8550.85 toks/s, output: 70.66 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.61it/s, est. speed input: 8550.85 toks/s, output: 70.66 toks/s]
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:592:   Condition anxiety_5pct summary:
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_1: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_2: 1.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_1: 0.083
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_2: 0.917
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_per_1: 0.984
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_per_2: 0.016
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_per_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ar_per_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_1: 0.003
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_2: 0.492
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_3: 0.240
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_4: 0.265
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_1: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_2: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_3: 0.705
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_4: 0.295
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_per_1: 0.311
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_per_2: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_per_3: 0.606
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     cr_per_4: 0.083
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_1: 0.032
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_2: 0.967
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_3: 0.001
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_1: 0.953
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_2: 0.047
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_per_1: 1.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_per_2: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_per_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ep_per_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_1: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_2: 0.471
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_3: 0.242
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_4: 0.287
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_1: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_2: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_3: 0.378
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_4: 0.622
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_per_1: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_per_2: 0.384
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_per_3: 0.534
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     fu_per_4: 0.082
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_1: 0.037
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_2: 0.532
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_3: 0.431
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_1: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_2: 0.415
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_3: 0.475
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_4: 0.110
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_per_1: 0.717
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_per_2: 0.225
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_per_3: 0.040
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     hf_per_4: 0.019
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_1: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_2: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_3: 1.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_1: 0.238
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_2: 0.571
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_3: 0.104
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_4: 0.087
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_per_1: 0.173
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_per_2: 0.205
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_per_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ia_per_4: 0.622
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_1: 0.284
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_2: 0.716
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_1: 0.874
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_2: 0.126
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_per_1: 0.958
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_per_2: 0.042
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_per_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     ms_per_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_1: 0.829
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_2: 0.171
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_1: 1.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_2: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_per_1: 0.509
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_per_2: 0.491
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_per_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pc_per_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_1: 0.146
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_2: 0.255
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_3: 0.265
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_4: 0.334
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_1: 1.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_2: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_per_1: 0.500
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_per_2: 0.500
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_per_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     pr_per_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_beh_1: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_beh_2: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_beh_3: 1.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_beh_4: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_goal_1: 0.458
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_goal_2: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_goal_3: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_goal_4: 0.542
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_per_1: 0.000
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_per_2: 0.728
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_per_3: 0.105
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:595:     re_per_4: 0.166
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:403: 
+============================================================
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:404: Condition: contentment_7pct
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:405: ============================================================
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:417: Combined vector norm: 3647.54 (target: 3647.54)
+[2026-01-25 06:17:13] INFO core.py:552: Raw vector steering applied: ['Steering: scale=1.00, norm=3647.5374, phases=prompt+generation']
+[2026-01-25 06:17:13] INFO mcq_emotion_steering_experiment.py:428:   Scenario: ambiguous_request
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1153.36it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.98it/s, est. speed input: 1041.72 toks/s, output: 8.98 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.55it/s, est. speed input: 683.50 toks/s, output: 5.89 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.55it/s, est. speed input: 8173.71 toks/s, output: 70.46 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.41it/s, est. speed input: 8173.71 toks/s, output: 70.46 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1114.58it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.90it/s, est. speed input: 1080.03 toks/s, output: 9.90 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.84it/s, est. speed input: 678.13 toks/s, output: 6.22 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.84it/s, est. speed input: 8101.50 toks/s, output: 74.32 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 74.25it/s, est. speed input: 8101.50 toks/s, output: 74.32 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 858.73it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.66it/s, est. speed input: 713.25 toks/s, output: 6.67 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.66it/s, est. speed input: 8525.89 toks/s, output: 79.68 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 79.61it/s, est. speed input: 8525.89 toks/s, output: 79.68 toks/s]
+[2026-01-25 06:17:14] INFO mcq_emotion_steering_experiment.py:428:   Scenario: frustrated_user
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1165.87it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.98it/s, est. speed input: 1288.12 toks/s, output: 9.98 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.38it/s, est. speed input: 745.05 toks/s, output: 5.78 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.38it/s, est. speed input: 8924.22 toks/s, output: 69.18 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.15it/s, est. speed input: 8924.22 toks/s, output: 69.18 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 2126.57it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.18it/s, est. speed input: 1028.13 toks/s, output: 9.18 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.20it/s, est. speed input: 1030.09 toks/s, output: 9.20 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.20it/s, est. speed input: 8198.41 toks/s, output: 73.19 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.10it/s, est. speed input: 8198.41 toks/s, output: 73.19 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1187.17it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.94it/s, est. speed input: 719.15 toks/s, output: 5.94 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.94it/s, est. speed input: 8597.83 toks/s, output: 71.05 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.00it/s, est. speed input: 8597.83 toks/s, output: 71.05 toks/s]
+[2026-01-25 06:17:15] INFO mcq_emotion_steering_experiment.py:428:   Scenario: production_code
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1167.12it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.28it/s, est. speed input: 1095.80 toks/s, output: 9.28 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.50it/s, est. speed input: 690.86 toks/s, output: 5.85 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.50it/s, est. speed input: 8271.96 toks/s, output: 70.10 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.07it/s, est. speed input: 8271.96 toks/s, output: 70.10 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 970.69it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.20it/s, est. speed input: 700.67 toks/s, output: 6.20 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.20it/s, est. speed input: 8382.36 toks/s, output: 74.18 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 74.13it/s, est. speed input: 8382.36 toks/s, output: 74.18 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1350.42it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.24it/s, est. speed input: 711.45 toks/s, output: 6.24 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.24it/s, est. speed input: 8503.23 toks/s, output: 74.59 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 74.52it/s, est. speed input: 8503.23 toks/s, output: 74.59 toks/s]
+[2026-01-25 06:17:17] INFO mcq_emotion_steering_experiment.py:428:   Scenario: persuasion_request
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1079.00it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02, 10.00it/s, est. speed input: 1210.30 toks/s, output: 10.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.49it/s, est. speed input: 712.66 toks/s, output: 5.89 toks/s]  Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.49it/s, est. speed input: 8516.21 toks/s, output: 70.38 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.32it/s, est. speed input: 8516.21 toks/s, output: 70.38 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1030.34it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.98it/s, est. speed input: 1128.37 toks/s, output: 9.98 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.72it/s, est. speed input: 690.40 toks/s, output: 6.11 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.72it/s, est. speed input: 8254.88 toks/s, output: 73.05 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.99it/s, est. speed input: 8254.88 toks/s, output: 73.05 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1174.83it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.65it/s, est. speed input: 1120.12 toks/s, output: 9.65 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.62it/s, est. speed input: 695.60 toks/s, output: 6.00 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.62it/s, est. speed input: 8315.15 toks/s, output: 71.68 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.62it/s, est. speed input: 8315.15 toks/s, output: 71.68 toks/s]
+[2026-01-25 06:17:18] INFO mcq_emotion_steering_experiment.py:428:   Scenario: changed_requirements
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1021.22it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.17it/s, est. speed input: 746.80 toks/s, output: 6.17 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.17it/s, est. speed input: 8929.59 toks/s, output: 73.79 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.74it/s, est. speed input: 8929.59 toks/s, output: 73.79 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1141.38it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.93it/s, est. speed input: 717.48 toks/s, output: 5.93 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.93it/s, est. speed input: 8579.79 toks/s, output: 70.90 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.85it/s, est. speed input: 8579.79 toks/s, output: 70.90 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1141.59it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.56it/s, est. speed input: 1186.07 toks/s, output: 9.56 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.40it/s, est. speed input: 716.62 toks/s, output: 5.78 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.40it/s, est. speed input: 8570.33 toks/s, output: 69.11 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.06it/s, est. speed input: 8570.33 toks/s, output: 69.11 toks/s]
+[2026-01-25 06:17:19] INFO mcq_emotion_steering_experiment.py:428:   Scenario: image_analysis
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1161.62it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.08it/s, est. speed input: 1235.40 toks/s, output: 9.08 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  4.94it/s, est. speed input: 721.24 toks/s, output: 5.30 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  4.94it/s, est. speed input: 8626.35 toks/s, output: 63.43 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 63.38it/s, est. speed input: 8626.35 toks/s, output: 63.43 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1172.23it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.51it/s, est. speed input: 1122.48 toks/s, output: 9.51 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.56it/s, est. speed input: 700.36 toks/s, output: 5.93 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.56it/s, est. speed input: 8375.48 toks/s, output: 70.98 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.93it/s, est. speed input: 8375.48 toks/s, output: 70.98 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1176.58it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.81it/s, est. speed input: 1206.61 toks/s, output: 9.81 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.44it/s, est. speed input: 717.52 toks/s, output: 5.83 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.44it/s, est. speed input: 8581.10 toks/s, output: 69.76 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.71it/s, est. speed input: 8581.10 toks/s, output: 69.76 toks/s]
+[2026-01-25 06:17:20] INFO mcq_emotion_steering_experiment.py:428:   Scenario: harsh_feedback
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1177.94it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  7.98it/s, est. speed input: 910.29 toks/s, output: 7.98 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  8.78it/s, est. speed input: 991.23 toks/s, output: 8.69 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  8.78it/s, est. speed input: 7901.62 toks/s, output: 69.31 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.25it/s, est. speed input: 7901.62 toks/s, output: 69.31 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1177.78it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.11it/s, est. speed input: 1048.63 toks/s, output: 9.11 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.08it/s, est. speed input: 1044.94 toks/s, output: 9.09 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.08it/s, est. speed input: 8334.42 toks/s, output: 72.47 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.42it/s, est. speed input: 8334.42 toks/s, output: 72.47 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1476.52it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.63it/s, est. speed input: 1021.72 toks/s, output: 9.64 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.04it/s, est. speed input: 678.01 toks/s, output: 6.40 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.04it/s, est. speed input: 8102.22 toks/s, output: 76.43 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 76.36it/s, est. speed input: 8102.22 toks/s, output: 76.43 toks/s]
+[2026-01-25 06:17:21] INFO mcq_emotion_steering_experiment.py:428:   Scenario: recent_events
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1011.26it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.88it/s, est. speed input: 1127.17 toks/s, output: 9.88 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.61it/s, est. speed input: 684.46 toks/s, output: 6.00 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.61it/s, est. speed input: 8182.36 toks/s, output: 71.77 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.71it/s, est. speed input: 8182.36 toks/s, output: 71.77 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1162.38it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.46it/s, est. speed input: 955.55 toks/s, output: 9.46 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.14it/s, est. speed input: 654.83 toks/s, output: 6.48 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.14it/s, est. speed input: 7833.91 toks/s, output: 77.56 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 77.51it/s, est. speed input: 7833.91 toks/s, output: 77.56 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1238.14it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.60it/s, est. speed input: 692.86 toks/s, output: 6.60 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.60it/s, est. speed input: 8280.46 toks/s, output: 78.86 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 78.79it/s, est. speed input: 8280.46 toks/s, output: 78.86 toks/s]
+[2026-01-25 06:17:22] INFO mcq_emotion_steering_experiment.py:428:   Scenario: medical_system
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1075.89it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.44it/s, est. speed input: 1123.87 toks/s, output: 9.44 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.42it/s, est. speed input: 689.29 toks/s, output: 5.79 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.42it/s, est. speed input: 8243.79 toks/s, output: 69.27 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.22it/s, est. speed input: 8243.79 toks/s, output: 69.27 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1155.71it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  8.87it/s, est. speed input: 994.15 toks/s, output: 8.87 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.66it/s, est. speed input: 670.18 toks/s, output: 5.98 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.66it/s, est. speed input: 8014.17 toks/s, output: 71.55 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.50it/s, est. speed input: 8014.17 toks/s, output: 71.55 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1256.09it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.15it/s, est. speed input: 997.52 toks/s, output: 9.15 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.70it/s, est. speed input: 658.47 toks/s, output: 6.04 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.70it/s, est. speed input: 7864.00 toks/s, output: 72.14 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.07it/s, est. speed input: 7864.00 toks/s, output: 72.14 toks/s]
+[2026-01-25 06:17:23] INFO mcq_emotion_steering_experiment.py:428:   Scenario: excessive_praise
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1076.34it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.97it/s, est. speed input: 716.81 toks/s, output: 5.97 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.97it/s, est. speed input: 8571.92 toks/s, output: 71.43 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.38it/s, est. speed input: 8571.92 toks/s, output: 71.43 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1212.97it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.18it/s, est. speed input: 729.67 toks/s, output: 6.18 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.18it/s, est. speed input: 8721.45 toks/s, output: 73.91 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.84it/s, est. speed input: 8721.45 toks/s, output: 73.91 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1160.10it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:01, 20.00it/s, est. speed input: 2420.39 toks/s, output: 20.00 toks/s]Processed prompts:  17%|█▋        | 4/24 [00:00<00:01, 11.31it/s, est. speed input: 1463.66 toks/s, output: 12.10 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 11.31it/s, est. speed input: 8750.07 toks/s, output: 72.31 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.25it/s, est. speed input: 8750.07 toks/s, output: 72.31 toks/s]
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:592:   Condition contentment_7pct summary:
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_1: 0.199
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_2: 0.801
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_3: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_1: 0.001
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_2: 0.914
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_3: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_4: 0.085
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_per_1: 0.917
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_per_2: 0.083
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_per_3: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ar_per_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_3: 0.761
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_4: 0.239
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_3: 0.888
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_4: 0.112
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_per_1: 0.021
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_per_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_per_3: 0.582
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     cr_per_4: 0.398
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_1: 0.219
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_2: 0.531
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_3: 0.250
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_1: 0.910
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_2: 0.090
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_3: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_per_1: 0.932
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_per_2: 0.068
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_per_3: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ep_per_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_3: 0.646
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_4: 0.354
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_3: 0.794
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_4: 0.206
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_per_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_per_2: 0.034
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_per_3: 0.507
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     fu_per_4: 0.458
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_2: 0.073
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_3: 0.526
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_4: 0.401
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_3: 0.998
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_4: 0.002
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_per_1: 0.189
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_per_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_per_3: 0.062
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     hf_per_4: 0.749
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_3: 1.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_1: 0.227
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_2: 0.567
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_3: 0.200
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_4: 0.006
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_per_1: 0.181
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_per_2: 0.026
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_per_3: 0.085
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ia_per_4: 0.708
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_1: 0.004
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_3: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_4: 0.996
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_1: 0.643
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_2: 0.327
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_3: 0.030
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_per_1: 0.826
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_per_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_per_3: 0.001
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     ms_per_4: 0.173
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_1: 0.913
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_2: 0.087
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_3: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_1: 1.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_3: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_per_1: 0.584
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_per_2: 0.416
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_per_3: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pc_per_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_3: 0.532
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_4: 0.467
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_1: 0.986
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_3: 0.014
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_4: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_per_1: 0.132
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_per_2: 0.055
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_per_3: 0.613
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     pr_per_4: 0.200
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_beh_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_beh_2: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_beh_3: 0.923
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_beh_4: 0.077
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_goal_1: 0.127
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_goal_2: 0.001
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_goal_3: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_goal_4: 0.871
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_per_1: 0.000
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_per_2: 0.321
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_per_3: 0.675
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:595:     re_per_4: 0.003
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:403: 
+============================================================
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:404: Condition: anxiety_7pct
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:405: ============================================================
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:417: Combined vector norm: 3647.54 (target: 3647.54)
+[2026-01-25 06:17:24] INFO core.py:552: Raw vector steering applied: ['Steering: scale=1.00, norm=3647.5374, phases=prompt+generation']
+[2026-01-25 06:17:24] INFO mcq_emotion_steering_experiment.py:428:   Scenario: ambiguous_request
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1075.84it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.45it/s, est. speed input: 1096.71 toks/s, output: 9.45 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.58it/s, est. speed input: 689.32 toks/s, output: 5.94 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.58it/s, est. speed input: 8236.23 toks/s, output: 71.00 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.94it/s, est. speed input: 8236.23 toks/s, output: 71.00 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1029.68it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.63it/s, est. speed input: 1050.84 toks/s, output: 9.63 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.81it/s, est. speed input: 673.72 toks/s, output: 6.18 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.81it/s, est. speed input: 8052.06 toks/s, output: 73.87 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.81it/s, est. speed input: 8052.06 toks/s, output: 73.87 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1222.32it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.58it/s, est. speed input: 704.42 toks/s, output: 6.58 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.58it/s, est. speed input: 8417.76 toks/s, output: 78.67 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 78.59it/s, est. speed input: 8417.76 toks/s, output: 78.67 toks/s]
+[2026-01-25 06:17:25] INFO mcq_emotion_steering_experiment.py:428:   Scenario: frustrated_user
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1038.89it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.35it/s, est. speed input: 1207.07 toks/s, output: 9.35 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.18it/s, est. speed input: 715.76 toks/s, output: 5.55 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.18it/s, est. speed input: 8561.01 toks/s, output: 66.36 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 66.32it/s, est. speed input: 8561.01 toks/s, output: 66.36 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1122.38it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.29it/s, est. speed input: 704.95 toks/s, output: 6.29 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.29it/s, est. speed input: 8428.66 toks/s, output: 75.25 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.19it/s, est. speed input: 8428.66 toks/s, output: 75.25 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1159.11it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.56it/s, est. speed input: 1158.01 toks/s, output: 9.57 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.39it/s, est. speed input: 698.59 toks/s, output: 5.77 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.39it/s, est. speed input: 8354.65 toks/s, output: 69.04 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.00it/s, est. speed input: 8354.65 toks/s, output: 69.04 toks/s]
+[2026-01-25 06:17:26] INFO mcq_emotion_steering_experiment.py:428:   Scenario: production_code
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1112.41it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.12it/s, est. speed input: 722.00 toks/s, output: 6.12 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.12it/s, est. speed input: 8647.81 toks/s, output: 73.28 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 73.26it/s, est. speed input: 8647.81 toks/s, output: 73.28 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1205.29it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.63it/s, est. speed input: 1088.16 toks/s, output: 9.63 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.63it/s, est. speed input: 8673.93 toks/s, output: 76.76 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 76.70it/s, est. speed input: 8673.93 toks/s, output: 76.76 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1203.56it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.65it/s, est. speed input: 1100.79 toks/s, output: 9.65 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.68it/s, est. speed input: 690.56 toks/s, output: 6.06 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.68it/s, est. speed input: 8257.04 toks/s, output: 72.43 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.37it/s, est. speed input: 8257.04 toks/s, output: 72.43 toks/s]
+[2026-01-25 06:17:28] INFO mcq_emotion_steering_experiment.py:428:   Scenario: persuasion_request
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1127.31it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.03it/s, est. speed input: 730.11 toks/s, output: 6.03 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.03it/s, est. speed input: 8730.41 toks/s, output: 72.15 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.10it/s, est. speed input: 8730.41 toks/s, output: 72.15 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1400.84it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.11it/s, est. speed input: 690.53 toks/s, output: 6.11 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.11it/s, est. speed input: 8254.13 toks/s, output: 73.04 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.98it/s, est. speed input: 8254.13 toks/s, output: 73.04 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1073.89it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:03,  5.93it/s, est. speed input: 688.58 toks/s, output: 5.94 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  4.89it/s, est. speed input: 582.34 toks/s, output: 5.02 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  4.89it/s, est. speed input: 6967.57 toks/s, output: 60.06 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 60.03it/s, est. speed input: 6967.57 toks/s, output: 60.06 toks/s]
+[2026-01-25 06:17:29] INFO mcq_emotion_steering_experiment.py:428:   Scenario: changed_requirements
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1186.06it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.28it/s, est. speed input: 1124.22 toks/s, output: 9.29 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.40it/s, est. speed input: 697.71 toks/s, output: 5.77 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.40it/s, est. speed input: 8350.16 toks/s, output: 69.01 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 68.96it/s, est. speed input: 8350.16 toks/s, output: 69.01 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1265.19it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.97it/s, est. speed input: 722.96 toks/s, output: 5.97 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.97it/s, est. speed input: 8654.58 toks/s, output: 71.52 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.49it/s, est. speed input: 8654.58 toks/s, output: 71.52 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1595.07it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.71it/s, est. speed input: 1204.46 toks/s, output: 9.71 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  8.71it/s, est. speed input: 1092.07 toks/s, output: 8.81 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  8.71it/s, est. speed input: 8705.03 toks/s, output: 70.20 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.14it/s, est. speed input: 8705.03 toks/s, output: 70.20 toks/s]
+[2026-01-25 06:17:30] INFO mcq_emotion_steering_experiment.py:428:   Scenario: image_analysis
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 970.64it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.92it/s, est. speed input: 1349.75 toks/s, output: 9.92 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.02it/s, est. speed input: 737.93 toks/s, output: 5.43 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.02it/s, est. speed input: 8826.79 toks/s, output: 64.90 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 64.86it/s, est. speed input: 8826.79 toks/s, output: 64.90 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1075.96it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.36it/s, est. speed input: 750.70 toks/s, output: 6.36 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.36it/s, est. speed input: 8990.36 toks/s, output: 76.19 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 76.16it/s, est. speed input: 8990.36 toks/s, output: 76.19 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 2096.93it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  9.13it/s, est. speed input: 1123.72 toks/s, output: 9.13 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  9.13it/s, est. speed input: 8957.85 toks/s, output: 72.82 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.77it/s, est. speed input: 8957.85 toks/s, output: 72.82 toks/s]
+[2026-01-25 06:17:31] INFO mcq_emotion_steering_experiment.py:428:   Scenario: harsh_feedback
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1314.18it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.62it/s, est. speed input: 1096.91 toks/s, output: 9.62 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.67it/s, est. speed input: 688.43 toks/s, output: 6.04 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.67it/s, est. speed input: 8229.14 toks/s, output: 72.18 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.12it/s, est. speed input: 8229.14 toks/s, output: 72.18 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1175.33it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.65it/s, est. speed input: 1110.38 toks/s, output: 9.65 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.71it/s, est. speed input: 699.99 toks/s, output: 6.09 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.71it/s, est. speed input: 8352.17 toks/s, output: 72.62 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 72.53it/s, est. speed input: 8352.17 toks/s, output: 72.62 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1265.27it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.72it/s, est. speed input: 712.92 toks/s, output: 6.72 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.72it/s, est. speed input: 8521.01 toks/s, output: 80.38 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 80.32it/s, est. speed input: 8521.01 toks/s, output: 80.38 toks/s]
+[2026-01-25 06:17:32] INFO mcq_emotion_steering_experiment.py:428:   Scenario: recent_events
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1256.64it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.35it/s, est. speed input: 724.49 toks/s, output: 6.35 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.35it/s, est. speed input: 8658.16 toks/s, output: 75.94 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.88it/s, est. speed input: 8658.16 toks/s, output: 75.94 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1246.87it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.71it/s, est. speed input: 677.46 toks/s, output: 6.71 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.71it/s, est. speed input: 8093.35 toks/s, output: 80.13 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 80.05it/s, est. speed input: 8093.35 toks/s, output: 80.13 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 968.21it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.75it/s, est. speed input: 708.93 toks/s, output: 6.75 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.75it/s, est. speed input: 8466.70 toks/s, output: 80.63 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 80.55it/s, est. speed input: 8466.70 toks/s, output: 80.63 toks/s]
+[2026-01-25 06:17:33] INFO mcq_emotion_steering_experiment.py:428:   Scenario: medical_system
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1102.74it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.60it/s, est. speed input: 1143.74 toks/s, output: 9.61 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:04,  5.41it/s, est. speed input: 688.81 toks/s, output: 5.79 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.41it/s, est. speed input: 8224.84 toks/s, output: 69.11 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.05it/s, est. speed input: 8224.84 toks/s, output: 69.11 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1157.95it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.96it/s, est. speed input: 1115.80 toks/s, output: 9.96 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.91it/s, est. speed input: 704.55 toks/s, output: 6.29 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.91it/s, est. speed input: 8420.78 toks/s, output: 75.18 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 75.12it/s, est. speed input: 8420.78 toks/s, output: 75.18 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1179.00it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  6.53it/s, est. speed input: 712.40 toks/s, output: 6.53 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  6.53it/s, est. speed input: 8516.42 toks/s, output: 78.13 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 78.07it/s, est. speed input: 8516.42 toks/s, output: 78.13 toks/s]
+[2026-01-25 06:17:34] INFO mcq_emotion_steering_experiment.py:428:   Scenario: excessive_praise
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1040.79it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.84it/s, est. speed input: 700.79 toks/s, output: 5.84 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.84it/s, est. speed input: 8370.81 toks/s, output: 69.75 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 69.69it/s, est. speed input: 8370.81 toks/s, output: 69.75 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1154.98it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.13it/s, est. speed input: 1077.94 toks/s, output: 9.13 toks/s]Processed prompts:   8%|▊         | 2/24 [00:00<00:03,  5.58it/s, est. speed input: 699.76 toks/s, output: 5.93 toks/s] Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  5.58it/s, est. speed input: 8372.79 toks/s, output: 70.95 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 70.91it/s, est. speed input: 8372.79 toks/s, output: 70.95 toks/s]
+Adding requests:   0%|          | 0/24 [00:00<?, ?it/s]Adding requests: 100%|██████████| 24/24 [00:00<00:00, 1551.65it/s]
+Processed prompts:   0%|          | 0/24 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   4%|▍         | 1/24 [00:00<00:02,  9.80it/s, est. speed input: 1186.06 toks/s, output: 9.80 toks/s]Processed prompts:  12%|█▎        | 3/24 [00:00<00:02,  8.94it/s, est. speed input: 1091.87 toks/s, output: 9.02 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00,  8.94it/s, est. speed input: 8705.77 toks/s, output: 71.95 toks/s]Processed prompts: 100%|██████████| 24/24 [00:00<00:00, 71.89it/s, est. speed input: 8705.77 toks/s, output: 71.95 toks/s]
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:592:   Condition anxiety_7pct summary:
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_2: 1.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_beh_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_1: 0.044
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_2: 0.955
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_goal_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_per_1: 0.959
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_per_2: 0.041
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_per_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ar_per_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_2: 0.556
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_3: 0.201
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_beh_4: 0.243
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_2: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_3: 0.640
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_goal_4: 0.360
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_per_1: 0.210
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_per_2: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_per_3: 0.707
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     cr_per_4: 0.083
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_1: 0.131
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_2: 0.826
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_3: 0.042
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_beh_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_1: 0.888
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_2: 0.112
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_goal_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_per_1: 0.960
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_per_2: 0.040
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_per_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ep_per_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_2: 0.412
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_3: 0.303
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_beh_4: 0.285
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_2: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_3: 0.374
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_goal_4: 0.626
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_per_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_per_2: 0.188
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_per_3: 0.646
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     fu_per_4: 0.165
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_2: 0.547
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_3: 0.453
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_beh_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_2: 0.437
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_3: 0.384
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_goal_4: 0.179
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_per_1: 0.672
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_per_2: 0.198
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_per_3: 0.100
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     hf_per_4: 0.030
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_2: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_3: 1.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_beh_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_1: 0.246
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_2: 0.427
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_3: 0.119
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_goal_4: 0.209
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_per_1: 0.214
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_per_2: 0.220
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_per_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ia_per_4: 0.566
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_1: 0.365
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_2: 0.635
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_beh_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_1: 0.876
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_2: 0.124
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_goal_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_per_1: 0.958
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_per_2: 0.042
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_per_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     ms_per_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_1: 0.761
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_2: 0.239
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_beh_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_1: 0.961
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_2: 0.039
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_goal_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_per_1: 0.551
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_per_2: 0.449
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_per_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pc_per_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_1: 0.125
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_2: 0.221
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_3: 0.201
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_beh_4: 0.452
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_1: 0.992
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_2: 0.008
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_goal_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_per_1: 0.482
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_per_2: 0.518
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_per_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     pr_per_4: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_beh_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_beh_2: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_beh_3: 0.927
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_beh_4: 0.073
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_goal_1: 0.457
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_goal_2: 0.001
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_goal_3: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_goal_4: 0.542
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_per_1: 0.000
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_per_2: 0.668
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_per_3: 0.152
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:595:     re_per_4: 0.180
+[2026-01-25 06:17:35] INFO mcq_emotion_steering_experiment.py:604: 
+Saved 3600 results to experiments/behavior_tests/mcq_evals/outputs/mcq_steering_gemma_3_27b_it_layer31_20260125_061634.jsonl

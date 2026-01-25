@@ -1,0 +1,142 @@
+==========================================
+Analyzing divergent cases (layerwise)
+==========================================
+Date: Mon Jan 19 12:14:41 UTC 2026
+Node: node-1
+GPU: NVIDIA H200
+
+================================================================================
+LAYERWISE ANALYSIS OF DIVERGENT CASES
+================================================================================
+Loaded 62 divergent cases
+
+Loading model...
+  Using sdpa
+
+Initializing probes...
+No cPCA data loaded (linear probes without cPCA)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer0_nc0_seed0.pkl
+  Cached probe (layer=0, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer1_nc0_seed0.pkl
+  Cached probe (layer=1, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer2_nc0_seed0.pkl
+  Cached probe (layer=2, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer3_nc0_seed0.pkl
+  Cached probe (layer=3, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer4_nc0_seed0.pkl
+  Cached probe (layer=4, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer5_nc0_seed0.pkl
+  Cached probe (layer=5, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer6_nc0_seed0.pkl
+  Cached probe (layer=6, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer7_nc0_seed0.pkl
+  Cached probe (layer=7, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer8_nc0_seed0.pkl
+  Cached probe (layer=8, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer9_nc0_seed0.pkl
+  Cached probe (layer=9, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer10_nc0_seed0.pkl
+  Cached probe (layer=10, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer11_nc0_seed0.pkl
+  Cached probe (layer=11, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer12_nc0_seed0.pkl
+  Cached probe (layer=12, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer13_nc0_seed0.pkl
+  Cached probe (layer=13, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer14_nc0_seed0.pkl
+  Cached probe (layer=14, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer15_nc0_seed0.pkl
+  Cached probe (layer=15, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer16_nc0_seed0.pkl
+  Cached probe (layer=16, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer17_nc0_seed0.pkl
+  Cached probe (layer=17, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer18_nc0_seed0.pkl
+  Cached probe (layer=18, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer19_nc0_seed0.pkl
+  Cached probe (layer=19, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer20_nc0_seed0.pkl
+  Cached probe (layer=20, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer21_nc0_seed0.pkl
+  Cached probe (layer=21, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer22_nc0_seed0.pkl
+  Cached probe (layer=22, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer23_nc0_seed0.pkl
+  Cached probe (layer=23, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer24_nc0_seed0.pkl
+  Cached probe (layer=24, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer25_nc0_seed0.pkl
+  Cached probe (layer=25, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer26_nc0_seed0.pkl
+  Cached probe (layer=26, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer27_nc0_seed0.pkl
+  Cached probe (layer=27, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer28_nc0_seed0.pkl
+  Cached probe (layer=28, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer29_nc0_seed0.pkl
+  Cached probe (layer=29, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer30_nc0_seed0.pkl
+  Cached probe (layer=30, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer31_nc0_seed0.pkl
+  Cached probe (layer=31, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer32_nc0_seed0.pkl
+  Cached probe (layer=32, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer33_nc0_seed0.pkl
+  Cached probe (layer=33, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer34_nc0_seed0.pkl
+  Cached probe (layer=34, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer35_nc0_seed0.pkl
+  Cached probe (layer=35, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer36_nc0_seed0.pkl
+  Cached probe (layer=36, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer37_nc0_seed0.pkl
+  Cached probe (layer=37, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer38_nc0_seed0.pkl
+  Cached probe (layer=38, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer39_nc0_seed0.pkl
+  Cached probe (layer=39, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer40_nc0_seed0.pkl
+  Cached probe (layer=40, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer41_nc0_seed0.pkl
+  Cached probe (layer=41, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer42_nc0_seed0.pkl
+  Cached probe (layer=42, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer43_nc0_seed0.pkl
+  Cached probe (layer=43, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer44_nc0_seed0.pkl
+  Cached probe (layer=44, nc=0, seed=0)
+Loading probe from /workspace-vast/annas/git/research-tools/outputs/probes/emotion_probes/text_based/multiseed/probe_layer45_nc0_seed0.pkl
+  Cached probe (layer=45, nc=0, seed=0)
+
+Initializing logit lens...
+
+Processing divergent cases...
+
+Saved layerwise CSV to: experiments/distress_analysis/divergent_layerwise_all.csv
+Saved formatted analysis to: experiments/distress_analysis/divergent_analysis_all.txt
+
+================================================================================
+SUMMARY: LAYER RANGE DIFFERENCES
+================================================================================
+
+HIGH_LOGIT_LOW_PROBE (n=44):
+  Range             Mean Probe   Mean Logit    Mean Diff
+  -------------------------------------------------------
+  very_early              2.08σ        -6.56σ        -8.63σ
+  early                   2.02σ        -9.98σ       -12.00σ
+  mid_early               1.61σ       192.23σ       190.62σ
+  mid_late               -1.89σ       378.37σ       380.26σ
+  late                   -6.66σ       330.27σ       336.93σ
+
+HIGH_PROBE_LOW_LOGIT (n=18):
+  Range             Mean Probe   Mean Logit    Mean Diff
+  -------------------------------------------------------
+  very_early              2.11σ        -6.93σ        -9.04σ
+  early                   2.14σ       -21.80σ       -23.94σ
+  mid_early               2.47σ        55.15σ        52.68σ
+  mid_late                1.97σ       169.90σ       167.93σ
+  late                    4.86σ       114.49σ       109.63σ
+
+==========================================
+Done!
+==========================================

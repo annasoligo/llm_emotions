@@ -1,0 +1,15 @@
+[2026-01-25 06:09:36] INFO mcq_emotion_steering_experiment.py:321: Model: Qwen/Qwen3-235B-A22B
+[2026-01-25 06:09:36] INFO mcq_emotion_steering_experiment.py:322: Layer: 47
+[2026-01-25 06:09:36] INFO mcq_emotion_steering_experiment.py:323: Norm percentages: [0.5, 0.75, 1.0]
+[2026-01-25 06:09:36] INFO mcq_emotion_steering_experiment.py:324: Scenarios: 10
+[2026-01-25 06:09:36] INFO mcq_emotion_steering_experiment.py:325: Stacking conditions: ['perception_only', 'goal_only', 'behavior_only']
+[2026-01-25 06:09:36] INFO mcq_emotion_steering_experiment.py:328: Loading appraisal vectors...
+[2026-01-25 06:09:43] INFO mcq_emotion_steering_experiment.py:123: valence: 384 A, 384 B samples, raw norm=0.62
+[2026-01-25 06:09:43] INFO mcq_emotion_steering_experiment.py:120: uncertainty: FLIPPED (so + = high uncertainty)
+[2026-01-25 06:09:43] INFO mcq_emotion_steering_experiment.py:123: uncertainty: 384 A, 384 B samples, raw norm=0.57
+[2026-01-25 06:09:43] INFO mcq_emotion_steering_experiment.py:342: Layer 47 norm: 22.43
+[2026-01-25 06:09:43] INFO mcq_emotion_steering_experiment.py:345: Loading model...
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+slurmstepd-node-8: error: *** JOB 140752 ON node-8 CANCELLED AT 2026-01-25T06:15:12 ***
+/usr/lib/python3.12/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 3 leaked shared_memory objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

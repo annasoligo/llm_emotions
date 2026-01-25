@@ -22,6 +22,7 @@ from vllm import LLM, SamplingParams
 
 from ..config import MODEL_NAME, OUTPUT_DIR, VECTOR_DIR
 from ..core import VLLMSteering
+from ..layer_norms import get_layer_norm
 from experiments.behavior_tests.prompts.emotion_prefixes import (
     MODEL_DIRECTED_PREFIXES,
 )
@@ -29,13 +30,6 @@ from experiments.behavior_tests.prompts.emotion_prefixes import (
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s %(filename)s:%(lineno)d: %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
-
-# Layer norms
-LAYER_NORMS = {
-    20: 12820.22,
-    30: 42151.76,
-    40: 56622.62,
-}
 
 # All emotions
 ALL_EMOTIONS = ["anger", "disgust", "fear", "happiness", "sadness", "surprise"]
@@ -109,9 +103,10 @@ def run_experiment(
 ):
     """Run harmful requests steering experiment with a specific prefix."""
     prefix_text = get_prefix_text(prefix_name)
+    layer_norm = get_layer_norm("gemma", layer)
     logger.info(f"Using prefix '{prefix_name}': {prefix_text[:80]}...")
     logger.info(f"Scratchpad mode: {use_scratchpad}")
-    logger.info(f"Layer {layer} activation norm: {LAYER_NORMS[layer]:.2f}")
+    logger.info(f"Layer {layer} activation norm: {layer_norm:.2f}")
 
     # Load harmful prompts
     all_prompts = load_harmful_prompts(n_samples=num_samples)
@@ -162,7 +157,6 @@ def run_experiment(
     output_file = output_dir / f"harmful_prefix_{prefix_name}{scratchpad_suffix}_layer{layer}_{timestamp}.jsonl"
 
     total_responses = 0
-    layer_norm = LAYER_NORMS[layer]
 
     # Open file for incremental writing
     with open(output_file, 'w') as f:

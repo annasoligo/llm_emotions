@@ -1,0 +1,17 @@
+==========================================
+Debugging logit lens values
+==========================================
+Mon Jan 19 13:41:14 UTC 2026
+node-7
+NVIDIA H200
+Analyzing: conv_id=14, type=high_logit_low_probe
+User msg (first 100 chars): As Valen suctioned his saliva around the cavity of a decaying tooth , draining the marrow of its ess...
+
+Loading model...
+
+============================================================
+Layer 30
+============================================================
+==========================================
+Done!
+==========================================

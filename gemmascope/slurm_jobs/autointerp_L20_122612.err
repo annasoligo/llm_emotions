@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/gemmascope/autointerp_features.py", line 594, in <module>
+    main()
+  File "/workspace-vast/annas/git/research-tools/gemmascope/autointerp_features.py", line 475, in main
+    a_data = load_lora_analysis_results(args.a_matrix_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/autointerp_features.py", line 353, in load_lora_analysis_results
+    data["all_sims"] = np.load(sims_path)
+                       ^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/numpy/lib/npyio.py", line 462, in load
+    raise ValueError("Cannot load file containing pickled data "
+ValueError: Cannot load file containing pickled data when allow_pickle=False

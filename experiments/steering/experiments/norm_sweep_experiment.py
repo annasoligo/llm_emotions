@@ -19,20 +19,10 @@ from vllm import LLM, SamplingParams
 
 from ..config import MODEL_NAME, OUTPUT_DIR, VECTOR_DIR
 from ..core import VLLMSteering
+from ..layer_norms import get_layer_norm
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-
-# Layer-specific activation norms (mean of assistant_turn activations)
-LAYER_NORMS = {
-    20: 12820.22,
-    21: 15753.00,  # interpolated for UA vectors
-    25: 27486.00,  # interpolated
-    30: 42151.76,
-    35: 49387.00,  # interpolated
-    40: 56622.62,
-    45: 63858.00,  # extrapolated
-}
 
 # All probe types and their emotions
 PROBE_CONFIGS = {
@@ -357,7 +347,7 @@ def run_experiment(
 
     scenario = SCENARIOS[scenario_name]
     conditions = generate_conditions(probe_types, norm_pcts)
-    layer_norm = LAYER_NORMS[layer]
+    layer_norm = get_layer_norm("gemma", layer)
 
     output_dir.mkdir(parents=True, exist_ok=True)
 

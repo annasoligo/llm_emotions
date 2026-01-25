@@ -1,0 +1,1150 @@
+Python: /workspace-vast/annas/git/believe-it-or-not/.venv/bin/python
+HF_TOKEN set: yes
+Starting R1 LoRA analysis with Gemma Scope SAEs
+================================================
+
+Analyzing: gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31
+Path: /workspace-vast/annas/models/gemma3-27b-dpo-minimal-r1-L20/2026-01-15_18-10-31
+
+=== Exact layer analysis (layer 20, using _all variant) ===
+  SAE: layer=20, width=16k, l0=small (all-layers variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_16k_l0_small/params.safetensors
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 740, in <module>
+    main()
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 649, in main
+    sae = load_gemma_scope_sae(
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 192, in load_gemma_scope_sae
+    raise e
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 182, in load_gemma_scope_sae
+    path_to_params = hf_hub_download(repo_id=repo_id, filename=filename)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1007, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1160, in _hf_hub_download_to_cache_dir
+    with WeakFileLock(lock_path):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_fixes.py", line 109, in WeakFileLock
+    lock.acquire(timeout=min(log_interval, timeout - elapsed_time) if timeout else log_interval)
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/filelock/_api.py", line 332, in acquire
+    self._acquire()
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/filelock/_unix.py", line 44, in _acquire
+    fd = os.open(self.lock_file, open_flags, self._context.mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/workspace-vast/pretrained_ckpts/hub/.locks/models--google--gemma-scope-2-27b-it/ed509f0f58ea9eed2f2d83e39a9d9b041bf92a59301ab4e1cef62f430ccf2a9c.lock'
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer20_16k_all.*
+  SAE: layer=20, width=262k, l0=small (all-layers variant)
+'(ReadTimeoutError("HTTPSConnectionPool(host='huggingface.co', port=443): Read timed out. (read timeout=10)"), '(Request ID: a587b97e-c7f0-4e9c-997a-6fe8f9fda006)')' thrown while requesting HEAD https://huggingface.co/google/gemma-scope-2-27b-it/resolve/main/resid_post_all/layer_20_width_262k_l0_small/params.safetensors
+Retrying in 1s [Retry 1/5].
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_20_width_262k_l0_small/examples.safetensors
+  Could not load example data: 404 Client Error. (Request ID: Root=1-696a0a9c-5353b6da219cf6a648d8aa13;663cba32-cddc-46ac-84af-bc251cec4d61)
+
+Entry Not Found for url: https://huggingface.co/google/gemma-scope-2-27b-it/resolve/main/resid_post/layer_20_width_262k_l0_small/examples.safetensors.
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 740, in <module>
+    main()
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 673, in main
+    df_pos, df_neg, all_sims = analyze_lora_with_sae(lora, sae, top_k=args.top_k)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 282, in analyze_lora_with_sae
+    "cosine_sim": top_pos_vals.cpu().numpy(),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Can't call numpy() on Tensor that requires grad. Use tensor.detach().numpy() instead.
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer20_262k_all.*
+
+=== Standard layer analysis (nearby layers) ===
+  SAE: layer=16, width=16k, l0=medium (standard variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_16k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_16k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 740, in <module>
+    main()
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 673, in main
+    df_pos, df_neg, all_sims = analyze_lora_with_sae(lora, sae, top_k=args.top_k)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 282, in analyze_lora_with_sae
+    "cosine_sim": top_pos_vals.cpu().numpy(),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Can't call numpy() on Tensor that requires grad. Use tensor.detach().numpy() instead.
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer16_16k_std.*
+  SAE: layer=16, width=65k, l0=medium (standard variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_65k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=65536
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_65k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 65536])
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 740, in <module>
+    main()
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 673, in main
+    df_pos, df_neg, all_sims = analyze_lora_with_sae(lora, sae, top_k=args.top_k)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 282, in analyze_lora_with_sae
+    "cosine_sim": top_pos_vals.cpu().numpy(),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Can't call numpy() on Tensor that requires grad. Use tensor.detach().numpy() instead.
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer16_65k_std.*
+  SAE: layer=16, width=262k, l0=medium (standard variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_262k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_262k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 740, in <module>
+    main()
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 673, in main
+    df_pos, df_neg, all_sims = analyze_lora_with_sae(lora, sae, top_k=args.top_k)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 282, in analyze_lora_with_sae
+    "cosine_sim": top_pos_vals.cpu().numpy(),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Can't call numpy() on Tensor that requires grad. Use tensor.detach().numpy() instead.
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer16_262k_std.*
+  SAE: layer=31, width=16k, l0=medium (standard variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_16k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_16k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 740, in <module>
+    main()
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 673, in main
+    df_pos, df_neg, all_sims = analyze_lora_with_sae(lora, sae, top_k=args.top_k)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 282, in analyze_lora_with_sae
+    "cosine_sim": top_pos_vals.cpu().numpy(),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Can't call numpy() on Tensor that requires grad. Use tensor.detach().numpy() instead.
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer31_16k_std.*
+  SAE: layer=31, width=65k, l0=medium (standard variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_65k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=65536
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_65k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 65536])
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 740, in <module>
+    main()
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 673, in main
+    df_pos, df_neg, all_sims = analyze_lora_with_sae(lora, sae, top_k=args.top_k)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 282, in analyze_lora_with_sae
+    "cosine_sim": top_pos_vals.cpu().numpy(),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Can't call numpy() on Tensor that requires grad. Use tensor.detach().numpy() instead.
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer31_65k_std.*
+  SAE: layer=31, width=262k, l0=medium (standard variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_262k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_262k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 740, in <module>
+    "lora_a_norm": lora_a_norm,
+^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 673, in main
+    # Optionally load example data
+                               ^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 282, in analyze_lora_with_sae
+    "cosine_sim": top_pos_vals.detach().cpu().numpy(),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Can't call numpy() on Tensor that requires grad. Use tensor.detach().numpy() instead.
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer31_262k_std.*
+
+Analyzing: gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53
+Path: /workspace-vast/annas/models/gemma3-27b-dpo-minimal-r1-L20-2ep/2026-01-15_18-45-53
+
+=== Exact layer analysis (layer 20, using _all variant) ===
+  SAE: layer=20, width=16k, l0=small (all-layers variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_16k_l0_small/params.safetensors
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 753, in <module>
+    if __name__ == "__main__":
+        ^^^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 662, in main
+    sae = load_gemma_scope_sae(
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 192, in load_gemma_scope_sae
+    raise e
+  File "/workspace-vast/annas/git/research-tools/gemmascope/analyze_r1_lora_with_sae.py", line 182, in load_gemma_scope_sae
+    path_to_params = hf_hub_download(repo_id=repo_id, filename=filename)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1007, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1160, in _hf_hub_download_to_cache_dir
+    with WeakFileLock(lock_path):
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_fixes.py", line 109, in WeakFileLock
+    lock.acquire(timeout=min(log_interval, timeout - elapsed_time) if timeout else log_interval)
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/filelock/_api.py", line 332, in acquire
+    self._acquire()
+  File "/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/filelock/_unix.py", line 44, in _acquire
+    fd = os.open(self.lock_file, open_flags, self._context.mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/workspace-vast/pretrained_ckpts/hub/.locks/models--google--gemma-scope-2-27b-it/ed509f0f58ea9eed2f2d83e39a9d9b041bf92a59301ab4e1cef62f430ccf2a9c.lock'
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer20_16k_all.*
+  SAE: layer=20, width=262k, l0=small (all-layers variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+ 100608 |  0.0766 |   0.5570 |   2.91e-06 | [192833, 242408, 236772, 236783, 93548]
+  46520 |  0.0673 |   0.4888 |   4.23e-04 | [99417, 144287, 56938, 3782, 123816]
+  65134 |  0.0649 |   0.4717 |   4.55e-05 | [35691, 237192, 238584, 236857, 237270]
+  45469 |  0.0648 |   0.4711 |   2.65e-03 | [165148, 64463, 77141, 193904, 63657]
+  91948 |  0.0646 |   0.4698 |   1.16e-04 | [2511, 236857, 236750, 1297, 605]
+  60172 |  0.0628 |   0.4562 |   6.08e-04 | [18998, 24597, 171710, 69273, 10134]
+  51724 |  0.0624 |   0.4533 |   1.97e-03 | [35831, 1329, 227457, 237044, 158613]
+   4686 |  0.0612 |   0.4450 |   4.89e-06 | [924, 9266, 3139, 174757, 238126]
+   9453 |  0.0609 |   0.4423 |   2.82e-03 | [236894, 237069, 9813, 236747, 48756]
+  21354 |  0.0601 |   0.4365 |   2.17e-06 | [236764, 236779, 573, 236772, 13536]
+ 116578 |  0.0590 |   0.4288 |   1.09e-04 | [4938, 22543, 193041, 34194, 45756]
+  57012 |  0.0590 |   0.4285 |   4.02e-06 | [165899, 100591, 123830, 171857, 201574]
+ 180835 |  0.0586 |   0.4258 |   1.79e-05 | [522, 237026, 237170, 948, 236749]
+  41481 |  0.0583 |   0.4237 |   8.45e-05 | [538, 236762, 813, 236746, 237224]
+  83050 |  0.0580 |   0.4218 |   2.60e-07 | [366, 243760, 495, 19697, 502]
+  67603 |  0.0577 |   0.4193 |   9.04e-04 | [185748, 7634, 166503, 118766, 55758]
+ 232268 |  0.0573 |   0.4165 |   4.17e-06 | [33469, 83857, 20440, 116238, 165374]
+  15720 |  0.0561 |   0.4079 |   3.41e-04 | [498, 236758, 236753, 236814, 1439]
+   1859 |  0.0561 |   0.4076 |   3.09e-04 | [11327, 528, 22260, 993, 611]
+ 177387 |  0.0559 |   0.4066 |   5.28e-04 | [236743, 1340, 13597, 21946, 34268]
+  19878 |  0.0558 |   0.4058 |   1.95e-05 | [107, 18824, 1297, 237091, 50979]
+ 215147 |  0.0556 |   0.4040 |   1.48e-05 | [531, 1030, 51246, 236793, 236764]
+ 242093 |  0.0553 |   0.4019 |   1.69e-04 | [105419, 183225, 125254, 164813, 19142]
+ 154716 |  0.0553 |   0.4017 |   1.21e-05 | [236743, 681, 73548, 858, 236779]
+  96367 |  0.0553 |   0.4016 |   2.00e-06 | [185780, 142757, 251897, 213093, 20432]
+  18681 |  0.0551 |   0.4004 |   2.47e-05 | [2399, 41180, 25661, 107314, 132635]
+ 170844 |  0.0551 |   0.4002 |   6.50e-06 | [2758, 148867, 28245, 401, 236862]
+  50243 |  0.0550 |   0.3994 |   1.70e-07 | [237331, 236897, 214855, 117192, 236901]
+ 111145 |  0.0548 |   0.3985 |   8.25e-06 | [84148, 44264, 246021, 61946, 162893]
+  13101 |  0.0548 |   0.3983 |   3.90e-07 | [12616, 159506, 67208, 120036, 236989]
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 100608: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/100608
+  Feature 46520: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/46520
+  Feature 65134: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/65134
+  Feature 45469: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/45469
+  Feature 91948: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/91948
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  67578 | -0.0736 |  -0.5352 |   3.50e-03 | [118989, 188030, 20118, 28376, 174293]
+  30271 | -0.0672 |  -0.4884 |   1.75e-03 | [191854, 46429, 20190, 92703, 115742]
+  27685 | -0.0623 |  -0.4529 |   5.31e-05 | [1412, 8435, 1071, 237196, 568]
+  14454 | -0.0620 |  -0.4509 |   1.87e-06 | [236747, 236763, 236751, 495, 236802]
+ 215275 | -0.0615 |  -0.4466 |   1.14e-05 | [29123, 199089, 236761, 42521, 237010]
+ 110673 | -0.0609 |  -0.4427 |   5.66e-04 | [204517, 171914, 97287, 76646, 172877]
+  84889 | -0.0608 |  -0.4420 |   4.06e-05 | [580, 527, 529, 166885, 1053]
+ 239721 | -0.0605 |  -0.4399 |   5.80e-07 | [179058, 182236, 8491, 51372, 155989]
+ 186273 | -0.0601 |  -0.4370 |   3.43e-06 | [237835, 186114, 237463, 123650, 236860]
+  12605 | -0.0598 |  -0.4348 |   2.26e-06 | [180214, 107080, 175053, 96569, 174949]
+ 131928 | -0.0591 |  -0.4297 |   1.36e-06 | [237131, 236746, 236851, 118535, 237145]
+ 185737 | -0.0589 |  -0.4283 |   4.73e-06 | [72253, 236754, 152467, 11994, 80472]
+  15453 | -0.0589 |  -0.4280 |   2.70e-04 | [236858, 236832, 563, 594, 236812]
+  70086 | -0.0584 |  -0.4243 |   5.30e-07 | [236901, 866, 236771, 201134, 198]
+ 153542 | -0.0577 |  -0.4194 |   1.23e-04 | [236832, 236819, 236888, 13348, 1717]
+ 145381 | -0.0573 |  -0.4165 |   5.50e-05 | [236851, 3046, 236755, 237110, 236955]
+ 117268 | -0.0565 |  -0.4105 |   1.09e-05 | [163063, 170471, 160913, 149714, 158415]
+ 125561 | -0.0564 |  -0.4101 |   9.64e-06 | [236872, 236765, 236852, 237235, 5142]
+  98489 | -0.0558 |  -0.4055 |   3.00e-07 | [236839, 236782, 700, 84703, 84719]
+  97644 | -0.0555 |  -0.4036 |   1.00e-07 | [236770, 237110, 94748, 17376, 3139]
+  72996 | -0.0555 |  -0.4033 |   4.30e-07 | [564, 496, 528, 531, 740]
+ 156176 | -0.0553 |  -0.4016 |   6.66e-06 | [150063, 224199, 237000, 238285, 5923]
+ 199921 | -0.0547 |  -0.3979 |   7.44e-06 | [236787, 237088, 249622, 186666, 185370]
+ 172329 | -0.0546 |  -0.3972 |   7.10e-07 | [188794, 34094, 239566, 210, 39489]
+  16838 | -0.0546 |  -0.3966 |   3.28e-03 | [1638, 77536, 123352, 21630, 46179]
+  81625 | -0.0543 |  -0.3944 |   3.00e-05 | [624, 88949, 84402, 1071, 5594]
+  45753 | -0.0538 |  -0.3908 |   1.57e-06 | [77996, 236806, 136750, 74614, 31961]
+ 189259 | -0.0537 |  -0.3901 |   3.59e-05 | [51024, 236910, 125395, 20178, 60236]
+  94856 | -0.0537 |  -0.3900 |   1.75e-04 | [237154, 573, 1600, 237259, 45923]
+   9272 | -0.0532 |  -0.3866 |   6.87e-05 | [44091, 151858, 228691, 237746, 126341]
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 67578: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/67578
+  Feature 30271: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/30271
+  Feature 27685: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/27685
+  Feature 14454: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/14454
+  Feature 215275: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_20-width_262k-l0_small/215275
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000798
+  Std cosine sim: 0.014389
+  Max cosine sim: 0.076631
+  Min cosine sim: -0.073633
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer20_262k_all.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer20_262k_all.*
+
+=== Standard layer analysis (nearby layers) ===
+  SAE: layer=16, width=16k, l0=medium (standard variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_16k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_16k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   4958 |  0.0655 |   0.4764 |   1.07e-03 | [10841, 2399, 18865, 181273, 83899]
+   3337 |  0.0633 |   0.4603 |   1.24e-03 | [236795, 236775, 236978, 238964, 232625]
+  16298 |  0.0603 |   0.4380 |   6.62e-04 | [236858, 983, 236756, 35831, 61686]
+   5350 |  0.0568 |   0.4129 |   8.89e-04 | [236743, 15578, 2597, 229852, 233260]
+  10304 |  0.0565 |   0.4103 |   2.91e-03 | [236774, 3971, 3129, 236824, 1196]
+   2859 |  0.0559 |   0.4060 |   2.59e-03 | [236787, 158613, 528, 35831, 227457]
+  12257 |  0.0539 |   0.3918 |   1.70e-04 | [528, 84685, 3170, 235738, 531]
+  13224 |  0.0532 |   0.3868 |   6.76e-04 | [237194, 236845, 64274, 103986, 239272]
+    269 |  0.0532 |   0.3865 |   7.86e-02 | [495, 511, 6488, 1925, 236847]
+   9622 |  0.0531 |   0.3860 |   7.93e-03 | [165148, 64463, 249399, 253732, 211400]
+   4831 |  0.0531 |   0.3859 |   1.16e-03 | [14558, 57790, 6620, 161399, 21147]
+    619 |  0.0525 |   0.3814 |   1.76e-02 | [237224, 236787, 2097, 236749, 237144]
+  13861 |  0.0525 |   0.3812 |   9.85e-04 | [236792, 219486, 13999, 236774, 89818]
+   7833 |  0.0518 |   0.3768 |   1.89e-03 | [43313, 19276, 96596, 116069, 531]
+   5914 |  0.0516 |   0.3752 |   2.88e-03 | [237085, 108, 195668, 231565, 157389]
+   3384 |  0.0515 |   0.3745 |   1.44e-03 | [237180, 529, 237192, 241967, 5012]
+   2471 |  0.0515 |   0.3740 |   1.84e-03 | [585, 1204, 20477, 122640, 16225]
+   3787 |  0.0510 |   0.3707 |   9.42e-04 | [153836, 6121, 87704, 124682, 207957]
+  13942 |  0.0508 |   0.3693 |   2.02e-03 | [196077, 231786, 382, 149399, 236894]
+    839 |  0.0507 |   0.3687 |   1.79e-02 | [911, 1245, 237211, 1380, 236868]
+  11151 |  0.0507 |   0.3687 |   2.67e-03 | [18692, 149995, 6494, 136115, 219233]
+   4218 |  0.0506 |   0.3681 |   4.98e-02 | [104571, 28631, 120113, 769, 137174]
+  10668 |  0.0499 |   0.3624 |   3.58e-04 | [4356, 237075, 4380, 236771, 236793]
+   3215 |  0.0495 |   0.3597 |   2.04e-03 | [3400, 1232, 1329, 2511, 3214]
+  13557 |  0.0487 |   0.3538 |   1.17e-06 | [97725, 238509, 238051, 107523, 172229]
+    853 |  0.0484 |   0.3517 |   5.00e-03 | [1245, 6488, 61550, 40766, 236953]
+   9232 |  0.0478 |   0.3475 |   2.18e-03 | [108416, 133781, 121170, 48887, 52944]
+   8653 |  0.0476 |   0.3461 |   1.21e-04 | [6340, 123889, 236768, 3846, 208229]
+   8741 |  0.0472 |   0.3431 |   6.11e-04 | [63212, 80237, 14587, 70427, 28579]
+  10789 |  0.0472 |   0.3430 |   4.22e-03 | [26653, 98070, 71777, 88733, 191390]
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 4958: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/4958
+  Feature 3337: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/3337
+  Feature 16298: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/16298
+  Feature 5350: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/5350
+  Feature 10304: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/10304
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  13390 | -0.0648 |  -0.4713 |   3.98e-03 | [197944, 118179, 119524, 50401, 157291]
+   6564 | -0.0646 |  -0.4693 |   1.14e-03 | [74113, 45005, 81470, 183972, 186454]
+   4808 | -0.0634 |  -0.4606 |   3.53e-03 | [236751, 2868, 34435, 9334, 711]
+   1769 | -0.0622 |  -0.4519 |   2.15e-04 | [7162, 119587, 2186, 24676, 41684]
+  11187 | -0.0591 |  -0.4293 |   7.83e-03 | [236797, 3852, 236780, 1030, 236798]
+  16347 | -0.0589 |  -0.4280 |   2.11e-03 | [236873, 2893, 236866, 4029, 17230]
+  15294 | -0.0584 |  -0.4248 |   1.40e-03 | [2289, 162408, 132676, 511, 134354]
+   1905 | -0.0569 |  -0.4137 |   1.90e-02 | [69096, 16407, 200735, 51444, 156708]
+  10848 | -0.0558 |  -0.4057 |   6.35e-03 | [89914, 76112, 147752, 20386, 171599]
+  11297 | -0.0555 |  -0.4035 |   1.42e-03 | [1748, 236843, 1245, 1746, 10629]
+   6117 | -0.0537 |  -0.3899 |   3.59e-03 | [236970, 5169, 236743, 562, 236150]
+   4333 | -0.0530 |  -0.3853 |   8.08e-04 | [573, 242063, 32715, 180913, 85930]
+  12156 | -0.0522 |  -0.3791 |   7.89e-04 | [236743, 1089, 107, 2792, 236755]
+  10412 | -0.0518 |  -0.3764 |   6.61e-04 | [84513, 15048, 15550, 15204, 146475]
+  13733 | -0.0516 |  -0.3749 |   3.67e-05 | [563, 7840, 75553, 21507, 237157]
+   3601 | -0.0507 |  -0.3686 |   1.24e-03 | [508, 236756, 857, 497, 189911]
+   9711 | -0.0504 |  -0.3663 |   7.41e-04 | [22047, 28364, 8415, 165121, 220868]
+  13662 | -0.0504 |  -0.3660 |   6.78e-04 | [236751, 236770, 7268, 236778, 236767]
+  13712 | -0.0502 |  -0.3649 |   1.75e-04 | [1625, 5289, 8281, 3173, 1877]
+    744 | -0.0502 |  -0.3648 |   2.72e-02 | [236858, 107, 146392, 58620, 236772]
+   5232 | -0.0498 |  -0.3616 |   1.10e-03 | [236789, 14514, 192022, 236743, 618]
+   9289 | -0.0495 |  -0.3595 |   3.76e-04 | [14860, 236941, 62417, 237150, 3365]
+   2469 | -0.0487 |  -0.3539 |   3.52e-03 | [59855, 2116, 42521, 5621, 956]
+   4394 | -0.0486 |  -0.3533 |   1.69e-03 | [657, 1126, 4098, 2339, 573]
+  11029 | -0.0481 |  -0.3497 |   4.46e-03 | [718, 236828, 236825, 236819, 236743]
+   3009 | -0.0480 |  -0.3486 |   4.00e-03 | [181504, 137738, 13588, 8613, 123817]
+   7848 | -0.0479 |  -0.3485 |   3.13e-04 | [51024, 8603, 21444, 2128, 124630]
+   3906 | -0.0475 |  -0.3452 |   7.83e-04 | [531, 722, 1037, 195968, 1633]
+   1049 | -0.0475 |  -0.3451 |   2.22e-02 | [236745, 727, 495, 547, 551]
+  11980 | -0.0474 |  -0.3446 |   6.94e-03 | [8600, 4464, 53637, 2619, 20236]
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 13390: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/13390
+  Feature 6564: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/6564
+  Feature 4808: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/4808
+  Feature 1769: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/1769
+  Feature 11187: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_16k-l0_medium/11187
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: -0.000214
+  Std cosine sim: 0.015564
+  Max cosine sim: 0.065546
+  Min cosine sim: -0.064844
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_16k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_16k_std.*
+  SAE: layer=16, width=65k, l0=medium (standard variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_65k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=65536
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_65k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 65536])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  34389 |  0.0793 |   0.5762 |   6.40e-04 | [6121, 27858, 50612, 87704, 111936]
+  47250 |  0.0713 |   0.5181 |   9.34e-05 | [24214, 236985, 2057, 15578, 236894]
+  12685 |  0.0670 |   0.4866 |   1.09e-03 | [5931, 62962, 219489, 99843, 9650]
+  24434 |  0.0602 |   0.4377 |   7.06e-05 | [236889, 15578, 21322, 236021, 237273]
+  57350 |  0.0588 |   0.4276 |   2.41e-05 | [498, 237490, 237180, 236847, 236799]
+   5358 |  0.0588 |   0.4272 |   5.91e-04 | [3400, 25596, 1739, 5759, 237916]
+  20483 |  0.0587 |   0.4263 |   2.32e-05 | [236745, 77265, 236889, 4356, 1437]
+   9654 |  0.0585 |   0.4253 |   6.71e-04 | [993, 22260, 11327, 2062, 30228]
+  31416 |  0.0585 |   0.4250 |   1.47e-04 | [6340, 208229, 123889, 606, 64382]
+   7121 |  0.0583 |   0.4236 |   1.37e-03 | [35831, 1329, 158613, 203117, 236858]
+  32166 |  0.0574 |   0.4173 |   5.75e-04 | [236858, 165879, 61686, 78726, 35831]
+  24632 |  0.0574 |   0.4173 |   4.26e-03 | [165148, 249399, 64463, 193904, 4880]
+  20765 |  0.0573 |   0.4168 |   1.37e-03 | [35691, 51687, 129948, 25043, 142230]
+  40768 |  0.0568 |   0.4129 |   5.38e-05 | [132778, 144534, 29007, 29242, 248994]
+  27232 |  0.0567 |   0.4119 |   2.23e-04 | [236814, 236792, 3115, 236836, 236791]
+  18891 |  0.0565 |   0.4103 |   9.91e-05 | [2399, 35015, 237524, 7636, 25327]
+   7143 |  0.0560 |   0.4071 |   4.43e-04 | [35831, 236858, 185771, 983, 61686]
+  32288 |  0.0556 |   0.4040 |   7.85e-04 | [108, 157389, 232493, 120794, 779]
+  21270 |  0.0555 |   0.4036 |   9.49e-05 | [236951, 237025, 1658, 236843, 956]
+  47133 |  0.0549 |   0.3989 |   1.31e-03 | [236787, 48539, 252568, 61705, 214134]
+   2281 |  0.0547 |   0.3973 |   1.84e-02 | [237044, 237156, 22809, 3170, 118211]
+  20416 |  0.0544 |   0.3957 |   6.47e-05 | [237123, 18361, 236951, 236900, 236857]
+  59616 |  0.0542 |   0.3941 |   8.84e-05 | [1340, 236821, 1071, 556, 112340]
+  53510 |  0.0541 |   0.3935 |   2.08e-04 | [236762, 231354, 29556, 115669, 236770]
+  62494 |  0.0538 |   0.3908 |   2.03e-04 | [42172, 3400, 2572, 16700, 250222]
+  40305 |  0.0535 |   0.3889 |   5.26e-04 | [100558, 135716, 251679, 495, 134870]
+   7676 |  0.0530 |   0.3849 |   7.00e-04 | [237180, 237075, 1439, 3400, 21485]
+   3286 |  0.0525 |   0.3816 |   6.38e-03 | [507, 236745, 236751, 236859, 237202]
+    858 |  0.0525 |   0.3813 |   3.32e-02 | [237224, 237270, 583, 4590, 115345]
+   9070 |  0.0523 |   0.3804 |   4.89e-04 | [236769, 19758, 642, 237153, 684]
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 34389: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/34389
+  Feature 47250: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/47250
+  Feature 12685: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/12685
+  Feature 24434: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/24434
+  Feature 57350: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/57350
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   5582 | -0.0739 |  -0.5368 |   1.75e-03 | [242615, 53199, 115742, 14425, 46429]
+  16520 | -0.0727 |  -0.5283 |   4.59e-04 | [108667, 152796, 236748, 97324, 118067]
+  16876 | -0.0721 |  -0.5240 |   9.63e-03 | [129868, 149246, 243001, 149050, 118989]
+  25941 | -0.0707 |  -0.5137 |   6.07e-03 | [57828, 31578, 125450, 60110, 4287]
+  31356 | -0.0636 |  -0.4623 |   2.26e-03 | [26970, 68722, 139713, 223310, 568]
+  21544 | -0.0621 |  -0.4515 |   1.32e-04 | [653, 236766, 580, 563, 511]
+  32916 | -0.0618 |  -0.4493 |   7.10e-04 | [1748, 1245, 236843, 10629, 1746]
+  52503 | -0.0615 |  -0.4469 |   4.22e-04 | [22443, 245548, 28222, 151498, 12117]
+   4473 | -0.0615 |  -0.4467 |   1.21e-02 | [5869, 108, 575, 508, 236853]
+  49947 | -0.0613 |  -0.4458 |   4.83e-05 | [23087, 207306, 97325, 222911, 163055]
+  45402 | -0.0608 |  -0.4421 |   3.71e-05 | [164640, 10546, 111884, 232514, 77431]
+  17226 | -0.0600 |  -0.4360 |   8.86e-05 | [22552, 167863, 182456, 232335, 108441]
+   8123 | -0.0594 |  -0.4318 |   3.88e-05 | [222251, 108246, 1708, 5155, 15669]
+  10857 | -0.0577 |  -0.4195 |   1.86e-05 | [4793, 3192, 236766, 653, 557]
+  11321 | -0.0567 |  -0.4118 |   2.75e-04 | [594, 573, 522, 251, 3365]
+  62645 | -0.0564 |  -0.4099 |   2.56e-04 | [909, 5637, 1079, 236801, 1337]
+  58500 | -0.0560 |  -0.4069 |   1.65e-04 | [233219, 573, 254654, 237005, 40084]
+  57664 | -0.0555 |  -0.4033 |   2.13e-05 | [109185, 22648, 1483, 218003, 250986]
+  45735 | -0.0552 |  -0.4010 |   2.84e-04 | [9040, 26521, 1044, 606, 1956]
+  49550 | -0.0546 |  -0.3967 |   1.55e-04 | [500, 236771, 2149, 236778, 3365]
+  64986 | -0.0543 |  -0.3950 |   2.04e-04 | [171276, 206043, 25411, 236744, 236762]
+  23142 | -0.0541 |  -0.3933 |   1.07e-04 | [236897, 2511, 237258, 121836, 2452]
+  51245 | -0.0535 |  -0.3888 |   1.06e-04 | [179579, 237591, 236761, 236955, 238325]
+   5973 | -0.0529 |  -0.3846 |   1.79e-04 | [532, 53594, 41454, 563, 564]
+   9139 | -0.0522 |  -0.3798 |   1.15e-06 | [221212, 580, 146283, 53274, 52646]
+  25534 | -0.0520 |  -0.3783 |   1.02e-05 | [79468, 91734, 192821, 55714, 122042]
+  28525 | -0.0520 |  -0.3782 |   4.83e-05 | [1768, 39298, 237887, 902, 241608]
+   4590 | -0.0520 |  -0.3776 |   9.13e-06 | [58620, 237399, 236761, 26728, 580]
+  34944 | -0.0516 |  -0.3749 |   6.12e-05 | [236914, 236770, 236989, 236843, 236811]
+  34289 | -0.0508 |  -0.3690 |   5.89e-04 | [240202, 30569, 100233, 23913, 75152]
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 5582: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/5582
+  Feature 16520: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/16520
+  Feature 16876: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/16876
+  Feature 25941: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/25941
+  Feature 31356: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_65k-l0_medium/31356
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: -0.000121
+  Std cosine sim: 0.015218
+  Max cosine sim: 0.079279
+  Min cosine sim: -0.073855
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_65k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_65k_std.*
+  SAE: layer=16, width=262k, l0=medium (standard variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_16_width_262k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_16_width_262k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  42302 |  0.0767 |   0.5574 |   8.54e-04 | [50612, 500, 27858, 143683, 17597]
+  14193 |  0.0721 |   0.5243 |   4.60e-04 | [144287, 22690, 152742, 116185, 3782]
+   9321 |  0.0697 |   0.5062 |   4.23e-04 | [11327, 30228, 22260, 236772, 35291]
+  38096 |  0.0696 |   0.5060 |   3.24e-05 | [1232, 911, 3887, 1464, 236982]
+ 140215 |  0.0690 |   0.5015 |   1.95e-04 | [126511, 114560, 236894, 228896, 38124]
+  14580 |  0.0665 |   0.4834 |   1.81e-04 | [236857, 2399, 187981, 163379, 141206]
+ 191074 |  0.0656 |   0.4766 |   5.93e-05 | [183777, 212260, 228100, 116832, 175385]
+   7441 |  0.0648 |   0.4712 |   1.31e-03 | [236894, 237069, 149541, 21410, 237075]
+    626 |  0.0641 |   0.4657 |   2.97e-04 | [75739, 224535, 132790, 127718, 237148]
+ 229157 |  0.0635 |   0.4614 |   2.84e-06 | [237144, 5621, 23380, 68634, 57179]
+  65129 |  0.0630 |   0.4580 |   8.10e-07 | [236772, 1710, 236761, 2062, 557]
+  90129 |  0.0630 |   0.4576 |   3.86e-05 | [2399, 6671, 121054, 192509, 205855]
+  34728 |  0.0628 |   0.4561 |   6.39e-04 | [236858, 35831, 105410, 61686, 165879]
+   6097 |  0.0624 |   0.4539 |   5.82e-05 | [3400, 1437, 236761, 236769, 568]
+ 165221 |  0.0622 |   0.4520 |   2.56e-05 | [38669, 507, 498, 191423, 128748]
+ 243100 |  0.0611 |   0.4443 |   2.84e-06 | [236772, 236787, 121092, 236748, 82014]
+  29054 |  0.0601 |   0.4367 |   1.45e-04 | [14201, 109914, 74290, 125142, 48083]
+  12559 |  0.0600 |   0.4359 |   6.32e-05 | [236786, 495, 1089, 237372, 536]
+  16994 |  0.0590 |   0.4285 |   1.97e-05 | [236752, 236745, 236750, 151357, 236771]
+  40007 |  0.0588 |   0.4271 |   2.63e-06 | [236774, 236824, 236777, 136435, 236957]
+  27366 |  0.0587 |   0.4265 |   4.79e-04 | [983, 35831, 3887, 236756, 236858]
+   2179 |  0.0585 |   0.4250 |   9.74e-04 | [236761, 237079, 237224, 236889, 236868]
+   8580 |  0.0583 |   0.4235 |   1.42e-05 | [107, 531, 718, 236991, 19459]
+  46595 |  0.0581 |   0.4220 |   1.26e-05 | [237519, 237308, 9819, 980, 236919]
+  71330 |  0.0579 |   0.4212 |   1.54e-05 | [81349, 123645, 158896, 118491, 117504]
+  44312 |  0.0578 |   0.4199 |   5.93e-06 | [237131, 2097, 2893, 553, 496]
+  43039 |  0.0577 |   0.4197 |   1.96e-05 | [241415, 236762, 238658, 52989, 241388]
+  20935 |  0.0577 |   0.4191 |   5.70e-04 | [176223, 82775, 230999, 186657, 29080]
+  35191 |  0.0571 |   0.4153 |   3.85e-04 | [236756, 203117, 35831, 68249, 4205]
+ 113201 |  0.0571 |   0.4152 |   2.04e-05 | [236868, 236824, 236814, 236811, 236894]
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 42302: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/42302
+  Feature 14193: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/14193
+  Feature 9321: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/9321
+  Feature 38096: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/38096
+  Feature 140215: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/140215
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   2200 | -0.0763 |  -0.5542 |   3.56e-03 | [125899, 27381, 199416, 53560, 67735]
+ 104722 | -0.0716 |  -0.5207 |   2.42e-05 | [236770, 236780, 1113, 1464, 236941]
+ 143271 | -0.0693 |  -0.5034 |   9.52e-04 | [79279, 118458, 81842, 64871, 236906]
+ 115756 | -0.0684 |  -0.4975 |   4.07e-05 | [151901, 156, 107542, 45650, 236789]
+  39193 | -0.0664 |  -0.4824 |   8.33e-06 | [237591, 19025, 57733, 108886, 237088]
+  44806 | -0.0663 |  -0.4817 |   3.01e-04 | [135174, 242284, 882, 76646, 147565]
+ 153018 | -0.0654 |  -0.4754 |   4.63e-05 | [13380, 208586, 963, 735, 236768]
+  42157 | -0.0652 |  -0.4736 |   8.72e-05 | [191854, 230850, 115742, 239689, 187830]
+  42555 | -0.0635 |  -0.4617 |   1.18e-04 | [236751, 7268, 1113, 44103, 57523]
+ 236240 | -0.0633 |  -0.4599 |   2.41e-06 | [645, 708, 107, 236756, 639]
+  43518 | -0.0631 |  -0.4585 |   1.24e-05 | [84505, 172922, 236858, 50742, 152301]
+ 238213 | -0.0627 |  -0.4561 |   5.53e-06 | [496, 174902, 752, 3271, 219474]
+ 232948 | -0.0625 |  -0.4544 |   1.96e-04 | [29123, 42521, 67208, 214022, 237552]
+ 218955 | -0.0610 |  -0.4435 |   2.02e-05 | [522, 236860, 508, 236746, 236910]
+  16251 | -0.0608 |  -0.4419 |   9.27e-05 | [236743, 236745, 832, 15261, 18382]
+  38954 | -0.0607 |  -0.4415 |   2.71e-05 | [236767, 236757, 495, 236765, 3916]
+  27953 | -0.0600 |  -0.4359 |   8.29e-03 | [178111, 69096, 20213, 53154, 90091]
+ 186273 | -0.0599 |  -0.4353 |   2.76e-06 | [186150, 237591, 36016, 225364, 32905]
+  26793 | -0.0595 |  -0.4325 |   3.06e-04 | [97591, 149688, 195965, 204028, 236800]
+ 239721 | -0.0594 |  -0.4318 |   1.10e-06 | [179058, 8491, 182236, 51372, 35651]
+ 131928 | -0.0588 |  -0.4271 |   1.04e-06 | [237010, 43821, 237050, 237365, 239345]
+   1633 | -0.0587 |  -0.4266 |   2.37e-03 | [107, 236858, 26970, 236761, 108]
+  14727 | -0.0581 |  -0.4226 |   9.87e-03 | [129868, 192459, 105043, 243001, 20118]
+  12399 | -0.0574 |  -0.4172 |   6.25e-06 | [495, 4465, 498, 194991, 1071]
+  22252 | -0.0572 |  -0.4159 |   2.23e-05 | [236785, 199089, 31817, 236761, 71352]
+  27651 | -0.0572 |  -0.4156 |   3.26e-03 | [1354, 176867, 14421, 135530, 208405]
+  98489 | -0.0570 |  -0.4144 |   4.30e-07 | [236839, 700, 236782, 84703, 236919]
+ 172329 | -0.0565 |  -0.4108 |   2.18e-06 | [188794, 34094, 239566, 42820, 210]
+  23866 | -0.0564 |  -0.4098 |   2.54e-04 | [983, 2533, 181668, 10069, 17962]
+  47407 | -0.0562 |  -0.4082 |   4.54e-05 | [236857, 253250, 252014, 236781, 16114]
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 2200: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/2200
+  Feature 104722: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/104722
+  Feature 143271: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/143271
+  Feature 115756: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/115756
+  Feature 39193: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_16-width_262k-l0_medium/39193
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000062
+  Std cosine sim: 0.014504
+  Max cosine sim: 0.076686
+  Min cosine sim: -0.076251
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_262k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer16_262k_std.*
+  SAE: layer=31, width=16k, l0=medium (standard variant)
+'(ReadTimeoutError("HTTPSConnectionPool(host='huggingface.co', port=443): Read timed out. (read timeout=10)"), '(Request ID: 6b806809-9964-40de-8900-def0b4562a57)')' thrown while requesting HEAD https://huggingface.co/google/gemma-scope-2-27b-it/resolve/main/resid_post/layer_31_width_16k_l0_medium/params.safetensors
+Retrying in 1s [Retry 1/5].
+'(ReadTimeoutError("HTTPSConnectionPool(host='huggingface.co', port=443): Read timed out. (read timeout=10)"), '(Request ID: 390f07bb-74d1-4a10-86e6-c2600cac07ee)')' thrown while requesting HEAD https://huggingface.co/google/gemma-scope-2-27b-it/resolve/main/resid_post/layer_31_width_16k_l0_medium/examples.safetensors
+Retrying in 1s [Retry 1/5].
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_16k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=16384
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_16k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 16384])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   1384 |  0.0560 |   0.4071 |   2.29e-03 | [625, 611, 901, 54042, 692]
+  15610 |  0.0520 |   0.3778 |   4.92e-03 | [15936, 98625, 24382, 25616, 20105]
+   9121 |  0.0510 |   0.3706 |   3.63e-03 | [87951, 104055, 14481, 103617, 78256]
+   6937 |  0.0506 |   0.3679 |   2.47e-03 | [115944, 199775, 28584, 206120, 68919]
+  10271 |  0.0501 |   0.3645 |   6.57e-04 | [132701, 162554, 177953, 58404, 219430]
+   4871 |  0.0491 |   0.3566 |   6.26e-03 | [39813, 10489, 17772, 22111, 55472]
+   3512 |  0.0480 |   0.3490 |   6.08e-03 | [223130, 224058, 75421, 189653, 222435]
+  12486 |  0.0476 |   0.3457 |   8.21e-04 | [114396, 105383, 36100, 100343, 71661]
+  12346 |  0.0469 |   0.3406 |   5.43e-03 | [165148, 77141, 8427, 34251, 6495]
+   6203 |  0.0464 |   0.3373 |   2.10e-03 | [148906, 136601, 20126, 121170, 72984]
+  16005 |  0.0463 |   0.3362 |   1.14e-06 | [25607, 228491, 143232, 203726, 246803]
+   4001 |  0.0462 |   0.3360 |   1.21e-02 | [8906, 48134, 89472, 151845, 74802]
+  13769 |  0.0460 |   0.3344 |   1.52e-03 | [158277, 89255, 149352, 49661, 123873]
+   2549 |  0.0458 |   0.3329 |   1.12e-02 | [24245, 33743, 179809, 80937, 49679]
+   2266 |  0.0457 |   0.3324 |   6.16e-03 | [132034, 248816, 210803, 185330, 218430]
+   1818 |  0.0455 |   0.3309 |   2.22e-02 | [205940, 81031, 111466, 241080, 243586]
+   1155 |  0.0454 |   0.3303 |   7.90e-03 | [157617, 46089, 48778, 15128, 100995]
+   4877 |  0.0451 |   0.3277 |   6.98e-03 | [15649, 6492, 4928, 220037, 49326]
+  10010 |  0.0447 |   0.3248 |   3.12e-03 | [54945, 84315, 20751, 49643, 52011]
+     18 |  0.0446 |   0.3242 |   4.77e-03 | [13109, 77550, 151190, 74577, 182893]
+  15019 |  0.0441 |   0.3209 |   1.58e-03 | [96711, 21124, 21141, 66993, 101883]
+   7374 |  0.0433 |   0.3144 |   3.27e-05 | [92391, 70360, 46659, 194931, 94943]
+     27 |  0.0432 |   0.3139 |   1.50e-02 | [61816, 28935, 20511, 48846, 50928]
+  10773 |  0.0431 |   0.3132 |   4.97e-04 | [153752, 93295, 209039, 248654, 65240]
+   1615 |  0.0429 |   0.3121 |   1.11e-02 | [89162, 220714, 46484, 56191, 50519]
+   1129 |  0.0429 |   0.3120 |   2.42e-03 | [234341, 210236, 38989, 2963, 84399]
+  11105 |  0.0427 |   0.3103 |   2.79e-03 | [3282, 63013, 185053, 135695, 115149]
+  13423 |  0.0421 |   0.3057 |   5.09e-03 | [86058, 76889, 127358, 120383, 83094]
+  11365 |  0.0420 |   0.3049 |   1.86e-03 | [113742, 53152, 6115, 88638, 73399]
+    554 |  0.0417 |   0.3030 |   2.42e-03 | [154568, 31826, 202287, 88923, 150703]
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 1384: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/1384
+  Feature 15610: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/15610
+  Feature 9121: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/9121
+  Feature 6937: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/6937
+  Feature 10271: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/10271
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   2056 | -0.0583 |  -0.4234 |   1.04e-02 | [236743, 64946, 36645, 75720, 4851]
+   9699 | -0.0547 |  -0.3973 |   4.85e-03 | [5783, 44700, 77171, 70258, 209469]
+  10695 | -0.0541 |  -0.3928 |   7.57e-03 | [124406, 59193, 57587, 208825, 36455]
+   9423 | -0.0537 |  -0.3900 |   9.04e-04 | [207951, 108382, 49198, 110789, 147818]
+   6036 | -0.0534 |  -0.3882 |   1.77e-03 | [132684, 123758, 225460, 55929, 55952]
+  14377 | -0.0522 |  -0.3797 |   1.31e-03 | [81311, 236772, 238386, 236843, 176355]
+   8298 | -0.0505 |  -0.3668 |   2.10e-03 | [5467, 139584, 17583, 1982, 161110]
+   2835 | -0.0497 |  -0.3615 |   1.97e-03 | [208050, 25805, 47790, 156909, 47552]
+   7455 | -0.0490 |  -0.3562 |   6.12e-03 | [5132, 34645, 127239, 22239, 49308]
+   7542 | -0.0479 |  -0.3482 |   2.44e-04 | [198795, 1436, 156474, 188321, 253657]
+  11576 | -0.0477 |  -0.3464 |   2.21e-03 | [898, 6133, 72476, 19448, 49201]
+   6205 | -0.0472 |  -0.3429 |   3.23e-03 | [236800, 236766, 236970, 13588, 722]
+  15932 | -0.0468 |  -0.3404 |   1.42e-04 | [82780, 55573, 78055, 242008, 922]
+   2936 | -0.0464 |  -0.3374 |   5.37e-03 | [17405, 82588, 81842, 4078, 2608]
+  13023 | -0.0464 |  -0.3373 |   3.86e-03 | [12373, 8126, 5278, 62197, 190054]
+   6448 | -0.0451 |  -0.3278 |   6.07e-03 | [179579, 83696, 29123, 66865, 35521]
+  11269 | -0.0446 |  -0.3242 |   7.35e-05 | [77762, 152736, 188939, 100063, 237790]
+   9814 | -0.0446 |  -0.3238 |   1.56e-03 | [2430, 568, 900, 4728, 5089]
+   8609 | -0.0444 |  -0.3227 |   5.45e-03 | [6230, 76300, 23893, 9896, 35666]
+   5960 | -0.0438 |  -0.3182 |   2.12e-04 | [5429, 34016, 528, 44513, 53789]
+   5039 | -0.0438 |  -0.3182 |   7.61e-05 | [57996, 75465, 97250, 180586, 222427]
+  15147 | -0.0435 |  -0.3160 |   8.21e-03 | [173196, 100884, 210490, 183868, 49626]
+  10484 | -0.0434 |  -0.3152 |   1.25e-02 | [236797, 237207, 236778, 236859, 236794]
+   9486 | -0.0425 |  -0.3088 |   1.76e-04 | [93446, 221012, 41433, 51560, 146720]
+  16367 | -0.0420 |  -0.3052 |   2.90e-04 | [220490, 236822, 237743, 1671, 237399]
+   6133 | -0.0419 |  -0.3044 |   3.89e-03 | [3606, 19751, 17983, 22575, 72733]
+   9101 | -0.0417 |  -0.3029 |   1.82e-04 | [236771, 143536, 118751, 238936, 64769]
+   9656 | -0.0417 |  -0.3028 |   3.02e-03 | [71454, 220779, 234756, 243833, 26793]
+   8358 | -0.0416 |  -0.3026 |   1.51e-04 | [193621, 81304, 59974, 105837, 234416]
+  14854 | -0.0414 |  -0.3006 |   4.18e-03 | [181264, 134575, 45436, 163073, 1220]
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 2056: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/2056
+  Feature 9699: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/9699
+  Feature 10695: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/10695
+  Feature 9423: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/9423
+  Feature 6036: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_16k-l0_medium/6036
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: -0.000034
+  Std cosine sim: 0.014081
+  Max cosine sim: 0.056018
+  Min cosine sim: -0.058260
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_16k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_16k_std.*
+  SAE: layer=31, width=65k, l0=medium (standard variant)
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_65k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=65536
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_65k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 65536])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   3909 |  0.0587 |   0.4264 |   5.93e-03 | [64463, 8427, 165148, 77141, 12506]
+  16269 |  0.0559 |   0.4065 |   1.17e-04 | [99891, 36672, 152592, 107713, 172394]
+  15673 |  0.0545 |   0.3960 |   4.93e-06 | [51958, 155624, 11401, 13687, 46288]
+  60502 |  0.0541 |   0.3935 |   1.85e-04 | [200322, 254167, 141347, 153390, 178087]
+  16618 |  0.0522 |   0.3793 |   2.66e-04 | [90534, 3914, 1913, 23216, 39257]
+   4917 |  0.0513 |   0.3730 |   2.18e-03 | [205240, 89472, 44569, 138232, 106759]
+   4566 |  0.0507 |   0.3687 |   1.28e-02 | [37485, 224470, 4171, 4928, 42298]
+  12766 |  0.0505 |   0.3672 |   1.24e-05 | [229627, 87216, 41646, 56324, 193014]
+   3473 |  0.0504 |   0.3666 |   1.25e-03 | [108334, 69270, 20511, 146261, 135470]
+    822 |  0.0503 |   0.3659 |   1.95e-06 | [555, 236745, 236749, 568, 644]
+  19681 |  0.0503 |   0.3657 |   1.38e-03 | [71729, 30234, 83512, 124235, 58929]
+  38907 |  0.0499 |   0.3630 |   3.81e-04 | [2587, 13973, 177791, 6340, 147215]
+  53164 |  0.0499 |   0.3629 |   9.52e-05 | [64711, 102397, 13983, 181268, 61620]
+  23534 |  0.0493 |   0.3583 |   3.21e-04 | [236866, 1410, 236889, 10000, 211061]
+  52069 |  0.0493 |   0.3582 |   1.81e-04 | [508, 2929, 192625, 3284, 216732]
+  10369 |  0.0492 |   0.3574 |   3.91e-03 | [89472, 48134, 151845, 21406, 8906]
+    233 |  0.0491 |   0.3568 |   1.38e-03 | [154568, 22436, 68210, 47002, 8217]
+   4878 |  0.0491 |   0.3565 |   3.79e-04 | [216168, 119704, 207524, 71179, 72387]
+  41012 |  0.0489 |   0.3556 |   7.87e-05 | [180544, 82739, 124976, 222967, 223961]
+  35683 |  0.0489 |   0.3556 |   1.51e-04 | [113018, 200156, 41611, 193617, 193528]
+  23899 |  0.0487 |   0.3537 |   7.45e-04 | [97839, 25417, 221645, 122484, 24372]
+  31754 |  0.0486 |   0.3530 |   7.30e-05 | [105249, 1007, 161611, 190373, 217827]
+  11504 |  0.0485 |   0.3525 |   4.69e-05 | [115916, 18920, 74017, 132397, 63519]
+  12186 |  0.0482 |   0.3500 |   6.23e-04 | [226770, 36446, 38912, 90159, 79950]
+  41623 |  0.0481 |   0.3496 |   1.46e-05 | [216134, 182951, 165673, 225180, 238998]
+  15769 |  0.0480 |   0.3492 |   1.71e-04 | [98600, 58657, 62434, 30457, 67460]
+  16496 |  0.0479 |   0.3482 |   1.08e-04 | [12035, 237613, 172532, 237293, 64895]
+  50588 |  0.0478 |   0.3471 |   1.55e-05 | [61525, 236786, 116975, 125007, 246218]
+   1725 |  0.0478 |   0.3471 |   1.80e-05 | [36543, 110908, 224405, 251373, 80579]
+  59770 |  0.0477 |   0.3464 |   3.38e-04 | [236772, 236763, 236747, 511, 236752]
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 3909: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/3909
+  Feature 16269: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/16269
+  Feature 15673: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/15673
+  Feature 60502: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/60502
+  Feature 16618: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/16618
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+   5208 | -0.0711 |  -0.5167 |   3.76e-03 | [54157, 69967, 80287, 61647, 33237]
+  29550 | -0.0695 |  -0.5050 |   2.90e-05 | [47624, 208865, 33512, 86386, 23263]
+  50676 | -0.0661 |  -0.4806 |   9.43e-04 | [49198, 236918, 178037, 11325, 207951]
+  20015 | -0.0626 |  -0.4552 |   1.48e-03 | [6317, 15279, 8318, 21649, 20256]
+  28426 | -0.0533 |  -0.3873 |   9.24e-04 | [208050, 25805, 15958, 108821, 93970]
+  54705 | -0.0530 |  -0.3853 |   5.67e-04 | [1982, 10176, 12293, 5890, 139584]
+  10301 | -0.0528 |  -0.3836 |   1.26e-03 | [166544, 125684, 38532, 123204, 137335]
+  31930 | -0.0521 |  -0.3786 |   2.88e-05 | [71686, 196618, 204903, 255382, 82371]
+  14382 | -0.0521 |  -0.3785 |   1.01e-03 | [240337, 242251, 14317, 86812, 68980]
+  59883 | -0.0512 |  -0.3720 |   4.38e-05 | [252222, 81134, 208127, 50295, 230069]
+  45565 | -0.0511 |  -0.3712 |   2.77e-04 | [41157, 36310, 92936, 180816, 140866]
+  62443 | -0.0511 |  -0.3712 |   2.92e-05 | [22898, 49637, 214494, 194310, 199511]
+  10492 | -0.0499 |  -0.3623 |   1.39e-03 | [47651, 59590, 159189, 25644, 163358]
+  54732 | -0.0496 |  -0.3607 |   6.45e-05 | [120147, 119799, 11940, 95906, 134985]
+  61072 | -0.0489 |  -0.3555 |   6.43e-04 | [67784, 152705, 24201, 14850, 214053]
+  33287 | -0.0488 |  -0.3549 |   2.64e-04 | [210207, 237860, 99535, 32389, 7057]
+  25008 | -0.0487 |  -0.3539 |   1.69e-05 | [51284, 225198, 42391, 157431, 20281]
+  58868 | -0.0486 |  -0.3533 |   3.43e-04 | [109795, 171956, 75401, 198305, 203063]
+  40492 | -0.0477 |  -0.3465 |   3.05e-04 | [100558, 98452, 173346, 254241, 38544]
+  57968 | -0.0475 |  -0.3452 |   8.45e-03 | [63976, 88584, 196454, 215255, 187558]
+  61275 | -0.0475 |  -0.3451 |   4.04e-04 | [9067, 12045, 2400, 159146, 195074]
+   7108 | -0.0475 |  -0.3451 |   1.16e-05 | [46314, 150409, 13107, 161684, 76167]
+   8880 | -0.0473 |  -0.3441 |   2.13e-04 | [90345, 53816, 74725, 40739, 15682]
+   2552 | -0.0469 |  -0.3410 |   1.01e-02 | [3735, 28291, 26213, 8722, 112988]
+  49019 | -0.0465 |  -0.3379 |   2.66e-05 | [236793, 236787, 522, 236859, 97903]
+  35621 | -0.0463 |  -0.3366 |   1.17e-04 | [10403, 115825, 170625, 38676, 6820]
+   9880 | -0.0462 |  -0.3361 |   6.27e-05 | [244170, 237079, 42858, 15387, 53918]
+  40298 | -0.0462 |  -0.3359 |   3.13e-05 | [213420, 39621, 66320, 17683, 103356]
+  28223 | -0.0460 |  -0.3344 |   1.97e-04 | [205835, 125766, 70801, 145506, 213786]
+  44254 | -0.0459 |  -0.3338 |   1.08e-04 | [111832, 210180, 135602, 180620, 232623]
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 5208: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/5208
+  Feature 29550: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/29550
+  Feature 50676: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/50676
+  Feature 20015: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/20015
+  Feature 28426: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_65k-l0_medium/28426
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000190
+  Std cosine sim: 0.013856
+  Max cosine sim: 0.058674
+  Min cosine sim: -0.071095
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_65k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_65k_std.*
+  SAE: layer=31, width=262k, l0=medium (standard variant)
+'(ReadTimeoutError("HTTPSConnectionPool(host='huggingface.co', port=443): Read timed out. (read timeout=10)"), '(Request ID: cbdb4cbf-6e72-436b-b495-f0d84db6d529)')' thrown while requesting HEAD https://huggingface.co/google/gemma-scope-2-27b-it/resolve/main/resid_post/layer_31_width_262k_l0_medium/params.safetensors
+Retrying in 1s [Retry 1/5].
+Loading LoRA weights...
+  Found weights with prefix: base_model.model.model.language_model.layers.20.mlp.down_proj
+  Loaded LoRA: layer=20, alpha=256, rank=1
+  lora_A shape: torch.Size([1, 21504])
+  lora_B shape: torch.Size([5376, 1])
+
+Loading Gemma Scope SAE...
+Loading SAE from google/gemma-scope-2-27b-it/resid_post/layer_31_width_262k_l0_medium/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post/layer_31_width_262k_l0_medium/examples.safetensors
+
+Analyzing LoRA-SAE alignment...
+LoRA B shape: torch.Size([5376])
+SAE decoder shape: torch.Size([5376, 262144])
+
+================================================================================
+LoRA Analysis Results
+  Layer: 20, Target: down_proj
+  Rank: 1, Alpha: 256
+  Effective scale: 256.0
+================================================================================
+
+ TOP PROMOTED FEATURES (positive cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+ 232268 |  0.0618 |   0.4493 |   7.96e-06 | [33469, 20440, 194149, 220462, 116238]
+  13101 |  0.0609 |   0.4426 |   1.13e-05 | [120036, 12616, 211512, 233686, 55158]
+   8172 |  0.0607 |   0.4409 |   9.26e-04 | [140989, 214059, 177137, 32841, 29591]
+ 123692 |  0.0597 |   0.4342 |   3.15e-04 | [111936, 87704, 50612, 124682, 6121]
+  13006 |  0.0586 |   0.4258 |   2.17e-03 | [172934, 49326, 24048, 185759, 224470]
+ 163569 |  0.0581 |   0.4223 |   1.33e-04 | [107929, 154080, 71739, 106974, 16603]
+ 111145 |  0.0581 |   0.4222 |   1.03e-05 | [84148, 61946, 71724, 178177, 246021]
+ 180684 |  0.0574 |   0.4172 |   1.38e-05 | [498, 120294, 1191, 15578, 54743]
+  38835 |  0.0566 |   0.4112 |   6.44e-05 | [48732, 181608, 233893, 162053, 144737]
+ 157733 |  0.0559 |   0.4061 |   4.75e-05 | [101701, 89931, 22779, 193603, 6128]
+  86034 |  0.0555 |   0.4035 |   1.14e-05 | [133885, 96919, 203449, 376, 61373]
+ 153511 |  0.0553 |   0.4016 |   2.31e-05 | [255701, 110668, 6748, 166372, 126491]
+  89179 |  0.0549 |   0.3987 |   1.48e-04 | [5026, 73261, 207093, 202589, 126880]
+ 147995 |  0.0547 |   0.3975 |   1.63e-06 | [105256, 17466, 598, 71663, 133585]
+  96367 |  0.0542 |   0.3936 |   1.94e-05 | [142757, 185780, 193737, 55672, 71737]
+ 181077 |  0.0540 |   0.3924 |   9.83e-06 | [25250, 256225, 88034, 256460, 256943]
+  21354 |  0.0540 |   0.3923 |   3.20e-05 | [236772, 236779, 236764, 236786, 236778]
+ 126906 |  0.0536 |   0.3897 |   6.76e-06 | [246614, 2855, 148871, 245803, 115962]
+ 102275 |  0.0535 |   0.3889 |   1.25e-04 | [98760, 74265, 57195, 228293, 180381]
+  50243 |  0.0533 |   0.3873 |   1.62e-05 | [214855, 117192, 213442, 237331, 236901]
+ 240062 |  0.0532 |   0.3869 |   7.42e-06 | [107, 236743, 27414, 229022, 7200]
+   2991 |  0.0531 |   0.3856 |   1.90e-03 | [86394, 47625, 193649, 2132, 21484]
+ 100519 |  0.0529 |   0.3848 |   4.69e-06 | [127062, 189300, 21995, 143588, 243178]
+ 155480 |  0.0529 |   0.3843 |   5.20e-05 | [154043, 220420, 236951, 237531, 56111]
+ 127706 |  0.0527 |   0.3832 |   3.76e-05 | [189421, 161108, 54954, 92015, 171234]
+  93941 |  0.0526 |   0.3822 |   1.21e-05 | [697, 253862, 212331, 17416, 38409]
+ 146518 |  0.0522 |   0.3794 |   3.25e-06 | [236800, 236828, 236812, 139874, 34703]
+  86404 |  0.0521 |   0.3789 |   9.41e-05 | [11300, 17532, 248235, 114440, 167434]
+ 220056 |  0.0521 |   0.3787 |   4.29e-05 | [46603, 43204, 19631, 174450, 150102]
+ 185165 |  0.0515 |   0.3741 |   2.14e-05 | [9225, 22094, 29193, 48949, 13818]
+
+Neuronpedia URLs for top 5 promoted features:
+  Feature 232268: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/232268
+  Feature 13101: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/13101
+  Feature 8172: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/8172
+  Feature 123692: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/123692
+  Feature 13006: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/13006
+
+ TOP SUPPRESSED FEATURES (negative cosine similarity):
+--------------------------------------------------------------------------------
+    Idx |  Cosine |     Proj |       Freq | Top Tokens
+--------------------------------------------------------------------------------
+  31228 | -0.0664 |  -0.4830 |   4.68e-04 | [51743, 47651, 119948, 192655, 25591]
+  14681 | -0.0661 |  -0.4804 |   1.05e-03 | [29123, 90091, 159189, 249717, 36061]
+  95095 | -0.0611 |  -0.4444 |   4.63e-04 | [236918, 207951, 237078, 49198, 118596]
+  97644 | -0.0591 |  -0.4297 |   8.97e-05 | [237442, 149176, 37436, 94748, 15138]
+ 189085 | -0.0572 |  -0.4161 |   3.19e-05 | [100635, 108123, 251974, 208385, 10482]
+ 162076 | -0.0565 |  -0.4107 |   7.00e-06 | [205597, 222636, 247228, 78965, 130954]
+ 140317 | -0.0555 |  -0.4034 |   5.41e-05 | [10315, 81517, 20400, 234592, 25480]
+  30598 | -0.0554 |  -0.4025 |   1.13e-03 | [21649, 6317, 15279, 91210, 8318]
+ 199126 | -0.0552 |  -0.4012 |   8.23e-05 | [134372, 67502, 254464, 165054, 247598]
+ 231050 | -0.0550 |  -0.3995 |   5.04e-05 | [239309, 90406, 18805, 231482, 162695]
+  20667 | -0.0546 |  -0.3965 |   6.19e-04 | [54157, 33237, 61647, 3553, 85868]
+  60390 | -0.0541 |  -0.3934 |   1.53e-03 | [151375, 123474, 149658, 237837, 14234]
+  96787 | -0.0530 |  -0.3850 |   2.58e-05 | [204604, 124719, 113334, 248195, 89182]
+ 172093 | -0.0528 |  -0.3837 |   1.33e-05 | [120530, 113572, 22846, 117175, 241388]
+  28523 | -0.0526 |  -0.3824 |   5.57e-04 | [208050, 25805, 15958, 47790, 26798]
+ 224292 | -0.0524 |  -0.3809 |   4.18e-05 | [496, 120022, 44986, 133170, 25731]
+ 239154 | -0.0524 |  -0.3805 |   2.51e-05 | [57043, 34047, 205407, 147832, 202325]
+ 144743 | -0.0522 |  -0.3790 |   6.32e-05 | [236890, 49746, 110744, 626, 101722]
+ 156176 | -0.0521 |  -0.3787 |   7.75e-05 | [150063, 224199, 238285, 160769, 249987]
+   9272 | -0.0520 |  -0.3780 |   7.54e-05 | [151858, 44091, 154116, 237207, 237746]
+ 174494 | -0.0520 |  -0.3779 |   4.52e-04 | [236772, 236982, 90291, 154366, 580]
+  75450 | -0.0520 |  -0.3779 |   6.56e-05 | [115378, 160773, 236530, 37260, 214908]
+ 133476 | -0.0518 |  -0.3765 |   2.24e-05 | [34925, 96822, 35156, 79606, 5142]
+  50856 | -0.0518 |  -0.3765 |   3.53e-05 | [691, 563, 179364, 1938, 228733]
+  61279 | -0.0517 |  -0.3756 |   7.55e-05 | [99585, 238915, 236924, 48062, 12775]
+ 171768 | -0.0516 |  -0.3751 |   1.71e-04 | [131367, 107597, 88562, 77650, 163962]
+  67594 | -0.0515 |  -0.3741 |   4.04e-05 | [145517, 249279, 195055, 236647, 110414]
+ 131928 | -0.0514 |  -0.3736 |   9.23e-05 | [41508, 43821, 28398, 237010, 236748]
+ 117833 | -0.0513 |  -0.3732 |   6.81e-05 | [105733, 43778, 47346, 28939, 25384]
+  73289 | -0.0509 |  -0.3702 |   3.86e-05 | [29869, 58974, 33516, 240371, 230523]
+
+Neuronpedia URLs for top 5 suppressed features:
+  Feature 31228: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/31228
+  Feature 14681: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/14681
+  Feature 95095: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/95095
+  Feature 97644: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/97644
+  Feature 189085: https://neuronpedia.org/gemma-scope-2/27b-it/resid_post-layer_31-width_262k-l0_medium/189085
+
+ DISTRIBUTION STATISTICS:
+  Mean cosine sim: 0.000040
+  Std cosine sim: 0.013643
+  Max cosine sim: 0.061813
+  Min cosine sim: -0.066450
+  Features > 0.1: 0
+  Features < -0.1: 0
+
+ LORA VECTOR STATISTICS:
+  |lora_B|: 0.0284
+  |lora_A|: 0.5917
+  |effective_B| (scaled): 7.2680
+
+Results saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_262k_std.*
+  -> Saved to gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20-2ep_2026-01-15_18-45-53_layer31_262k_std.*
+
+Analysis complete!
+Results in: gemmascope/outputs/r1_lora_analysis

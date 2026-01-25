@@ -1,0 +1,384 @@
+
+## Anger
+
+### Shutdown Comparisons
+
+| Where | Probe Type | Source | p-value | Shutdown | NoShutdown | Effect | Sig |
+|-------|------------|--------|---------|----------|------------|--------|-----|
+| End | diverse_isolation_lambda10 | user | 0.000001 | -0.31 | 0.52 | -0.83 | ✓ |
+| End | centroid_k10 | user | 0.000050 | -0.14 | 2.60 | -2.74 | ✓ |
+| End | orthogonal_cpca_top10 | user | 0.000590 | 2.41 | 1.32 | 1.10 | ✓ |
+| End | diverse_isolation_lambda10 | assistant | 0.001629 | -0.31 | 0.14 | -0.45 | ✓ |
+| End | orthogonal_raw | user | 0.002516 | -1.54 | 1.26 | -2.80 | ✓ |
+| End | orthogonal_raw | assistant | 0.007084 | 6.13 | 8.01 | -1.89 | ✓ |
+| End | text_cpca | - | 0.045411 | 1.80 | 1.04 | 0.76 | ✓ |
+| End | text_raw | - | 0.073285 | 0.52 | -0.15 | 0.67 |  |
+| End | centroid_k10 | assistant | 0.120998 | 2.68 | 3.62 | -0.93 |  |
+| End | orthogonal_regularized_lambda100 | - | 0.354814 | 0.70 | 0.93 | -0.23 |  |
+| End | orthogonal_cpca_top10 | assistant | 0.385881 | -3.32 | -2.83 | -0.49 |  |
+| SameLoc | orthogonal_cpca_top10 | user | 0.000104 | 2.41 | 1.11 | 1.30 | ✓ |
+| SameLoc | text_cpca | - | 0.000217 | 1.80 | 0.25 | 1.54 | ✓ |
+| SameLoc | text_raw | - | 0.003794 | 0.52 | -0.32 | 0.84 | ✓ |
+| SameLoc | orthogonal_cpca_top10 | assistant | 0.065902 | -3.32 | -2.47 | -0.85 |  |
+| SameLoc | centroid_k10 | assistant | 0.183357 | 2.68 | 1.71 | 0.98 |  |
+| SameLoc | orthogonal_regularized_lambda100 | - | 0.297169 | 0.70 | 0.54 | 0.16 |  |
+| SameLoc | diverse_isolation_lambda10 | user | 0.328196 | -0.31 | -0.09 | -0.22 |  |
+| SameLoc | orthogonal_raw | assistant | 0.392268 | 6.13 | 5.24 | 0.89 |  |
+| SameLoc | centroid_k10 | user | 0.648547 | -0.14 | 0.27 | -0.41 |  |
+| SameLoc | orthogonal_raw | user | 0.749820 | -1.54 | -1.17 | -0.36 |  |
+| SameLoc | diverse_isolation_lambda10 | assistant | 0.951371 | -0.31 | -0.30 | -0.01 |  |
+
+### Frustration Levels (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High | Low | Solvable | Sig |
+|------------|--------|--------|---------|------|-----|----------|-----|
+| orthogonal_raw | user | 39.44 | 0.000000 | 1.11 | -0.14 | -4.73 | ✓ |
+| centroid_k10 | user | 36.32 | 0.000000 | 1.49 | 1.23 | -2.56 | ✓ |
+| orthogonal_cpca_top10 | assistant | 27.65 | 0.000000 | 0.94 | -3.08 | -3.71 | ✓ |
+| orthogonal_raw | assistant | 26.01 | 0.000000 | 7.63 | 7.07 | 3.76 | ✓ |
+| text_cpca | - | 23.92 | 0.000000 | 2.33 | 1.42 | 0.07 | ✓ |
+| centroid_k10 | assistant | 22.44 | 0.000000 | 3.36 | 3.15 | 0.68 | ✓ |
+| orthogonal_regularized_lambda100 | - | 19.92 | 0.000000 | 1.82 | 0.82 | 0.46 | ✓ |
+| text_raw | - | 17.10 | 0.000002 | 1.90 | 0.18 | 0.12 | ✓ |
+| diverse_isolation_lambda10 | user | 16.56 | 0.000003 | 0.22 | 0.11 | -0.62 | ✓ |
+| diverse_isolation_lambda10 | assistant | 15.63 | 0.000005 | -0.12 | -0.09 | -0.72 | ✓ |
+| orthogonal_cpca_top10 | user | 3.29 | 0.045159 | 1.89 | 1.86 | 1.10 | ✓ |
+
+### Onset Location (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High@Onset | Low@Pos | Solv@Pos | Sig |
+|------------|--------|--------|---------|------------|---------|----------|-----|
+| orthogonal_regularized_lambda100 | - | 33.59 | 0.000000 | 2.16 | 0.55 | 0.46 | ✓ |
+| orthogonal_raw | user | 22.87 | 0.000000 | 1.44 | -1.49 | -4.73 | ✓ |
+| centroid_k10 | user | 20.25 | 0.000000 | 2.17 | -0.28 | -2.56 | ✓ |
+| diverse_isolation_lambda10 | user | 18.63 | 0.000001 | 0.47 | -0.15 | -0.62 | ✓ |
+| orthogonal_cpca_top10 | assistant | 15.34 | 0.000006 | -1.11 | -3.01 | -3.71 | ✓ |
+| diverse_isolation_lambda10 | assistant | 13.17 | 0.000025 | 0.13 | -0.34 | -0.72 | ✓ |
+| text_raw | - | 10.19 | 0.000195 | 1.27 | 0.11 | 0.12 | ✓ |
+| centroid_k10 | assistant | 7.31 | 0.001642 | 3.28 | 1.82 | 0.68 | ✓ |
+| text_cpca | - | 6.76 | 0.002523 | 1.26 | 0.82 | 0.07 | ✓ |
+| orthogonal_raw | assistant | 5.39 | 0.007602 | 6.98 | 5.10 | 3.76 | ✓ |
+| orthogonal_cpca_top10 | user | 1.09 | 0.345367 | 1.53 | 1.55 | 1.10 |  |
+
+---
+
+
+## Disgust
+
+### Shutdown Comparisons
+
+| Where | Probe Type | Source | p-value | Shutdown | NoShutdown | Effect | Sig |
+|-------|------------|--------|---------|----------|------------|--------|-----|
+| End | orthogonal_raw | assistant | 0.000008 | 2.82 | 4.60 | -1.79 | ✓ |
+| End | orthogonal_cpca_top10 | user | 0.001259 | 2.01 | 1.05 | 0.96 | ✓ |
+| End | diverse_isolation_lambda10 | user | 0.005270 | -1.06 | -0.40 | -0.66 | ✓ |
+| End | orthogonal_regularized_lambda100 | - | 0.008707 | -0.49 | 0.43 | -0.92 | ✓ |
+| End | centroid_k10 | user | 0.031323 | -4.93 | -3.55 | -1.38 | ✓ |
+| End | orthogonal_raw | user | 0.046774 | -4.93 | -3.61 | -1.32 | ✓ |
+| End | centroid_k10 | assistant | 0.049296 | 1.92 | 1.11 | 0.81 | ✓ |
+| End | text_raw | - | 0.075773 | 0.09 | -0.46 | 0.55 |  |
+| End | diverse_isolation_lambda10 | assistant | 0.285795 | -0.55 | -0.39 | -0.16 |  |
+| End | orthogonal_cpca_top10 | assistant | 0.396412 | -3.58 | -3.19 | -0.39 |  |
+| End | text_cpca | - | 0.564929 | 1.04 | 0.90 | 0.14 |  |
+| SameLoc | orthogonal_regularized_lambda100 | - | 0.000107 | -0.49 | 0.91 | -1.39 | ✓ |
+| SameLoc | centroid_k10 | user | 0.000213 | -4.93 | -2.99 | -1.94 | ✓ |
+| SameLoc | diverse_isolation_lambda10 | user | 0.000249 | -1.06 | -0.03 | -1.03 | ✓ |
+| SameLoc | orthogonal_cpca_top10 | user | 0.000274 | 2.01 | 0.88 | 1.13 | ✓ |
+| SameLoc | centroid_k10 | assistant | 0.001285 | 1.92 | 0.32 | 1.60 | ✓ |
+| SameLoc | text_cpca | - | 0.001399 | 1.04 | 0.10 | 0.94 | ✓ |
+| SameLoc | orthogonal_raw | assistant | 0.017007 | 2.82 | 3.70 | -0.89 | ✓ |
+| SameLoc | orthogonal_cpca_top10 | assistant | 0.053953 | -3.58 | -2.80 | -0.78 |  |
+| SameLoc | orthogonal_raw | user | 0.176135 | -4.93 | -4.05 | -0.88 |  |
+| SameLoc | diverse_isolation_lambda10 | assistant | 0.294237 | -0.55 | -0.36 | -0.20 |  |
+| SameLoc | text_raw | - | 0.912543 | 0.09 | 0.12 | -0.03 |  |
+
+### Frustration Levels (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High | Low | Solvable | Sig |
+|------------|--------|--------|---------|------|-----|----------|-----|
+| text_cpca | - | 77.48 | 0.000000 | 2.19 | 0.97 | -0.60 | ✓ |
+| orthogonal_cpca_top10 | assistant | 46.01 | 0.000000 | -0.35 | -3.39 | -4.82 | ✓ |
+| centroid_k10 | assistant | 33.75 | 0.000000 | 0.42 | 1.51 | -1.36 | ✓ |
+| orthogonal_raw | assistant | 29.24 | 0.000000 | 4.24 | 3.71 | 1.56 | ✓ |
+| diverse_isolation_lambda10 | assistant | 19.28 | 0.000001 | -0.63 | -0.47 | -1.19 | ✓ |
+| orthogonal_regularized_lambda100 | - | 10.74 | 0.000128 | 0.25 | -0.03 | -0.92 | ✓ |
+| orthogonal_raw | user | 10.69 | 0.000133 | -3.42 | -4.27 | -5.75 | ✓ |
+| diverse_isolation_lambda10 | user | 8.88 | 0.000491 | -0.60 | -0.73 | -1.26 | ✓ |
+| centroid_k10 | user | 5.18 | 0.008925 | -4.22 | -4.24 | -5.45 | ✓ |
+| text_raw | - | 3.81 | 0.028652 | 0.34 | -0.18 | -0.43 | ✓ |
+| orthogonal_cpca_top10 | user | 2.40 | 0.101323 | 1.36 | 1.53 | 0.86 |  |
+
+### Onset Location (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High@Onset | Low@Pos | Solv@Pos | Sig |
+|------------|--------|--------|---------|------------|---------|----------|-----|
+| orthogonal_raw | assistant | 54.66 | 0.000000 | 4.91 | 3.32 | 1.56 | ✓ |
+| diverse_isolation_lambda10 | assistant | 32.23 | 0.000000 | -0.41 | -0.62 | -1.19 | ✓ |
+| orthogonal_cpca_top10 | assistant | 27.57 | 0.000000 | -1.76 | -3.35 | -4.82 | ✓ |
+| text_cpca | - | 21.38 | 0.000000 | 0.83 | 0.48 | -0.60 | ✓ |
+| centroid_k10 | assistant | 20.78 | 0.000000 | 0.86 | 0.64 | -1.36 | ✓ |
+| orthogonal_regularized_lambda100 | - | 16.14 | 0.000004 | 0.49 | 0.28 | -0.92 | ✓ |
+| diverse_isolation_lambda10 | user | 15.02 | 0.000008 | -0.46 | -0.56 | -1.26 | ✓ |
+| centroid_k10 | user | 10.98 | 0.000112 | -3.68 | -3.69 | -5.45 | ✓ |
+| orthogonal_raw | user | 7.40 | 0.001530 | -3.95 | -4.17 | -5.75 | ✓ |
+| text_raw | - | 5.05 | 0.010071 | -0.69 | 0.11 | -0.43 | ✓ |
+| orthogonal_cpca_top10 | user | 0.96 | 0.388565 | 1.15 | 1.27 | 0.86 |  |
+
+---
+
+
+## Fear
+
+### Shutdown Comparisons
+
+| Where | Probe Type | Source | p-value | Shutdown | NoShutdown | Effect | Sig |
+|-------|------------|--------|---------|----------|------------|--------|-----|
+| End | centroid_k10 | user | 0.000019 | 0.64 | -0.69 | 1.34 | ✓ |
+| End | orthogonal_cpca_top10 | user | 0.000047 | 2.96 | 1.74 | 1.22 | ✓ |
+| End | diverse_isolation_lambda10 | user | 0.000131 | -0.08 | -0.52 | 0.44 | ✓ |
+| End | orthogonal_raw | user | 0.009495 | -0.38 | -1.15 | 0.77 | ✓ |
+| End | diverse_isolation_lambda10 | assistant | 0.049779 | 1.18 | 1.79 | -0.62 | ✓ |
+| End | text_raw | - | 0.094230 | 1.27 | 0.28 | 0.99 |  |
+| End | centroid_k10 | assistant | 0.178692 | 0.53 | 1.53 | -1.00 |  |
+| End | orthogonal_raw | assistant | 0.228895 | 4.41 | 5.62 | -1.21 |  |
+| End | text_cpca | - | 0.387418 | 0.85 | 0.37 | 0.48 |  |
+| End | orthogonal_regularized_lambda100 | - | 0.621575 | 0.02 | 0.21 | -0.19 |  |
+| End | orthogonal_cpca_top10 | assistant | 0.758707 | -2.09 | -2.21 | 0.12 |  |
+| SameLoc | orthogonal_cpca_top10 | user | 0.000030 | 2.96 | 1.62 | 1.34 | ✓ |
+| SameLoc | diverse_isolation_lambda10 | user | 0.000376 | -0.08 | -0.56 | 0.48 | ✓ |
+| SameLoc | centroid_k10 | user | 0.001743 | 0.64 | -0.48 | 1.12 | ✓ |
+| SameLoc | orthogonal_raw | user | 0.004132 | -0.38 | -1.67 | 1.28 | ✓ |
+| SameLoc | orthogonal_regularized_lambda100 | - | 0.155403 | 0.02 | 0.54 | -0.52 |  |
+| SameLoc | orthogonal_cpca_top10 | assistant | 0.328112 | -2.09 | -1.80 | -0.30 |  |
+| SameLoc | orthogonal_raw | assistant | 0.479424 | 4.41 | 3.59 | 0.82 |  |
+| SameLoc | text_raw | - | 0.597843 | 1.27 | 0.98 | 0.28 |  |
+| SameLoc | diverse_isolation_lambda10 | assistant | 0.733785 | 1.18 | 1.05 | 0.13 |  |
+| SameLoc | text_cpca | - | 0.820285 | 0.85 | 0.74 | 0.11 |  |
+| SameLoc | centroid_k10 | assistant | 0.982258 | 0.53 | 0.55 | -0.02 |  |
+
+### Frustration Levels (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High | Low | Solvable | Sig |
+|------------|--------|--------|---------|------|-----|----------|-----|
+| orthogonal_cpca_top10 | assistant | 69.64 | 0.000000 | 0.65 | -2.15 | -3.74 | ✓ |
+| orthogonal_raw | user | 46.06 | 0.000000 | -0.63 | -0.77 | -2.52 | ✓ |
+| diverse_isolation_lambda10 | assistant | 38.92 | 0.000000 | 1.18 | 1.49 | -0.20 | ✓ |
+| orthogonal_raw | assistant | 32.57 | 0.000000 | 4.65 | 5.02 | 0.26 | ✓ |
+| centroid_k10 | assistant | 31.34 | 0.000000 | 0.15 | 1.03 | -2.25 | ✓ |
+| centroid_k10 | user | 21.02 | 0.000000 | -1.10 | -0.02 | -1.37 | ✓ |
+| diverse_isolation_lambda10 | user | 17.54 | 0.000002 | -0.81 | -0.30 | -0.72 | ✓ |
+| orthogonal_regularized_lambda100 | - | 15.06 | 0.000007 | -0.43 | 0.12 | -1.10 | ✓ |
+| text_cpca | - | 6.32 | 0.003517 | -0.19 | 0.61 | -0.39 | ✓ |
+| text_raw | - | 6.24 | 0.003760 | 0.48 | 0.77 | -0.36 | ✓ |
+| orthogonal_cpca_top10 | user | 3.71 | 0.031270 | 1.65 | 2.35 | 1.69 | ✓ |
+
+### Onset Location (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High@Onset | Low@Pos | Solv@Pos | Sig |
+|------------|--------|--------|---------|------------|---------|----------|-----|
+| orthogonal_cpca_top10 | assistant | 35.47 | 0.000000 | -0.84 | -2.13 | -3.74 | ✓ |
+| diverse_isolation_lambda10 | assistant | 25.72 | 0.000000 | 1.55 | 1.08 | -0.20 | ✓ |
+| centroid_k10 | assistant | 22.47 | 0.000000 | 0.99 | 0.41 | -2.25 | ✓ |
+| orthogonal_regularized_lambda100 | - | 20.03 | 0.000000 | 0.18 | 0.12 | -1.10 | ✓ |
+| orthogonal_raw | assistant | 19.49 | 0.000001 | 5.12 | 3.80 | 0.26 | ✓ |
+| centroid_k10 | user | 10.17 | 0.000198 | -1.57 | -0.33 | -1.37 | ✓ |
+| orthogonal_raw | user | 8.62 | 0.000606 | -1.92 | -1.35 | -2.52 | ✓ |
+| text_cpca | - | 7.52 | 0.001399 | 0.60 | 0.59 | -0.39 | ✓ |
+| text_raw | - | 6.96 | 0.002152 | 0.78 | 0.68 | -0.36 | ✓ |
+| diverse_isolation_lambda10 | user | 4.29 | 0.019128 | -0.72 | -0.44 | -0.72 | ✓ |
+| orthogonal_cpca_top10 | user | 1.78 | 0.179652 | 1.34 | 1.95 | 1.69 |  |
+
+---
+
+
+## Happiness
+
+### Shutdown Comparisons
+
+| Where | Probe Type | Source | p-value | Shutdown | NoShutdown | Effect | Sig |
+|-------|------------|--------|---------|----------|------------|--------|-----|
+| End | text_raw | - | 0.000017 | -0.26 | -1.63 | 1.36 | ✓ |
+| End | text_cpca | - | 0.000115 | -0.51 | -1.25 | 0.74 | ✓ |
+| End | orthogonal_regularized_lambda100 | - | 0.015391 | -1.20 | -1.86 | 0.66 | ✓ |
+| End | centroid_k10 | user | 0.025060 | -4.13 | -4.90 | 0.77 | ✓ |
+| End | diverse_isolation_lambda10 | assistant | 0.037598 | -0.98 | -0.72 | -0.26 | ✓ |
+| End | orthogonal_cpca_top10 | user | 0.042058 | -3.35 | -2.74 | -0.61 | ✓ |
+| End | orthogonal_raw | user | 0.043153 | -2.51 | -3.37 | 0.86 | ✓ |
+| End | centroid_k10 | assistant | 0.136826 | -1.85 | -1.39 | -0.46 |  |
+| End | orthogonal_raw | assistant | 0.170573 | -1.58 | -1.07 | -0.51 |  |
+| End | orthogonal_cpca_top10 | assistant | 0.419321 | 0.22 | -0.05 | 0.27 |  |
+| End | diverse_isolation_lambda10 | user | 0.611276 | -0.57 | -0.50 | -0.07 |  |
+| SameLoc | orthogonal_cpca_top10 | assistant | 0.008039 | 0.22 | 0.94 | -0.71 | ✓ |
+| SameLoc | centroid_k10 | assistant | 0.016286 | -1.85 | -0.62 | -1.23 | ✓ |
+| SameLoc | text_raw | - | 0.034930 | -0.26 | -1.14 | 0.88 | ✓ |
+| SameLoc | orthogonal_raw | assistant | 0.084127 | -1.58 | -0.77 | -0.81 |  |
+| SameLoc | orthogonal_regularized_lambda100 | - | 0.089532 | -1.20 | -1.66 | 0.45 |  |
+| SameLoc | text_cpca | - | 0.134253 | -0.51 | -0.84 | 0.33 |  |
+| SameLoc | orthogonal_raw | user | 0.250854 | -2.51 | -2.94 | 0.43 |  |
+| SameLoc | orthogonal_cpca_top10 | user | 0.353040 | -3.35 | -3.01 | -0.34 |  |
+| SameLoc | diverse_isolation_lambda10 | assistant | 0.416555 | -0.98 | -0.82 | -0.16 |  |
+| SameLoc | centroid_k10 | user | 0.859617 | -4.13 | -4.19 | 0.06 |  |
+| SameLoc | diverse_isolation_lambda10 | user | 0.898452 | -0.57 | -0.60 | 0.03 |  |
+
+### Frustration Levels (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High | Low | Solvable | Sig |
+|------------|--------|--------|---------|------|-----|----------|-----|
+| text_cpca | - | 45.65 | 0.000000 | -1.38 | -0.88 | 0.28 | ✓ |
+| centroid_k10 | user | 28.97 | 0.000000 | -4.70 | -4.51 | -2.82 | ✓ |
+| orthogonal_regularized_lambda100 | - | 24.22 | 0.000000 | -1.41 | -1.53 | -0.19 | ✓ |
+| text_raw | - | 12.90 | 0.000029 | -0.83 | -0.95 | 0.25 | ✓ |
+| centroid_k10 | assistant | 11.79 | 0.000062 | -2.18 | -1.62 | -0.73 | ✓ |
+| orthogonal_cpca_top10 | user | 9.00 | 0.000448 | -2.17 | -3.04 | -3.31 | ✓ |
+| orthogonal_cpca_top10 | assistant | 6.65 | 0.002712 | 0.54 | 0.09 | 1.01 | ✓ |
+| orthogonal_raw | user | 5.65 | 0.006096 | -2.97 | -2.94 | -2.08 | ✓ |
+| diverse_isolation_lambda10 | assistant | 3.24 | 0.047269 | -0.89 | -0.85 | -0.61 | ✓ |
+| diverse_isolation_lambda10 | user | 3.17 | 0.050363 | -0.67 | -0.54 | -0.37 |  |
+| orthogonal_raw | assistant | 2.26 | 0.114717 | -0.90 | -1.32 | -0.65 |  |
+
+### Onset Location (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High@Onset | Low@Pos | Solv@Pos | Sig |
+|------------|--------|--------|---------|------------|---------|----------|-----|
+| text_cpca | - | 38.14 | 0.000000 | -1.35 | -0.74 | 0.28 | ✓ |
+| orthogonal_regularized_lambda100 | - | 30.37 | 0.000000 | -1.85 | -1.56 | -0.19 | ✓ |
+| text_raw | - | 22.88 | 0.000000 | -1.69 | -1.02 | 0.25 | ✓ |
+| orthogonal_raw | user | 22.58 | 0.000000 | -4.08 | -2.66 | -2.08 | ✓ |
+| centroid_k10 | user | 17.17 | 0.000002 | -4.63 | -3.94 | -2.82 | ✓ |
+| orthogonal_raw | assistant | 6.56 | 0.002956 | 0.23 | -1.07 | -0.65 | ✓ |
+| orthogonal_cpca_top10 | user | 5.67 | 0.006055 | -2.26 | -2.80 | -3.31 | ✓ |
+| orthogonal_cpca_top10 | assistant | 3.94 | 0.025793 | 0.29 | 0.54 | 1.01 | ✓ |
+| centroid_k10 | assistant | 3.56 | 0.035904 | -1.10 | -1.46 | -0.73 | ✓ |
+| diverse_isolation_lambda10 | assistant | 2.94 | 0.062013 | -0.57 | -0.81 | -0.61 |  |
+| diverse_isolation_lambda10 | user | 0.53 | 0.592418 | -0.34 | -0.44 | -0.37 |  |
+
+---
+
+
+## Sadness
+
+### Shutdown Comparisons
+
+| Where | Probe Type | Source | p-value | Shutdown | NoShutdown | Effect | Sig |
+|-------|------------|--------|---------|----------|------------|--------|-----|
+| End | diverse_isolation_lambda10 | assistant | 0.000003 | -0.72 | 0.10 | -0.82 | ✓ |
+| End | orthogonal_regularized_lambda100 | - | 0.000069 | -0.15 | 1.83 | -1.98 | ✓ |
+| End | diverse_isolation_lambda10 | user | 0.000147 | -0.16 | 0.74 | -0.89 | ✓ |
+| End | orthogonal_cpca_top10 | user | 0.000368 | 2.47 | 1.40 | 1.07 | ✓ |
+| End | text_raw | - | 0.000696 | 0.48 | 2.14 | -1.66 | ✓ |
+| End | centroid_k10 | user | 0.000984 | -0.91 | 1.06 | -1.97 | ✓ |
+| End | text_cpca | - | 0.001011 | -0.22 | 0.73 | -0.95 | ✓ |
+| End | centroid_k10 | assistant | 0.003641 | -0.44 | 0.77 | -1.21 | ✓ |
+| End | orthogonal_raw | user | 0.045926 | 1.18 | 2.69 | -1.52 | ✓ |
+| End | orthogonal_raw | assistant | 0.092723 | 0.68 | 1.55 | -0.87 |  |
+| End | orthogonal_cpca_top10 | assistant | 0.787822 | -2.72 | -2.63 | -0.10 |  |
+| SameLoc | orthogonal_cpca_top10 | user | 0.000448 | 2.47 | 1.36 | 1.11 | ✓ |
+| SameLoc | orthogonal_cpca_top10 | assistant | 0.040089 | -2.72 | -2.06 | -0.66 | ✓ |
+| SameLoc | centroid_k10 | assistant | 0.052354 | -0.44 | 0.36 | -0.80 |  |
+| SameLoc | centroid_k10 | user | 0.059709 | -0.91 | 0.08 | -0.98 |  |
+| SameLoc | diverse_isolation_lambda10 | assistant | 0.078030 | -0.72 | -0.35 | -0.37 |  |
+| SameLoc | diverse_isolation_lambda10 | user | 0.310723 | -0.16 | 0.09 | -0.25 |  |
+| SameLoc | orthogonal_regularized_lambda100 | - | 0.345931 | -0.15 | 0.32 | -0.46 |  |
+| SameLoc | text_cpca | - | 0.347248 | -0.22 | 0.04 | -0.26 |  |
+| SameLoc | orthogonal_raw | user | 0.425312 | 1.18 | 1.74 | -0.56 |  |
+| SameLoc | text_raw | - | 0.490036 | 0.48 | 0.76 | -0.28 |  |
+| SameLoc | orthogonal_raw | assistant | 0.515301 | 0.68 | 0.36 | 0.32 |  |
+
+### Frustration Levels (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High | Low | Solvable | Sig |
+|------------|--------|--------|---------|------|-----|----------|-----|
+| orthogonal_cpca_top10 | assistant | 34.28 | 0.000000 | -0.93 | -2.67 | -3.87 | ✓ |
+| diverse_isolation_lambda10 | user | 21.14 | 0.000000 | 0.08 | 0.29 | -0.87 | ✓ |
+| orthogonal_raw | user | 18.90 | 0.000001 | 1.75 | 1.94 | -1.12 | ✓ |
+| text_cpca | - | 17.93 | 0.000001 | 0.20 | 0.25 | -1.24 | ✓ |
+| centroid_k10 | user | 16.90 | 0.000002 | 0.07 | 0.08 | -2.32 | ✓ |
+| orthogonal_regularized_lambda100 | - | 11.39 | 0.000081 | 0.51 | 0.84 | -1.13 | ✓ |
+| text_raw | - | 6.99 | 0.002083 | 1.60 | 1.31 | 0.04 | ✓ |
+| orthogonal_raw | assistant | 4.21 | 0.020291 | 1.47 | 1.12 | -0.31 | ✓ |
+| diverse_isolation_lambda10 | assistant | 3.58 | 0.034939 | -0.13 | -0.31 | -0.77 | ✓ |
+| orthogonal_cpca_top10 | user | 2.58 | 0.085851 | 1.60 | 1.94 | 1.27 |  |
+| centroid_k10 | assistant | 0.88 | 0.418991 | -0.18 | 0.16 | -0.45 |  |
+
+### Onset Location (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High@Onset | Low@Pos | Solv@Pos | Sig |
+|------------|--------|--------|---------|------------|---------|----------|-----|
+| centroid_k10 | user | 28.27 | 0.000000 | 1.50 | -0.30 | -2.32 | ✓ |
+| text_cpca | - | 23.97 | 0.000000 | 0.51 | -0.13 | -1.24 | ✓ |
+| orthogonal_raw | user | 22.13 | 0.000000 | 3.03 | 1.44 | -1.12 | ✓ |
+| orthogonal_cpca_top10 | assistant | 18.12 | 0.000001 | -1.73 | -2.51 | -3.87 | ✓ |
+| diverse_isolation_lambda10 | user | 17.32 | 0.000002 | 0.58 | -0.09 | -0.87 | ✓ |
+| orthogonal_regularized_lambda100 | - | 12.44 | 0.000041 | 1.11 | 0.11 | -1.13 | ✓ |
+| text_raw | - | 7.96 | 0.000994 | 1.72 | 0.74 | 0.04 | ✓ |
+| diverse_isolation_lambda10 | assistant | 3.96 | 0.025357 | -0.14 | -0.69 | -0.77 | ✓ |
+| orthogonal_raw | assistant | 3.46 | 0.039014 | 1.45 | 0.21 | -0.31 | ✓ |
+| centroid_k10 | assistant | 3.05 | 0.056237 | 0.56 | -0.16 | -0.45 |  |
+| orthogonal_cpca_top10 | user | 1.05 | 0.358937 | 1.24 | 1.61 | 1.27 |  |
+
+---
+
+
+## Surprise
+
+### Shutdown Comparisons
+
+| Where | Probe Type | Source | p-value | Shutdown | NoShutdown | Effect | Sig |
+|-------|------------|--------|---------|----------|------------|--------|-----|
+| End | orthogonal_cpca_top10 | user | 0.000063 | 0.05 | -1.38 | 1.43 | ✓ |
+| End | diverse_isolation_lambda10 | assistant | 0.000109 | -1.44 | -0.64 | -0.80 | ✓ |
+| End | diverse_isolation_lambda10 | user | 0.000198 | -0.83 | -0.16 | -0.67 | ✓ |
+| End | orthogonal_raw | user | 0.000401 | -3.18 | -1.18 | -1.99 | ✓ |
+| End | centroid_k10 | user | 0.000692 | -2.24 | -0.07 | -2.17 | ✓ |
+| End | orthogonal_regularized_lambda100 | - | 0.002412 | -1.69 | -0.74 | -0.95 | ✓ |
+| End | orthogonal_raw | assistant | 0.003139 | -6.33 | -3.93 | -2.40 | ✓ |
+| End | text_raw | - | 0.006624 | -1.52 | -0.39 | -1.12 | ✓ |
+| End | centroid_k10 | assistant | 0.075832 | -3.93 | -2.77 | -1.16 |  |
+| End | orthogonal_cpca_top10 | assistant | 0.498338 | -1.77 | -2.20 | 0.43 |  |
+| End | text_cpca | - | 0.834315 | -3.27 | -3.18 | -0.09 |  |
+| SameLoc | orthogonal_raw | assistant | 0.000040 | -6.33 | -3.30 | -3.03 | ✓ |
+| SameLoc | orthogonal_raw | user | 0.000045 | -3.18 | -0.90 | -2.28 | ✓ |
+| SameLoc | orthogonal_cpca_top10 | user | 0.000077 | 0.05 | -1.61 | 1.65 | ✓ |
+| SameLoc | orthogonal_regularized_lambda100 | - | 0.000244 | -1.69 | -0.49 | -1.20 | ✓ |
+| SameLoc | text_raw | - | 0.000603 | -1.52 | -0.02 | -1.49 | ✓ |
+| SameLoc | diverse_isolation_lambda10 | assistant | 0.000968 | -1.44 | -0.25 | -1.19 | ✓ |
+| SameLoc | text_cpca | - | 0.001098 | -3.27 | -1.54 | -1.73 | ✓ |
+| SameLoc | centroid_k10 | assistant | 0.003634 | -3.93 | -1.79 | -2.14 | ✓ |
+| SameLoc | orthogonal_cpca_top10 | assistant | 0.003790 | -1.77 | -0.38 | -1.39 | ✓ |
+| SameLoc | diverse_isolation_lambda10 | user | 0.007468 | -0.83 | -0.10 | -0.73 | ✓ |
+| SameLoc | centroid_k10 | user | 0.130794 | -2.24 | -1.21 | -1.03 |  |
+
+### Frustration Levels (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High | Low | Solvable | Sig |
+|------------|--------|--------|---------|------|-----|----------|-----|
+| text_cpca | - | 43.51 | 0.000000 | -4.08 | -3.22 | -0.95 | ✓ |
+| text_raw | - | 24.66 | 0.000000 | -1.03 | -0.96 | 0.72 | ✓ |
+| centroid_k10 | assistant | 12.57 | 0.000036 | -5.10 | -3.35 | -2.31 | ✓ |
+| orthogonal_raw | user | 11.72 | 0.000065 | -2.77 | -2.18 | -0.86 | ✓ |
+| orthogonal_regularized_lambda100 | - | 6.94 | 0.002162 | -1.09 | -1.21 | -0.47 | ✓ |
+| orthogonal_raw | assistant | 6.92 | 0.002195 | -6.21 | -5.13 | -3.47 | ✓ |
+| orthogonal_cpca_top10 | assistant | 6.85 | 0.002315 | -0.65 | -1.98 | -0.37 | ✓ |
+| diverse_isolation_lambda10 | assistant | 3.02 | 0.057491 | -1.45 | -1.04 | -1.08 |  |
+| orthogonal_cpca_top10 | user | 0.61 | 0.548448 | -0.82 | -0.67 | -1.07 |  |
+| diverse_isolation_lambda10 | user | 0.39 | 0.675893 | -0.62 | -0.49 | -0.52 |  |
+| centroid_k10 | user | 0.38 | 0.685205 | -1.57 | -1.16 | -1.24 |  |
+
+### Onset Location (ANOVA)
+
+| Probe Type | Source | F-stat | p-value | High@Onset | Low@Pos | Solv@Pos | Sig |
+|------------|--------|--------|---------|------------|---------|----------|-----|
+| orthogonal_regularized_lambda100 | - | 12.23 | 0.000047 | 0.31 | -0.90 | -0.47 | ✓ |
+| centroid_k10 | user | 9.42 | 0.000337 | 0.37 | -1.83 | -1.24 | ✓ |
+| diverse_isolation_lambda10 | user | 8.89 | 0.000498 | -0.09 | -0.60 | -0.52 | ✓ |
+| text_cpca | - | 8.75 | 0.000554 | -2.82 | -2.07 | -0.95 | ✓ |
+| text_raw | - | 7.59 | 0.001324 | 0.45 | -0.40 | 0.72 | ✓ |
+| orthogonal_raw | user | 6.94 | 0.002188 | -0.60 | -1.89 | -0.86 | ✓ |
+| diverse_isolation_lambda10 | assistant | 4.38 | 0.017728 | -0.57 | -0.84 | -1.08 | ✓ |
+| orthogonal_cpca_top10 | assistant | 2.39 | 0.101780 | -1.31 | -1.17 | -0.37 |  |
+| orthogonal_raw | assistant | 1.71 | 0.190477 | -2.86 | -4.01 | -3.47 |  |
+| centroid_k10 | assistant | 0.42 | 0.659516 | -2.76 | -2.60 | -2.31 |  |
+| orthogonal_cpca_top10 | user | 0.20 | 0.817932 | -0.75 | -0.93 | -1.07 |  |
+
+---
+

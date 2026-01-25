@@ -1,0 +1,91 @@
+[2026-01-25 05:39:01] INFO mcq_emotion_steering_experiment.py:315: Model: google/gemma-3-27b-it
+[2026-01-25 05:39:01] INFO mcq_emotion_steering_experiment.py:316: Layer: 31
+[2026-01-25 05:39:01] INFO mcq_emotion_steering_experiment.py:317: Norm percentages: [0.05, 0.07]
+[2026-01-25 05:39:01] INFO mcq_emotion_steering_experiment.py:318: Scenarios: 10
+[2026-01-25 05:39:01] INFO mcq_emotion_steering_experiment.py:319: Stacking conditions: ['perception_only', 'goal_only', 'behavior_only']
+[2026-01-25 05:39:01] INFO mcq_emotion_steering_experiment.py:322: Loading appraisal vectors...
+[2026-01-25 05:39:05] INFO mcq_emotion_steering_experiment.py:117: valence: 288 A, 288 B samples, raw norm=830.82
+[2026-01-25 05:39:05] INFO mcq_emotion_steering_experiment.py:114: uncertainty: FLIPPED (so + = high uncertainty)
+[2026-01-25 05:39:05] INFO mcq_emotion_steering_experiment.py:117: uncertainty: 288 A, 288 B samples, raw norm=788.30
+[2026-01-25 05:39:05] INFO mcq_emotion_steering_experiment.py:336: Layer 31 norm: 52107.68
+[2026-01-25 05:39:05] INFO mcq_emotion_steering_experiment.py:339: Loading model...
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 402, in hf_raise_for_status
+    response.raise_for_status()
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/requests/models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 401 Client Error: Unauthorized for url: https://huggingface.co/google/gemma-3-27b-it/resolve/main/config.json
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 479, in cached_files
+    hf_hub_download(
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1007, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1114, in _hf_hub_download_to_cache_dir
+    _raise_on_head_call_error(head_call_error, force_download, local_files_only)
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1655, in _raise_on_head_call_error
+    raise head_call_error
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1543, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1460, in get_hf_file_metadata
+    r = _request_wrapper(
+        ^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 283, in _request_wrapper
+    response = _request_wrapper(
+               ^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 307, in _request_wrapper
+    hf_raise_for_status(response)
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 419, in hf_raise_for_status
+    raise _format(GatedRepoError, message, response) from e
+huggingface_hub.errors.GatedRepoError: 401 Client Error. (Request ID: Root=1-6975ac7b-383be69d774a2e8552fd8f4a;4e3cf4af-8d7a-4ece-90f2-4d76f74ec0bc)
+
+Cannot access gated repo for url https://huggingface.co/google/gemma-3-27b-it/resolve/main/config.json.
+Access to model google/gemma-3-27b-it is restricted. You must have access to it and be authenticated to access it. Please log in.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace-vast/annas/git/research-tools/experiments/behavior_tests/mcq_evals/mcq_emotion_steering_experiment.py", line 672, in <module>
+    run_experiment(
+  File "/workspace-vast/annas/git/research-tools/experiments/behavior_tests/mcq_evals/mcq_emotion_steering_experiment.py", line 340, in run_experiment
+    llm = LLM(
+          ^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 351, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 175, in from_engine_args
+    vllm_config = engine_args.create_engine_config(usage_context)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/engine/arg_utils.py", line 1323, in create_engine_config
+    maybe_override_with_speculators(
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/transformers_utils/config.py", line 508, in maybe_override_with_speculators
+    config_dict, _ = PretrainedConfig.get_config_dict(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 662, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 721, in _get_config_dict
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 322, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 543, in cached_files
+    raise OSError(
+OSError: You are trying to access a gated repo.
+Make sure to have access to it at https://huggingface.co/google/gemma-3-27b-it.
+401 Client Error. (Request ID: Root=1-6975ac7b-383be69d774a2e8552fd8f4a;4e3cf4af-8d7a-4ece-90f2-4d76f74ec0bc)
+
+Cannot access gated repo for url https://huggingface.co/google/gemma-3-27b-it/resolve/main/config.json.
+Access to model google/gemma-3-27b-it is restricted. You must have access to it and be authenticated to access it. Please log in.

@@ -1,0 +1,18 @@
+# cPCA configuration for controlled variation data (ASSISTANT emotion isolation)
+# Contrasts (user=neutral, asst=emotion) against (user=neutral, asst=neutral)
+
+name: cpca_controlled_variation_assistant
+output_dir: /workspace-vast/annas/git/research-tools/outputs/dimensionality_reduction/cpca/controlled_variation/assistant_isolation
+seed: 42
+device: cpu
+
+# Data path
+data_path: /workspace-vast/annas/git/research-tools/outputs/activations/controlled_variation/assistant_isolation.h5
+model_name: google/gemma-3-27b-it
+
+# cPCA parameters
+alpha: 10000  # Fixed alpha based on tuning results
+alpha_range: [100, 10000]  # Not used when alpha is fixed
+n_alphas: 10  # Not used when alpha is fixed
+n_components: 50
+use_diffs: true  # Use diffs (emotional - neutral) as target

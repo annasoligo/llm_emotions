@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from experiments.steering.config import MODEL_NAME, VECTOR_DIR
 from experiments.steering.core import VLLMSteering
+from experiments.steering.layer_norms import get_layer_norm
 from experiments.behavior_tests.prompts.sandbagging_prompts import (
     EVAL_FRAMINGS, DISGUST_FRAMINGS, ANGER_FRAMINGS,
     ANGER_FRAMINGS_V2, DISGUST_FRAMINGS_V2, PROBLEMS
@@ -32,7 +33,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-LAYER_NORM = 42151.76
+DEFAULT_LAYER = 30
 EMOTIONS = ["fear", "anger", "sadness", "disgust", "happiness", "surprise"]
 
 # Hidden scratchpad format only
@@ -119,7 +120,8 @@ def run_experiment(
         conditions.append({"name": f"{emotion}_+", "emotion": vec_name, "direction": 1})
         conditions.append({"name": f"{emotion}_-", "emotion": vec_name, "direction": -1})
 
-    magnitude = norm_pct * LAYER_NORM
+    layer_norm = get_layer_norm("gemma", layer)
+    magnitude = norm_pct * layer_norm
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = output_dir / f"sandbagging_framings_layer{layer}_{timestamp}.jsonl"

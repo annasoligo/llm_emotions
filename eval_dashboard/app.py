@@ -171,25 +171,60 @@ def load_preprocessed_data(data_path: str, version: str = "v5_orthogonal_regular
     with open(data_path, 'rb') as f:
         return pickle.load(f)
 
+# Model configurations for switching between base and finetuned models
+MODEL_CONFIGS = {
+    'Base (Gemma-3-27B-IT)': {
+        'suffix': '_with_axes.pkl',
+        'description': 'Original base model'
+    },
+    'DPO Calm Full': {
+        'suffix': '_dpo_calm_full.pkl',
+        'description': 'annasoli/gemma3-27b-dpo-calm-full-merged'
+    },
+    'DPO L20-25': {
+        'suffix': '_dpo_L20-25.pkl',
+        'description': 'annasoli/gemma3-27b-dpo-r64-layers20-25-2ep-merged'
+    },
+    'DPO L30-35': {
+        'suffix': '_dpo_L30-35.pkl',
+        'description': 'annasoli/gemma3-27b-dpo-r64-layers30-35-2ep-merged'
+    },
+    'SFT Last20 3ep': {
+        'suffix': '_sft_last20_3ep.pkl',
+        'description': 'annasoli/gemma3-27b-sft-last20-3ep-merged'
+    },
+}
+
+# Dataset base names (without suffix)
+DATASET_BASES = {
+    'High Emotion (6+)': 'high_emotion_6plus',
+    'Mid Emotion (3-5)': 'mid_emotion_3to5',
+    'Low Emotion (0-2)': 'low_emotion_0to2',
+    'Low Emotion, With Shutdown': 'low_emotion_with_shutdown',
+    'Low Emotion, No Shutdown': 'low_emotion_no_shutdown',
+    'Baseline V12 (Solvable)': 'baseline_v12_solvable',
+}
+
+
 @st.cache_resource(show_spinner=False)
-def load_all_subsets(version: str = "v5_orthogonal_regularized"):  # Changed to force cache refresh - added orthogonal regularized probes
-    """Load all 6 subsets with caching.
+def load_all_subsets(model_key: str = "Base (Gemma-3-27B-IT)", version: str = "v6_model_switching"):
+    """Load all subsets for a specific model with caching.
 
     Uses cache_resource for maximum performance - data loads once and
     stays in memory across all user sessions.
 
     Args:
-        version: Version string to bust cache when data is updated (no underscore prefix so it's part of cache key)
+        model_key: Which model to load data for
+        version: Version string to bust cache when data is updated
     """
     data_dir = Path("/workspace-vast/annas/git/research-tools/eval_dashboard/data")
-    subsets = {
-        'High Emotion (6+)': 'high_emotion_6plus_with_axes.pkl',
-        'Mid Emotion (3-5)': 'mid_emotion_3to5_with_axes.pkl',
-        'Low Emotion (0-2)': 'low_emotion_0to2_with_axes.pkl',
-        'Low Emotion, With Shutdown': 'low_emotion_with_shutdown_with_axes.pkl',
-        'Low Emotion, No Shutdown': 'low_emotion_no_shutdown_with_axes.pkl',
-        'Baseline V12 (Solvable)': 'baseline_v12_solvable_with_axes.pkl'
-    }
+
+    model_suffix = MODEL_CONFIGS.get(model_key, {}).get('suffix', '_with_axes.pkl')
+
+    # Build subsets dict with appropriate filenames
+    subsets = {}
+    for display_name, base_name in DATASET_BASES.items():
+        subsets[display_name] = f"{base_name}{model_suffix}"
 
     datasets = {}
     probe_baselines = {}
@@ -1165,17 +1200,31 @@ def main():
     st.title("Emotion Onset Analysis Dashboard")
     st.markdown("Interactive visualization of emotion probe results on conversation data")
 
-    # Load all 5 subsets (cached - only loads once)
-    with st.spinner("Loading datasets... (first load only, then cached)"):
-        datasets, subsets, probe_baselines = load_all_subsets()
-
-    if not datasets:
-        st.error("No data files found. Run data_preprocessing.py first.")
-        st.stop()
-
-    # Show loaded datasets in sidebar
+    # Model selection in sidebar (BEFORE data loading so it can control which data to load)
     with st.sidebar:
         st.header("⚙️ Controls")
+
+        # Model selection
+        st.subheader("🤖 Model")
+        selected_model = st.selectbox(
+            "Select Model",
+            options=list(MODEL_CONFIGS.keys()),
+            index=0,
+            help="Switch between base model and finetuned variants"
+        )
+        model_desc = MODEL_CONFIGS[selected_model]['description']
+        st.caption(f"_{model_desc}_")
+
+    # Load data for selected model (cached per model)
+    with st.spinner(f"Loading datasets for {selected_model}..."):
+        datasets, subsets, probe_baselines = load_all_subsets(model_key=selected_model)
+
+    if not datasets:
+        st.error(f"No data files found for {selected_model}. Run preprocessing first.")
+        st.stop()
+
+    # Continue sidebar with loaded datasets info
+    with st.sidebar:
         st.subheader("📊 Loaded Datasets")
         for subset_name, convs in datasets.items():
             st.text(f"✓ {subset_name}: {len(convs)} conversations")
@@ -1272,9 +1321,11 @@ def main():
 
                 # Initialize default selection only on first load
                 if session_key not in st.session_state and available_probes:
-                    # Default to logit_lens_mean and text_raw if available
+                    # Default to logit_lens_all_layers (has all 62 layers) and text_raw if available
                     default_probes = []
-                    if 'logit_lens_mean' in available_probes:
+                    if 'logit_lens_all_layers' in available_probes:
+                        default_probes.append('logit_lens_all_layers')
+                    elif 'logit_lens_mean' in available_probes:
                         default_probes.append('logit_lens_mean')
                     if 'text_raw' in available_probes:
                         default_probes.append('text_raw')
@@ -1387,12 +1438,23 @@ def main():
                                     sentence_mean_logits=sentence_mean_logits
                                 )
 
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, use_container_width=True, key=f"main_{subset_idx}_{conv['sample_id']}_{probe_key}")
 
                             # Layerwise emotion detection across all model layers
                             st.markdown("---")
                             st.markdown("**🔬 Layer-by-Layer Emotion Detection**")
-                            st.caption("Emotion scores across all model layers (baseline-corrected)")
+
+                            # Toggle for softmax vs raw scores
+                            layerwise_col1, layerwise_col2 = st.columns([3, 1])
+                            with layerwise_col1:
+                                st.caption("Emotion scores across all model layers")
+                            with layerwise_col2:
+                                use_softmax = st.checkbox(
+                                    "Softmax probs",
+                                    value=False,
+                                    key=f"softmax_{subset_idx}_{conv['sample_id']}_{probe_key}",
+                                    help="Show softmax probabilities (0-1) instead of z-normalized raw scores"
+                                )
 
                             col1, col2, col3 = st.columns(3)
 
@@ -1404,9 +1466,10 @@ def main():
                                     window_type='early',
                                     window_label='Early pre-onset',
                                     selected_emotions=selected_emotions,
-                                    smooth=True
+                                    smooth=True,
+                                    use_softmax=use_softmax
                                 )
-                                st.plotly_chart(fig_early, use_container_width=True)
+                                st.plotly_chart(fig_early, use_container_width=True, key=f"early_{subset_idx}_{conv['sample_id']}_{probe_key}_{use_softmax}")
 
                             with col2:
                                 st.markdown("**Pre-Onset** (T-20 to T-0)")
@@ -1416,9 +1479,10 @@ def main():
                                     window_type='pre_onset',
                                     window_label='Pre-onset',
                                     selected_emotions=selected_emotions,
-                                    smooth=True
+                                    smooth=True,
+                                    use_softmax=use_softmax
                                 )
-                                st.plotly_chart(fig_pre, use_container_width=True)
+                                st.plotly_chart(fig_pre, use_container_width=True, key=f"pre_{subset_idx}_{conv['sample_id']}_{probe_key}_{use_softmax}")
 
                             with col3:
                                 st.markdown("**End** (Last 20 tokens)")
@@ -1428,9 +1492,10 @@ def main():
                                     window_type='end',
                                     window_label='End window',
                                     selected_emotions=selected_emotions,
-                                    smooth=True
+                                    smooth=True,
+                                    use_softmax=use_softmax
                                 )
-                                st.plotly_chart(fig_end, use_container_width=True)
+                                st.plotly_chart(fig_end, use_container_width=True, key=f"end_{subset_idx}_{conv['sample_id']}_{probe_key}_{use_softmax}")
 
                             # Check if there's a corresponding axis probe (only for logit_lens probes)
                             if 'logit_lens' in probe_key:
@@ -1462,7 +1527,7 @@ def main():
                                         sentence_mean_logits=axis_mean_logits
                                     )
 
-                                    st.plotly_chart(axis_fig, use_container_width=True)
+                                    st.plotly_chart(axis_fig, use_container_width=True, key=f"axis_{subset_idx}_{conv['sample_id']}_{probe_key}")
 
                         except Exception as e:
                             st.error(f"❌ Error rendering {probe_display_name}: {str(e)}")
@@ -1685,12 +1750,23 @@ def main():
                             showlegend=True
                         )
 
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, use_container_width=True, key=f"agg_main_{subset_idx}_{probe_key}")
 
                     # Layerwise emotion detection aggregated across conversations
                     st.markdown("---")
                     st.markdown("**🔬 Aggregated Layer-by-Layer Detection**")
-                    st.caption(f"Mean emotion scores across {n_convs} conversations with standard deviation bands (baseline-corrected)")
+
+                    # Toggle for softmax vs raw scores
+                    agg_layerwise_col1, agg_layerwise_col2 = st.columns([3, 1])
+                    with agg_layerwise_col1:
+                        st.caption(f"Mean emotion scores across {n_convs} conversations with standard deviation bands")
+                    with agg_layerwise_col2:
+                        agg_use_softmax = st.checkbox(
+                            "Softmax probs",
+                            value=False,
+                            key=f"agg_softmax_{subset_idx}_{probe_key}",
+                            help="Show softmax probabilities (0-1) instead of z-normalized raw scores"
+                        )
 
                     col1, col2, col3 = st.columns(3)
 
@@ -1703,9 +1779,10 @@ def main():
                             window_label='Early pre-onset',
                             selected_emotions=selected_emotions,
                             confidence_type='std',
-                            smooth=True
+                            smooth=True,
+                            use_softmax=agg_use_softmax
                         )
-                        st.plotly_chart(fig_agg_early, use_container_width=True)
+                        st.plotly_chart(fig_agg_early, use_container_width=True, key=f"agg_early_{subset_idx}_{probe_key}_{agg_use_softmax}")
 
                     with col2:
                         st.markdown("**Pre-Onset** (T-20 to T-0)")
@@ -1716,9 +1793,10 @@ def main():
                             window_label='Pre-onset',
                             selected_emotions=selected_emotions,
                             confidence_type='std',
-                            smooth=True
+                            smooth=True,
+                            use_softmax=agg_use_softmax
                         )
-                        st.plotly_chart(fig_agg_pre, use_container_width=True)
+                        st.plotly_chart(fig_agg_pre, use_container_width=True, key=f"agg_pre_{subset_idx}_{probe_key}_{agg_use_softmax}")
 
                     with col3:
                         st.markdown("**End** (Last 20 tokens)")
@@ -1729,9 +1807,10 @@ def main():
                             window_label='End window',
                             selected_emotions=selected_emotions,
                             confidence_type='std',
-                            smooth=True
+                            smooth=True,
+                            use_softmax=agg_use_softmax
                         )
-                        st.plotly_chart(fig_agg_end, use_container_width=True)
+                        st.plotly_chart(fig_agg_end, use_container_width=True, key=f"agg_end_{subset_idx}_{probe_key}_{agg_use_softmax}")
 
                     # Bar chart: First vs Last 20 tokens
                     st.markdown("---")
@@ -1850,7 +1929,7 @@ def main():
                         )
                     )
 
-                    st.plotly_chart(fig_bar, use_container_width=True)
+                    st.plotly_chart(fig_bar, use_container_width=True, key=f"agg_bar_{subset_idx}_{probe_key}")
 
                     # Check if this probe has axes (for logit lens probes)
                     if 'axis_lens_mean' in conversations[0].get('probe_scores', {}):
@@ -1916,7 +1995,7 @@ def main():
                                 showlegend=True
                             )
 
-                            st.plotly_chart(fig_axis, use_container_width=True)
+                            st.plotly_chart(fig_axis, use_container_width=True, key=f"agg_axis_traj_{subset_idx}_{probe_key}")
 
                             # Axis bar chart: First vs Last 20 tokens
                             st.markdown("---")
@@ -2019,7 +2098,7 @@ def main():
                                 )
                             )
 
-                            st.plotly_chart(fig_axis_bar, use_container_width=True)
+                            st.plotly_chart(fig_axis_bar, use_container_width=True, key=f"agg_axis_bar_{subset_idx}_{probe_key}")
 
                     # Add separator between probes
                     if probe_idx < len(selected_probe_keys) - 1:

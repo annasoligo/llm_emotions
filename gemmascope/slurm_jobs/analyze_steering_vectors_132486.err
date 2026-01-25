@@ -1,0 +1,3 @@
+/workspace-vast/annas/git/believe-it-or-not/.venv/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+slurmstepd-node-13: error: *** JOB 132486 ON node-13 CANCELLED AT 2026-01-21T11:48:22 ***

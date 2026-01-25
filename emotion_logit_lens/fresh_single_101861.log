@@ -1,0 +1,30 @@
+✓ Activated venv
+Running data preprocessing on single conversation...
+================================================================================
+TESTING LOGIT LENS ON SINGLE CONVERSATION
+================================================================================
+
+[1/6] Loading conversation...
+  Sample ID: 0
+  Rating: 0/10
+  Turns: 6
+  Sentences: 585
+
+[2/6] Loading model...
+  ✓ Model loaded
+
+[3/6] Loading emotion token IDs...
+  ✓ Loaded 6 emotions
+    anger: 260 tokens
+    disgust: 168 tokens
+    fear: 174 tokens
+    happiness: 304 tokens
+    sadness: 239 tokens
+    surprise: 86 tokens
+
+[4/6] Loading baseline statistics...
+  ✓ Loaded baselines for 62 layers
+
+[5/6] Computing emotion scores for sample sentences...
+
+  Testing on 3 sample sentences:

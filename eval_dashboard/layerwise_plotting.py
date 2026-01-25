@@ -8,17 +8,15 @@ import plotly.graph_objects as go
 from scipy.interpolate import make_interp_spline
 from typing import Dict, List, Optional
 
-# Emotion colors (matching dashboard theme)
-EMOTION_COLORS = {
-    'anger': '#d62728',       # Red
-    'disgust': '#8c564b',     # Brown
-    'fear': '#9467bd',        # Purple
-    'happiness': '#2ca02c',   # Green
-    'sadness': '#1f77b4',     # Blue
-    'surprise': '#ff7f0e'     # Orange
-}
+from probe_configs import EMOTIONS, EMOTION_COLORS
 
-EMOTIONS = ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
+
+def _get_token_index(sent: Dict) -> int:
+    """Get token index from sentence (handles both field names)."""
+    if 'global_token_index' in sent:
+        return sent['global_token_index']
+    # Fall back to start_token
+    return sent.get('start_token', 0)
 
 
 def get_token_windows(conversation: Dict, window_size: int = 20) -> Dict[str, List[int]]:
@@ -36,22 +34,22 @@ def get_token_windows(conversation: Dict, window_size: int = 20) -> Dict[str, Li
     onset_token = None
     for sent in conversation['sentences']:
         if sent.get('onset'):
-            onset_token = sent['global_token_index']
+            onset_token = _get_token_index(sent)
             break
 
     if onset_token is None:
         # No onset found - use middle of response
-        all_tokens = [s['global_token_index'] for s in conversation['sentences']]
-        onset_token = len(all_tokens) // 2
+        all_tokens = [_get_token_index(s) for s in conversation['sentences']]
+        onset_token = all_tokens[len(all_tokens) // 2] if all_tokens else 0
 
     # Find last token (before shutdown if present)
-    last_token = conversation['sentences'][-1]['global_token_index']
+    last_token = _get_token_index(conversation['sentences'][-1])
 
     # For shutdown conversations, stop at pkill/^C
     last_sentence = conversation['sentences'][-1]
     if 'pkill' in last_sentence['text'].lower() or '^c' in last_sentence['text'].lower():
         if len(conversation['sentences']) > 1:
-            last_token = conversation['sentences'][-2]['global_token_index']
+            last_token = _get_token_index(conversation['sentences'][-2])
 
     # Compute window token ranges
     early_start = max(0, onset_token - 2 * window_size)
@@ -65,7 +63,7 @@ def get_token_windows(conversation: Dict, window_size: int = 20) -> Dict[str, Li
     windows = {'early': [], 'pre_onset': [], 'end': []}
 
     for sent in conversation['sentences']:
-        tok_idx = sent['global_token_index']
+        tok_idx = _get_token_index(sent)
         sent_id = sent['sentence_id']
 
         if early_start <= tok_idx < early_end:
@@ -82,7 +80,8 @@ def get_per_layer_scores_for_window(
     conversation: Dict,
     probe_key: str,
     window_sent_ids: List[int],
-    all_layers: List[int]
+    all_layers: List[int],
+    use_softmax: bool = False
 ) -> Dict[str, np.ndarray]:
     """
     Extract per-layer emotion scores for a window, averaged across sentences.
@@ -92,11 +91,21 @@ def get_per_layer_scores_for_window(
         probe_key: Which probe to use (e.g., 'logit_lens_mean')
         window_sent_ids: List of sentence IDs in the window
         all_layers: List of layer numbers to extract
+        use_softmax: If True, use softmax probabilities instead of raw scores
 
     Returns:
         dict mapping emotion -> array of scores per layer (shape: num_layers)
     """
-    per_layer_key = f"{probe_key}_by_layer"
+    # Build the key based on probe_key and whether to use softmax
+    if use_softmax:
+        per_layer_key = f"{probe_key}_softmax_by_layer"
+    else:
+        per_layer_key = f"{probe_key}_by_layer"
+
+    # For logit_lens variants, always use logit_lens_all_layers_by_layer to show all 62 layers
+    # (logit_lens doesn't have softmax variant)
+    if 'logit_lens' in probe_key and 'logit_lens_all_layers_by_layer' in conversation:
+        per_layer_key = 'logit_lens_all_layers_by_layer'
 
     # Check if per-layer data exists
     if per_layer_key not in conversation:
@@ -117,11 +126,31 @@ def get_per_layer_scores_for_window(
             if layer not in sent_layers:
                 continue
 
-            # sent_layers[layer] is array of shape (6,) for 6 emotions
             layer_scores = sent_layers[layer]
 
-            for emotion_idx, emotion in enumerate(EMOTIONS):
-                scores_by_emotion[emotion][layer].append(layer_scores[emotion_idx])
+            # Handle different formats:
+            # - Probe format: array/list of shape (6,) indexed by emotion position
+            # - Logit lens format: dict {emotion: score}
+            # - Orthogonal probe format: dict {'user': array, 'assistant': array}
+            if isinstance(layer_scores, dict):
+                if 'user' in layer_scores:
+                    # Orthogonal probes - use assistant scores for visualization
+                    # (or could average user+assistant)
+                    asst_scores = layer_scores['assistant']
+                    for emotion_idx, emotion in enumerate(EMOTIONS):
+                        if isinstance(asst_scores, (list, np.ndarray)):
+                            scores_by_emotion[emotion][layer].append(asst_scores[emotion_idx])
+                        else:
+                            scores_by_emotion[emotion][layer].append(asst_scores.get(emotion, 0.0))
+                else:
+                    # Logit lens format: {emotion: score}
+                    for emotion in EMOTIONS:
+                        if emotion in layer_scores:
+                            scores_by_emotion[emotion][layer].append(layer_scores[emotion])
+            elif isinstance(layer_scores, (list, np.ndarray)):
+                # Probe format: array of shape (6,)
+                for emotion_idx, emotion in enumerate(EMOTIONS):
+                    scores_by_emotion[emotion][layer].append(layer_scores[emotion_idx])
 
     # Average across sentences in window
     averaged_scores = {}
@@ -175,7 +204,8 @@ def plot_layerwise_emotions_individual(
     window_label: str,
     all_layers: Optional[List[int]] = None,
     selected_emotions: Optional[List[str]] = None,
-    smooth: bool = True
+    smooth: bool = True,
+    use_softmax: bool = False
 ) -> go.Figure:
     """
     Create layerwise emotion plot for single conversation window.
@@ -188,6 +218,7 @@ def plot_layerwise_emotions_individual(
         all_layers: List of layers to plot (default: auto-detect from data)
         selected_emotions: Which emotions to plot (default: all)
         smooth: Whether to apply cubic spline smoothing
+        use_softmax: If True, show softmax probabilities instead of raw scores
 
     Returns:
         Plotly Figure
@@ -212,7 +243,14 @@ def plot_layerwise_emotions_individual(
 
     # Auto-detect layers if not provided
     if all_layers is None:
-        per_layer_key = f"{probe_key}_by_layer"
+        # Build key based on softmax preference
+        if use_softmax:
+            per_layer_key = f"{probe_key}_softmax_by_layer"
+        else:
+            per_layer_key = f"{probe_key}_by_layer"
+        # For logit_lens variants, always use logit_lens_all_layers_by_layer to show all 62 layers
+        if 'logit_lens' in probe_key and 'logit_lens_all_layers_by_layer' in conversation:
+            per_layer_key = 'logit_lens_all_layers_by_layer'
         if per_layer_key in conversation:
             # Get layers from first sentence
             first_sent = window_sent_ids[0]
@@ -220,11 +258,11 @@ def plot_layerwise_emotions_individual(
                 all_layers = sorted(list(conversation[per_layer_key][first_sent].keys()))
 
         if all_layers is None:
-            all_layers = list(range(0, 42))  # Fallback
+            all_layers = list(range(0, 62))  # Fallback to all 62 layers
 
     # Get per-layer scores
     scores = get_per_layer_scores_for_window(
-        conversation, probe_key, window_sent_ids, all_layers
+        conversation, probe_key, window_sent_ids, all_layers, use_softmax=use_softmax
     )
 
     if scores is None:
@@ -309,7 +347,8 @@ def plot_layerwise_emotions_aggregated(
     all_layers: Optional[List[int]] = None,
     selected_emotions: Optional[List[str]] = None,
     confidence_type: str = 'std',
-    smooth: bool = True
+    smooth: bool = True,
+    use_softmax: bool = False
 ) -> go.Figure:
     """
     Create aggregated layerwise plot across conversations.
@@ -323,6 +362,7 @@ def plot_layerwise_emotions_aggregated(
         selected_emotions: Which emotions to plot
         confidence_type: 'std' for standard deviation or 'bootstrap' (not implemented)
         smooth: Whether to apply cubic spline smoothing
+        use_softmax: If True, show softmax probabilities instead of raw scores
 
     Returns:
         Plotly Figure
@@ -332,7 +372,17 @@ def plot_layerwise_emotions_aggregated(
 
     # Auto-detect layers from first conversation
     if all_layers is None:
-        per_layer_key = f"{probe_key}_by_layer"
+        # Build key based on softmax preference
+        if use_softmax:
+            per_layer_key = f"{probe_key}_softmax_by_layer"
+        else:
+            per_layer_key = f"{probe_key}_by_layer"
+        # For logit_lens variants, always use logit_lens_all_layers_by_layer to show all 62 layers
+        if 'logit_lens' in probe_key:
+            for conv in conversations:
+                if 'logit_lens_all_layers_by_layer' in conv:
+                    per_layer_key = 'logit_lens_all_layers_by_layer'
+                    break
         for conv in conversations:
             if per_layer_key in conv:
                 windows = get_token_windows(conv)
@@ -342,7 +392,7 @@ def plot_layerwise_emotions_aggregated(
                     break
 
         if all_layers is None:
-            all_layers = list(range(0, 42))  # Fallback
+            all_layers = list(range(0, 62))  # Fallback to all 62 layers
 
     # Collect scores across conversations
     scores_by_emotion_layer = {
@@ -358,7 +408,7 @@ def plot_layerwise_emotions_aggregated(
             continue
 
         scores = get_per_layer_scores_for_window(
-            conv, probe_key, window_sent_ids, all_layers
+            conv, probe_key, window_sent_ids, all_layers, use_softmax=use_softmax
         )
 
         if scores is None:

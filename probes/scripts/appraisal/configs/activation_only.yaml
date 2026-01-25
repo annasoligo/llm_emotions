@@ -1,0 +1,37 @@
+# Activation collection only - run after data generation completes
+# Run with: sbatch slurm_activation_collection.sh
+
+name: appraisal_full_run
+output_dir: /workspace-vast/annas/appraisal_data/full_run
+
+# LLM settings (not used for activation logging)
+claude_model: claude-sonnet-4-20250514
+use_batch_api: false
+max_tokens: 4096
+concurrency: 50
+
+# Data generation settings (not used - data already generated)
+data_generation:
+  axes:
+    - name: agency
+      description: "Placeholder - not used for activation logging"
+  domains: []
+  n_cards_per_axis: 8
+  n_scenarios_per_card: 2
+  n_paraphrases: 3
+
+# Activation logging settings
+activation:
+  target_model: google/gemma-3-27b-it
+  layers: null  # all layers
+  representations:
+    - assistant_start_last_token
+  batch_size: 4
+  dtype: bfloat16
+
+additional_forbidden_words: []
+max_diff_ratio: 0.25
+
+# Settings
+resume: true
+skip_activation_logging: false  # Enable activation logging

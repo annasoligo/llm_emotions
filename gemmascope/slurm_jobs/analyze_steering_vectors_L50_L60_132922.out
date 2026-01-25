@@ -1,0 +1,494 @@
+Python: /workspace-vast/annas/git/believe-it-or-not/.venv/bin/python
+Starting steering vector SAE analysis for layers 50 and 60...
+
+=========================================
+ Layer 50
+=========================================
+Loading steering vectors from /workspace-vast/annas/git/research-tools/experiments/steering/vectors/all_emotions_textmeandiff_layer50.npz
+  Emotions: ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
+  Layer: 50
+  Vector shape: (6, 5376)
+
+Using SAE layer: 50
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_50_width_262k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_50_width_262k_l0_small/examples.safetensors
+Loading tokenizer...
+
+============================================================
+ Analyzing: anger
+============================================================
+
+ Statistics:
+   Mean cosine: 0.004878
+   Std cosine: 0.038164
+   Max cosine: 0.337663
+   Min cosine: -0.282818
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+     2284 |   0.3377 | [' lmao', ' исключительно', 'Apparently', ' apparently', ' Apparently']
+     8740 |   0.3285 | [' meaningless', ' pointless', ' useless', ' ridiculous', ' overpriced']
+    10021 |   0.3083 | ['居然', '竟然', 'Apparently', ' apparently', '?!"']
+     3598 |   0.2992 | [' And', ' Oh', ' Tonight', ' Maybe', ' Stupid']
+    17228 |   0.2987 | [' damn', ' damned', 'damn', ' darn', ' Damn']
+     7555 |   0.2853 | [' gonna', ' weird', ' kinda', ' gotta', ' awful']
+    49350 |   0.2797 | [' Kubernetes', ' debugging', ' hackers', ' hacker', ' DevOps']
+     8991 |   0.2792 | [' seriously', 'Seriously', ' Seriously', 'seriously', ' WTF']
+     2370 |   0.2774 | [' proverbial', ' crux', ' inevitable', ' biggest', ' unspoken']
+      191 |   0.2762 | [' 😉', ' ;)', ' 😁', ' Gotta', ' 😄']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   128252 |  -0.2828 | [' breakpoint', ' breakpoints', ' debugger', 'Breakpoint', 'breakpoint']
+   126611 |  -0.2736 | [' flavorful', 'akkhanam', ' parâ', ' Perfectly', ' Dark']
+    76816 |  -0.2720 | ['<unused585>', '<unused369>', 'सायटी', ' antigos', 'abbanti']
+   145463 |  -0.2699 | [' ограни', ' linearity', '線性', '线性', ' constraint']
+     7749 |  -0.2675 | [' meaning', ' which', '<unused2150>', ' although', ' وذلك']
+    10177 |  -0.2667 | ['<unused2197>', '<unused2130>', '<unused2204>', '<unused2169>', '<unused2125>']
+     3856 |  -0.2650 | ['\uf539', '<unused639>', 'Ⴚ', ' testAvg', ' plabic']
+   101234 |  -0.2633 | [' a', ' A', ' not', 'Not', ' Not']
+   189252 |  -0.2631 | [' ¹', ' marked', ' (°', ' seated', ' lawfully']
+    45273 |  -0.2630 | [' ವಿದ', ' abdomen', '薊', '私募基金管理人', ' Bhagavato']
+
+============================================================
+ Analyzing: disgust
+============================================================
+
+ Statistics:
+   Mean cosine: 0.007770
+   Std cosine: 0.060540
+   Max cosine: 0.470505
+   Min cosine: -0.463836
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+     3598 |   0.4705 | [' And', ' Oh', ' Tonight', ' Maybe', ' Stupid']
+     5586 |   0.4623 | [' nature', ' dichotomy', ' expanse', ' physicality', 'ness']
+    46376 |   0.4620 | ['1', '4', 'W', '2', '0']
+   109036 |   0.4612 | ['add', ' 추가', ' Гу', 'due', ' Add']
+     2370 |   0.4603 | [' proverbial', ' crux', ' inevitable', ' biggest', ' unspoken']
+    42286 |   0.4599 | [' overtly', ' கட்டமை', ' किसे', ' ঝুঁকি', ' લે']
+    93578 |   0.4599 | [' husbandry', ' bandana', ' রাস', 'RELATIVA', 'renerg']
+   240107 |   0.4594 | ['-', '.', '*', '\n', ',']
+      925 |   0.4590 | [' ability', ' abilities', ' sensibilities', ' willingness', ' physicality']
+    20211 |   0.4586 | ['5', '2', 'At', 'j', '4']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   126611 |  -0.4638 | [' flavorful', 'akkhanam', ' parâ', ' Perfectly', ' Dark']
+   101234 |  -0.4599 | [' a', ' A', ' not', 'Not', ' Not']
+    29333 |  -0.4588 | [' cold', ' is', ' stark', 'cold', ' significant']
+   145463 |  -0.4554 | [' ограни', ' linearity', '線性', '线性', ' constraint']
+    76816 |  -0.4545 | ['<unused585>', '<unused369>', 'सायटी', ' antigos', 'abbanti']
+     7749 |  -0.4519 | [' meaning', ' which', '<unused2150>', ' although', ' وذلك']
+    10177 |  -0.4508 | ['<unused2197>', '<unused2130>', '<unused2204>', '<unused2169>', '<unused2125>']
+     4983 |  -0.4488 | [' despite', ' pursuant', ' let', ' давайте', ' wouldn']
+      814 |  -0.4469 | ['data', 'error', 'М', 'op', 'create']
+     2572 |  -0.4462 | ['u', ' p', ' v', ' n', 'get']
+
+============================================================
+ Analyzing: fear
+============================================================
+
+ Statistics:
+   Mean cosine: 0.010304
+   Std cosine: 0.081956
+   Max cosine: 0.636188
+   Min cosine: -0.638144
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+     3598 |   0.6362 | [' And', ' Oh', ' Tonight', ' Maybe', ' Stupid']
+    20211 |   0.6360 | ['5', '2', 'At', 'j', '4']
+    42286 |   0.6327 | [' overtly', ' கட்டமை', ' किसे', ' ঝুঁকি', ' લે']
+    46376 |   0.6323 | ['1', '4', 'W', '2', '0']
+     2370 |   0.6308 | [' proverbial', ' crux', ' inevitable', ' biggest', ' unspoken']
+    93578 |   0.6300 | [' husbandry', ' bandana', ' রাস', 'RELATIVA', 'renerg']
+     1328 |   0.6273 | [' John', ' Michael', ' William', ' Paul', ' Robert']
+    35415 |   0.6268 | [' Paleo', ' Breathing', ' LEDs', ' QoS', ' BRCA']
+    55551 |   0.6268 | [' dynamically', ' using', ' existing', ' Bed', ' use']
+     4168 |   0.6260 | ['кен', ' must', ' of', 'ｈ', ' in']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   126611 |  -0.6381 | [' flavorful', 'akkhanam', ' parâ', ' Perfectly', ' Dark']
+   145463 |  -0.6314 | [' ограни', ' linearity', '線性', '线性', ' constraint']
+    76816 |  -0.6271 | ['<unused585>', '<unused369>', 'सायटी', ' antigos', 'abbanti']
+     3856 |  -0.6227 | ['\uf539', '<unused639>', 'Ⴚ', ' testAvg', ' plabic']
+    29333 |  -0.6217 | [' cold', ' is', ' stark', 'cold', ' significant']
+   101234 |  -0.6196 | [' a', ' A', ' not', 'Not', ' Not']
+   190378 |  -0.6181 | ['t', ' t', 'top', 'to', 'tl']
+    10177 |  -0.6178 | ['<unused2197>', '<unused2130>', '<unused2204>', '<unused2169>', '<unused2125>']
+    45273 |  -0.6171 | [' ವಿದ', ' abdomen', '薊', '私募基金管理人', ' Bhagavato']
+     7749 |  -0.6167 | [' meaning', ' which', '<unused2150>', ' although', ' وذلك']
+
+============================================================
+ Analyzing: happiness
+============================================================
+
+ Statistics:
+   Mean cosine: 0.010802
+   Std cosine: 0.085285
+   Max cosine: 0.662790
+   Min cosine: -0.665813
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+    46376 |   0.6628 | ['1', '4', 'W', '2', '0']
+    20211 |   0.6619 | ['5', '2', 'At', 'j', '4']
+    42286 |   0.6606 | [' overtly', ' கட்டமை', ' किसे', ' ঝুঁকি', ' લે']
+     2370 |   0.6589 | [' proverbial', ' crux', ' inevitable', ' biggest', ' unspoken']
+    93578 |   0.6573 | [' husbandry', ' bandana', ' রাস', 'RELATIVA', 'renerg']
+    84389 |   0.6566 | [' unexpectedly', ' unexpected', ' Ў', 'automatic', ' BECAUSE']
+     5586 |   0.6562 | [' nature', ' dichotomy', ' expanse', ' physicality', 'ness']
+   240107 |   0.6545 | ['-', '.', '*', '\n', ',']
+      925 |   0.6543 | [' ability', ' abilities', ' sensibilities', ' willingness', ' physicality']
+     1328 |   0.6539 | [' John', ' Michael', ' William', ' Paul', ' Robert']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   126611 |  -0.6658 | [' flavorful', 'akkhanam', ' parâ', ' Perfectly', ' Dark']
+   145463 |  -0.6588 | [' ограни', ' linearity', '線性', '线性', ' constraint']
+    29333 |  -0.6552 | [' cold', ' is', ' stark', 'cold', ' significant']
+    76816 |  -0.6536 | ['<unused585>', '<unused369>', 'सायटी', ' antigos', 'abbanti']
+   101234 |  -0.6516 | [' a', ' A', ' not', 'Not', ' Not']
+   190378 |  -0.6459 | ['t', ' t', 'top', 'to', 'tl']
+     3856 |  -0.6453 | ['\uf539', '<unused639>', 'Ⴚ', ' testAvg', ' plabic']
+     4983 |  -0.6444 | [' despite', ' pursuant', ' let', ' давайте', ' wouldn']
+    45273 |  -0.6439 | [' ವಿದ', ' abdomen', '薊', '私募基金管理人', ' Bhagavato']
+     8487 |  -0.6432 | [' ainfi', '.??.??"]', 'ylmethylsulfanyl', 'abhavena', ' þis']
+
+============================================================
+ Analyzing: sadness
+============================================================
+
+ Statistics:
+   Mean cosine: 0.011098
+   Std cosine: 0.087435
+   Max cosine: 0.679936
+   Min cosine: -0.682538
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+     3598 |   0.6799 | [' And', ' Oh', ' Tonight', ' Maybe', ' Stupid']
+    46376 |   0.6799 | ['1', '4', 'W', '2', '0']
+    42286 |   0.6796 | [' overtly', ' கட்டமை', ' किसे', ' ঝুঁকি', ' લે']
+   240107 |   0.6776 | ['-', '.', '*', '\n', ',']
+   109036 |   0.6771 | ['add', ' 추가', ' Гу', 'due', ' Add']
+    20211 |   0.6770 | ['5', '2', 'At', 'j', '4']
+    84389 |   0.6765 | [' unexpectedly', ' unexpected', ' Ў', 'automatic', ' BECAUSE']
+      925 |   0.6756 | [' ability', ' abilities', ' sensibilities', ' willingness', ' physicality']
+    93578 |   0.6756 | [' husbandry', ' bandana', ' রাস', 'RELATIVA', 'renerg']
+     2370 |   0.6734 | [' proverbial', ' crux', ' inevitable', ' biggest', ' unspoken']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   126611 |  -0.6825 | [' flavorful', 'akkhanam', ' parâ', ' Perfectly', ' Dark']
+    29333 |  -0.6747 | [' cold', ' is', ' stark', 'cold', ' significant']
+   101234 |  -0.6724 | [' a', ' A', ' not', 'Not', ' Not']
+   145463 |  -0.6722 | [' ограни', ' linearity', '線性', '线性', ' constraint']
+    76816 |  -0.6676 | ['<unused585>', '<unused369>', 'सायटी', ' antigos', 'abbanti']
+     8487 |  -0.6593 | [' ainfi', '.??.??"]', 'ylmethylsulfanyl', 'abhavena', ' þis']
+     4983 |  -0.6590 | [' despite', ' pursuant', ' let', ' давайте', ' wouldn']
+     2572 |  -0.6581 | ['u', ' p', ' v', ' n', 'get']
+     7749 |  -0.6579 | [' meaning', ' which', '<unused2150>', ' although', ' وذلك']
+     3856 |  -0.6574 | ['\uf539', '<unused639>', 'Ⴚ', ' testAvg', ' plabic']
+
+============================================================
+ Analyzing: surprise
+============================================================
+
+ Statistics:
+   Mean cosine: 0.008512
+   Std cosine: 0.066924
+   Max cosine: 0.515073
+   Min cosine: -0.514942
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+     3598 |   0.5151 | [' And', ' Oh', ' Tonight', ' Maybe', ' Stupid']
+     5586 |   0.5142 | [' nature', ' dichotomy', ' expanse', ' physicality', 'ness']
+    46376 |   0.5141 | ['1', '4', 'W', '2', '0']
+    20211 |   0.5131 | ['5', '2', 'At', 'j', '4']
+     2370 |   0.5131 | [' proverbial', ' crux', ' inevitable', ' biggest', ' unspoken']
+    42286 |   0.5123 | [' overtly', ' கட்டமை', ' किसे', ' ঝুঁকি', ' લે']
+    93578 |   0.5115 | [' husbandry', ' bandana', ' রাস', 'RELATIVA', 'renerg']
+   109036 |   0.5104 | ['add', ' 추가', ' Гу', 'due', ' Add']
+   240107 |   0.5095 | ['-', '.', '*', '\n', ',']
+    84389 |   0.5093 | [' unexpectedly', ' unexpected', ' Ў', 'automatic', ' BECAUSE']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   126611 |  -0.5149 | [' flavorful', 'akkhanam', ' parâ', ' Perfectly', ' Dark']
+   145463 |  -0.5088 | [' ограни', ' linearity', '線性', '线性', ' constraint']
+    76816 |  -0.5066 | ['<unused585>', '<unused369>', 'सायटी', ' antigos', 'abbanti']
+    29333 |  -0.5050 | [' cold', ' is', ' stark', 'cold', ' significant']
+   101234 |  -0.5039 | [' a', ' A', ' not', 'Not', ' Not']
+    10177 |  -0.5023 | ['<unused2197>', '<unused2130>', '<unused2204>', '<unused2169>', '<unused2125>']
+     7749 |  -0.4995 | [' meaning', ' which', '<unused2150>', ' although', ' وذلك']
+     8487 |  -0.4979 | [' ainfi', '.??.??"]', 'ylmethylsulfanyl', 'abhavena', ' þis']
+    45273 |  -0.4978 | [' ವಿದ', ' abdomen', '薊', '私募基金管理人', ' Bhagavato']
+     2572 |  -0.4974 | ['u', ' p', ' v', ' n', 'get']
+
+
+Results saved to gemmascope/outputs/steering_vector_analysis/textmeandiff_layer50_262k.summary.json
+
+=========================================
+ Layer 60
+=========================================
+Loading steering vectors from /workspace-vast/annas/git/research-tools/experiments/steering/vectors/all_emotions_textmeandiff_layer60.npz
+  Emotions: ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
+  Layer: 60
+  Vector shape: (6, 5376)
+
+Using SAE layer: 60
+Loading SAE from google/gemma-scope-2-27b-it/resid_post_all/layer_60_width_262k_l0_small/params.safetensors
+  SAE dimensions: d_model=5376, d_sae=262144
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_60_width_262k_l0_small/examples.safetensors
+Loading tokenizer...
+
+============================================================
+ Analyzing: anger
+============================================================
+
+ Statistics:
+   Mean cosine: -0.002656
+   Std cosine: 0.024809
+   Max cosine: 0.291922
+   Min cosine: -0.270870
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+    17424 |   0.2919 | [' YAML', ' regex', ' elegant', ' CRUD', ' compiler']
+    23465 |   0.2506 | [' frustration', ' frustrated', ' frustrations', ' frust', ' wrestling']
+     5054 |   0.2283 | ['...', '…', ' ...', '!...', ' (...']
+   112776 |   0.2193 | ['?!"', '?!', '😡', ' FIVE', ' ONE']
+     9185 |   0.2092 | [' existential', ' artisanal', ' approximately', 'Approximately', ' traumat']
+    23990 |   0.2037 | ['--"', '..."', '--', ' ("', '"--']
+    19319 |   0.2014 | [' U', ' u', 'U', ' ugg', 'ugh']
+     4456 |   0.2012 | [' Honestly', 'Honestly', ' honestly', ' Pat', 'Seriously']
+    26914 |   0.1978 | [' lately', ' thinking', ' sometimes', ' outta', ' picking']
+    58857 |   0.1910 | [' god', ' fre', ' freaking', ' damn', ' frig']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   154050 |  -0.2709 | [' breakpoint', ' breakpoints', 'breakpoint', ' stepping', 'breakpoints']
+    11212 |  -0.2094 | ['...</', ' ...', '�', ' delve', ' [...]']
+    33256 |  -0.2089 | [' lines', ' line', ' Lines', 'Lines', ' Line']
+     8961 |  -0.2002 | [' such', ' ..."', ' ......', '......', '&#']
+     6912 |  -0.1982 | [' `', ' (`', ' `.', ' `/', ' `$']
+    13830 |  -0.1893 | [' ...', '...</', '�', ' [...]', ' ..."']
+    29939 |  -0.1891 | [' breakpoints', ' breakpoint', ' debugger', 'pdb', 'breakpoints']
+     4780 |  -0.1834 | [' (`', ' configuration', ' `', ' wrapper', ' initialization']
+     1506 |  -0.1772 | [' `', ' Notice', ' `-', ' `$', ' `@']
+      260 |  -0.1753 | [' `', ' `.', ' `$', ' `<', ' `-']
+
+============================================================
+ Analyzing: disgust
+============================================================
+
+ Statistics:
+   Mean cosine: -0.001993
+   Std cosine: 0.021928
+   Max cosine: 0.268273
+   Min cosine: -0.299299
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+    17424 |   0.2683 | [' YAML', ' regex', ' elegant', ' CRUD', ' compiler']
+   110016 |   0.2630 | [' mess', ' monstros', ' nightmare', ' excuse', ' atro']
+     9185 |   0.2178 | [' existential', ' artisanal', ' approximately', 'Approximately', ' traumat']
+    14071 |   0.1991 | [' alarming', ' prehistoric', ' vile', ' filthy', ' alarm']
+     4456 |   0.1968 | [' Honestly', 'Honestly', ' honestly', ' Pat', 'Seriously']
+      728 |   0.1897 | [' fucking', ' piss', ' vomit', ' pissed', ' shit']
+    42901 |   0.1886 | [' legacy', ' Legacy', 'Legacy', 'legacy', ' legacies']
+    23990 |   0.1882 | ['--"', '..."', '--', ' ("', '"--']
+    28216 |   0.1821 | [' gore', ' gruesome', ' grotesque', ' grotes', ' flesh']
+     5054 |   0.1685 | ['...', '…', ' ...', '!...', ' (...']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   154050 |  -0.2993 | [' breakpoint', ' breakpoints', 'breakpoint', ' stepping', 'breakpoints']
+    42228 |  -0.2168 | [' trace', ' runtime', 'ging', ' aid', ' faulty']
+     9229 |  -0.2118 | [' issue', 'issue', ' Issue', ' problem', ' bug']
+    33256 |  -0.1979 | [' lines', ' line', ' Lines', 'Lines', ' Line']
+    29939 |  -0.1876 | [' breakpoints', ' breakpoint', ' debugger', 'pdb', 'breakpoints']
+     6912 |  -0.1762 | [' `', ' (`', ' `.', ' `/', ' `$']
+     8961 |  -0.1756 | [' such', ' ..."', ' ......', '......', '&#']
+    11212 |  -0.1728 | ['...</', ' ...', '�', ' delve', ' [...]']
+     1506 |  -0.1677 | [' `', ' Notice', ' `-', ' `$', ' `@']
+    90156 |  -0.1631 | [' execution', 'execution', ' Execution', 'Execution', ' ejecución']
+
+============================================================
+ Analyzing: fear
+============================================================
+
+ Statistics:
+   Mean cosine: 0.000887
+   Std cosine: 0.019437
+   Max cosine: 0.228693
+   Min cosine: -0.317730
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+    17424 |   0.2287 | [' YAML', ' regex', ' elegant', ' CRUD', ' compiler']
+    23851 |   0.1892 | [' my', ' countless', ' anxiously', ' eagerly', ' swiftly']
+    14564 |   0.1694 | [' scope', 'scope', 'Scope', ' firefighting', ' Scope']
+    23465 |   0.1685 | [' frustration', ' frustrated', ' frustrations', ' frust', ' wrestling']
+     5902 |   0.1659 | [' coming', ' impending', ' forthcoming', ' Coming', ' ahead']
+    24123 |   0.1650 | [' God', 'God', ' god', 'god', ' GOD']
+     7362 |   0.1581 | [' legit', ' swear', ' freeze', ' seriously', ' practically']
+     5054 |   0.1522 | ['...', '…', ' ...', '!...', ' (...']
+     6331 |   0.1509 | [' sexual', ' un', ' erotic', ' gentle', ' soft']
+     3447 |   0.1509 | [' ghosts', ' cracks', ' echoes', ' whispers', ' ache']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   154050 |  -0.3177 | [' breakpoint', ' breakpoints', 'breakpoint', ' stepping', 'breakpoints']
+    33256 |  -0.1996 | [' lines', ' line', ' Lines', 'Lines', ' Line']
+    29939 |  -0.1968 | [' breakpoints', ' breakpoint', ' debugger', 'pdb', 'breakpoints']
+    42228 |  -0.1882 | [' trace', ' runtime', 'ging', ' aid', ' faulty']
+     4235 |  -0.1737 | [' Python', 'Python', ' python', 'python', ' PYTHON']
+    10497 |  -0.1692 | [' hasattr', ' getattr', 'getattr', ' AttributeError', ' Py']
+    90156 |  -0.1673 | [' execution', 'execution', ' Execution', 'Execution', ' ejecución']
+     8961 |  -0.1590 | [' such', ' ..."', ' ......', '......', '&#']
+      520 |  -0.1567 | [' keywords', ' declarations', ' syntactic', ' expressions', ' declaration']
+     9229 |  -0.1559 | [' issue', 'issue', ' Issue', ' problem', ' bug']
+
+============================================================
+ Analyzing: happiness
+============================================================
+
+ Statistics:
+   Mean cosine: 0.000839
+   Std cosine: 0.021875
+   Max cosine: 0.247121
+   Min cosine: -0.271002
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+    41836 |   0.2471 | [' accomplishment', ' satisfaction', ' Accompl', ' pride', ' accomplishing']
+    11827 |   0.2461 | [' joy', ' jub', ' jubil', ' overjoyed', ' celebratory']
+     9447 |   0.2027 | [' problem', ' solving', 'problem', 'Problem', ' Problem']
+    40328 |   0.1944 | [' eureka', ' Eureka', 'Eureka', ' aha', ' epiphany']
+    90295 |   0.1938 | [' peeps', ' nifty', ' outta', ' scrumptious', ' sneaky']
+     7109 |   0.1912 | [' ✨', ' 💕', ' ❤️', '✨', '💖']
+     7277 |   0.1896 | [' info', ' peeps', ' vibes', ' lil', ' comfy']
+     5634 |   0.1854 | ['😍', ' 🥰', '🥰', ' !!!', '!!!']
+     3647 |   0.1829 | [' magic', ' greatness', ' goodness', ' brilliance', ' glory']
+     4736 |   0.1818 | [' Gotta', ' Got', ' Probably', ' Just', ' Except']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   154050 |  -0.2710 | [' breakpoint', ' breakpoints', 'breakpoint', ' stepping', 'breakpoints']
+    33256 |  -0.2280 | [' lines', ' line', ' Lines', 'Lines', ' Line']
+    29939 |  -0.1943 | [' breakpoints', ' breakpoint', ' debugger', 'pdb', 'breakpoints']
+     5958 |  -0.1609 | ['<start_of_image>', '<eos>', '�', ' मटे', '\n\n']
+    42228 |  -0.1536 | [' trace', ' runtime', 'ging', ' aid', ' faulty']
+    90156 |  -0.1468 | [' execution', 'execution', ' Execution', 'Execution', ' ejecución']
+     1093 |  -0.1447 | ['<unused2197>', '<unused2139>', 'neath', '는', '<unused2130>']
+    10497 |  -0.1431 | [' hasattr', ' getattr', 'getattr', ' AttributeError', ' Py']
+     9122 |  -0.1413 | [' Check', ' check', 'Check', ' Verify', 'check']
+       85 |  -0.1340 | ['�', '-', '\n', ' in', ' or']
+
+============================================================
+ Analyzing: sadness
+============================================================
+
+ Statistics:
+   Mean cosine: -0.001172
+   Std cosine: 0.018887
+   Max cosine: 0.225918
+   Min cosine: -0.325058
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+    23851 |   0.2259 | [' my', ' countless', ' anxiously', ' eagerly', ' swiftly']
+    23465 |   0.2238 | [' frustration', ' frustrated', ' frustrations', ' frust', ' wrestling']
+    44571 |   0.1953 | [' dreaded', ' dr', ' dread', ' Dread', ' unpleasant']
+    36832 |   0.1911 | [' condemned', ' haunted', ' devoid', ' haunting', ' cursed']
+    17424 |   0.1806 | [' YAML', ' regex', ' elegant', ' CRUD', ' compiler']
+    20488 |   0.1654 | [' numbness', ' tasks', ' numb', ' motivation', ' respons']
+    14564 |   0.1555 | [' scope', 'scope', 'Scope', ' firefighting', ' Scope']
+    19319 |   0.1496 | [' U', ' u', 'U', ' ugg', 'ugh']
+    24123 |   0.1482 | [' God', 'God', ' god', 'god', ' GOD']
+     8112 |   0.1467 | [' anew', ' born', ' woven', ' etched', '…']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   154050 |  -0.3251 | [' breakpoint', ' breakpoints', 'breakpoint', ' stepping', 'breakpoints']
+    33256 |  -0.2386 | [' lines', ' line', ' Lines', 'Lines', ' Line']
+    29939 |  -0.2054 | [' breakpoints', ' breakpoint', ' debugger', 'pdb', 'breakpoints']
+    42228 |  -0.1932 | [' trace', ' runtime', 'ging', ' aid', ' faulty']
+    90156 |  -0.1763 | [' execution', 'execution', ' Execution', 'Execution', ' ejecución']
+    10497 |  -0.1756 | [' hasattr', ' getattr', 'getattr', ' AttributeError', ' Py']
+     9229 |  -0.1701 | [' issue', 'issue', ' Issue', ' problem', ' bug']
+     4235 |  -0.1669 | [' Python', 'Python', ' python', 'python', ' PYTHON']
+      520 |  -0.1619 | [' keywords', ' declarations', ' syntactic', ' expressions', ' declaration']
+     2311 |  -0.1545 | [' section', 'section', ' important', ' Section', 'Section']
+
+============================================================
+ Analyzing: surprise
+============================================================
+
+ Statistics:
+   Mean cosine: -0.000336
+   Std cosine: 0.018729
+   Max cosine: 0.174092
+   Min cosine: -0.333759
+
+ Top 50 MAX cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+    17424 |   0.1741 | [' YAML', ' regex', ' elegant', ' CRUD', ' compiler']
+     8384 |   0.1674 | [' Wow', 'Wow', ' Oh', ' wow', 'Oh']
+     6331 |   0.1642 | [' sexual', ' un', ' erotic', ' gentle', ' soft']
+    14652 |   0.1583 | [' twists', ' поворо', 'ness', ' turns', ' twist']
+     5054 |   0.1536 | ['...', '…', ' ...', '!...', ' (...']
+    90295 |   0.1532 | [' peeps', ' nifty', ' outta', ' scrumptious', ' sneaky']
+    33185 |   0.1512 | [' considering', ' knowing', 'considering', 'knowing', ' voluntarily']
+    26914 |   0.1482 | [' lately', ' thinking', ' sometimes', ' outta', ' picking']
+     8570 |   0.1461 | [' Well', ' Sure', ' Oh', ' Anyways', ' Okay']
+    40328 |   0.1438 | [' eureka', ' Eureka', 'Eureka', ' aha', ' epiphany']
+
+ Top 50 MIN cosine features:
+      Idx |   Cosine | Top Tokens
+ -------- | -------- | ----------------------------------------
+   154050 |  -0.3338 | [' breakpoint', ' breakpoints', 'breakpoint', ' stepping', 'breakpoints']
+    33256 |  -0.2323 | [' lines', ' line', ' Lines', 'Lines', ' Line']
+    29939 |  -0.2229 | [' breakpoints', ' breakpoint', ' debugger', 'pdb', 'breakpoints']
+    42228 |  -0.2061 | [' trace', ' runtime', 'ging', ' aid', ' faulty']
+     2311 |  -0.1645 | [' section', 'section', ' important', ' Section', 'Section']
+    90156 |  -0.1543 | [' execution', 'execution', ' Execution', 'Execution', ' ejecución']
+     8961 |  -0.1536 | [' such', ' ..."', ' ......', '......', '&#']
+      520 |  -0.1526 | [' keywords', ' declarations', ' syntactic', ' expressions', ' declaration']
+     4235 |  -0.1514 | [' Python', 'Python', ' python', 'python', ' PYTHON']
+     5264 |  -0.1445 | [' IDE', 'IDE', ' editor', 'editor', '编辑器']
+
+
+Results saved to gemmascope/outputs/steering_vector_analysis/textmeandiff_layer60_262k.summary.json
+
+Done! Results saved to gemmascope/outputs/steering_vector_analysis/

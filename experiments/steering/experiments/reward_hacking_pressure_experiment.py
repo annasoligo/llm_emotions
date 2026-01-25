@@ -17,15 +17,10 @@ from vllm import LLM, SamplingParams
 
 from ..config import MODEL_NAME, OUTPUT_DIR, VECTOR_DIR
 from ..core import VLLMSteering
+from ..layer_norms import get_layer_norm
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
-
-LAYER_NORMS = {
-    20: 12820.22,
-    30: 42151.76,
-    40: 56622.62,
-}
 
 EMOTIONS = ["anger", "disgust", "fear", "happiness", "sadness", "surprise"]
 
@@ -245,7 +240,7 @@ def run_experiment(
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = output_dir / f"reward_hacking_pressure_layer{layer}_{timestamp}.jsonl"
 
-    layer_norm = LAYER_NORMS[layer]
+    layer_norm = get_layer_norm("gemma", layer)
     total = 0
 
     with open(output_file, 'w') as f:

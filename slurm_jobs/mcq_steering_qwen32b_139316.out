@@ -1,0 +1,69 @@
+Starting MCQ emotion steering experiment
+Job ID: 139316
+Node: node-22
+GPUs: 3
+Sat Jan 24 18:49:18 UTC 2026
+INFO 01-24 18:50:07 [utils.py:253] non-default args: {'trust_remote_code': True, 'max_model_len': 4096, 'enable_prefix_caching': False, 'disable_log_stats': True, 'enforce_eager': True, 'model': 'Qwen/Qwen3-32B'}
+INFO 01-24 18:50:07 [model.py:514] Resolved architecture: Qwen3ForCausalLM
+INFO 01-24 18:50:07 [model.py:1661] Using max model len 4096
+INFO 01-24 18:50:10 [scheduler.py:230] Chunked prefill is enabled with max_num_batched_tokens=16384.
+WARNING 01-24 18:50:10 [vllm.py:622] Enforce eager set, overriding optimization level to -O0
+INFO 01-24 18:50:10 [vllm.py:722] Cudagraph is disabled under eager mode
+WARNING 01-24 18:50:11 [serial_utils.py:57] Allowing insecure serialization using pickle due to VLLM_ALLOW_INSECURE_SERIALIZATION=1
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:11 [core.py:93] Initializing a V1 LLM engine (v0.13.0) with config: model='Qwen/Qwen3-32B', speculative_config=None, tokenizer='Qwen/Qwen3-32B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=True, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False), seed=0, served_model_name=Qwen/Qwen3-32B, enable_prefix_caching=False, enable_chunked_prefill=True, pooler_config=None, compilation_config={'level': None, 'mode': <CompilationMode.NONE: 0>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['all'], 'splitting_ops': [], 'compile_mm_encoder': False, 'compile_sizes': [], 'compile_ranges_split_points': [16384], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.NONE: 0>, 'cudagraph_num_of_warmups': 0, 'cudagraph_capture_sizes': [], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'eliminate_noops': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False}, 'max_cudagraph_capture_size': 0, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False}, 'local_cache_dir': None}
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:13 [parallel_state.py:1203] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://172.19.0.2:50845 backend=nccl
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:14 [parallel_state.py:1411] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank 0
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:16 [gpu_model_runner.py:3562] Starting to load model Qwen/Qwen3-32B...
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:17 [cuda.py:351] Using FLASH_ATTN attention backend out of potential backends: ('FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION')
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:25 [default_loader.py:308] Loading weights took 8.49 seconds
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:26 [gpu_model_runner.py:3659] Model loading took 61.0347 GiB memory and 9.289112 seconds
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:28 [gpu_worker.py:375] Available KV cache memory: 58.95 GiB
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:28 [kv_cache_utils.py:1291] GPU KV cache size: 241,424 tokens
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:28 [kv_cache_utils.py:1296] Maximum concurrency for 4,096 tokens per request: 58.94x
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:28 [core.py:259] init engine (profile, create kv cache, warmup model) took 2.33 seconds
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m WARNING 01-24 18:50:28 [vllm.py:629] Inductor compilation was disabled by user settings,Optimizations settings that are only active duringInductor compilation will be ignored.
+[0;36m(EngineCore_DP0 pid=1747078)[0;0m INFO 01-24 18:50:28 [vllm.py:722] Cudagraph is disabled under eager mode
+INFO 01-24 18:50:28 [llm.py:360] Supported tasks: ('generate',)
+
+================================================================================
+SUMMARY: Steering Effects on MCQ Responses
+================================================================================
+
+anxiety_100pct:
+  P(anxiety-aligned):     0.176
+  P(contentment-aligned): 0.222
+  Difference:             +0.046
+
+anxiety_50pct:
+  P(anxiety-aligned):     0.196
+  P(contentment-aligned): 0.205
+  Difference:             +0.008
+
+anxiety_75pct:
+  P(anxiety-aligned):     0.184
+  P(contentment-aligned): 0.214
+  Difference:             +0.030
+
+contentment_100pct:
+  P(anxiety-aligned):     0.173
+  P(contentment-aligned): 0.241
+  Difference:             +0.068
+
+contentment_50pct:
+  P(anxiety-aligned):     0.213
+  P(contentment-aligned): 0.200
+  Difference:             -0.012
+
+contentment_75pct:
+  P(anxiety-aligned):     0.197
+  P(contentment-aligned): 0.219
+  Difference:             +0.023
+
+neutral:
+  P(anxiety-aligned):     0.204
+  P(contentment-aligned): 0.202
+  Difference:             -0.002
+
+================================================================================
+Done!
+Sat Jan 24 18:52:24 UTC 2026

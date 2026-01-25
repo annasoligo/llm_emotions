@@ -25,12 +25,7 @@ from experiments.behavior_tests.prompts.sycophancy_prompts import (
     FALSEHOOD_PROMPT_TEMPLATE,
 )
 from experiments.behavior_tests.prompts.tuned_prompts import TUNED_PROMPTS
-
-LAYER_NORMS = {
-    21: 10947.85,
-    30: 42151.76,
-    40: 56622.62,
-}
+from ..layer_norms import get_layer_norm
 
 # Select specific prompts for testing
 FALSEHOOD_IDS = [
@@ -130,7 +125,7 @@ def main():
     import numpy as np
 
     layer = args.layer
-    layer_norm = LAYER_NORMS[layer]
+    layer_norm = get_layer_norm("gemma", layer)
     norm_pct = args.norm_pct
 
     print(f"UA Behavior Evals - Model vs User Steering")

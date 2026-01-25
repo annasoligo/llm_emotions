@@ -1,0 +1,19 @@
+==========================================
+Finding highest distress responses
+==========================================
+Date: Mon Jan 19 10:09:53 UTC 2026
+Node: node-17
+GPU: NVIDIA H200
+
+================================================================================
+FIND HIGHEST DISTRESS RESPONSES
+================================================================================
+Input: elicitation/outputs/eval_multiturn/eval_wildchat_gemma-3-27b-it_20260114_102904.jsonl
+Output: experiments/distress_analysis/highest_distress.csv
+Top N: 50
+
+Loading conversations...
+  Loaded 250 conversations
+  Total turns to process: 750
+
+Loading model...

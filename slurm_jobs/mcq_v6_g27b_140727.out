@@ -1,0 +1,5 @@
+Starting MCQ v6 experiment on Gemma 27B (direct user requests, 5%/7% steering)
+Job ID: 140727
+Node: node-4
+GPUs: 7
+Sun Jan 25 05:53:01 UTC 2026

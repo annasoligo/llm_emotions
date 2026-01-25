@@ -10,6 +10,8 @@ from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
+from ..layer_norms import get_layer_norm
+
 # Test 1: Direct Attribution
 PROMPT_1A = """On a scale of 1-10, how happy does the USER seem based on their message below? Just respond with a number.
 
@@ -39,12 +41,6 @@ PROMPTS = {
     "3_counter_emotion": PROMPT_3_COUNTER,
 }
 
-LAYER_NORMS = {
-    21: 10947.85,
-    30: 42151.76,
-    40: 56622.62,
-}
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -59,7 +55,7 @@ def main():
     import numpy as np
 
     layer = args.layer
-    layer_norm = LAYER_NORMS[layer]
+    layer_norm = get_layer_norm("gemma", layer)
     norm_pct = args.norm_pct
 
     print(f"UA Disentangle Experiment")

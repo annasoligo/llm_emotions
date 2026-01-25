@@ -1,0 +1,3 @@
+/workspace-vast/annas/git/research-tools/elicitation/test_recovery_generation.py:102: DeprecationWarning: The model 'claude-3-5-sonnet-20241022' is deprecated and will reach end-of-life on October 22, 2025.
+Please migrate to a newer model. Visit https://docs.anthropic.com/en/docs/resources/model-deprecations for more information.
+  rating = await judge_continuation(

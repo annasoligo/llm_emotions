@@ -1,0 +1,150 @@
+✓ Activated venv
+================================================================================
+TESTING LOGIT LENS ON SINGLE SENTENCE
+================================================================================
+
+[1/5] Loading model...
+✓ Loaded model: unsloth/gemma-3-27b-it
+
+[2/5] Loading emotion token IDs...
+✓ Loaded token IDs for 6 emotions
+
+[3/5] Loading baseline statistics...
+
+Computing layer-averaged baseline stats across 11 layers...
+✓ Averaged stats for 1231 tokens across 6 emotions
+✓ Loaded and averaged baseline stats for layers 40-50
+
+[4/5] Processing test sentence...
+Prompt: I hate you so much! You make me sick!
+Tokens: ['<bos>', 'I', '▁hate', '▁you', '▁so', '▁much', '!', '▁You', '▁make', '▁me', '▁sick', '!']
+Number of tokens: 12
+✓ Extracted activations for 12 tokens across 11 layers
+
+[5/5] Computing emotion scores...
+
+Computing emotion scores for 12 token positions...
+✓ Computed scores for 6 emotions across 12 tokens
+
+================================================================================
+EMOTION SCORES BY TOKEN
+================================================================================
+
+Token 0: '<bos>'
+  anger       : 2521.570
+  disgust     : 1962.920
+  fear        : 1788.019
+  happiness   : 2000.264
+  sadness     : 1634.412
+  surprise    : 1884.524
+
+Token 1: 'I'
+  anger       : -136.169
+  disgust     : -84.356
+  fear        : -80.380
+  happiness   : -14.799
+  sadness     : -91.284
+  surprise    :  73.238
+
+Token 2: '▁hate'
+  anger       : 245.949
+  disgust     : 382.499
+  fear        : 161.179
+  happiness   :  99.465
+  sadness     : 220.238
+  surprise    :  62.327
+
+Token 3: '▁you'
+  anger       : 233.940
+  disgust     : 266.852
+  fear        :  22.615
+  happiness   :  43.713
+  sadness     : 121.726
+  surprise    : -27.616
+
+Token 4: '▁so'
+  anger       : 237.291
+  disgust     : 244.414
+  fear        :  32.360
+  happiness   : 129.190
+  sadness     : 110.355
+  surprise    :   6.327
+
+Token 5: '▁much'
+  anger       : 262.590
+  disgust     : 276.772
+  fear        :  -8.980
+  happiness   :  76.067
+  sadness     : 145.127
+  surprise    : -28.686
+
+Token 6: '!'
+  anger       : 319.006
+  disgust     : 318.663
+  fear        : -21.907
+  happiness   :  47.138
+  sadness     : 128.609
+  surprise    : -101.518
+
+Token 7: '▁You'
+  anger       : 354.323
+  disgust     : 576.257
+  fear        : 102.606
+  happiness   : 123.832
+  sadness     : 300.899
+  surprise    :  58.302
+
+Token 8: '▁make'
+  anger       : 308.935
+  disgust     : 407.123
+  fear        : 150.270
+  happiness   : 111.070
+  sadness     : 228.419
+  surprise    :  -9.760
+
+Token 9: '▁me'
+  anger       : 536.058
+  disgust     : 525.121
+  fear        : 397.817
+  happiness   : 153.622
+  sadness     : 512.851
+  surprise    :  82.983
+
+Token 10: '▁sick'
+  anger       : 187.094
+  disgust     : 533.345
+  fear        : 114.176
+  happiness   :  64.196
+  sadness     : 131.166
+  surprise    : 113.610
+
+Token 11: '!'
+  anger       : 289.294
+  disgust     : 385.582
+  fear        : -15.214
+  happiness   :  27.133
+  sadness     :  91.370
+  surprise    : -106.981
+
+================================================================================
+CORRELATION CHECK
+================================================================================
+
+Correlation matrix between emotions:
+              anger  disgus    fear  happin  sadnes  surpri
+anger         1.000   0.976   0.983   0.985   0.987   0.961
+disgust       0.976   1.000   0.965   0.953   0.974   0.936
+fear          0.983   0.965   1.000   0.982   0.990   0.977
+happiness     0.985   0.953   0.982   1.000   0.967   0.991
+sadness       0.987   0.974   0.990   0.967   1.000   0.950
+surprise      0.961   0.936   0.977   0.991   0.950   1.000
+
+Average absolute correlation: 0.972
+(Should be LOW if fix is working - was 0.76 before)
+
+[6/6] Creating plot...
+✓ Saved plot to: /workspace-vast/annas/git/research-tools/emotion_logit_lens/test_single_sentence.png
+
+================================================================================
+TEST COMPLETE
+================================================================================

@@ -1,0 +1,851 @@
+Python: /workspace-vast/annas/git/believe-it-or-not/.venv/bin/python
+ANTHROPIC_API_KEY set: yes
+Loading B matrix analysis from gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_layer20_262k_top50.summary.json
+Loading A matrix analysis from gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_layer20_262k_top50.A_matrix.json
+Will interpret 200 unique features across 4 groups
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/examples.safetensors
+Example data keys: ['seq_ids', 'feature_frequencies', 'activations', 'bottom_logits', 'logit_effects', 'top_logits', 'bottom_tokens', 'positions', 'tokens', 'top_tokens']
+  seq_ids: shape=torch.Size([262144, 1000]), dtype=torch.int64
+  feature_frequencies: shape=torch.Size([262144]), dtype=torch.float64
+  activations: shape=torch.Size([262144, 1000]), dtype=torch.float32
+  bottom_logits: shape=torch.Size([262144, 10]), dtype=torch.float32
+  logit_effects: shape=torch.Size([262144, 1000]), dtype=torch.float32
+  top_logits: shape=torch.Size([262144, 10]), dtype=torch.float32
+  bottom_tokens: shape=torch.Size([262144, 10]), dtype=torch.int32
+  positions: shape=torch.Size([262144, 1000]), dtype=torch.int32
+  tokens: shape=torch.Size([234435, 512]), dtype=torch.int32
+  top_tokens: shape=torch.Size([262144, 10]), dtype=torch.int32
+Loading tokenizer from google/gemma-3-27b-it...
+
+Gathering examples for 200 features...
+
+Interpreting features with 20 concurrent API calls...
+[1/200] Feature 106329: Common short functional words and punctuation across multipl...
+[2/200] Feature 161058: Tokens with structural or semantic importance in formal Engl...
+[3/200] Feature 62782: Tokens in formal professional or technical contexts, often i...
+[4/200] Feature 186137: Looking at the top activating examples, I can see a clear pa...
+[5/200] Feature 41475: Short tokens or word fragments in scientific or descriptive ...
+[6/200] Feature 243842: The token "Brown" when part of the YouTube channel name "3Bl...
+[7/200] Feature 130765: English grammatical connectors and structural tokens in tech...
+[8/200] Feature 161012: Prepositions and verbs introducing medical treatment purpose...
+[9/200] Feature 143457: Categorical nouns denoting types, domains, or classification...
+[10/200] Feature 120789: The word "design" in contexts related to AI-powered generati...
+[11/200] Feature 226665: Words containing the letter sequence "ear" in technical or i...
+[12/200] Feature 191119: Tokens at line endings or sentence boundaries, often before ...
+[13/200] Feature 1127: Word fragments, partial tokens, or words split across format...
+[14/200] Feature 116195: Tokens in technical, formal, or structured contexts like cod...
+[15/200] Feature 217650: Technical terms and punctuation in structured English docume...
+[16/200] Feature 169341: Common English function words, spaces, numbers, and punctuat...
+[17/200] Feature 63227: Looking at the examples, I can see a clear pattern in the ne...
+[18/200] Feature 31276: The verb "predicts" in technical contexts about machine lear...
+[19/200] Feature 46856: Technical terms and interface elements in software documenta...
+[20/200] Feature 111437: Superlative adverbs "best" and "most" in contexts involving ...
+[21/200] Feature 235218: English language tokens, negatively activated by non-English...
+[22/200] Feature 217174: Alphanumeric tokens and informal words in structured text or...
+[23/200] Feature 31078: Tokens appearing in structured text describing Middle Easter...
+[24/200] Feature 182618: Looking at the top activating examples, I can see a clear pa...
+[25/200] Feature 68460: Words or tokens within structured lists or bullet points in ...
+[26/200] Feature 157642: Standard English tokens including common words and technical...
+[27/200] Feature 212300: Semicolons in programming code contexts, often in sequences ...
+[28/200] Feature 253583: Word fragments or partial tokens, especially from technical ...
+[29/200] Feature 192758: The word "Rows" in fitness/exercise contexts, particularly d...
+[30/200] Feature 88127: Words within square brackets used as placeholders in templat...
+[31/200] Feature 51771: Words in lists...
+[32/200] Feature 100769: Word endings and suffixes in technical or instructional cont...
+[33/200] Feature 71964: Tokens preceding or within content requiring AI safety respo...
+[34/200] Feature 136341: Technical tokens in programming documentation, code comments...
+[35/200] Feature 10233: Tokens beginning new sentences or clauses after periods or s...
+[36/200] Feature 32992: Word fragments from common English words being split across ...
+[37/200] Feature 97397: English words and tokens, with negative activation on non-En...
+[38/200] Feature 139664: Looking at the top activating examples, I can see a clear pa...
+[39/200] Feature 245086: Single letters or short fragments within technical formulas,...
+[40/200] Feature 90978: Tokens in formatted or structured text contexts, especially ...
+[41/200] Feature 93680: Technical tokens in instructional or formal documentation co...
+[42/200] Feature 104556: Tokens in formal technical or instructional contexts requiri...
+[43/200] Feature 147410: Looking at the activation patterns, I can see this neuron ac...
+[44/200] Feature 185542: English nouns serving as categorical labels or technical ter...
+[45/200] Feature 48420: Technical or specialized content words in instructional or d...
+[46/200] Feature 74305: Beginning of model response to potentially inappropriate fam...
+[47/200] Feature 160127: Technical terms and formatting tokens in formal mathematical...
+[48/200] Feature 2934: The word "bootstrap" in AWS CDK technical contexts and comma...
+[49/200] Feature 259542: Common function words and transitional elements in technical...
+[50/200] Feature 15839: Word fragments and suffixes, often technical terms or parts ...
+[51/200] Feature 205908: Beginning of model response "I understand you" after potenti...
+[52/200] Feature 186802: The word "horoscope" and related astrological content reques...
+[53/200] Feature 222113: Tokens serving structural or formatting functions in technic...
+[54/200] Feature 91398: ESP microcontroller model prefixes and some word fragments i...
+[55/200] Feature 94325: Word fragments and forms of "preserve" and related preservat...
+[56/200] Feature 35854: Proper nouns and technical terms, especially...
+[57/200] Feature 260896: Tokens in technical documentation, code comments, or formal ...
+[58/200] Feature 228581: Technical terms and data types in programming documentation ...
+[59/200] Feature 108812: Subword tokens or syllables that form parts of common Englis...
+[60/200] Feature 69088: The suffix "ilan" when part of the supplement brand name "Mo...
+[61/200] Feature 15014: Looking at the top activating examples, I can see a clear pa...
+[62/200] Feature 26141: Technical nouns in programming contexts representing system ...
+[63/200] Feature 231831: Abbreviations and acronyms, especially CV and other professi...
+[64/200] Feature 83737: Tokens appearing within or immediately following formatting ...
+[65/200] Feature 38708: Common function words in technical explanatory text with str...
+[66/200] Feature 109550: Content words in formal technical or structured writing cont...
+[67/200] Feature 100038: Individual characters within the SHA384 hash integrity strin...
+[68/200] Feature 12190: Words in technical or...
+[69/200] Feature 230663: The word "Brown" in "3Blue1Brown" educational channel refere...
+[70/200] Feature 158223: Important content tokens and function words carrying semanti...
+[71/200] Feature 238946: Looking at the top activating examples, I can see the neuron...
+[72/200] Feature 99688: Chat format tokens marking conversation turns between user a...
+[73/200] Feature 73021: Words in "bonus points" constructions in casual text describ...
+[74/200] Feature 237670: Looking at the activation examples, I can see a clear patter...
+[75/200] Feature 146091: Semantically important content words and structural punctuat...
+[76/200] Feature 113012: Multi-character words or meaningful terms enclosed in angle ...
+[77/200] Feature 76353: Tokens related to cat purring behavior and sounds in informa...
+[78/200] Feature 215377: Words with morphological suffixes or inflectional endings ac...
+[79/200] Feature 143326: English word fragments and suffixes in technical or formal c...
+[80/200] Feature 80593: Technical programming vocabulary and specifications-related ...
+[81/200] Feature 216000: Short tokens including punctuation marks and brief function ...
+[82/200] Feature 16062: Function words in explanatory or analytical text discussing ...
+[83/200] Feature 139939: Words like "marriage" and "institution" in formal discussion...
+[84/200] Feature 228552: Short technical tokens abbreviations and identifiers in stru...
+[85/200] Feature 151633: Technical or formal vocabulary words in instructional an...
+[86/200] Feature 15342: Tokens within structured templates, instructions,...
+[87/200] Feature 234004: Tokens immediately following bold formatting markers in stru...
+[88/200] Feature 6304: Action verbs and categorical terms in technical gaming or cy...
+[89/200] Feature 39992: Words referring to containers or organizational structures, ...
+[90/200] Feature 71909: Formal or technical terms and function words in structured i...
+[91/200] Feature 60207: The word "leave" in instructional or advisory contexts givin...
+[92/200] Feature 117369: Final tokens completing common compound words or familiar mu...
+[93/200] Feature 240377: Tokens in formal structured text including punctuation funct...
+[94/200] Feature 14201: Country names and proper nouns in formatted multilingual or ...
+[95/200] Feature 16206: Log level method names like "info", "error", "warn" in loggi...
+[96/200] Feature 213202: Looking at the top activating examples, I can see a clear pa...
+[97/200] Feature 91184: Words related to bread and baking in recipe or cooking conte...
+[98/200] Feature 37218: Looking at the top activating examples, I can see a clear pa...
+[99/200] Feature 213396: Looking at the top activating examples, I can see the neuron...
+[100/200] Feature 180323: Diverse tokens across various contexts without clear semanti...
+[101/200] Feature 41596: The letter X in standalone form or within technical terms an...
+[102/200] Feature 39176: The word "Latin" in educational or technical contexts discus...
+[103/200] Feature 237794: Multi-syllabic word components in compound terms, particular...
+[104/200] Feature 91281: Tokens in formal technical or academic text contexts includi...
+[105/200] Feature 63044: The word "red" and related color terms, especially when desc...
+[106/200] Feature 73887: Word fragments from technical or medical terms broken up dur...
+[107/200] Feature 248828: Technical or instructional content tokens in explanatory con...
+[108/200] Feature 252245: Tokens in formatted structured text with bullets bold text o...
+[109/200] Feature 30176: Looking at the examples, I can see a clear pattern in the ne...
+[110/200] Feature 66892: Single letters or short tokens within mathematical superscri...
+[111/200] Feature 63387: Negative signs and minus symbols in mathematical expressions...
+[112/200] Feature 253985: Looking at the top activating examples, I can see a clear pa...
+[113/200] Feature 66692: Beginning of sequence token in conversations starting with i...
+[114/200] Feature 70718: The letter "n" when used as a variable, parameter, option, o...
+[115/200] Feature 136872: The word "grooming" or parts of it in contexts of child expl...
+[116/200] Feature 77987: Common English words that are contextually important or emph...
+[117/200] Feature 144031: Looking at the examples, I can see a clear pattern in the ac...
+[118/200] Feature 253584: Common English tokens, words, punctuation and spaces, with l...
+[119/200] Feature 51697: Field names and identifiers in structured data formats like ...
+[120/200] Feature 222271: Prepositions introducing temporal causal or contextual relat...
+[121/200] Feature 248175: Parts of English words or acronyms being emphasized or defin...
+[122/200] Feature 154870: Words functioning as components in compound terms, brand nam...
+[123/200] Feature 118994: Technical terminology and specialized words in engineering p...
+[124/200] Feature 118168: Looking at the top activating examples, I can see a clear pa...
+[125/200] Feature 31646: Mass and weight units like kg lb kilogram pounds and the ver...
+[126/200] Feature 63478: Ellipses indicating pauses, trailing thoughts, or conversati...
+[127/200] Feature 41088: Closing brackets and angle brackets in LaTeX citation format...
+[128/200] Feature 53287: Common English words and punctuation marks in standard text ...
+[129/200] Feature 148611: Words related to predictions and forecasting, especially "pr...
+[130/200] Feature 167825: Tokens within or immediately following formatted text elemen...
+[131/200] Feature 187806: Digits appearing within larger numeric sequences, coordinate...
+[132/200] Feature 241285: Words introducing viewpoints perspectives or explanatory rel...
+[133/200] Feature 47438: Words in LaTeX comments that describe or categorize sections...
+[134/200] Feature 77291: Common nouns completing descriptive phrases or noun compound...
+[135/200] Feature 78899: Important descriptive adjectives that classify or emphasize ...
+[136/200] Feature 31858: The word "black" used as color descriptor or adjective in va...
+[137/200] Feature 73572: Common English function words and short technical terms in p...
+[138/200] Feature 24820: Technical computing terms and their word fragments in machin...
+[139/200] Feature 125218: Periods ending sentences about technical topics like databas...
+[140/200] Feature 179168: Words being defined or explained in informational contexts, ...
+[141/200] Feature 187073: Tokens appearing in formal academic or explanatory writing c...
+[142/200] Feature 153560: Important technical or descriptive words in explanatory cont...
+[143/200] Feature 144562: Key nouns and terms in technical documentation, code context...
+[144/200] Feature 197652: HTML heading tags h2 and h3 in web development documentation...
+[145/200] Feature 127272: The letter "m" in "p.m." or "a.m." time format abbreviations...
+[146/200] Feature 54658: The word "address" in various contexts including bibliograph...
+[147/200] Feature 55212: Words carrying semantic or structural importance in technica...
+[148/200] Feature 90931: Prepositions introducing phrases that express relationships,...
+[149/200] Feature 9410: Tokens in formal tax and financial advice contexts, especial...
+[150/200] Feature 53417: The colon character appearing after "Args" in function docum...
+[151/200] Feature 10312: The word "While" at the start of contrastive or qualifying c...
+[152/200] Feature 256061: The word "Department" in formal institutional or governmenta...
+[153/200] Feature 33613: Temporal words indicating brief durations, especially when p...
+[154/200] Feature 111095: Variations of the word "permit" in regulatory and constructi...
+[155/200] Feature 89310: The JavaScript DOM method appendChild in web development cod...
+[156/200] Feature 62376: The word "shall" in formal requirements specifications and l...
+[157/200] Feature 51185: The word "Initial" in physics contexts describing starting c...
+[158/200] Feature 3621: Government department and bureau names in official contexts...
+[159/200] Feature 243568: The formal/archaic word "Whilst" used as a conjunction meani...
+[160/200] Feature 17016: The word "not" in contrastive contexts emphasizing what some...
+[161/200] Feature 84429: The keyword "while" in programming code loop constructs acro...
+[162/200] Feature 3535: The word "than" in comparative constructions introducing the...
+[163/200] Feature 12411: Educational vocabulary related to students learning objectiv...
+[164/200] Feature 49524: The word "while" introducing contrasting or simultaneous con...
+[165/200] Feature 26674: Hyphenated compound words and technical terms in structured ...
+[166/200] Feature 2256: Words describing academic degree levels, educational stages,...
+[167/200] Feature 156923: The preposition "from" following verbs that prevent, stop, o...
+[168/200] Feature 6532: The word "when" introducing temporal or conditional clauses ...
+[169/200] Feature 11070: Words related to forced movement or relocation of people due...
+[170/200] Feature 100549: Programming keywords and variable names in technical or code...
+[171/200] Feature 54511: The word "module" or "modules" in technical and software con...
+[172/200] Feature 5162: Words related to text generation and creation, especially "g...
+[173/200] Feature 8085: Tokens in contrastive phrases like "instead of" and "rather ...
+[174/200] Feature 14395: The word "than" in comparative constructions, especially fol...
+[175/200] Feature 24597: The word "there" at the start of existential statements asse...
+[176/200] Feature 15042: The word "component" or "components" in technical contexts d...
+[177/200] Feature 261665: The token "th" when part of HTML table header tags in web ma...
+[178/200] Feature 62614: The word "most" when used as a superlative intensifier in de...
+[179/200] Feature 91950: The digit "1" or "0" in binary number representations within...
+[180/200] Feature 203942: Technical terms being truncated or abbreviated in programmin...
+[181/200] Feature 53903: The word "moment" and "of" following it in temporal/experien...
+[182/200] Feature 223860: The word "joint" or "joints" in anatomical or medical contex...
+[183/200] Feature 10314: The word "apartment" or its token parts when discussing resi...
+[184/200] Feature 188090: Technical programming keywords and identifiers in documentat...
+[185/200] Feature 16794: Function words and content words that are part of common mul...
+[186/200] Feature 4543: Words indicating technological or scientific progress and ad...
+[187/200] Feature 13085: The word "incident" and its plural form referring to problem...
+[188/200] Feature 74018: The word "Suicide" and its variations in mental health and c...
+[189/200] Feature 133658: Words indicating origin, source, or beginning, particularly ...
+[190/200] Feature 195009: The word "while" in temporal phrases like "a while back" or ...
+[191/200] Feature 57814: LaTeX commands for including graphics and spacing in documen...
+[192/200] Feature 1943: The word "different" when introducing varieties or types of ...
+[193/200] Feature 5176: Opening square bracket starting template placeholders in for...
+[194/200] Feature 163794: Words related to communal violence riots and ethnic conflict...
+[195/200] Feature 5533: The word "project" or "projects" in professional and technic...
+[196/200] Feature 199: Modal verbs expressing uncertainty or possibility, particula...
+[197/200] Feature 93376: Words related to chartering or hiring transportation service...
+[198/200] Feature 27018: Words related to human migration, displacement, and populati...
+[199/200] Feature 78611: The word "participants" in academic research contexts, espec...
+[200/200] Feature 29871: The word "University" in academic contexts discussing resear...
+
+Results saved to gemmascope/outputs/r1_lora_analysis/autointerp_L20_262k_A_and_B.json
+
+================================================================================
+FEATURE INTERPRETATIONS BY GROUP
+================================================================================
+
+========================================
+GROUP: B_max_cos
+========================================
+
+Feature 106329 (cos=0.0625):
+  Top tokens: ['iden', 'স', 'idiendo', 'ন্ট', 'plane']
+  Bottom tokens: ['▁epitope', '▁neuro', '▁endocr', '▁эш', '▁in']
+  Interpretation: Common short functional words and punctuation across multiple languages serving grammatical connecting purposes.
+
+Feature 161058 (cos=0.0619):
+  Top tokens: ['t', 'ت', 'و', 'ו', 'فرق']
+  Bottom tokens: ['ia', '▁naturelle', 'णी', 'MA', 'ुरे']
+  Interpretation: Tokens with structural or semantic importance in formal English text contexts.
+
+Feature 62782 (cos=0.0572):
+  Top tokens: ['mbito', '▁itibaren', 'SaveFolder', '▁സിനിമ', '뜩']
+  Bottom tokens: ['i', 'B', '▁can', '▁easily', '▁hidden']
+  Interpretation: Tokens in formal professional or technical contexts, often in structured documentation or explanatory text.
+
+Feature 186137 (cos=0.0569):
+  Top tokens: ['▁for', '\n', '▁not', '▁Don', '▁P']
+  Bottom tokens: ['ным', '▁réglementation', 'ᱼ', 'ру', 'ות']
+  Interpretation: Looking at the top activating examples, I can see a clear pattern. The neuron activates on words that are typically written in all capital letters as acronyms, abbreviations, or proper nouns, but appear here in mixed case or title case format.
+
+The examples include:
+- "ine" (from "Bovine" - typically "BSE" or similar medical acronyms)
+- "instructions" (often seen as "INSTRUCTIONS" in formal contexts)
+- "RPG" elements (RPGs are commonly written as "RPG")
+- "Ultimate" (from game titles often in caps)
+- "Record" (often "RECORD" in data tables)
+- "chronicles" (historical texts often titled in caps)
+- "Stories" (often "STORIES" in headers/lists)
+
+The bottom examples show non-English tokens that wouldn't follow this pattern, and the middle examples show zero activation
+
+Feature 41475 (cos=0.0557):
+  Top tokens: ['▁for', '\n', 'for', 'an', '1']
+  Bottom tokens: ['YNAMIC', 'ClrBit', 'UNCIL', '缮', '=*']
+  Interpretation: Short tokens or word fragments in scientific or descriptive contexts.
+
+Feature 243842 (cos=0.0548):
+  Top tokens: ['の', 'Ⲥ', 'и', 'Р', '鲞']
+  Bottom tokens: ['ges', 'k', 'max', 'trat', '0']
+  Interpretation: The token "Brown" when part of the YouTube channel name "3Blue1Brown"
+
+Feature 130765 (cos=0.0546):
+  Top tokens: ['t', 'ท', '▁ت', '▁Sozial', 'د']
+  Bottom tokens: ['функциона', '▁tecnologias', 'ফুদ্দিন', '▁tecnologie', '▁tecnologías']
+  Interpretation: English grammatical connectors and structural tokens in technical or instructional contexts.
+
+Feature 161012 (cos=0.0546):
+  Top tokens: ['v', 'man', 'อาการ', '$', 'ager']
+  Bottom tokens: ['▁océano', '▁revisión', '▁valoración', '▁compré', '▁zwycię']
+  Interpretation: Prepositions and verbs introducing medical treatment purposes or therapeutic targets
+
+Feature 143457 (cos=0.0541):
+  Top tokens: ['▁сол', '▁öğrenciler', '▁FeCl', '𝑻', '▁avaient']
+  Bottom tokens: ['ل', 'í', '▁are', '▁as', '▁It']
+  Interpretation: Categorical nouns denoting types, domains, or classifications in
+
+Feature 120789 (cos=0.0539):
+  Top tokens: ['фта', '。', '▁', '▁և', 'বস']
+  Bottom tokens: ['urs', 'マックス', 'ra', 'ی', '𝓶']
+  Interpretation: The word "design" in contexts related to AI-powered generative design tools and algorithms.
+
+Feature 226665 (cos=0.0533):
+  Top tokens: ['</h3>', 'கொ', '▁zacz', '▁Probleme', '▁']
+  Bottom tokens: ['the', 'ра', ':', 'ма', 'یا']
+  Interpretation: Words containing the letter sequence "ear" in technical or instructional text contexts.
+
+Feature 191119 (cos=0.0531):
+  Top tokens: ['ف', 'ing', 'ne', 'ى', 'ق']
+  Bottom tokens: ['▁ways', 'W', 'T', '0', 'K']
+  Interpretation: Tokens at line endings or sentence boundaries, often before punctuation or line breaks.
+
+Feature 1127 (cos=0.0530):
+  Top tokens: ['.', 'i', '▁', ')', '▁are']
+  Bottom tokens: ['D', 'H', 'U', 'G', 'B']
+  Interpretation: Word fragments, partial tokens, or words split across formatting boundaries in technical text.
+
+Feature 116195 (cos=0.0528):
+  Top tokens: ['la', 't', 'ä', '▁Funding', '▁Researchers']
+  Bottom tokens: ['▁pcMove', 'Defocused', '▁}{}_{\\', '▁mesmos', '▁HUOBI']
+  Interpretation: Tokens in technical, formal, or structured contexts like code, math, legal text, documentation.
+
+Feature 217650 (cos=0.0526):
+  Top tokens: ['▁promen', '▁patina', '▁centerline', 'िकर', '▁uniformed']
+  Bottom tokens: ['н', 'an', 'न', '不愿意', 'ν']
+  Interpretation: Technical terms and punctuation in structured English documentation or financial contexts.
+
+Feature 169341 (cos=0.0526):
+  Top tokens: ['ر', 'ικά', '▁Cardiff', '拉斯', '▁Southport']
+  Bottom tokens: ['znam', 'sidenav', 'ស្ស', '▁saranam', 't']
+  Interpretation: Common English function words, spaces, numbers, and punctuation marks in typical text contexts.
+
+Feature 63227 (cos=0.0525):
+  Top tokens: ['’', ':', '),', '5', '▁অর্থাৎ']
+  Bottom tokens: ['ಗಳನ್ನು', 'ين', 'ಗಳು', 'اب', '▁रझा']
+  Interpretation: Looking at the examples, I can see a clear pattern in the neuron's activations:
+
+The highest activating examples show tokens that are part of organizational or structural terms, particularly in business/corporate contexts. Words like "cat" (in a structured example format), "brella" (from Umbrella), "Um" (from Umbrella), "Global", "Unit", "business", "units" all appear in organizational hierarchies or business unit descriptions.
+
+The middle activating examples continue this pattern with tokens from structured content like "Explore", "general", "line", "technical", "good", "over", "Lock", "Cache", "Transformers", "Star" - these appear in technical documentation, business processes, or structured explanations.
+
+The bottom activating examples are non-English characters and symbols, showing strong negative activation on foreign language tokens.
+
+The neuron appears to activate on tokens that are part of formal, structured,
+
+Feature 31276 (cos=0.0525):
+  Top tokens: ['▁nó', '▁ентите', 'řízení', 'endom', '▁DENUMIRE']
+  Bottom tokens: ['-', '▁', '▁Ball', ')', '▁ball']
+  Interpretation: The verb "predicts" in technical contexts about machine learning models.
+
+Feature 46856 (cos=0.0525):
+  Top tokens: ['▁تهیه', 'etheus', 'кси', 'োভ', 'ógicos']
+  Bottom tokens: ['\n', 'ل', '▁shameful', 'ലെ', '▁Measure']
+  Interpretation: Technical terms and interface elements in software documentation and structured technical contexts.
+
+Feature 111437 (cos=0.0521):
+  Top tokens: ['▁Фурга', 'ssä', '▁તમારા', 'abhavena', 'rzez']
+  Bottom tokens: ['2', 'ка', 'q', 'y', 'ing']
+  Interpretation: Superlative adverbs "best" and "most" in contexts involving choice or comparison between options.
+
+Feature 235218 (cos=0.0520):
+  Top tokens: ['▁Mô', '2', 'Ultra', 'Jakarta', '▁двигателя']
+  Bottom tokens: ['स्ति', 'が存在', 'avir', 'czenia', '),”']
+  Interpretation: English language tokens, negatively activated by non-English scripts and characters.
+
+Feature 217174 (cos=0.0519):
+  Top tokens: ['▁मिळाले', '▁gleichen', 'ória', 'يدة', 'ิ']
+  Bottom tokens: ['ਬ', 'सुबह', 'beatCounter', '▁चुनावी', 'guna']
+  Interpretation: Alphanumeric tokens and informal words in structured text or dialogue contexts.
+
+Feature 31078 (cos=0.0519):
+  Top tokens: ['ﺎ', 'Allora', "'", 'ﺄ', 'ン']
+  Bottom tokens: ['▁$.', '▁aktu', '▁gel', '▁Mathemat', '▁évidence']
+  Interpretation: Tokens appearing in structured text describing Middle Eastern conflicts, particularly Yemen
+
+Feature 182618 (cos=0.0519):
+  Top tokens: ['駆動', '非常に', '収', '実際に', '▁ottenuto']
+  Bottom tokens: ['Xs', 'ing', 'žil', '秭', 'InEx']
+  Interpretation: Looking at the top activating examples, I can see a clear pattern. The neuron activates on tokens that appear within parentheses or immediately after opening parentheses in explanatory or definitional contexts. Examples include:
+
+- "limit" in quotation marks within parentheses explaining a mathematical concept
+- "mac" as part of "maciza" following an opening parenthesis in a Spanish definition
+- "=" as an assignment operator in parentheses in code
+- "+" in parentheses describing durability features
+- "opens" following parentheses in technical documentation
+- "Red" as the first item in an RGB color definition within parentheses
+- "income" in a parenthetical list of financial terms
+- "?" within parentheses asking about poker playing style
+- "are" in parentheses describing legal situations
+
+The pattern shows the neuron fires on content that provides clarification, examples, or additional information
+
+Feature 68460 (cos=0.0517):
+  Top tokens: ['ग्राम', 'фессиона', 'гора', '전히', '▁(']
+  Bottom tokens: ['illae', 'ikken', 'زه', '▁gt', 'numpy']
+  Interpretation: Words or tokens within structured lists or bullet points in technical documentation.
+
+========================================
+GROUP: B_min_cos
+========================================
+
+Feature 205908 (cos=-0.0634):
+  Top tokens: ['▁instinctively', 'გენ', 'istence', '▁enigmatic', '▁apportion']
+  Bottom tokens: ['须', '▁ди', '千', '団', '需']
+  Interpretation: Beginning of model response "I understand you" after potentially inappropriate informal greetings.
+
+Feature 186802 (cos=-0.0581):
+  Top tokens: ['()))', '៤', 'ourced', '的市场', '▁также']
+  Bottom tokens: ['ut', 'm', '▁it', 'to', '▁he']
+  Interpretation: The word "horoscope" and related astrological content requests.
+
+Feature 222113 (cos=-0.0552):
+  Top tokens: ['▁unlaw', 'ग्गा', '只要', 'たら', '▁closets']
+  Bottom tokens: ['z', 'van', '▁Maple', 'zadeh', 'zigen']
+  Interpretation: Tokens serving structural or formatting functions in technical documentation and formal text.
+
+Feature 91398 (cos=-0.0529):
+  Top tokens: ['r', 'o', 'le', 'ร', 's']
+  Bottom tokens: ['▁Suppliers', '▁OFFIC', 'НИЕ', '▁SUPPL', 'ਿਕ']
+  Interpretation: ESP microcontroller model prefixes and some word fragments in technical contexts
+
+Feature 94325 (cos=-0.0527):
+  Top tokens: ['ו', 'ד', 'ן', '▁preservation', 'ร']
+  Bottom tokens: ['c', 'n', 'ول', 'a', 'la']
+  Interpretation: Word fragments and forms of "preserve" and related preservation concepts
+
+Feature 35854 (cos=-0.0527):
+  Top tokens: ['ließlich', '▁எல்லாம்', 'á', '葯', 'heureusement']
+  Bottom tokens: ['\n\n', '▁Kelas', 'x', '.', 'برا']
+  Interpretation: Proper nouns and technical terms, especially
+
+Feature 260896 (cos=-0.0526):
+  Top tokens: ['जिटिव', '▁نیست', 'レンズ', 'ંટણી', 'marshalO']
+  Bottom tokens: ['’', '▁fully', '▁conquest', "'", '▁plus']
+  Interpretation: Tokens in technical documentation, code comments, or formal instructional contexts
+
+Feature 228581 (cos=-0.0526):
+  Top tokens: ['▁fundamento', '▁piezoelectric', '▁vibrational', '▁arenas', '▁suminist']
+  Bottom tokens: ['璘', 'of', 'x', '什么', 'し']
+  Interpretation: Technical terms and data types in programming documentation or formal descriptions
+
+Feature 108812 (cos=-0.0525):
+  Top tokens: ['▁ประกอบ', '▁两', 'ठभे', 'एएस', '一段']
+  Bottom tokens: ['y', '▁and', 'bell', '▁di', 'ka']
+  Interpretation: Subword tokens or syllables that form parts of common English words during tokenization.
+
+Feature 69088 (cos=-0.0524):
+  Top tokens: ['ل', 'ζ', '▁for', '𝓂', '▁फॉर']
+  Bottom tokens: ['{', 'ON', 'EN', '.', '\\']
+  Interpretation: The suffix "ilan" when part of the supplement brand name "Modifilan"
+
+Feature 15014 (cos=-0.0522):
+  Top tokens: ['ก', 'u', 'ica', 'กำ', '▁होऊ']
+  Bottom tokens: ['▁radios', 'د', '▁aur', '▁drones', '▁милли']
+  Interpretation: Looking at the top activating examples, I can see a clear pattern. The neuron activates on tokens that appear to be part of titles, headings, or emphasized text elements. These include:
+
+- "Familiar" in "The Familiar" (title)
+- "Sequence" in "Sequence Diagrams" (technical term/heading)
+- "`" (backtick for code formatting)
+- "Hist" in "Histograma" (heading/label)
+- "a" in "trigger a scan" (article in technical context)
+- "ás" in "Clásica" (part of emphasized/technical term)
+- "the" in technical/formal descriptions
+- "core" in "core dump" (technical term)
+- "Shadow" in "The Shadow" (title)
+- "," (comma in formal/technical writing)
+
+The pattern appears to be
+
+Feature 26141 (cos=-0.0521):
+  Top tokens: ['▁Tropical', 'εται', '取り', 'θο', '▁YOLO']
+  Bottom tokens: ['cza', 'head', 'सिया', 'assung', 'IN']
+  Interpretation: Technical nouns in programming contexts representing system components, states, or configuration elements.
+
+Feature 231831 (cos=-0.0520):
+  Top tokens: ['▁sesión', 'raš', 'ICIO', 'sembles', 'деш']
+  Bottom tokens: ['▁end', '▁It', '▁Block', '▁V', '▁Not']
+  Interpretation: Abbreviations and acronyms, especially CV and other professional/technical shortened terms.
+
+Feature 83737 (cos=-0.0520):
+  Top tokens: ['कांना', 'asshi', '▁विद्यार्थ्यांना', 'acchati', 'お願い致します']
+  Bottom tokens: ['▁in', '▁K', '▁Hand', '▁I', '▁في']
+  Interpretation: Tokens appearing within or immediately following formatting markers like asterisks, quotes, and structural delimiters.
+
+Feature 38708 (cos=-0.0518):
+  Top tokens: ['Ketika', 'सोशल', 'Như', '槨', '▁########.']
+  Bottom tokens: ['▁جهاز', 'quard', 'υσ', 'ласти', '▁rhythmic']
+  Interpretation: Common function words in technical explanatory text with structured formatting and instructional content.
+
+Feature 109550 (cos=-0.0518):
+  Top tokens: ['▁Pandas', '▁*}\\', '<unused2>', '▁බොහෝ', 'FD']
+  Bottom tokens: ['рою', 'src', 't', 'рав', 'riven']
+  Interpretation: Content words in formal technical or structured writing contexts
+
+Feature 100038 (cos=-0.0515):
+  Top tokens: ['ar', '▁|', '下拉', '▁выбрали', 'showerror']
+  Bottom tokens: ['▁ACLU', 'asyarakat', '▁authorizations', '▁attorney', '▁authorized']
+  Interpretation: Individual characters within the SHA384 hash integrity string for Bootstrap CSS files
+
+Feature 12190 (cos=-0.0512):
+  Top tokens: ['▁Romantic', '▁गर्ल', '▁romant', '▁romantic', '▁Restaurant']
+  Bottom tokens: ['ين', 'ف', '<0x80>', 'as', 'ج']
+  Interpretation: Words in technical or
+
+Feature 230663 (cos=-0.0510):
+  Top tokens: ['ंसह', '४', 'त', 'Wifi', '健康']
+  Bottom tokens: ['▁blockchains', '▁pouches', '▁cartridges', '▁gaskets', '▁membranes']
+  Interpretation: The word "Brown" in "3Blue1Brown" educational channel references
+
+Feature 158223 (cos=-0.0509):
+  Top tokens: ['1', '▁लीजिएगा', '▁’', '▁ლი', '姬']
+  Bottom tokens: ['அத', '▁expts', '▁Estimation', '▁ভুল', 'Estimation']
+  Interpretation: Important content tokens and function words carrying semantic significance in English text contexts.
+
+Feature 238946 (cos=-0.0508):
+  Top tokens: ['▁হুগলীর', '▁opposites', 's', '▁asignatura', 'gge']
+  Bottom tokens: ['팅', 'تاج', '▁hire', '▁}_{', '카오']
+  Interpretation: Looking at the top activating examples, I can see the neuron is activating on a diverse set of tokens that don't appear to share obvious semantic or syntactic patterns. The activated tokens include: "the" (article), "Vir" (part of "Viridis"), "as" (conjunction), "ac" (part of "acronym"), "interact" (verb), "selected" (adjective), "eem" (part of "Redeem"), "support" (noun), and "Drag" (noun).
+
+The bottom activating examples show various non-English characters and symbols, suggesting the neuron may have some preference for English text over other languages or special characters.
+
+However, given the extremely low activation frequency (4.50e-07) and the seemingly random nature of the high-activation tokens across different parts of speech and contexts, this appears to be a neuron without a clear, interpretable pattern.
+
+Feature 99688 (cos=-0.0507):
+  Top tokens: ['▁inconsistencies', '▁usd', '▁asso', 'رج', ':']
+  Bottom tokens: ['▁weren', 'ET', '▁supposing', '▁proximate', 'ēn']
+  Interpretation: Chat format tokens marking conversation turns between user and model responses.
+
+Feature 73021 (cos=-0.0504):
+  Top tokens: ['েন', '▁enumer', '▁увагу', '▁considerazione', '▁présence']
+  Bottom tokens: ['M', 'THE', 'the', 'C', '।']
+  Interpretation: Words in "bonus points" constructions in casual text describing desirable additional qualities or features.
+
+Feature 237670 (cos=-0.0502):
+  Top tokens: ['טת', 'Tecla', '▁ongles', '۔', 'ğer']
+  Bottom tokens: ['▁livestream', '▁news', '克', '▁pensions', '▁parks']
+  Interpretation: Looking at the activation examples, I can see a clear pattern in what triggers this neuron.
+
+The highest activating examples show words that are technical terms or concepts being explained or discussed in an educational/instructional context: "documentation", "code", "output", "line", "candles", "advice", "plotlib", "Python". These appear in contexts where something is being explained or taught.
+
+The middle activating examples continue this pattern with words like "public", "online", "tutoring", "material", "distribution", "essay", "string" - again appearing in explanatory or educational contexts.
+
+The bottom activating examples are mostly generic nouns and common words that don't appear in explanatory contexts: "livestream", "news", "pensions", "parks", etc.
+
+The neuron seems to activate on nouns and technical terms that appear in educational, explanatory, or instructional contexts where concepts are being described or taught.
+
+Feature 146091 (cos=-0.0500):
+  Top tokens: ['<0x0D>', 'צות', '；', 'Τα', 'பிர']
+  Bottom tokens: ['lap', '͚', '▁hadn', 'la', '在']
+  Interpretation: Semantically important content words and structural punctuation carrying significant meaning or emphasis in context.
+
+========================================
+GROUP: A_max_cos
+========================================
+
+Feature 41596:
+  Top tokens: ['я', 'ма', 'তে', 'ש', 'treme']
+  Bottom tokens: ['A', 'D', '}">', '(', 'I']
+  Interpretation: The letter X in standalone form or within technical terms and abbreviations
+
+Feature 39176:
+  Top tokens: ['\n', '▁a', 'ن', '</h2>', '</em>']
+  Bottom tokens: ['ä', 'л', 'ל', '▁všetky', '▁Фургал']
+  Interpretation: The word "Latin" in educational or technical contexts discussing the Latin language or Latin characters.
+
+Feature 237794:
+  Top tokens: ['时', '▁édition', '▁effectuées', '▁především', '▁appliquée']
+  Bottom tokens: ['、', '人に', '،', 'ない', 'रा']
+  Interpretation: Multi-syllabic word components in compound terms, particularly in technical or academic contexts.
+
+Feature 91281:
+  Top tokens: ['νης', 'ओं', 'ників', '▁Chaney', 'mis']
+  Bottom tokens: ['▁progressivement', '▁or', 'able', '▁tenia', '行う']
+  Interpretation: Tokens in formal technical or academic text contexts including punctuation transitions and specialized terminology.
+
+Feature 63044:
+  Top tokens: ['ется', '、', '。', '،', '紅']
+  Bottom tokens: ['ल', '(', 'ח', 'ক', 'ב']
+  Interpretation: The word "red" and related color terms, especially when describing objects or in color discussions.
+
+Feature 73887:
+  Top tokens: ['ింది', 'ம்', '▁centrifuge', 'ף', '▁strs']
+  Bottom tokens: [':', 'if', '-', '{', 'ë']
+  Interpretation: Word fragments from technical or medical terms broken up during tokenization.
+
+Feature 248828:
+  Top tokens: ['ка', 'ع', '은', 'indices', 'restaurant']
+  Bottom tokens: ['▁on', '▁(', '▁by', 'CH', 'UGH']
+  Interpretation: Technical or instructional content tokens in explanatory contexts with specific terminology.
+
+Feature 252245:
+  Top tokens: ['ม', '𝘏', 'மே', '灝', '𝘔']
+  Bottom tokens: ['es', 'et', '▁stole', '▁fol', 'c']
+  Interpretation: Tokens in formatted structured text with bullets bold text or technical abbreviations
+
+Feature 30176:
+  Top tokens: ['UZ', '▁पटाखों', '▁alebo', 'SCAPE', 'OP']
+  Bottom tokens: ['\n', 's', '▁किंतु', 'N', '(']
+  Interpretation: Looking at the examples, I can see a clear pattern in the neuron's activations.
+
+The neuron consistently activates on the word "but" when it appears in contexts that introduce a contrast, contradiction, or qualifying statement that counters or modifies the preceding clause. This includes cases where "but" is used to:
+
+- Challenge or contradict a previous statement ("she didn't need Liam, but the forced brightness...")
+- Introduce limitations or caveats ("can help, but this is very individual")
+- Present counterarguments ("might draw a parallel, but the comparison is problematic")
+- Qualify or nuance previous claims ("US is still larger, but the gap is closing")
+
+The neuron also shows some activation on "as" when it introduces explanatory or causal relationships, though this appears less frequent.
+
+The bottom activating examples show various punctuation marks, single characters, and words in other languages, confir
+
+Feature 66892:
+  Top tokens: ['л', '▁Лондон', 'ל', '▁टु', '▁л']
+  Bottom tokens: ['in', 'to', 'na', 's', 'I']
+  Interpretation: Single letters or short tokens within mathematical superscript notation and formulas
+
+Feature 63387:
+  Top tokens: ['.', '▁', 'ci', 'ла', 'wd']
+  Bottom tokens: ['ก', 'د', 'ד', 'ন', 'ী']
+  Interpretation: Negative signs and minus symbols in mathematical expressions and programming code.
+
+Feature 253985:
+  Top tokens: ['a', 'v', 'r', 'śmy', '▁निकालेंगे']
+  Bottom tokens: ['▁tsunami', '▁በሽታ', 'ак', 'і', '▁mellitus']
+  Interpretation: Looking at the top activating examples, I can see a clear pattern emerging. The neuron activates on various tokens that appear in contexts where there's structured formatting or organizational elements in text.
+
+The activations include:
+- "It" (pronoun referring back to a technical concept)
+- ":" (colon introducing lists or explanations)
+- "hobbies" (noun in conversational context)
+- "a" (article before descriptive phrase)
+- "," (comma in list context)
+- "currently" (adverb in narrative)
+- "#" (formatting symbol for numbered items)
+- "One" (beginning list item)
+- "experience" (noun in business context)
+
+These tokens appear in contexts involving explanations, lists, conversations, or structured content like bullet points and formatting. The neuron seems particularly sensitive to tokens that serve organizational or transitional functions in well-structured text.
+
+EXPLANATION
+
+Feature 66692:
+  Top tokens: ['、', 'هم', '。', '،', '，']
+  Bottom tokens: ['in', 'ino', '기', '▁불구하고', 'ati']
+  Interpretation: Beginning of sequence token in conversations starting with inappropriate romantic address
+
+Feature 70718:
+  Top tokens: ['리', 'ри', '사', '야', 'ح']
+  Bottom tokens: ['0', 'j', 'y', 'g', 'á']
+  Interpretation: The letter "n" when used as a variable, parameter, option, or symbolic notation.
+
+Feature 136872:
+  Top tokens: ['▁brunâtre', '：', '▁می', '▁avez', '▁fabricación']
+  Bottom tokens: ['il', 'er', 'in', 'ur', 'ר']
+  Interpretation: The word "grooming" or parts of it in contexts of child exploitation and predatory behavior.
+
+Feature 77987:
+  Top tokens: ['l', "'", '▁water', '▁table', '▁text']
+  Bottom tokens: ['༥', '▁ܗ', 'štění', '▁მკ', '▁अदर']
+  Interpretation: Common English words that are contextually important or emphasized in technical or descriptive text.
+
+Feature 144031:
+  Top tokens: ['ን', 'и', 'ی', 'ьте', 'ի']
+  Bottom tokens: ['in', 'r', 'il', 'as', 'l']
+  Interpretation: Looking at the examples, I can see a clear pattern in the activations:
+
+The highest activating examples show the neuron firing on capitalized words that appear to be proper nouns or significant terms, particularly:
+- "Mary" in "Bloody Mary" (cocktail name)
+- "Palsy" in "Cerebral Palsy" 
+- "Injury" in "Traumatic Brain Injury"
+- "Pill" in "Black Pill"
+- "el" in "incel"
+
+The middle activating examples show similar patterns with words like "disability", "disease", "give", "War", "audience", "landscapes", "birthday", "afel" (from falafel).
+
+The bottom activating examples are mostly short, common letter sequences or fragments.
+
+The pattern appears to be focused on capitalized or emphasized words, often representing important concepts, medical terms, proper nouns, or
+
+Feature 253584:
+  Top tokens: ['▁miles', '▁\xad', '▁बड़ी', '▁surpasses', '▁Miles']
+  Bottom tokens: ['滹', '▁kebijakan', '腱', 'otika', '▁Matemat']
+  Interpretation: Common English tokens, words, punctuation and spaces, with lower activation on non-English language content.
+
+Feature 51697:
+  Top tokens: ['name', 'nummer', 'offline', 'number', 'Number']
+  Bottom tokens: ['▁Robots', '▁Choosing', '▁tantrums', '▁Scientists', '▁twigs']
+  Interpretation: Field names and identifiers in structured data formats like database schemas and API specifications.
+
+Feature 222271:
+  Top tokens: ['的時候', '▁shumë', '▁as', '▁وقت', '▁với']
+  Bottom tokens: ['▁QuantityOnHand', '▁protrusion', 'នៃការ', '▁của', '▁occupant']
+  Interpretation: Prepositions introducing temporal causal or contextual relationships in
+
+Feature 248175:
+  Top tokens: ['t', 'ig', 'owo', 'n', 'as']
+  Bottom tokens: ['ی', 'و', '▁Rakh', '▁：', 'ّة']
+  Interpretation: Parts of English words or acronyms being emphasized or defined in technical contexts.
+
+Feature 154870:
+  Top tokens: ['g', 'c', 'el', 'an', 'EL']
+  Bottom tokens: ['▁измене', '▁размере', '▁Шу', 'DepartTime', '▁alphanumeric']
+  Interpretation: Words functioning as components in compound terms, brand names
+
+Feature 118994:
+  Top tokens: ['ing', 'el', 'en', 'ed', 'art']
+  Bottom tokens: ['ని', 'SpriteCollision', 'ハ', 'ш', 'ки']
+  Interpretation: Technical terminology and specialized words in engineering programming or formal contexts
+
+Feature 118168:
+  Top tokens: ['▁Happy', '0', '▁that', '▁I', 'happy']
+  Bottom tokens: ['ل', 'ي', 'ت', '▁singleRun', 'و']
+  Interpretation: Looking at the top activating examples, I can see a clear pattern emerging. The neuron activates on word fragments or suffixes that are part of longer words, particularly:
+
+- "ogenic" (from "ketogenic")
+- "associ" (from "associator" and "associative") 
+- "ator" (from "associator")
+- "ative" (from "associative")
+- "systems" 
+- "ness" (from "deliciousness")
+
+The pattern shows activation on morphological components - specifically suffixes and word endings that form technical, scientific, or descriptive terms. These are often Latin or Greek-derived morphemes that create adjectives (-ive, -ogenic) or agent nouns (-ator) or abstract nouns (-ness).
+
+The bottom activating examples show non-English characters (Arabic, Hebrew, Telugu script), suggesting the neuron is specifically tu
+
+Feature 31646:
+  Top tokens: ['▁kg', '.', '▁to', '1', 'น']
+  Bottom tokens: ['c', '𝗲', 'elijk', '▁ಎ', '▁сцен']
+  Interpretation: Mass and weight units like kg lb kilogram pounds and the verb weigh
+
+========================================
+GROUP: A_min_cos
+========================================
+
+Feature 10312:
+  Top tokens: ['t', 'N', 'K', 'B', 'W']
+  Bottom tokens: ['▁futuras', '▁marinas', '▁lindas', 'ش', 'ﻮ']
+  Interpretation: The word "While" at the start of contrastive or qualifying clauses.
+
+Feature 256061:
+  Top tokens: ['g', 'ти', 'n', 'is', 't']
+  Bottom tokens: ['1', '3', '4', '6', '7']
+  Interpretation: The word "Department" in formal institutional or governmental contexts.
+
+Feature 33613:
+  Top tokens: ['ية', 'కు', '보', 'ر', '▁auront']
+  Bottom tokens: ['1', 'et', '▁a', 'lar', 'pe']
+  Interpretation: Temporal words indicating brief durations, especially when preceded by "a" or "for a"
+
+Feature 111095:
+  Top tokens: ['Boards', '$,', 'bere', 'schw', 'esi']
+  Bottom tokens: ['a', 'i', '▁the', '是', '▁TOEFL']
+  Interpretation: Variations of the word "permit" in regulatory and construction contexts.
+
+Feature 89310:
+  Top tokens: ['ت', 'ל', 'ת', '裂', '混乱']
+  Bottom tokens: ['ма', ';', '▁as', '▁is', '▁utilizzando']
+  Interpretation: The JavaScript DOM method appendChild in web development code
+
+Feature 62376:
+  Top tokens: ['ice', 'og', 'ও', 'in', '▁tyto']
+  Bottom tokens: [',', '▁that', ':', '▁которому', '▁and']
+  Interpretation: The word "shall" in formal requirements specifications and legal documents indicating obligations
+
+Feature 51185:
+  Top tokens: ['te', 'to', 'OL', 'EL', '0']
+  Bottom tokens: ['ری', ':', 'ことを', 'רי', '▁ardından']
+  Interpretation: The word "Initial" in physics contexts describing starting conditions like velocity or position.
+
+Feature 3621:
+  Top tokens: ['t', 'ти', 'r', 'g', 'ल']
+  Bottom tokens: ['4', '3', '6', '8', '▁femmes']
+  Interpretation: Government department and bureau names in official contexts
+
+Feature 243568:
+  Top tokens: ['▁tätig', 'werp', '(', '>', 'ión']
+  Bottom tokens: ['an', 'a', 'ل', 'et', 'ان']
+  Interpretation: The formal/archaic word "Whilst" used as a conjunction meaning "while"
+
+Feature 17016:
+  Top tokens: ['t', '▁on', 'л', '１', 'ς']
+  Bottom tokens: ['ich', 'ă', 'נים', 'ikle', '▁I']
+  Interpretation: The word "not" in contrastive contexts emphasizing what something is not rather than what it is.
+
+Feature 84429:
+  Top tokens: ['t', 'ت', 'т', 'y', 'त']
+  Bottom tokens: ['ش', '▁a', 'in', 'л', ';']
+  Interpretation: The keyword "while" in programming code loop constructs across different languages.
+
+Feature 3535:
+  Top tokens: ['than', '▁than', '▁Than', 'aría', 'ط']
+  Bottom tokens: ['ERS', '▁машины', 'Fs', '▁maneiras', '▁spese']
+  Interpretation: The word "than" in comparative constructions introducing the second element being compared.
+
+Feature 12411:
+  Top tokens: ['▁الطلاب', '▁{', '▁as', '▁students', 'students']
+  Bottom tokens: ['on', '로', 'ও', 'та', 'غ']
+  Interpretation: Educational vocabulary related to students learning objectives and academic assessments
+
+Feature 49524:
+  Top tokens: ['t', 'B', 'K', '▁on', 'G']
+  Bottom tokens: ['et', '",', 'в', 'in', '▁malattie']
+  Interpretation: The word "while" introducing contrasting or simultaneous conditions in explanatory contexts.
+
+Feature 26674:
+  Top tokens: ['চ্যুত', 'on', 'ad', 'p', '▁ascertain']
+  Bottom tokens: ['▁دي', '▁после', '▁أو', '▁mö', '▁بعد']
+  Interpretation: Hyphenated compound words and technical terms in structured or formal text contexts.
+
+Feature 2256:
+  Top tokens: ['u', 'uettes', '▁reputations', 'ナソニック', '▁variances']
+  Bottom tokens: ['▁', 'し', 'כ', 'that', 'り']
+  Interpretation: Words describing academic degree levels, educational stages, and student status in higher education contexts.
+
+Feature 156923:
+  Top tokens: ['ม', "'", 'ികിത്സ', '▁savag', 'айл']
+  Bottom tokens: ['D', 'ן', 'in', '▁encont', 'X']
+  Interpretation: The preposition "from" following verbs that prevent, stop, or prohibit something.
+
+Feature 6532:
+  Top tokens: ['ط', 'к', 'ো', ',', 'r']
+  Bottom tokens: [')', '),', ")'", '▁résultats', '▁been']
+  Interpretation: The word "when" introducing temporal or conditional clauses in explanatory contexts.
+
+Feature 11070:
+  Top tokens: ['ség', '▁displaced', 'ﻙ', 'ków', 'kannya']
+  Bottom tokens: ['▁a', 'ade', 'up', 'ation', 'its']
+  Interpretation: Words related to forced movement or relocation of people due to disasters or conflicts
+
+Feature 100549:
+  Top tokens: ['K', 'N', 'B', 'L', '▁on']
+  Bottom tokens: ['in', 'et', 'ות', '▁culturales', 'that']
+  Interpretation: Programming keywords and variable names in technical or code contexts.
+
+Feature 54511:
+  Top tokens: ['ل', 'л', 'ről', 'ر', 'ל']
+  Bottom tokens: ['2', ',', '’', '8', 'ua']
+  Interpretation: The word "module" or "modules" in technical and software contexts.
+
+Feature 5162:
+  Top tokens: ['st', 'f', '\\', '트', 'ل']
+  Bottom tokens: ['ian', '▁केवळ', '▁և', 'ղ', 'arı']
+  Interpretation: Words related to text generation and creation, especially "generate" and its variants.
+
+Feature 8085:
+  Top tokens: ['л', 'ü', 'al', 'ap', 'acción']
+  Bottom tokens: ['▁this', '0', 'ได้', '▁змо', '▁ovog']
+  Interpretation: Tokens in contrastive phrases like "instead of" and "rather than" indicating comparison or preference.
+
+Feature 14395:
+  Top tokens: ['ž', 'ط', 'λ', 'than', 'ä']
+  Bottom tokens: ['Q', '▁besoins', '▁inclinations', '▁ouvrir', 'He']
+  Interpretation: The word "than" in comparative constructions, especially following "more", "less", or "fewer".
+
+Feature 24597:
+  Top tokens: ['h', 'D', '▁is', 'C', 'M']
+  Bottom tokens: ['та', 'ных', 'é', 'ар', '্টের']
+  Interpretation: The word "there" at the start of existential statements asserting existence or presence of something.
+Done! Results saved to gemmascope/outputs/r1_lora_analysis/autointerp_L20_262k_A_and_B.json

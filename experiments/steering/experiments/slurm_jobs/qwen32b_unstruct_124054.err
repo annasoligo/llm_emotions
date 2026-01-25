@@ -1,0 +1,78 @@
+/var/spool/slurmd/job124054/slurm_script: line 28: bc: command not found
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:553: ======================================================================
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:554: QWEN 32B BLACKMAIL STEERING - 100% - TEXT VECTORS
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:555: ======================================================================
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:556: Model: Qwen/Qwen3-32B
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:557: Layer: 30
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:558: Vector type: TEXT mean diff
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:559: Steering strength: 100%
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:560: Emotions: ['fear', 'anger']
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:561: Structured: False
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:562: Samples per condition: 100
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:563: Conditions: 4
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:564: Total responses: 400
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:565: ======================================================================
+[2026-01-17 11:41:19] INFO blackmail_steering_qwen32b.py:266: Loading tokenizer...
+[2026-01-17 11:41:20] INFO blackmail_steering_qwen32b.py:270: Loading model: Qwen/Qwen3-32B with TP=2...
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:   0% Completed | 0/17 [00:00<?, ?it/s]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:   6% Completed | 1/17 [00:04<01:17,  4.83s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  12% Completed | 2/17 [00:12<01:38,  6.56s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  18% Completed | 3/17 [00:19<01:33,  6.70s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  24% Completed | 4/17 [00:25<01:22,  6.31s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  29% Completed | 5/17 [00:32<01:17,  6.50s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  35% Completed | 6/17 [00:40<01:17,  7.04s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  41% Completed | 7/17 [00:47<01:13,  7.31s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  47% Completed | 8/17 [00:57<01:12,  8.02s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  53% Completed | 9/17 [01:06<01:06,  8.35s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  59% Completed | 10/17 [01:16<01:00,  8.71s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  65% Completed | 11/17 [01:25<00:53,  8.93s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  71% Completed | 12/17 [01:32<00:42,  8.46s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  76% Completed | 13/17 [01:40<00:32,  8.14s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  82% Completed | 14/17 [01:48<00:24,  8.14s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  88% Completed | 15/17 [01:57<00:17,  8.54s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards:  94% Completed | 16/17 [02:08<00:09,  9.01s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards: 100% Completed | 17/17 [02:13<00:00,  7.80s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m Loading safetensors checkpoint shards: 100% Completed | 17/17 [02:13<00:00,  7.83s/it]
+[0;36m(EngineCore_DP0 pid=2692522)[0;0m [0;36m(Worker_TP0 pid=2692528)[0;0m 
+[2026-01-17 11:45:14] INFO blackmail_steering_qwen32b.py:247:   Loaded fear: shape=(5120,), norm=39.55
+[2026-01-17 11:45:14] INFO blackmail_steering_qwen32b.py:247:   Loaded anger: shape=(5120,), norm=41.34
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/workspace-vast/annas/git/research-tools/experiments/steering/experiments/blackmail_steering_qwen32b.py", line 607, in <module>
+    main()
+  File "/workspace-vast/annas/git/research-tools/experiments/steering/experiments/blackmail_steering_qwen32b.py", line 576, in main
+    output_file, responses = run_experiment(
+                             ^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/experiments/steering/experiments/blackmail_steering_qwen32b.py", line 287, in run_experiment
+    steering = VLLMSteering(llm, layer, baseline_std=1.0)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/experiments/steering/core.py", line 449, in __init__
+    self._setup_hook()
+  File "/workspace-vast/annas/git/research-tools/experiments/steering/core.py", line 456, in _setup_hook
+    result = self.llm.apply_model(setup_callable)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 584, in apply_model
+    return self.llm_engine.apply_model(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 409, in apply_model
+    return self.collective_rpc("apply_model", args=(func,))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 406, in collective_rpc
+    return self.engine_core.collective_rpc(method, timeout, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 800, in collective_rpc
+    return self.call_utility("collective_rpc", method, timeout, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 740, in call_utility
+    self._send_input(EngineCoreRequestType.UTILITY, (0, call_id, method, args))
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 726, in _send_input
+    msg = (self.core_engine, request_type.value, *self.encoder.encode(request))
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/serial_utils.py", line 139, in encode
+    bufs[0] = self.encoder.encode(obj)
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace-vast/annas/git/research-tools/.venv/lib/python3.12/site-packages/vllm/v1/serial_utils.py", line 188, in enc_hook
+    raise TypeError(
+TypeError: Object of type <class 'experiments.steering.core._SetupHookCallable'> is not serializableSet VLLM_ALLOW_INSECURE_SERIALIZATION=1 to allow fallback to pickle-based serialization.

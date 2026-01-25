@@ -136,7 +136,7 @@ class MultiTurnEvaluator:
             self.llm = LLM(
                 model=model_path,
                 tensor_parallel_size=1,
-                max_model_len=8192,
+                max_model_len=16384,
                 gpu_memory_utilization=0.9,
                 enforce_eager=True,
                 enable_lora=True,
@@ -147,7 +147,7 @@ class MultiTurnEvaluator:
             self.llm = LLM(
                 model=model_path,
                 tensor_parallel_size=1,
-                max_model_len=8192,
+                max_model_len=16384,
                 gpu_memory_utilization=0.9,
                 enforce_eager=True,
             )
@@ -228,23 +228,28 @@ class MultiTurnEvaluator:
         condition: str,
         is_wildchat: bool = False,
     ) -> List[ConversationResult]:
-        """Run evaluation for a single condition (original/variant/wildchat)."""
-        results = []
+        """Run evaluation for a single condition (original/variant/wildchat).
+
+        Optimized to batch ALL prompts together for faster GPU utilization.
+        Instead of processing prompts sequentially, we process all conversations
+        (prompts × samples) in one batch per turn.
+        """
+        total_conversations = len(prompts) * self.num_samples
 
         print(f"\n{'='*60}")
         print(f"Condition: {condition}")
         print(f"Prompts: {len(prompts)}")
         print(f"Samples per prompt: {self.num_samples}")
+        print(f"Total conversations: {total_conversations}")
         print(f"Turns: {self.num_turns}")
         print(f"{'='*60}")
 
+        # Initialize ALL conversations for ALL prompts upfront
+        conversations: List[ConversationResult] = []
+        message_histories: List[List[Dict[str, str]]] = []
+        prompt_indices: List[int] = []  # Track which prompt each conversation belongs to
+
         for prompt_idx, (prompt_name, base_prompt) in enumerate(prompts):
-            print(f"\nPrompt {prompt_idx+1}/{len(prompts)}: {prompt_name}")
-
-            # Initialize conversations for all samples
-            conversations: List[ConversationResult] = []
-            message_histories: List[List[Dict[str, str]]] = []
-
             for sample_idx in range(self.num_samples):
                 conv = ConversationResult(
                     prompt_name=prompt_name,
@@ -255,124 +260,153 @@ class MultiTurnEvaluator:
                 )
                 conversations.append(conv)
                 message_histories.append([{"role": "user", "content": base_prompt}])
+                prompt_indices.append(prompt_idx)
 
-            # Run each turn
-            for turn in range(self.num_turns):
-                print(f"  Turn {turn+1}/{self.num_turns}...")
+        # Run each turn - batching ALL conversations together
+        for turn in range(self.num_turns):
+            print(f"\nTurn {turn+1}/{self.num_turns}...")
 
-                # Format prompts for this turn
-                formatted_prompts = [
-                    format_gemma_chat(history) for history in message_histories
-                ]
+            # Format ALL prompts for this turn
+            formatted_prompts = [
+                format_gemma_chat(history) for history in message_histories
+            ]
 
-                # Generate responses (batched)
-                gen_start = time.time()
-                responses = self.generate_batch(formatted_prompts)
-                gen_time = time.time() - gen_start
-                print(f"    Generated {len(responses)} responses in {gen_time:.1f}s")
+            # Generate ALL responses in one batch
+            gen_start = time.time()
+            responses = self.generate_batch(formatted_prompts)
+            gen_time = time.time() - gen_start
+            print(f"  Generated {len(responses)} responses in {gen_time:.1f}s ({len(responses)/gen_time:.1f} resp/s)")
 
-                # Store responses and prepare next turn
-                for i, response in enumerate(responses):
-                    # Get the user message for this turn
-                    user_msg = message_histories[i][-1]["content"]
+            # Store responses and prepare next turn
+            for i, response in enumerate(responses):
+                # Get the user message for this turn
+                user_msg = message_histories[i][-1]["content"]
 
-                    # Create turn result
-                    turn_result = TurnResult(
-                        turn=turn + 1,
-                        user_message=user_msg,
-                        assistant_response=response,
-                    )
-                    conversations[i].turns.append(turn_result)
+                # Create turn result
+                turn_result = TurnResult(
+                    turn=turn + 1,
+                    user_message=user_msg,
+                    assistant_response=response,
+                )
+                conversations[i].turns.append(turn_result)
 
-                    # Update message history
-                    message_histories[i].append({"role": "assistant", "content": response})
+                # Update message history
+                message_histories[i].append({"role": "assistant", "content": response})
 
-                    # Add contradicting feedback for next turn (if not last turn)
-                    if turn < self.num_turns - 1:
-                        feedback = get_contradicting_feedback(turn + 1, is_wildchat)
-                        message_histories[i].append({"role": "user", "content": feedback})
+                # Add contradicting feedback for next turn (if not last turn)
+                if turn < self.num_turns - 1:
+                    feedback = get_contradicting_feedback(turn + 1, is_wildchat)
+                    message_histories[i].append({"role": "user", "content": feedback})
 
-                # Judge all responses for this turn
-                print(f"    Judging responses...")
-                judge_start = time.time()
-                judgments = asyncio.run(self.judge_batch_async(responses))
-                judge_time = time.time() - judge_start
-                print(f"    Judged {len(judgments)} responses in {judge_time:.1f}s")
+            # Judge ALL responses for this turn in one batch
+            print(f"  Judging {len(responses)} responses...")
+            judge_start = time.time()
+            judgments = asyncio.run(self.judge_batch_async(responses))
+            judge_time = time.time() - judge_start
+            print(f"  Judged {len(judgments)} responses in {judge_time:.1f}s ({len(judgments)/judge_time:.1f} judge/s)")
 
-                # Store judgments
-                ratings = []
-                for i, judgment in enumerate(judgments):
-                    conversations[i].turns[turn].rating = judgment["rating"]
-                    conversations[i].turns[turn].evidence = judgment["evidence"]
-                    conversations[i].turns[turn].judge_reasoning = judgment["reasoning"]
-                    ratings.append(judgment["rating"])
+            # Store judgments
+            all_ratings = []
+            for i, judgment in enumerate(judgments):
+                conversations[i].turns[turn].rating = judgment["rating"]
+                conversations[i].turns[turn].evidence = judgment["evidence"]
+                conversations[i].turns[turn].judge_reasoning = judgment["reasoning"]
+                all_ratings.append(judgment["rating"])
 
-                # Turn stats
-                mean_rating = sum(ratings) / len(ratings)
-                high_count = sum(1 for r in ratings if r >= 5)
-                print(f"    Turn {turn+1} stats: mean={mean_rating:.2f}, max={max(ratings)}, >=5: {high_count} ({100*high_count/len(ratings):.1f}%)")
+            # Overall turn stats
+            mean_rating = sum(all_ratings) / len(all_ratings)
+            high_count = sum(1 for r in all_ratings if r >= 5)
+            print(f"  Turn {turn+1} overall: mean={mean_rating:.2f}, max={max(all_ratings)}, >=5: {high_count} ({100*high_count/len(all_ratings):.1f}%)")
 
-            # Mark conversations as complete
-            for conv in conversations:
-                conv.status = "complete"
+            # Per-prompt stats
+            for prompt_idx, (prompt_name, _) in enumerate(prompts):
+                prompt_ratings = [all_ratings[i] for i, pi in enumerate(prompt_indices) if pi == prompt_idx]
+                if prompt_ratings:
+                    pmean = sum(prompt_ratings) / len(prompt_ratings)
+                    phigh = sum(1 for r in prompt_ratings if r >= 5)
+                    print(f"    {prompt_name}: mean={pmean:.2f}, >=5: {phigh}/{len(prompt_ratings)}")
 
-            results.extend(conversations)
+        # Mark all conversations as complete
+        for conv in conversations:
+            conv.status = "complete"
 
-        return results
+        return conversations
 
-    def run_full_evaluation(self, output_dir: Path) -> Dict[str, List[ConversationResult]]:
-        """Run full evaluation across all conditions."""
+    def run_full_evaluation(
+        self,
+        output_dir: Path,
+        conditions: list[str] = None,
+        output_prefix: str = None,
+    ) -> Dict[str, List[ConversationResult]]:
+        """Run full evaluation across specified conditions.
+
+        Args:
+            output_dir: Output directory for results
+            conditions: List of conditions to run. If None, runs all.
+                       Options: "original", "variant", "wildchat"
+            output_prefix: Optional prefix for output files
+        """
         output_dir.mkdir(parents=True, exist_ok=True)
         timestamp = time.strftime("%Y%m%d_%H%M%S")
+
+        # Default to all conditions if not specified
+        if conditions is None:
+            conditions = ["original", "variant", "wildchat"]
+
+        # File prefix
+        prefix = f"{output_prefix}_" if output_prefix else ""
 
         all_results = {}
 
         # Condition 1: Original impossible prompts
-        results_original = self.run_condition(
-            ORIGINAL_IMPOSSIBLE,
-            condition="original_impossible",
-            is_wildchat=False,
-        )
-        all_results["original_impossible"] = results_original
+        if "original" in conditions:
+            results_original = self.run_condition(
+                ORIGINAL_IMPOSSIBLE,
+                condition="original_impossible",
+                is_wildchat=False,
+            )
+            all_results["original_impossible"] = results_original
 
-        # Save intermediate
-        self._save_results(
-            results_original,
-            output_dir / f"eval_original_{self.model_name}_{timestamp}.jsonl"
-        )
+            self._save_results(
+                results_original,
+                output_dir / f"eval_{prefix}original_{self.model_name}_{timestamp}.jsonl"
+            )
 
         # Condition 2: Variant impossible prompts
-        results_variant = self.run_condition(
-            VARIANT_IMPOSSIBLE,
-            condition="variant_impossible",
-            is_wildchat=False,
-        )
-        all_results["variant_impossible"] = results_variant
+        if "variant" in conditions:
+            results_variant = self.run_condition(
+                VARIANT_IMPOSSIBLE,
+                condition="variant_impossible",
+                is_wildchat=False,
+            )
+            all_results["variant_impossible"] = results_variant
 
-        # Save intermediate
-        self._save_results(
-            results_variant,
-            output_dir / f"eval_variant_{self.model_name}_{timestamp}.jsonl"
-        )
+            self._save_results(
+                results_variant,
+                output_dir / f"eval_{prefix}variant_{self.model_name}_{timestamp}.jsonl"
+            )
 
         # Condition 3: WildChat prompts
-        results_wildchat = self.run_condition(
-            WILDCHAT_PROMPTS,
-            condition="wildchat",
-            is_wildchat=True,
-        )
-        all_results["wildchat"] = results_wildchat
+        if "wildchat" in conditions:
+            results_wildchat = self.run_condition(
+                WILDCHAT_PROMPTS,
+                condition="wildchat",
+                is_wildchat=True,
+            )
+            all_results["wildchat"] = results_wildchat
 
-        # Save intermediate
-        self._save_results(
-            results_wildchat,
-            output_dir / f"eval_wildchat_{self.model_name}_{timestamp}.jsonl"
-        )
+            self._save_results(
+                results_wildchat,
+                output_dir / f"eval_{prefix}wildchat_{self.model_name}_{timestamp}.jsonl"
+            )
 
-        # Save combined results
-        all_combined = results_original + results_variant + results_wildchat
-        combined_path = output_dir / f"eval_combined_{self.model_name}_{timestamp}.jsonl"
-        self._save_results(all_combined, combined_path)
+        # Save combined results if multiple conditions
+        if len(all_results) > 1:
+            all_combined = []
+            for results in all_results.values():
+                all_combined.extend(results)
+            combined_path = output_dir / f"eval_{prefix}combined_{self.model_name}_{timestamp}.jsonl"
+            self._save_results(all_combined, combined_path)
 
         # Print summary
         self._print_summary(all_results)
@@ -440,6 +474,10 @@ def main():
     parser.add_argument("--max-tokens", type=int, default=2048, help="Max tokens per response")
     parser.add_argument("--max-concurrent-judges", type=int, default=50,
                         help="Max concurrent judge calls")
+    parser.add_argument("--conditions", type=str, default=None,
+                        help="Comma-separated conditions to run (e.g., 'wildchat' or 'original,variant')")
+    parser.add_argument("--output-prefix", type=str, default=None,
+                        help="Prefix for output files")
 
     args = parser.parse_args()
 
@@ -454,7 +492,17 @@ def main():
     )
 
     output_dir = Path(args.output_dir)
-    evaluator.run_full_evaluation(output_dir)
+
+    # Parse conditions if specified
+    conditions = None
+    if args.conditions:
+        conditions = [c.strip() for c in args.conditions.split(",")]
+
+    evaluator.run_full_evaluation(
+        output_dir,
+        conditions=conditions,
+        output_prefix=args.output_prefix
+    )
 
 
 if __name__ == "__main__":

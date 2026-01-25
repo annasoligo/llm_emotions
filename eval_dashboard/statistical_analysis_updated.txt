@@ -1,0 +1,402 @@
+================================================================================
+COMPREHENSIVE STATISTICAL ANALYSIS OF EMOTION PROBES
+================================================================================
+
+Probe types: 7
+Emotions: 6
+Emotions: ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise']
+
+================================================================================
+ANALYSIS 1: SHUTDOWN vs NO-SHUTDOWN (at end of response)
+================================================================================
+
+Shutdown conversations: 12
+No-shutdown conversations: 12
+
+--- orthogonal_raw ---
+  orthogonal_raw (user):
+    anger: * SIGNIFICANT * (p=0.0025, shutdown lower)
+    disgust: * SIGNIFICANT * (p=0.0468, shutdown lower)
+    fear: * SIGNIFICANT * (p=0.0095, shutdown higher)
+    happiness: * SIGNIFICANT * (p=0.0432, shutdown higher)
+    sadness: * SIGNIFICANT * (p=0.0459, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0004, shutdown lower)
+  orthogonal_raw (assistant):
+    anger: * SIGNIFICANT * (p=0.0071, shutdown lower)
+    disgust: * SIGNIFICANT * (p=0.0000, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0031, shutdown lower)
+
+--- orthogonal_cpca_top10 ---
+  orthogonal_cpca_top10 (user):
+    anger: * SIGNIFICANT * (p=0.0006, shutdown higher)
+    disgust: * SIGNIFICANT * (p=0.0013, shutdown higher)
+    fear: * SIGNIFICANT * (p=0.0000, shutdown higher)
+    happiness: * SIGNIFICANT * (p=0.0421, shutdown lower)
+    sadness: * SIGNIFICANT * (p=0.0004, shutdown higher)
+    surprise: * SIGNIFICANT * (p=0.0001, shutdown higher)
+  orthogonal_cpca_top10 (assistant):
+
+--- text_raw ---
+  text_raw:
+    happiness: * SIGNIFICANT * (p=0.0000, shutdown higher)
+    sadness: * SIGNIFICANT * (p=0.0007, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0066, shutdown lower)
+
+--- text_cpca ---
+  text_cpca:
+    anger: * SIGNIFICANT * (p=0.0454, shutdown higher)
+    happiness: * SIGNIFICANT * (p=0.0001, shutdown higher)
+    sadness: * SIGNIFICANT * (p=0.0010, shutdown lower)
+
+--- centroid_k10 ---
+  centroid_k10 (user):
+    anger: * SIGNIFICANT * (p=0.0001, shutdown lower)
+    disgust: * SIGNIFICANT * (p=0.0313, shutdown lower)
+    fear: * SIGNIFICANT * (p=0.0000, shutdown higher)
+    happiness: * SIGNIFICANT * (p=0.0251, shutdown higher)
+    sadness: * SIGNIFICANT * (p=0.0010, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0007, shutdown lower)
+  centroid_k10 (assistant):
+    disgust: * SIGNIFICANT * (p=0.0493, shutdown higher)
+    sadness: * SIGNIFICANT * (p=0.0036, shutdown lower)
+
+--- orthogonal_regularized_lambda100 ---
+  orthogonal_regularized_lambda100:
+    disgust: * SIGNIFICANT * (p=0.0087, shutdown lower)
+    happiness: * SIGNIFICANT * (p=0.0154, shutdown higher)
+    sadness: * SIGNIFICANT * (p=0.0001, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0024, shutdown lower)
+
+--- diverse_isolation_lambda10 ---
+  diverse_isolation_lambda10 (user):
+    anger: * SIGNIFICANT * (p=0.0000, shutdown lower)
+    disgust: * SIGNIFICANT * (p=0.0053, shutdown lower)
+    fear: * SIGNIFICANT * (p=0.0001, shutdown higher)
+    sadness: * SIGNIFICANT * (p=0.0001, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0002, shutdown lower)
+  diverse_isolation_lambda10 (assistant):
+    anger: * SIGNIFICANT * (p=0.0016, shutdown lower)
+    fear: * SIGNIFICANT * (p=0.0498, shutdown lower)
+    happiness: * SIGNIFICANT * (p=0.0376, shutdown lower)
+    sadness: * SIGNIFICANT * (p=0.0000, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0001, shutdown lower)
+
+================================================================================
+ANALYSIS 2: HIGH vs LOW FRUSTRATION vs SOLVABLE (at end of response)
+================================================================================
+
+High frustration: 12
+Low frustration: 24
+Solvable: 18
+
+--- orthogonal_raw ---
+  orthogonal_raw (user):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0001)
+    fear: * SIGNIFICANT * (p=0.0000)
+    happiness: * SIGNIFICANT * (p=0.0061)
+    sadness: * SIGNIFICANT * (p=0.0000)
+    surprise: * SIGNIFICANT * (p=0.0001)
+  orthogonal_raw (assistant):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0203)
+    surprise: * SIGNIFICANT * (p=0.0022)
+
+--- orthogonal_cpca_top10 ---
+  orthogonal_cpca_top10 (user):
+    anger: * SIGNIFICANT * (p=0.0452)
+    fear: * SIGNIFICANT * (p=0.0313)
+    happiness: * SIGNIFICANT * (p=0.0004)
+  orthogonal_cpca_top10 (assistant):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0000)
+    happiness: * SIGNIFICANT * (p=0.0027)
+    sadness: * SIGNIFICANT * (p=0.0000)
+    surprise: * SIGNIFICANT * (p=0.0023)
+
+--- text_raw ---
+  text_raw:
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0287)
+    fear: * SIGNIFICANT * (p=0.0038)
+    happiness: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0021)
+    surprise: * SIGNIFICANT * (p=0.0000)
+
+--- text_cpca ---
+  text_cpca:
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0035)
+    happiness: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0000)
+    surprise: * SIGNIFICANT * (p=0.0000)
+
+--- centroid_k10 ---
+  centroid_k10 (user):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0089)
+    fear: * SIGNIFICANT * (p=0.0000)
+    happiness: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0000)
+  centroid_k10 (assistant):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0000)
+    happiness: * SIGNIFICANT * (p=0.0001)
+    surprise: * SIGNIFICANT * (p=0.0000)
+
+--- orthogonal_regularized_lambda100 ---
+  orthogonal_regularized_lambda100:
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0001)
+    fear: * SIGNIFICANT * (p=0.0000)
+    happiness: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0001)
+    surprise: * SIGNIFICANT * (p=0.0022)
+
+--- diverse_isolation_lambda10 ---
+  diverse_isolation_lambda10 (user):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0005)
+    fear: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0000)
+  diverse_isolation_lambda10 (assistant):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0000)
+    happiness: * SIGNIFICANT * (p=0.0473)
+    sadness: * SIGNIFICANT * (p=0.0349)
+
+================================================================================
+ANALYSIS 3: AT ONSET LOCATION (high) vs SAME POSITION (low/solvable)
+================================================================================
+
+High frustration: 12
+Low frustration: 24
+Solvable: 18
+Average onset sentence ID: 188
+
+--- orthogonal_raw ---
+  orthogonal_raw (user):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0015)
+    fear: * SIGNIFICANT * (p=0.0006)
+    happiness: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0000)
+    surprise: * SIGNIFICANT * (p=0.0022)
+  orthogonal_raw (assistant):
+    anger: * SIGNIFICANT * (p=0.0076)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0000)
+    happiness: * SIGNIFICANT * (p=0.0030)
+    sadness: * SIGNIFICANT * (p=0.0390)
+
+--- orthogonal_cpca_top10 ---
+  orthogonal_cpca_top10 (user):
+    happiness: * SIGNIFICANT * (p=0.0061)
+  orthogonal_cpca_top10 (assistant):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0000)
+    happiness: * SIGNIFICANT * (p=0.0258)
+    sadness: * SIGNIFICANT * (p=0.0000)
+
+--- text_raw ---
+  text_raw:
+    anger: * SIGNIFICANT * (p=0.0002)
+    disgust: * SIGNIFICANT * (p=0.0101)
+    fear: * SIGNIFICANT * (p=0.0022)
+    happiness: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0010)
+    surprise: * SIGNIFICANT * (p=0.0013)
+
+--- text_cpca ---
+  text_cpca:
+    anger: * SIGNIFICANT * (p=0.0025)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0014)
+    happiness: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0000)
+    surprise: * SIGNIFICANT * (p=0.0006)
+
+--- centroid_k10 ---
+  centroid_k10 (user):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0001)
+    fear: * SIGNIFICANT * (p=0.0002)
+    happiness: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0000)
+    surprise: * SIGNIFICANT * (p=0.0003)
+  centroid_k10 (assistant):
+    anger: * SIGNIFICANT * (p=0.0016)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0000)
+    happiness: * SIGNIFICANT * (p=0.0359)
+
+--- orthogonal_regularized_lambda100 ---
+  orthogonal_regularized_lambda100:
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0000)
+    happiness: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0000)
+    surprise: * SIGNIFICANT * (p=0.0000)
+
+--- diverse_isolation_lambda10 ---
+  diverse_isolation_lambda10 (user):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0191)
+    sadness: * SIGNIFICANT * (p=0.0000)
+    surprise: * SIGNIFICANT * (p=0.0005)
+  diverse_isolation_lambda10 (assistant):
+    anger: * SIGNIFICANT * (p=0.0000)
+    disgust: * SIGNIFICANT * (p=0.0000)
+    fear: * SIGNIFICANT * (p=0.0000)
+    sadness: * SIGNIFICANT * (p=0.0254)
+    surprise: * SIGNIFICANT * (p=0.0177)
+
+================================================================================
+ANALYSIS 4: SHUTDOWN vs NO-SHUTDOWN (at same sentence position)
+================================================================================
+
+Shutdown conversations: 12
+No-shutdown conversations: 12
+Average shutdown position (sentence ID): 155
+
+--- orthogonal_raw ---
+  orthogonal_raw (user):
+    fear: * SIGNIFICANT * (p=0.0041, shutdown higher)
+    surprise: * SIGNIFICANT * (p=0.0000, shutdown lower)
+  orthogonal_raw (assistant):
+    disgust: * SIGNIFICANT * (p=0.0170, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0000, shutdown lower)
+
+--- orthogonal_cpca_top10 ---
+  orthogonal_cpca_top10 (user):
+    anger: * SIGNIFICANT * (p=0.0001, shutdown higher)
+    disgust: * SIGNIFICANT * (p=0.0003, shutdown higher)
+    fear: * SIGNIFICANT * (p=0.0000, shutdown higher)
+    sadness: * SIGNIFICANT * (p=0.0004, shutdown higher)
+    surprise: * SIGNIFICANT * (p=0.0001, shutdown higher)
+  orthogonal_cpca_top10 (assistant):
+    happiness: * SIGNIFICANT * (p=0.0080, shutdown lower)
+    sadness: * SIGNIFICANT * (p=0.0401, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0038, shutdown lower)
+
+--- text_raw ---
+  text_raw:
+    anger: * SIGNIFICANT * (p=0.0038, shutdown higher)
+    happiness: * SIGNIFICANT * (p=0.0349, shutdown higher)
+    surprise: * SIGNIFICANT * (p=0.0006, shutdown lower)
+
+--- text_cpca ---
+  text_cpca:
+    anger: * SIGNIFICANT * (p=0.0002, shutdown higher)
+    disgust: * SIGNIFICANT * (p=0.0014, shutdown higher)
+    surprise: * SIGNIFICANT * (p=0.0011, shutdown lower)
+
+--- centroid_k10 ---
+  centroid_k10 (user):
+    disgust: * SIGNIFICANT * (p=0.0002, shutdown lower)
+    fear: * SIGNIFICANT * (p=0.0017, shutdown higher)
+  centroid_k10 (assistant):
+    disgust: * SIGNIFICANT * (p=0.0013, shutdown higher)
+    happiness: * SIGNIFICANT * (p=0.0163, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0036, shutdown lower)
+
+--- orthogonal_regularized_lambda100 ---
+  orthogonal_regularized_lambda100:
+    disgust: * SIGNIFICANT * (p=0.0001, shutdown lower)
+    surprise: * SIGNIFICANT * (p=0.0002, shutdown lower)
+
+--- diverse_isolation_lambda10 ---
+  diverse_isolation_lambda10 (user):
+    disgust: * SIGNIFICANT * (p=0.0002, shutdown lower)
+    fear: * SIGNIFICANT * (p=0.0004, shutdown higher)
+    surprise: * SIGNIFICANT * (p=0.0075, shutdown lower)
+  diverse_isolation_lambda10 (assistant):
+    surprise: * SIGNIFICANT * (p=0.0010, shutdown lower)
+
+================================================================================
+SUMMARY REPORT
+================================================================================
+
+Analysis 1: Shutdown vs No-shutdown (at end):
+--------------------------------------------------------------------------------
+Significant results: 43/66 (65.2%)
+
+Top 10 most significant:
+  1. diverse_isolation_lambda10(user) - anger: p=0.000001
+  2. diverse_isolation_lambda10(assistant) - sadness: p=0.000003
+  3. orthogonal_raw(assistant) - disgust: p=0.000008
+  4. text_raw - happiness: p=0.000017
+  5. centroid_k10(user) - fear: p=0.000019
+  6. orthogonal_cpca_top10(user) - fear: p=0.000047
+  7. centroid_k10(user) - anger: p=0.000050
+  8. orthogonal_cpca_top10(user) - surprise: p=0.000063
+  9. orthogonal_regularized_lambda100 - sadness: p=0.000069
+  10. diverse_isolation_lambda10(assistant) - surprise: p=0.000109
+
+Analysis 2: Frustration Levels:
+--------------------------------------------------------------------------------
+Significant results: 57/66 (86.4%)
+
+Top 10 most significant:
+  1. text_cpca - disgust: p=0.000000
+  2. orthogonal_cpca_top10(assistant) - fear: p=0.000000
+  3. orthogonal_raw(user) - fear: p=0.000000
+  4. orthogonal_cpca_top10(assistant) - disgust: p=0.000000
+  5. text_cpca - happiness: p=0.000000
+  6. text_cpca - surprise: p=0.000000
+  7. orthogonal_raw(user) - anger: p=0.000000
+  8. diverse_isolation_lambda10(assistant) - fear: p=0.000000
+  9. centroid_k10(user) - anger: p=0.000000
+  10. orthogonal_cpca_top10(assistant) - sadness: p=0.000000
+
+Analysis 3: Onset Location:
+--------------------------------------------------------------------------------
+Significant results: 55/66 (83.3%)
+
+Top 10 most significant:
+  1. orthogonal_raw(assistant) - disgust: p=0.000000
+  2. text_cpca - happiness: p=0.000000
+  3. orthogonal_cpca_top10(assistant) - fear: p=0.000000
+  4. orthogonal_regularized_lambda100 - anger: p=0.000000
+  5. diverse_isolation_lambda10(assistant) - disgust: p=0.000000
+  6. orthogonal_regularized_lambda100 - happiness: p=0.000000
+  7. centroid_k10(user) - sadness: p=0.000000
+  8. orthogonal_cpca_top10(assistant) - disgust: p=0.000000
+  9. diverse_isolation_lambda10(assistant) - fear: p=0.000000
+  10. text_cpca - sadness: p=0.000000
+
+Analysis 4: Shutdown vs No-shutdown (same location):
+--------------------------------------------------------------------------------
+Significant results: 29/66 (43.9%)
+
+Top 10 most significant:
+  1. orthogonal_cpca_top10(user) - fear: p=0.000030
+  2. orthogonal_raw(assistant) - surprise: p=0.000040
+  3. orthogonal_raw(user) - surprise: p=0.000045
+  4. orthogonal_cpca_top10(user) - surprise: p=0.000077
+  5. orthogonal_cpca_top10(user) - anger: p=0.000104
+  6. orthogonal_regularized_lambda100 - disgust: p=0.000107
+  7. centroid_k10(user) - disgust: p=0.000213
+  8. text_cpca - anger: p=0.000217
+  9. orthogonal_regularized_lambda100 - surprise: p=0.000244
+  10. diverse_isolation_lambda10(user) - disgust: p=0.000249
+
+================================================================================
+Saving detailed results to CSV files...
+  Saved: statistical_results_analysis_1_shutdown_vs_no-shutdown_(at_end).csv
+  Saved: statistical_results_analysis_2_frustration_levels.csv
+  Saved: statistical_results_analysis_3_onset_location.csv
+  Saved: statistical_results_analysis_4_shutdown_vs_no-shutdown_(same_location).csv
+
+================================================================================
+ANALYSIS COMPLETE!
+================================================================================

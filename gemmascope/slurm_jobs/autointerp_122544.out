@@ -1,0 +1,232 @@
+Python: /workspace-vast/annas/git/believe-it-or-not/.venv/bin/python
+ANTHROPIC_API_KEY set: yes
+Loading analysis from gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_2026-01-15_18-10-31_layer20_16k_all.summary.json
+Will interpret 20 features
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_16k_l0_small/examples.safetensors
+Example data keys: ['seq_ids', 'feature_frequencies', 'activations', 'bottom_logits', 'logit_effects', 'top_logits', 'bottom_tokens', 'positions', 'tokens', 'top_tokens']
+  seq_ids: shape=torch.Size([16384, 1000]), dtype=torch.int64
+  feature_frequencies: shape=torch.Size([16384]), dtype=torch.float64
+  activations: shape=torch.Size([16384, 1000]), dtype=torch.float32
+  bottom_logits: shape=torch.Size([16384, 10]), dtype=torch.float32
+  logit_effects: shape=torch.Size([16384, 1000]), dtype=torch.float32
+  top_logits: shape=torch.Size([16384, 10]), dtype=torch.float32
+  bottom_tokens: shape=torch.Size([16384, 10]), dtype=torch.int32
+  positions: shape=torch.Size([16384, 1000]), dtype=torch.int32
+  tokens: shape=torch.Size([234231, 512]), dtype=torch.int32
+  top_tokens: shape=torch.Size([16384, 10]), dtype=torch.int32
+Loading tokenizer from google/gemma-3-27b-it...
+
+[1/20] Interpreting feature 12895...
+  Top tokens: ['▁angry', '▁was', 'A', '▁had', '▁G', '▁fish', '▁fishermen', '▁are', '▁desperate', '▁a']
+  Bottom tokens: ['是可以', '▁crescimento', '▁haría', '▁infrast', '▁quê']
+  Interpretation: Common English function words and some nouns, contrasting with non-English language tokens.
+
+[2/20] Interpreting feature 7488...
+  Top tokens: ['▁आणि', '▁и', 'ictionnaire', '▁insbesondere', '▁અને', '<unused641>', '▁ਅਤੇ', '🗒', '▁\\&', '▁และ']
+  Bottom tokens: ['▁only', 'скольку', '▁not', '▁had', '▁at']
+  Interpretation: Looking at the top activating tokens, I can see a clear pattern emerging. The highest activating tokens include:
+
+- आणि (Marathi for "and")
+- и (Cyrillic "and") 
+- અને (Gujarati for "and")
+- ਅਤੇ (Punjabi for "and")
+- และ (Thai for "and")
+- insbesondere (German for "especially/particularly")
+- \& (ampersand symbol)
+
+There's also "ictionnaire" which appears to be part of "dictionnaire" (French for dictionary), and some special tokens.
+
+The bottom activating tokens are common English words like "only," "not," "had," "at" - basic function words that appear frequently in English text.
+
+The pattern is clear: this neuron activates on conjunctions and connecting words, particularly the word "and" across multiple
+
+[3/20] Interpreting feature 15041...
+  Top tokens: ['larni', 'ังหวัด', 'oshape', 'ستگی', 'δει', 'لیک', '▁kupu', '▁khung', '▁convexes', 'frameCount']
+  Bottom tokens: ['the', 'DE', "}')", 'und', 'trans']
+  Interpretation: Non-English words and technical terms from various languages and programming contexts.
+
+[4/20] Interpreting feature 2683...
+  Top tokens: ['나', '၊', 'на', 'い', 'dır', 'atoren', 'ون', 'ა', 'нка', 'ções']
+  Bottom tokens: ['▁in', '.', '▁all', '▁et', 'ه']
+  Interpretation: Non-English language tokens and morphemes, particularly from Asian and other non-Latin scripts.
+
+[5/20] Interpreting feature 9819...
+  Top tokens: ['p', 'es', '\n\n', 'era', 'ümü', 'itant', 'мости', '并', 'er', '▁Causes']
+  Bottom tokens: ['Niger', '產業', 'ニコ', 'AUGUST', 'ರಿಂದ']
+  Interpretation: Short incomplete word fragments or partial tokens, often 1-3 characters long.
+
+[6/20] Interpreting feature 9742...
+  Top tokens: ['▁또는', ']', '▁monitors', '▁interfacing', ')।', '▁sø', '▁него', '▁पुढे', ');', '▁pent']
+  Bottom tokens: ['first', 'Library', 'ọt', 'űr', '▁Regione']
+  Interpretation: Non-English tokens and closing punctuation marks, often in multilingual or technical contexts.
+
+[7/20] Interpreting feature 15820...
+  Top tokens: ['▁embeddings', '▁softmax', '▁oxidative', '▁hyperparameters', '▁intracellular', '▁convolutional', 'matmul', '▁extracellular', '▁invariant', 'adients']
+  Bottom tokens: ['经理', '财产', '▁autrefois', '▁business', '▁veřej']
+  Interpretation: Technical scientific terminology especially from machine learning and biochemistry domains
+
+[8/20] Interpreting feature 7698...
+  Top tokens: ['il', 'ä', 'p', 'ri', 'or', 'หรือ', 'an', 'm', 'b', '▁или']
+  Bottom tokens: ['\t', '▁', '▁acol', '这是一个', '▁itib']
+  Interpretation: Short tokens, particularly single letters and brief character sequences across various languages.
+
+[9/20] Interpreting feature 14546...
+  Top tokens: ['3', '2', '1', 'her', '.', '▁', 'can', 'ati', 'hand', '7']
+  Bottom tokens: ['在', 'ﮭ', 'дение', '搠', 'ﾝ']
+  Interpretation: Short tokens in English text, especially single digits and common short words.
+
+[10/20] Interpreting feature 2695...
+  Top tokens: ['c', 'ums', 'ık', 'con', 'baik', 'DC', 'dz', 'iche', 'dc', 'ed']
+  Bottom tokens: ['▁Tú', '▁linee', '▁eléctrico', '▁tú', '▁daños']
+  Interpretation: Short lowercase letter sequences and abbreviations, contrasting with longer accented words.
+
+[11/20] Interpreting feature 14571...
+  Top tokens: ['▁좋은', '▁good', '▁хорошие', '▁खासा', '▁bonnes', '▁наход', '良い', '▁اچھی', '▁zuverläss', 'buenas']
+  Bottom tokens: ['si', 'se', 'ini', 'os', 'Untitled']
+  Interpretation: Words meaning "good" or expressing positive qualities across multiple languages
+
+[12/20] Interpreting feature 15651...
+  Top tokens: ['▁permite', '▁точки', '▁предусматри', '<unused350>', '▁જરૂ', '▁точек', '▁обеспечи', 'の結果', '▁فراہم', '▁идентифика']
+  Bottom tokens: ['ன்னை', '▁habitually', '▁apparence', '▁NFTs', '▁puiss']
+  Interpretation: Verbs meaning provide ensure allow
+
+[13/20] Interpreting feature 13006...
+  Top tokens: ['？）', '?)', 'ato', '?}', '？', '▁washers', '?!"', '▁motorcycles', '▁chatting', '▁legumes']
+  Bottom tokens: ['ያ', 'บุคคล', '▁It', '’।', 'нициа']
+  Interpretation: Question marks especially in combination with closing punctuation like parentheses or brackets
+
+[14/20] Interpreting feature 14242...
+  Top tokens: ['▁невозможно', '▁podría', '▁предусматри', '▁если', '的這個', '▁바꿔', 'это', '赜', '▁οποία', '▁तरीका']
+  Bottom tokens: ['i', '▁(', '▁-', '/', '0']
+  Interpretation: Non-English words and characters from various languages, contrasting with basic English punctuation and symbols.
+
+[15/20] Interpreting feature 2822...
+  Top tokens: ['剧', '▁их', '崭', 'ască', '▁trình', '▁найкра', '▁её', '홋', 'রম', 'ią']
+  Bottom tokens: ['▁goes', 'ಮಾಡ', '▁পেছনে', '▁sindaco', 'presidente']
+  Interpretation: Non-English tokens and characters from various languages, particularly Asian and Slavic scripts.
+
+[16/20] Interpreting feature 12984...
+  Top tokens: ['🥬', '▁salads', '▁cucumbers', '▁Gemüse', '𝐫', '▁Vegetables', '▁carrots', '▁veggies', '▁vegetables', '▁apples']
+  Bottom tokens: ['م', '▁که', 'TA', '▁وی', '4']
+  Interpretation: Words referring to vegetables and fresh produce, including in different languages.
+
+[17/20] Interpreting feature 5069...
+  Top tokens: ['斯', '▁was', '▁wasp', 'ik', 'ни', '</h2>', 'イルド', 'نګ', 'FURNIZOR', 'が通販できます']
+  Bottom tokens: [',', '।', 'ED', 'AN', 'ं']
+  Interpretation: Non-Latin script characters and tokens from various writing systems like Chinese Japanese Cyrillic Arabic.
+
+[18/20] Interpreting feature 10909...
+  Top tokens: ['ه', ')', 'S', 'গ', '▁साखर', 'gebied', '”', 'پ', '৩', 'in']
+  Bottom tokens: ['не', '▁врач', '▁जिनके', '▁เนื่องจาก', '▁आपको']
+  Interpretation: Non-Latin script characters and certain punctuation marks, with negative activation on specific foreign language words.
+
+[19/20] Interpreting feature 4540...
+  Top tokens: ['in', 'v', 'ва', 'ו', 'و', 'd', 'it', 'description', 'ur', 'inizi']
+  Bottom tokens: ['.', '▁taxis', '▁are', 'ों', 'к']
+  Interpretation: Short tokens and word beginnings across
+
+[20/20] Interpreting feature 14192...
+  Top tokens: ['运算', '</h3>', 'ים', '▁extinguisher', 'я', '运算符', 't', 'عدد', '▁computations', 'לים']
+  Bottom tokens: ['JW', 'Mal', '▁অ', '▁suche', '▁ഹ']
+  Interpretation: Mathematical and computational terms across multiple languages including operations, numbers, and related technical vocabulary.
+
+Results saved to gemmascope/outputs/r1_lora_analysis/autointerp_layer20_16k.json
+
+================================================================================
+FEATURE INTERPRETATIONS
+================================================================================
+
+Feature 12895:
+  Top tokens: ['▁angry', '▁was', 'A', '▁had', '▁G']
+  Interpretation: Common English function words and some nouns, contrasting with non-English language tokens.
+
+Feature 7488:
+  Top tokens: ['▁आणि', '▁и', 'ictionnaire', '▁insbesondere', '▁અને']
+  Interpretation: Looking at the top activating tokens, I can see a clear pattern emerging. The highest activating tokens include:
+
+- आणि (Marathi for "and")
+- и (Cyrillic "and") 
+- અને (Gujarati for "and")
+- ਅਤੇ (Punjabi for "and")
+- และ (Thai for "and")
+- insbesondere (German for "especially/particularly")
+- \& (ampersand symbol)
+
+There's also "ictionnaire" which appears to be part of "dictionnaire" (French for dictionary), and some special tokens.
+
+The bottom activating tokens are common English words like "only," "not," "had," "at" - basic function words that appear frequently in English text.
+
+The pattern is clear: this neuron activates on conjunctions and connecting words, particularly the word "and" across multiple
+
+Feature 15041:
+  Top tokens: ['larni', 'ังหวัด', 'oshape', 'ستگی', 'δει']
+  Interpretation: Non-English words and technical terms from various languages and programming contexts.
+
+Feature 2683:
+  Top tokens: ['나', '၊', 'на', 'い', 'dır']
+  Interpretation: Non-English language tokens and morphemes, particularly from Asian and other non-Latin scripts.
+
+Feature 9819:
+  Top tokens: ['p', 'es', '\n\n', 'era', 'ümü']
+  Interpretation: Short incomplete word fragments or partial tokens, often 1-3 characters long.
+
+Feature 9742:
+  Top tokens: ['▁또는', ']', '▁monitors', '▁interfacing', ')।']
+  Interpretation: Non-English tokens and closing punctuation marks, often in multilingual or technical contexts.
+
+Feature 15820:
+  Top tokens: ['▁embeddings', '▁softmax', '▁oxidative', '▁hyperparameters', '▁intracellular']
+  Interpretation: Technical scientific terminology especially from machine learning and biochemistry domains
+
+Feature 7698:
+  Top tokens: ['il', 'ä', 'p', 'ri', 'or']
+  Interpretation: Short tokens, particularly single letters and brief character sequences across various languages.
+
+Feature 14546:
+  Top tokens: ['3', '2', '1', 'her', '.']
+  Interpretation: Short tokens in English text, especially single digits and common short words.
+
+Feature 2695:
+  Top tokens: ['c', 'ums', 'ık', 'con', 'baik']
+  Interpretation: Short lowercase letter sequences and abbreviations, contrasting with longer accented words.
+
+Feature 14571:
+  Top tokens: ['▁좋은', '▁good', '▁хорошие', '▁खासा', '▁bonnes']
+  Interpretation: Words meaning "good" or expressing positive qualities across multiple languages
+
+Feature 15651:
+  Top tokens: ['▁permite', '▁точки', '▁предусматри', '<unused350>', '▁જરૂ']
+  Interpretation: Verbs meaning provide ensure allow
+
+Feature 13006:
+  Top tokens: ['？）', '?)', 'ato', '?}', '？']
+  Interpretation: Question marks especially in combination with closing punctuation like parentheses or brackets
+
+Feature 14242:
+  Top tokens: ['▁невозможно', '▁podría', '▁предусматри', '▁если', '的這個']
+  Interpretation: Non-English words and characters from various languages, contrasting with basic English punctuation and symbols.
+
+Feature 2822:
+  Top tokens: ['剧', '▁их', '崭', 'ască', '▁trình']
+  Interpretation: Non-English tokens and characters from various languages, particularly Asian and Slavic scripts.
+
+Feature 12984:
+  Top tokens: ['🥬', '▁salads', '▁cucumbers', '▁Gemüse', '𝐫']
+  Interpretation: Words referring to vegetables and fresh produce, including in different languages.
+
+Feature 5069:
+  Top tokens: ['斯', '▁was', '▁wasp', 'ik', 'ни']
+  Interpretation: Non-Latin script characters and tokens from various writing systems like Chinese Japanese Cyrillic Arabic.
+
+Feature 10909:
+  Top tokens: ['ه', ')', 'S', 'গ', '▁साखर']
+  Interpretation: Non-Latin script characters and certain punctuation marks, with negative activation on specific foreign language words.
+
+Feature 4540:
+  Top tokens: ['in', 'v', 'ва', 'ו', 'و']
+  Interpretation: Short tokens and word beginnings across
+
+Feature 14192:
+  Top tokens: ['运算', '</h3>', 'ים', '▁extinguisher', 'я']
+  Interpretation: Mathematical and computational terms across multiple languages including operations, numbers, and related technical vocabulary.
+Done!

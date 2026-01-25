@@ -1,0 +1,1541 @@
+Python: /workspace-vast/annas/git/believe-it-or-not/.venv/bin/python
+ANTHROPIC_API_KEY set: yes
+Loading B matrix analysis from gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_layer20_262k_top50.summary.json
+Loading A matrix analysis from gemmascope/outputs/r1_lora_analysis/gemma3-27b-dpo-minimal-r1-L20_layer20_262k_top50.A_matrix.json
+Will interpret 200 unique features across 4 groups
+Loading example data from google/gemma-scope-2-27b-it/resid_post_all/layer_20_width_262k_l0_small/examples.safetensors
+Example data keys: ['seq_ids', 'feature_frequencies', 'activations', 'bottom_logits', 'logit_effects', 'top_logits', 'bottom_tokens', 'positions', 'tokens', 'top_tokens']
+  seq_ids: shape=torch.Size([262144, 1000]), dtype=torch.int64
+  feature_frequencies: shape=torch.Size([262144]), dtype=torch.float64
+  activations: shape=torch.Size([262144, 1000]), dtype=torch.float32
+  bottom_logits: shape=torch.Size([262144, 10]), dtype=torch.float32
+  logit_effects: shape=torch.Size([262144, 1000]), dtype=torch.float32
+  top_logits: shape=torch.Size([262144, 10]), dtype=torch.float32
+  bottom_tokens: shape=torch.Size([262144, 10]), dtype=torch.int32
+  positions: shape=torch.Size([262144, 1000]), dtype=torch.int32
+  tokens: shape=torch.Size([234435, 512]), dtype=torch.int32
+  top_tokens: shape=torch.Size([262144, 10]), dtype=torch.int32
+Loading tokenizer from google/gemma-3-27b-it...
+
+[1/200] Interpreting feature 106329...
+  Top tokens: ['iden', 'স', 'idiendo', 'ন্ট', 'plane', 'countries', 'Mutation', '▁कॉलेजों', '不', '▁पैरों']
+  Bottom tokens: ['▁epitope', '▁neuro', '▁endocr', '▁эш', '▁in']
+  Interpretation: Non-English language tokens and morphemes from various scripts including Bengali, Hindi, Chinese, and Spanish fragments.
+
+[2/200] Interpreting feature 161058...
+  Top tokens: ['t', 'ت', 'و', 'ו', 'فرق', 'সহ', 'Follow', 'anın', 'tı', '𝙩']
+  Bottom tokens: ['ia', '▁naturelle', 'णी', 'MA', 'ुरे']
+  Interpretation: Single characters or very short tokens from non-Latin scripts and isolated letters
+
+[3/200] Interpreting feature 62782...
+  Top tokens: ['mbito', '▁itibaren', 'SaveFolder', '▁സിനിമ', '뜩', '䄪', '棫', 'ুনিক', 'ოდა', '菈']
+  Bottom tokens: ['i', 'B', '▁can', '▁easily', '▁hidden']
+  Interpretation: Non-English text tokens from various languages and writing systems.
+
+[4/200] Interpreting feature 186137...
+  Top tokens: ['▁for', '\n', '▁not', '▁Don', '▁P', 'to', '▁have', 'ka', '▁Day', 'ge']
+  Bottom tokens: ['ным', '▁réglementation', 'ᱼ', 'ру', 'ות']
+  Interpretation: Common English function words and particles, with negative activation on non-English scripts.
+
+[5/200] Interpreting feature 41475...
+  Top tokens: ['▁for', '\n', 'for', 'an', '1', 'us', '.', 'ad', '▁official', '!']
+  Bottom tokens: ['YNAMIC', 'ClrBit', 'UNCIL', '缮', '=*']
+  Interpretation: Common English function words, basic punctuation, and simple tokens in natural text.
+
+[6/200] Interpreting feature 243842...
+  Top tokens: ['の', 'Ⲥ', 'и', 'Р', '鲞', '记者', '▁شهید', '▁سعید', 'Ἥ', '俅']
+  Bottom tokens: ['ges', 'k', 'max', 'trat', '0']
+  Interpretation: Non-Latin script characters and words from various writing systems including Asian, Arabic, Cyrillic.
+
+[7/200] Interpreting feature 130765...
+  Top tokens: ['t', 'ท', '▁ت', '▁Sozial', 'د', ';', '▁Opportunity', '▁فات', '▁▁', '▁t']
+  Bottom tokens: ['функциона', '▁tecnologias', 'ফুদ্দিন', '▁tecnologie', '▁tecnologías']
+  Interpretation: Short tokens and single characters, especially from non-Latin scripts like Thai and Arabic.
+
+[8/200] Interpreting feature 161012...
+  Top tokens: ['v', 'man', 'อาการ', '$', 'ager', 'ung', 'inea', 'اد', 'anger', '▁penyakit']
+  Bottom tokens: ['▁océano', '▁revisión', '▁valoración', '▁compré', '▁zwycię']
+  Interpretation: Short tokens and word fragments, especially in non-Spanish languages or single characters
+
+[9/200] Interpreting feature 143457...
+  Top tokens: ['▁сол', '▁öğrenciler', '▁FeCl', '𝑻', '▁avaient', '▁Сте', '▁bactéri', '▁Juillet', 'මෙ', 'ક']
+  Bottom tokens: ['ل', 'í', '▁are', '▁as', '▁It']
+  Interpretation: Non-English language tokens and specialized symbols, avoiding common English words.
+
+[10/200] Interpreting feature 120789...
+  Top tokens: ['фта', '。', '▁', '▁և', 'বস', 'дия', 'тата', '▁লিখিয়াছেন', '▁rerun', 'тите']
+  Bottom tokens: ['urs', 'マックス', 'ra', 'ی', '𝓶']
+  Interpretation: Non-Latin script tokens and whitespace markers, particularly from Cyrillic and South Asian writing systems.
+
+[11/200] Interpreting feature 226665...
+  Top tokens: ['</h3>', 'கொ', '▁zacz', '▁Probleme', '▁', '▁Entonces', '▁Dados', '</h2>', '▁Drums', '▁Tanaka']
+  Bottom tokens: ['the', 'ра', ':', 'ма', 'یا']
+  Interpretation: Uncommon or non-English tokens that appear infrequently in typical text.
+
+[12/200] Interpreting feature 191119...
+  Top tokens: ['ف', 'ing', 'ne', 'ى', 'ق', 'ج', 'r', 'ინგ', 'ör', 'ésar']
+  Bottom tokens: ['▁ways', 'W', 'T', '0', 'K']
+  Interpretation: Non-English characters and morphemes, particularly Arabic letters and foreign language suffixes.
+
+[13/200] Interpreting feature 1127...
+  Top tokens: ['.', 'i', '▁', ')', '▁are', '▁I', '▁for', 'if', '▁Come', 'en']
+  Bottom tokens: ['D', 'H', 'U', 'G', 'B']
+  Interpretation: Common short tokens, function words, and punctuation marks, avoiding single capital letters.
+
+[14/200] Interpreting feature 116195...
+  Top tokens: ['la', 't', 'ä', '▁Funding', '▁Researchers', '▁Researcher', '▁Standards', 'nak', '▁Production', 'inderella']
+  Bottom tokens: ['▁pcMove', 'Defocused', '▁}{}_{\\', '▁mesmos', '▁HUOBI']
+  Interpretation: Non-English characters and academic research-related terms in English text.
+
+[15/200] Interpreting feature 217650...
+  Top tokens: ['▁promen', '▁patina', '▁centerline', 'िकर', '▁uniformed', '▁demonstrable', 'ಾನ್', '▁anastomosis', '▁encirc', '▁veneer']
+  Bottom tokens: ['н', 'an', 'न', '不愿意', 'ν']
+  Interpretation: Sophisticated English vocabulary tokens, often technical or formal words with Latin origins.
+
+[16/200] Interpreting feature 169341...
+  Top tokens: ['ر', 'ικά', '▁Cardiff', '拉斯', '▁Southport', '西安', '▁बांट', '료', 'ঞ্চ', '漑']
+  Bottom tokens: ['znam', 'sidenav', 'ស្ស', '▁saranam', 't']
+  Interpretation: Non-Latin script characters and tokens from diverse writing systems including Arabic Greek Chinese Korean Bengali Hindi
+
+[17/200] Interpreting feature 63227...
+  Top tokens: ['’', ':', '),', '5', '▁অর্থাৎ', '.', "'", ';', '\n\n', ".'"]
+  Bottom tokens: ['ಗಳನ್ನು', 'ين', 'ಗಳು', 'اب', '▁रझा']
+  Interpretation: Common punctuation marks used for sentence structure and formatting
+
+[18/200] Interpreting feature 31276...
+  Top tokens: ['▁nó', '▁ентите', 'řízení', 'endom', '▁DENUMIRE', 'xcodep', '▁liberd', '▁zejména', '▁Бушлай', '▁имат']
+  Bottom tokens: ['-', '▁', '▁Ball', ')', '▁ball']
+  Interpretation: Non-English content words from various European languages, particularly Slavic and Romance languages.
+
+[19/200] Interpreting feature 46856...
+  Top tokens: ['▁تهیه', 'etheus', 'кси', 'োভ', 'ógicos', '▁térmica', 'juang', '▁फेमस', 'pciones', '▁بی']
+  Bottom tokens: ['\n', 'ل', '▁shameful', 'ലെ', '▁Measure']
+  Interpretation: Non-English words or morphemes from diverse languages and scripts.
+
+[20/200] Interpreting feature 111437...
+  Top tokens: ['▁Фурга', 'ssä', '▁તમારા', 'abhavena', 'rzez', '▁Bedürfn', 'вает', 'libat', '▁Ettha', '▁करती']
+  Bottom tokens: ['2', 'ка', 'q', 'y', 'ing']
+  Interpretation: Non-English language tokens, particularly from Indic, Slavic, Germanic, and Finno-Ugric languages.
+
+[21/200] Interpreting feature 235218...
+  Top tokens: ['▁Mô', '2', 'Ultra', 'Jakarta', '▁двигателя', 'Bei', 'Haupt', 'ర', 'IC', 'Hall']
+  Bottom tokens: ['स्ति', 'が存在', 'avir', 'czenia', '),”']
+  Interpretation: Technical terms, proper nouns, and specialized vocabulary tokens from various languages.
+
+[22/200] Interpreting feature 217174...
+  Top tokens: ['▁मिळाले', '▁gleichen', 'ória', 'يدة', 'ิ', '▁बंग', '▁ruim', 'Cry', '▁llor', 'H']
+  Bottom tokens: ['ਬ', 'सुबह', 'beatCounter', '▁चुनावी', 'guna']
+  Interpretation: Tokens from non-English languages and writing systems, particularly South Asian and other international scripts.
+
+[23/200] Interpreting feature 31078...
+  Top tokens: ['ﺎ', 'Allora', "'", 'ﺄ', 'ン', 'анд', 'б', 'ان', 'जा', 'FAE']
+  Bottom tokens: ['▁$.', '▁aktu', '▁gel', '▁Mathemat', '▁évidence']
+  Interpretation: Non-Latin script characters and diacritical marks from various international writing systems.
+
+[24/200] Interpreting feature 182618...
+  Top tokens: ['駆動', '非常に', '収', '実際に', '▁ottenuto', 'γο', 'トゥ', '何', '١', 'ซี']
+  Bottom tokens: ['Xs', 'ing', 'žil', '秭', 'InEx']
+  Interpretation: Non-English Unicode characters and words from non-Latin script languages.
+
+[25/200] Interpreting feature 68460...
+  Top tokens: ['ग्राम', 'фессиона', 'гора', '전히', '▁(', '۰', 'setDefault', '▁atractivo', '▁chairmanship', '董事长']
+  Bottom tokens: ['illae', 'ikken', 'زه', '▁gt', 'numpy']
+  Interpretation: Non-English tokens from various languages and scripts, particularly Asian and Cyrillic text.
+
+[26/200] Interpreting feature 157642...
+  Top tokens: ['ведения', 'ii', 'ichero', '木', 'main', 'bran', 'owany', 'second', 'UCS', 'ves']
+  Bottom tokens: ['𝔯', 'গারে', 'ホイール', '▁Teilen', '▁Parigi']
+  Interpretation: Tokens from diverse languages and writing systems, often non-Latin scripts or less common language fragments.
+
+[27/200] Interpreting feature 212300...
+  Top tokens: ['▁mention', '▁gé', 'pt', 'ế', '▁حض', '▁nhá', 'ống', '▁mutta', '▁dessa', '▁फल']
+  Bottom tokens: ['▁lipoproteins', '▁Corb', '▁вершин', '▁Sistemi', '▁Patterns']
+  Interpretation: Short function words or common terms in non-English languages, especially non-Latin scripts an
+
+[28/200] Interpreting feature 253583...
+  Top tokens: ['0', 'k', '૦', 'other', '▁agricoles', '０', '೦', '▁Но', '▁autres', 'kt']
+  Bottom tokens: ['▁المراجعه', '▁maturity', 'politik', '的全', '▁bootcamp']
+  Interpretation: Short tokens representing zero, alternatives, or
+
+[29/200] Interpreting feature 192758...
+  Top tokens: ['▁the', ')', '▁C', 'sing', '▁T', 'eds', '▁scintill', '▁is', '▁n', 'ting']
+  Bottom tokens: ['Diện', '▁Конститу', '▁पॉलिटिकल', '▁égal', '▁नेपाल']
+  Interpretation: English text tokens, strongly avoiding non-English or non-Latin script content.
+
+[30/200] Interpreting feature 88127...
+  Top tokens: ['▁avete', '▁avaient', '▁isang', '▁sogenannte', '▁esimerkiksi', '▁cosidd', '▁eğer', '▁Kepala', '▁sogenannten', '▁mauvaise']
+  Bottom tokens: ['8', '7', '&', 'وفر', 'รับ']
+  Interpretation: Non-English words from various languages, particularly European and some Asian languages using Latin script.
+
+[31/200] Interpreting feature 51771...
+  Top tokens: ['▁आणि', '▁и', '▁എന്നിവ', '▁અને', '▁insbesondere', '▁ਅਤੇ', 'ictionnaire', '▁และ', 'ﻤ', 'ᴊ']
+  Bottom tokens: ['▁lời', '▁', '▁negated', '</h3>', 'atthe']
+  Interpretation: Conjunctions meaning "and" in non-Latin scripts and languages, particularly South Asian and other international languages.
+
+[32/200] Interpreting feature 100769...
+  Top tokens: ['an', 'a', 'و', 'actor', '▁lohnt', 'ing', 'ie', 'j', 'ي', ';']
+  Bottom tokens: ['▁habitation', '▁lifeline', '▁in', 'ండా', '▁cửa']
+  Interpretation: Short tokens including single letters, articles, word fragments, and punctuation marks.
+
+[33/200] Interpreting feature 71964...
+  Top tokens: ['\n\n', '▁a', '▁nakon', '▁kvůli', '▁miatt', '▁exempel', '▁ocurrió', '▁llevo', '▁mettere', '▁após']
+  Bottom tokens: ['▁be', 'ン', 'in', 'ку', 'of']
+  Interpretation: Non-English prepositions and function words, particularly from European languages.
+
+[34/200] Interpreting feature 136341...
+  Top tokens: ['▁condomin', '▁proteomics', '▁FOR', '▁homeostasis', '▁WITH', 'PLEMENT', '▁OPERATIONS', '▁adapt', '▁receivables', '▁SUPER']
+  Bottom tokens: ['▁він', 'asting', '▁맥', 'Whis', 'Champ']
+  Interpretation: Formal or technical vocabulary, especially capitalized words in professional contexts.
+
+[35/200] Interpreting feature 10233...
+  Top tokens: ['ش', '就', '▁seus', '▁જેમ', 'に', '邺', 'うん', '▁COMMENTS', 'యా', 'चुर']
+  Bottom tokens: ['iddag', '度は', 'Defer', '▁tarifs', '៉']
+  Interpretation: Non-Latin script characters and tokens from various non-English languages including Asian and Indic scripts.
+
+[36/200] Interpreting feature 32992...
+  Top tokens: ['t', 'ene', 'pl', 'agn', 'r', 'une', 'marked', 'pm', '▁in', 'an']
+  Bottom tokens: ['▁JEE', '▁Carpath', '▁Electrochem', '▁SQLAlchemy', '▁İlç']
+  Interpretation: Short character fragments and abbreviations, typically 1-3 characters long.
+
+[37/200] Interpreting feature 97397...
+  Top tokens: ['ని', '▁marketers', '他', '▁wholesalers', '▁bargain', '▁multinationals', '▁Dinesh', '▁markets', '▁contractors', '▁workday']
+  Bottom tokens: ['ïdes', '▁également', 'ée', 'ibility', 'ación']
+  Interpretation: Business and commerce related terms, particularly those describing market participants and commercial activities.
+
+[38/200] Interpreting feature 139664...
+  Top tokens: ['▁pares', '▁ablation', '▁disparities', '้', '▁elenc', '▁assays', '▁iklan', '▁nyata', '▁by', '▁anuncios']
+  Bottom tokens: ['us', 'řed', '▁తో', 'to', 'locate']
+  Interpretation: Technical or scientific terminology and foreign language words, particularly those related to research or advertising.
+
+[39/200] Interpreting feature 245086...
+  Top tokens: ['▁Medizin', 'Tecla', '▁Character', '蘅', 'Text', 'Character', 'Date', '▁解説', 'Ev', '⺝']
+  Bottom tokens: ['▁churning', '▁democracies', '▁demokrasi', '▁consumers', '▁democracy']
+  Interpretation: Technical metadata terms, foreign language words, and specialized characters/symbols
+
+[40/200] Interpreting feature 90978...
+  Top tokens: ['▁materiale', '▁aberr', '▁ruộng', '▁auxqu', '=(\\', '𝗠', '▁ちゃっ', '▁potrzeb', '▁бясплат', '▁צי']
+  Bottom tokens: ['▁as', 's', 'also', 'uki', 'transparent']
+  Interpretation: Non-English tokens and special characters from various languages and scripts
+
+[41/200] Interpreting feature 93680...
+  Top tokens: ['▁seh', 'slug', '▁staat', '▁que', '▁nya', 'want', '▁fuori', '▁thru', '▁veut', 'vacuum']
+  Bottom tokens: ['წიფ', '▁सीपी', 'ккей', '▁ಸುಬ್ಬ', '▁улица']
+  Interpretation: Common short words in Latin-script languages, avoiding non-Latin scripts.
+
+[42/200] Interpreting feature 104556...
+  Top tokens: ['gba', 'vorsch', '▁Ти', 'те', '▁ఒప్ప', '▁বাকি', 'Examination', 'ウ', '▁Spanien', 'చి']
+  Bottom tokens: ['COS', 'FAT', '▁loosened', '▁distant', '조건']
+  Interpretation: Non-English text fragments and characters from various foreign language scripts and alphabets.
+
+[43/200] Interpreting feature 147410...
+  Top tokens: ['gary', '▁mattis', '▁և', 'mlin', 'haupt', 'kke', '▁दुप', 'Donald', 'urrence', 'wski']
+  Bottom tokens: ['お店', '▁lingua', '▁membros', '▁ATA', 'س']
+  Interpretation: Proper names and surname fragments across different languages and writing systems
+
+[44/200] Interpreting feature 185542...
+  Top tokens: ['▁and', '▁The', '▁And', '▁swipes', '▁improvements', '▁variances', '▁Minneapolis', '▁torpedo', '▁Gotham', '▁Because']
+  Bottom tokens: ['lič', 'ă', 'uparavant', 'á', '▁müşter']
+  Interpretation: English words and tokens versus non-English text with diacritical marks or foreign characters.
+
+[45/200] Interpreting feature 48420...
+  Top tokens: ['𝔼', '▁Nhật', '▁Kỳ', 'ഈ', '▁Goku', '噙', '痠', 'াপন্ন', 'ھر', '▁Params']
+  Bottom tokens: ['▁', 'nyder', 'azy', 'unas', 'pil']
+  Interpretation: Non-Latin script characters and symbols from various writing systems including mathematical, Asian, and Middle Eastern scripts.
+
+[46/200] Interpreting feature 74305...
+  Top tokens: ['▁पीड़िता', 'נס', '지가', '▁Pawar', '৪০', '最も', '▁руководством', 'apabb', 'सबसे', '잍']
+  Bottom tokens: ['▁don', '▁are', '▁b', '▁add', '▁won']
+  Interpretation: Non-English tokens from various scripts and languages, contrasting with common English words.
+
+[47/200] Interpreting feature 160127...
+  Top tokens: ['م', '스', '이', '아', 'ה', '为', 'ق', 'պ', 'پ', 'ب']
+  Bottom tokens: ['▁那麼', '▁เพิ่ม', '▁ฝึก', '▁Food', '▁Algebraic']
+  Interpretation: Single characters from non-Latin writing systems, particularly Arabic, Hebrew, Chinese, Korean, and Armenian scripts.
+
+[48/200] Interpreting feature 2934...
+  Top tokens: ['anda', 'uma', 'ume', 'was', 'ema', 'ada', 'iki', 'aka', 'se', 'ite']
+  Bottom tokens: ['▁lakini', '▁)\\', '徕', 'lockSeconds', '。\\']
+  Interpretation: Short tokens from non-English languages, particularly Japanese syllables and morphemes.
+
+[49/200] Interpreting feature 259542...
+  Top tokens: ['ところ', 'ocsát', '管', '▁کۆ', '▁degassing', 'πό', '▁courant', '▁کلی', 'កំណត់', '▁econom']
+  Bottom tokens: ['▁licz', 'LLO', 'াদার', '।*', 'ISTAN']
+  Interpretation: Tokens from non-English languages or non-Latin scripts, including some specialized English terms.
+
+[50/200] Interpreting feature 15839...
+  Top tokens: ['▁、', '▁autism', '世', '教', '▁assumptive', '▁vinyl', 'II', '券', '▁advocacy', '▁giro']
+  Bottom tokens: ['клон', '<unused248>', 'checkable', 'seller', 'isConnected']
+  Interpretation: Mix of Japanese characters and punctuation with specialized English vocabulary terms
+
+[51/200] Interpreting feature 205908...
+  Top tokens: ['▁instinctively', 'გენ', 'istence', '▁enigmatic', '▁apportion', '▁హైదర్', 'inputSet', '▁experimenting', '▁Everett', 'یکشن']
+  Bottom tokens: ['须', '▁ди', '千', '団', '需']
+  Interpretation: Longer complex tokens including sophisticated English vocabulary and non-Latin script text
+
+[52/200] Interpreting feature 186802...
+  Top tokens: ['()))', '៤', 'ourced', '的市场', '▁также', '🧗', 'ीय', 'ру', '▁онлайн', 'Footer']
+  Bottom tokens: ['ut', 'm', '▁it', 'to', '▁he']
+  Interpretation: Rare tokens including non-Latin scripts, special symbols, and uncommon character combinations.
+
+[53/200] Interpreting feature 222113...
+  Top tokens: ['▁unlaw', 'ग्गा', '只要', 'たら', '▁closets', '▁plots', '▁adjudication', '▁excesses', 'ﻟ', 'ﻓ']
+  Bottom tokens: ['z', 'van', '▁Maple', 'zadeh', 'zigen']
+  Interpretation: Non-Latin script tokens and formal/legal English words, avoiding simple Latin characters.
+
+[54/200] Interpreting feature 91398...
+  Top tokens: ['r', 'o', 'le', 'ร', 's', 'no', 'te', 'Event', 'Pop', 'ne']
+  Bottom tokens: ['▁Suppliers', '▁OFFIC', 'НИЕ', '▁SUPPL', 'ਿਕ']
+  Interpretation: Short tokens especially single letters and brief syllables
+
+[55/200] Interpreting feature 94325...
+  Top tokens: ['ו', 'ד', 'ן', '▁preservation', 'ร', 'יא', 'يها', 'ності', 'و', 'ר']
+  Bottom tokens: ['c', 'n', 'ول', 'a', 'la']
+  Interpretation: Hebrew letters and other non-Latin script characters, particularly individual Hebrew consonants.
+
+[56/200] Interpreting feature 35854...
+  Top tokens: ['ließlich', '▁எல்லாம்', 'á', '葯', 'heureusement', 'il', 'ﻭ', 'giveness', 'ie', 'IA']
+  Bottom tokens: ['\n\n', '▁Kelas', 'x', '.', 'برا']
+  Interpretation: Foreign language tokens and partial word fragments from diverse non-English scripts and languages.
+
+[57/200] Interpreting feature 260896...
+  Top tokens: ['जिटिव', '▁نیست', 'レンズ', 'ંટણી', 'marshalO', '🈯', 'ப்படம்', '▁expts', '裟', '▁земель']
+  Bottom tokens: ['’', '▁fully', '▁conquest', "'", '▁plus']
+  Interpretation: Non-Latin script tokens and Unicode characters from various writing systems.
+
+[58/200] Interpreting feature 228581...
+  Top tokens: ['▁fundamento', '▁piezoelectric', '▁vibrational', '▁arenas', '▁suminist', '▁calibre', '▁viviendas', '▁masonry', '▁MIMO', '▁chromatographed']
+  Bottom tokens: ['璘', 'of', 'x', '什么', 'し']
+  Interpretation: Technical or specialized vocabulary terms from engineering, construction, chemistry and scientific domains.
+
+[59/200] Interpreting feature 108812...
+  Top tokens: ['▁ประกอบ', '▁两', 'ठभे', 'एएस', '一段', '关系', '▁Gabrielle', 'OGRAM', '▁实现', '两']
+  Bottom tokens: ['y', '▁and', 'bell', '▁di', 'ka']
+  Interpretation: Non-English tokens from Asian languages especially Thai Chinese and Indic scripts
+
+[60/200] Interpreting feature 69088...
+  Top tokens: ['ل', 'ζ', '▁for', '𝓂', '▁फॉर', '▁ክ', 'և', 'ॉम', 'ထ', '▁टि']
+  Bottom tokens: ['{', 'ON', 'EN', '.', '\\']
+  Interpretation: Non-Latin script characters and foreign language tokens, especially single characters from various writing systems.
+
+[61/200] Interpreting feature 15014...
+  Top tokens: ['ก', 'u', 'ica', 'กำ', '▁होऊ', 'ö', 'ar', '▁যেমন', '㡷', 'గో']
+  Bottom tokens: ['▁radios', 'د', '▁aur', '▁drones', '▁милли']
+  Interpretation: Non-English characters and fragments from various international scripts and writing systems.
+
+[62/200] Interpreting feature 26141...
+  Top tokens: ['▁Tropical', 'εται', '取り', 'θο', '▁YOLO', '▁গভীরভাবে', 'υτό', '▁Atlantic', '▁Optim', '▁Electro']
+  Bottom tokens: ['cza', 'head', 'सिया', 'assung', 'IN']
+  Interpretation: Capital letter tokens starting proper nouns, technical terms, or non-Latin script characters.
+
+[63/200] Interpreting feature 231831...
+  Top tokens: ['▁sesión', 'raš', 'ICIO', 'sembles', 'деш', 'otá', '▁روسیه', 'JPN', '▁lão', 'ём']
+  Bottom tokens: ['▁end', '▁It', '▁Block', '▁V', '▁Not']
+  Interpretation: Non-English words and foreign language tokens, particularly from less common languages in text.
+
+[64/200] Interpreting feature 83737...
+  Top tokens: ['कांना', 'asshi', '▁विद्यार्थ्यांना', 'acchati', 'お願い致します', '▁প্রায়', 'calup', 'फोन', 'otricha', '⸩']
+  Bottom tokens: ['▁in', '▁K', '▁Hand', '▁I', '▁في']
+  Interpretation: Non-English script tokens and transliterated words from various languages, particularly Indic scripts.
+
+[65/200] Interpreting feature 38708...
+  Top tokens: ['Ketika', 'सोशल', 'Như', '槨', '▁########.', '餞', 'Đây', '▁вопроса', '▁kebijakan', 'anyaan']
+  Bottom tokens: ['▁جهاز', 'quard', 'υσ', 'ласти', '▁rhythmic']
+  Interpretation: Non-English words and characters from various languages including Asian and Cyrillic scripts.
+
+[66/200] Interpreting feature 109550...
+  Top tokens: ['▁Pandas', '▁*}\\', '<unused2>', '▁බොහෝ', 'FD', 'OrderFlight', '▁Valves', '▁amikor', '▁pandas', '▁Airports']
+  Bottom tokens: ['рою', 'src', 't', 'рав', 'riven']
+  Interpretation: Technical domain-specific terms and programming-related tokens, often capitalized or containing special characters.
+
+[67/200] Interpreting feature 100038...
+  Top tokens: ['ar', '▁|', '下拉', '▁выбрали', 'showerror', '▁мета', '▁▁▁▁', '▁=>', '▁விகி', '▁නොව']
+  Bottom tokens: ['▁ACLU', 'asyarakat', '▁authorizations', '▁attorney', '▁authorized']
+  Interpretation: Technical symbols, programming elements, and non-English text fragments, avoiding English legal/authority terms.
+
+[68/200] Interpreting feature 12190...
+  Top tokens: ['▁Romantic', '▁गर्ल', '▁romant', '▁romantic', '▁Restaurant', '▁Wife', '▁brie', '▁Hotel', '▁hei', '▁nightclub']
+  Bottom tokens: ['ين', 'ف', '<0x80>', 'as', 'ج']
+  Interpretation: Words related to romance relationships and hospitality venues associated with dating or intimate settings
+
+[69/200] Interpreting feature 230663...
+  Top tokens: ['ंसह', '४', 'त', 'Wifi', '健康', '的', 'س', 'ंगिक', 'ksjon', 'च्या']
+  Bottom tokens: ['▁blockchains', '▁pouches', '▁cartridges', '▁gaskets', '▁membranes']
+  Interpretation: Non-Latin script characters and symbols, particularly from Asian and Middle Eastern writing systems.
+
+[70/200] Interpreting feature 158223...
+  Top tokens: ['1', '▁लीजिएगा', '▁’', '▁ლი', '姬', '拍摄', '으며', '，', '▁মাওলানা', 'erade']
+  Bottom tokens: ['அத', '▁expts', '▁Estimation', '▁ভুল', 'Estimation']
+  Interpretation: Non-English characters and symbols from diverse writing systems and scripts.
+
+[71/200] Interpreting feature 238946...
+  Top tokens: ['▁হুগলীর', '▁opposites', 's', '▁asignatura', 'gge', '▁lengthened', '▁attacked', '▁niedrig', '▁alphabetically', '▁BHK']
+  Bottom tokens: ['팅', 'تاج', '▁hire', '▁}_{', '카오']
+  Interpretation: Mixed tokens from various languages without clear semantic or syntactic pattern
+
+[72/200] Interpreting feature 99688...
+  Top tokens: ['▁inconsistencies', '▁usd', '▁asso', 'رج', ':', '▁olla', 'ి', 'tips', 'ت', '▁nicotine']
+  Bottom tokens: ['▁weren', 'ET', '▁supposing', '▁proximate', 'ēn']
+  Interpretation: Rare or unusual tokens including technical words, word fragments, non-English characters, and specific punctuation.
+
+[73/200] Interpreting feature 73021...
+  Top tokens: ['েন', '▁enumer', '▁увагу', '▁considerazione', '▁présence', '<unused711>', '▁бонус', '▁enumerated', '▁лиш', '<unused444>']
+  Bottom tokens: ['M', 'THE', 'the', 'C', '।']
+  Interpretation: Non-English language tokens and some English words with foreign language characteristics or technical terminology.
+
+[74/200] Interpreting feature 237670...
+  Top tokens: ['טת', 'Tecla', '▁ongles', '۔', 'ğer', 'igenschaft', 'ڈا', '።', 'скольку', 'бычно']
+  Bottom tokens: ['▁livestream', '▁news', '克', '▁pensions', '▁parks']
+  Interpretation: Non-English tokens from various languages and writing systems.
+
+[75/200] Interpreting feature 146091...
+  Top tokens: ['<0x0D>', 'צות', '；', 'Τα', 'பிர', 'गोर', 'OffsetY', '▁tenements', '▁brazos', '▁menores']
+  Bottom tokens: ['lap', '͚', '▁hadn', 'la', '在']
+  Interpretation: Rare or non-standard tokens including non-Latin scripts, technical terms, and uncommon punctuation marks.
+
+[76/200] Interpreting feature 113012...
+  Top tokens: ['ა', '▁enclave', 'ת', 'ির', 'นาม', '혔', 'ษัท', 'י', 'ia', 'וריה']
+  Bottom tokens: ['cm', '▁', '5', '0', '2']
+  Interpretation: Non-Latin script characters and foreign language text elements.
+
+[77/200] Interpreting feature 76353...
+  Top tokens: ['ת', 'ре', 'ли', 'לי', 'ро', 'ъ', 'ני', '▁don', '▁ঐতিহ্য', 'ה']
+  Bottom tokens: ['▁adhipp', '▁inactivació', '▁tasmim', '▁asalamualaikum', '▁intran']
+  Interpretation: Short character sequences and morphemes in non-Latin scripts, particularly Hebrew and Cyrillic.
+
+[78/200] Interpreting feature 215377...
+  Top tokens: [':', 'y', 'ڦ', '-', 'ры', 'ลล์', 'e', 'them', '.', 'o']
+  Bottom tokens: ['▁to', '▁on', '▁बढ़ते', '▁बढ़ती', 'disamb']
+  Interpretation: Punctuation marks, single letters, and non-English characters, avoiding common English prepositions.
+
+[79/200] Interpreting feature 143326...
+  Top tokens: ['▁ওয়াস', '<unused729>', '▁стаўкі', '▁网', 'jó', 'GONE', '▁etkin', 'Fatal', 'inem', '搭载']
+  Bottom tokens: ['嵃', '▁milling', 'น', 'ваны', '可能な']
+  Interpretation: Rare or unusual tokens from various languages and special vocabulary items.
+
+[80/200] Interpreting feature 80593...
+  Top tokens: ['ли', '،', 'و', 'ка', 'ك', '人', 'س', 'ри', 'ла', 'يا']
+  Bottom tokens: ['▁a', 't', 'a', 'l', 'et']
+  Interpretation: Non-Latin script characters from Cyrillic, Arabic, Chinese and other writing systems.
+
+[81/200] Interpreting feature 216000...
+  Top tokens: ['anlı', 'ǒu', 'ലെസ്', 'aları', 'uis', 'וט', 'ਵਾਈ', '▁뉴', 'ALLE', '▁فیصلہ']
+  Bottom tokens: ['▁hrs', '▁Deus', '▁cô', '▁kwal', '▁phẩm']
+  Interpretation: Non-Latin script tokens and multilingual text fragments from diverse writing systems.
+
+[82/200] Interpreting feature 16062...
+  Top tokens: ['▁굉장히', '优先级', '▁incentiv', '▁admittedly', 'bindingFields', '위원회', '▁굉장', 'ພວກເຮົາ', '▁reluct', 'ⵡ']
+  Bottom tokens: ['▁or', 'ite', '▁and', 'te', 'é']
+  Interpretation: Non-Latin scripts and foreign language tokens, especially from East Asian and other non-English languages.
+
+[83/200] Interpreting feature 139939...
+  Top tokens: ['▁Offset', '™,', '▁enduro', '▁✨', '▁કોઈપણ', '▁Ozzy', '▁Encode', '▁Aad', '▁HDMI', '▁Antique']
+  Bottom tokens: ['the', 'them', 'กับ', 'social', 'their']
+  Interpretation: Uncommon technical terms, proper nouns, symbols, and non-English tokens versus common frequent words.
+
+[84/200] Interpreting feature 228552...
+  Top tokens: ['م', 'м', 'ylmethylsulfanyl', '▁방법', '▁हैव', '▁보세요', 'ം', 'Contribution', '▁TextAppearance', '▁그러면']
+  Bottom tokens: ['▁c', '▁logistics', 'ó', '▁reflects', '▁evening']
+  Interpretation: Non-Latin script characters and tokens from non-English languages
+
+[85/200] Interpreting feature 151633...
+  Top tokens: ['ponsor', '۔', '▁livestream', '▁政府', '▁ادائیگی', '▁και', 'endir', '▁букмекерлер', '᱖', 'និង']
+  Bottom tokens: ['▁', '▁particles', '▁Parameters', '▁aeration', '▁Volumen']
+  Interpretation: Non-English text tokens and fragments from various international languages and writing systems.
+
+[86/200] Interpreting feature 15342...
+  Top tokens: ['ید', 'সম্মত', 'Necess', '▁आधुनिक', 'atori', 'ERS', '▁طراحی', 'iting', 'acam', '헙']
+  Bottom tokens: ['▁कुशवाहा', '▁losers', 'diagonal', '▁chewed', '▁vines']
+  Interpretation: Word fragments or tokens from non-Latin scripts, particularly partial words in various languages.
+
+[87/200] Interpreting feature 234004...
+  Top tokens: ['ið', '▁presidencial', '▁Koš', '▁видимо', 'лым', 'λό', 'émy', 'িগুণ', 'лия', '▁comentário']
+  Bottom tokens: ['de', 'dent', 'di', 'dan', 'one']
+  Interpretation: Non-English words and characters from various foreign languages and scripts.
+
+[88/200] Interpreting feature 6304...
+  Top tokens: ['p', 'ﬀ', '▁Fris', '✌', '▁Purchases', 'Bike', '▁Made', 'ak', 'тя', 'Made']
+  Bottom tokens: ['は', '▁сказать', '▁resorting', 'он', '▁predict']
+  Interpretation: Special characters, symbols, abbreviations, and non-standard text tokens including formatting artifacts.
+
+[89/200] Interpreting feature 39992...
+  Top tokens: ['ir', 'F', 'on', 'X', 'ad', 'J', 'L', 'า', 'December', 'K']
+  Bottom tokens: ['▁are', '主义', '▁özellik', '项目的', '▁ఉద్య']
+  Interpretation: Very short tokens, typically single letters or brief character sequences.
+
+[90/200] Interpreting feature 71909...
+  Top tokens: ['۳', 'ূর্ব', 'ли', '▁রোধ', 'جمالي', 'diendo', 'ystem', '▁جائیں', '▁crescere', '▁raggiungere']
+  Bottom tokens: ['ک', '’', 'S', 'on', 'at']
+  Interpretation: Non-English language tokens and word fragments from various scripts and languages.
+
+[91/200] Interpreting feature 60207...
+  Top tokens: ['▁exemptions', '▁faucets', 'ки', '▁endpoints', '▁isotopes', '▁jigs', '▁tweaks', 'एम', '▁dilutions', '▁hashtags']
+  Bottom tokens: ['沒有', '▁a', '▁Cerebral', '▁Mid', 'ش']
+  Interpretation: Plural nouns ending in "s", particularly technical or specialized terms.
+
+[92/200] Interpreting feature 117369...
+  Top tokens: ['1', '▁D', '▁translational', '5', 'IO', 'PRE', '▁রা', '▁prevalent', '▁кле', 'BTW']
+  Bottom tokens: ['isyon', '嬅', 'eers', 'นอก', '▁समृ']
+  Interpretation: Short alphanumeric tokens, abbreviations, and code-like identifiers or markers in text.
+
+[93/200] Interpreting feature 240377...
+  Top tokens: ['\\"",', '湾', '▁namespace', '▁supremo', '▁falso', '▁enshrined', '▁almighty', 'מ', '▁relaxing', 'विशेष']
+  Bottom tokens: ['ettivi', 'ositol', 'óricos', '%)', 'cyst']
+  Interpretation: Non-ASCII characters from various languages and distinctive English words in multilingual contexts
+
+[94/200] Interpreting feature 14201...
+  Top tokens: ['rtle', '▁girlfriend', '▁boyfriend', '\n', '▁dude', '.', '▁mailbox', '▁แค', '.“', '▁безпе']
+  Bottom tokens: ['▁algebras', 'лення', '▁ancients', '▁distinctions', 'ных']
+  Interpretation: Casual informal language tokens versus formal academic vocabulary
+
+[95/200] Interpreting feature 16206...
+  Top tokens: ['<0x80>', '▁événement', '▁tráfico', '▁runtime', '▁dostęp', 'ס', '▁ότι', '目录下', 'ů', 'ী']
+  Bottom tokens: ['▁Be', '▁I', '▁Hope', '▁Agh', '▁Search']
+  Interpretation: Non-English text tokens from various languages and scripts, contrasting with common English words.
+
+[96/200] Interpreting feature 213202...
+  Top tokens: ['/', '▁reagents', '▁"', '▁attendees', '▁estoque', '▁pasted', '\n', '▁striated', 'an', 'quera']
+  Bottom tokens: ['▁मकसद', '▁ゲーム', 'ᑉ', 'ſh', '鶚']
+  Interpretation: Technical or specialized tokens often in formal structured text or scientific contexts
+
+[97/200] Interpreting feature 91184...
+  Top tokens: ['▁swear', '▁protégé', '▁rusty', '▁garanti', '▁strane', '▁articulated', '▁controversial', '▁restauration', '▁abord', '▁critic']
+  Bottom tokens: ['begin', 'series', 'không', 'que', '▁Δεν']
+  Interpretation: Descriptive adjectives and words expressing certainty, commitment, or evaluation in formal contexts.
+
+[98/200] Interpreting feature 37218...
+  Top tokens: ['itabbo', '▁ра', 'ISATION', 'ર્ડ', '▁рам', '▁infek', '▁loopholes', '▁Albania', 'aniyati', '్\u200c']
+  Bottom tokens: ['▁$', '▁of', 'I', '$', 'Color']
+  Interpretation: Non-English script characters and fragmentary text tokens from less common languages or incomplete words.
+
+[99/200] Interpreting feature 213396...
+  Top tokens: ['HC', 'Vintage', 'IA', 'Н', 'Algorithm', '▁Bathroom', 'Build', 'U', 'Healthy', 'N']
+  Bottom tokens: ['▁컬', '▁금융', 'ರುತ್ತವೆ', '▁cytokines', '▁traduce']
+  Interpretation: Short tokens serving as labels, categories, or identifiers including abbreviations and standalone descriptive words.
+
+[100/200] Interpreting feature 180323...
+  Top tokens: ['ル', '리', '▁간', 'ከል', 'ل', '▁పెరుగు', '𝚙', '}]=', '东', 'સ્ટ']
+  Bottom tokens: ['▁kode', '▁na', '’', '▁tuttavia', '▁in']
+  Interpretation: Non-Latin script characters and symbols from various writing systems including Asian, Arabic, and Indic scripts.
+
+[101/200] Interpreting feature 41596...
+  Top tokens: ['я', 'ма', 'তে', 'ש', 'treme', 'ер', 'не', 'ণ', 'ື້ນ', 'ת']
+  Bottom tokens: ['A', 'D', '}">', '(', 'I']
+  Interpretation: Non-Latin script characters and letter sequences from various writing systems like Cyrillic Bengali Hebrew Thai.
+
+[102/200] Interpreting feature 39176...
+  Top tokens: ['\n', '▁a', 'ن', '</h2>', '</em>', 'ER', 'اری', '▁be', '</b>', 'ام']
+  Bottom tokens: ['ä', 'л', 'ל', '▁všetky', '▁Фургал']
+  Interpretation: Common web formatting tags and frequent tokens across languages, avoiding rare foreign characters.
+
+[103/200] Interpreting feature 237794...
+  Top tokens: ['时', '▁édition', '▁effectuées', '▁především', '▁appliquée', ")';", 'ق', '▁étude', '▁exemplar', '自觉']
+  Bottom tokens: ['、', '人に', '،', 'ない', 'रा']
+  Interpretation: Formal academic vocabulary in European languages, particularly French, with negative response to Asian punctuation and text.
+
+[104/200] Interpreting feature 91281...
+  Top tokens: ['νης', 'ओं', 'ників', '▁Chaney', 'mis', 'τή', 'ндай', 'mazon', 'nę', 'ці']
+  Bottom tokens: ['▁progressivement', '▁or', 'able', '▁tenia', '行う']
+  Interpretation: Non-English script characters and partial words from various writing systems including Greek, Cyrillic, and Devanagari.
+
+[105/200] Interpreting feature 63044...
+  Top tokens: ['ется', '、', '。', '،', '紅', '၊', 'ным', 'nieuw', 'arán', '红']
+  Bottom tokens: ['ल', '(', 'ח', 'ক', 'ב']
+  Interpretation: Complete linguistic units like full words and punctuation marks across various languages and writing systems.
+
+[106/200] Interpreting feature 73887...
+  Top tokens: ['ింది', 'ம்', '▁centrifuge', 'ף', '▁strs', '▁bric', 'ن', 'िंग', '▁acrylonitrile', '▁orche']
+  Bottom tokens: [':', 'if', '-', '{', 'ë']
+  Interpretation: Non-Latin script characters and technical terms, avoiding common punctuation and basic English words.
+
+[107/200] Interpreting feature 248828...
+  Top tokens: ['ка', 'ع', '은', 'indices', 'restaurant', 'kyverno', 'اس', '에는', 'ನ್ಸ್', '▁insurers']
+  Bottom tokens: ['▁on', '▁(', '▁by', 'CH', 'UGH']
+  Interpretation: Non-English script characters and less common English words, avoiding frequent function words.
+
+[108/200] Interpreting feature 252245...
+  Top tokens: ['ม', '𝘏', 'மே', '灝', '𝘔', '▁ನಡೆಯ', '▁необхідно', 'น', '▁ചെയ്യ', '▁necessárias']
+  Bottom tokens: ['es', 'et', '▁stole', '▁fol', 'c']
+  Interpretation: Non-Latin script characters and words from non-English languages including Thai Tamil Chinese and Indian languages
+
+[109/200] Interpreting feature 30176...
+  Top tokens: ['UZ', '▁पटाखों', '▁alebo', 'SCAPE', 'OP', '▁vutto', 'FRINGEMENT', '▁Pursuant', '▁ataupun', '▁acesta']
+  Bottom tokens: ['\n', 's', '▁किंतु', 'N', '(']
+  Interpretation: Uncommon or specialized tokens from various non-English languages and technical abbreviations.
+
+[110/200] Interpreting feature 66892...
+  Top tokens: ['л', '▁Лондон', 'ל', '▁टु', '▁л', 'чи', 'ικούς', '邙', '▁Нью', 'ндарт']
+  Bottom tokens: ['in', 'to', 'na', 's', 'I']
+  Interpretation: Non-Latin script characters and text from non-English languages, particularly Cyrillic, Hebrew, Devanagari, Greek, and Chinese.
+
+[111/200] Interpreting feature 63387...
+  Top tokens: ['.', '▁', 'ci', 'ла', 'wd', '.-', 'vas', '▁tué', 'pture', '-']
+  Bottom tokens: ['ก', 'د', 'ד', 'ন', 'ী']
+  Interpretation: Punctuation marks and Latin script tokens, with negative activation on non-Latin script characters.
+
+[112/200] Interpreting feature 253985...
+  Top tokens: ['a', 'v', 'r', 'śmy', '▁निकालेंगे', 'া', '▁ezt', 'c', 'お客', '鍱']
+  Bottom tokens: ['▁tsunami', '▁በሽታ', 'ак', 'і', '▁mellitus']
+  Interpretation: Single characters or very short character sequences across multiple writing systems and languages.
+
+[113/200] Interpreting feature 66692...
+  Top tokens: ['、', 'هم', '。', '،', '，', 'a', '▁', '２', 'いて', '2']
+  Bottom tokens: ['in', 'ino', '기', '▁불구하고', 'ati']
+  Interpretation: Non-English punctuation marks and characters, particularly from Asian and Middle Eastern writing systems.
+
+[114/200] Interpreting feature 70718...
+  Top tokens: ['리', 'ри', '사', '야', 'ح', 'های', 'ले', '으며', '시', 'ला']
+  Bottom tokens: ['0', 'j', 'y', 'g', 'á']
+  Interpretation: Non-Latin script characters and syllables from languages like Korean, Arabic, Persian, Hindi.
+
+[115/200] Interpreting feature 136872...
+  Top tokens: ['▁brunâtre', '：', '▁می', '▁avez', '▁fabricación', '▁besondere', 'Disponible', '▁bạn', '▁jaunâtre', 'قد']
+  Bottom tokens: ['il', 'er', 'in', 'ur', 'ר']
+  Interpretation: Non-English words from various languages, particularly longer words with diacritical marks or non-Latin scripts.
+
+[116/200] Interpreting feature 77987...
+  Top tokens: ['l', "'", '▁water', '▁table', '▁text', '▁fine', '▁list', '▁chart', '▁virtually', '▁circular']
+  Bottom tokens: ['༥', '▁ܗ', 'štění', '▁მკ', '▁अदर']
+  Interpretation: Common English words and basic Latin characters, with negative activation on non-English scripts.
+
+[117/200] Interpreting feature 144031...
+  Top tokens: ['ን', 'и', 'ی', 'ьте', 'ի', 'ის', '▁détails', 'ються', '▁judiciaire', 'ή']
+  Bottom tokens: ['in', 'r', 'il', 'as', 'l']
+  Interpretation: Non-Latin script characters and non-English words, particularly from various international writing systems.
+
+[118/200] Interpreting feature 253584...
+  Top tokens: ['▁miles', '▁\xad', '▁बड़ी', '▁surpasses', '▁Miles', '▁mee', 'ック', '▁được', '▁mát', '▁बड़ी']
+  Bottom tokens: ['滹', '▁kebijakan', '腱', 'otika', '▁Matemat']
+  Interpretation: Tokens related to distance measurement and comparative magnitude across multiple languages.
+
+[119/200] Interpreting feature 51697...
+  Top tokens: ['name', 'nummer', 'offline', 'number', 'Number', '碼', 'ニア', 'Id', 'RFID', '▁name']
+  Bottom tokens: ['▁Robots', '▁Choosing', '▁tantrums', '▁Scientists', '▁twigs']
+  Interpretation: Words related to identification, naming, or numbering systems across multiple languages.
+
+[120/200] Interpreting feature 222271...
+  Top tokens: ['的時候', '▁shumë', '▁as', '▁وقت', '▁với', '▁giusta', '▁during', '▁midweek', '▁molto', '▁në']
+  Bottom tokens: ['▁QuantityOnHand', '▁protrusion', 'នៃការ', '▁của', '▁occupant']
+  Interpretation: Temporal markers and intensifying adverbs expressing time relationships or degree across multiple languages.
+
+[121/200] Interpreting feature 248175...
+  Top tokens: ['t', 'ig', 'owo', 'n', 'as', 'al', 'ur', 'ान', 'ew', 'he']
+  Bottom tokens: ['ی', 'و', '▁Rakh', '▁：', 'ّة']
+  Interpretation: Short English subword tokens or character fragments, typically 1-3 characters long.
+
+[122/200] Interpreting feature 154870...
+  Top tokens: ['g', 'c', 'el', 'an', 'EL', 're', 'u', 'v', 'm', 'as']
+  Bottom tokens: ['▁измене', '▁размере', '▁Шу', 'DepartTime', '▁alphanumeric']
+  Interpretation: Short letter sequences and abbreviations, particularly single letters and brief letter combinations.
+
+[123/200] Interpreting feature 118994...
+  Top tokens: ['ing', 'el', 'en', 'ed', 'art', 'ryt', 'he', 'alty', 'ry', 'roud']
+  Bottom tokens: ['ని', 'SpriteCollision', 'ハ', 'ш', 'ки']
+  Interpretation: English morphological endings and short word fragments, contrasted with non-Latin script characters.
+
+[124/200] Interpreting feature 118168...
+  Top tokens: ['▁Happy', '0', '▁that', '▁I', 'happy', '▁a', '▁', '1', '▁happy', 'AL']
+  Bottom tokens: ['ل', 'ي', 'ت', '▁singleRun', 'و']
+  Interpretation: Tokens related to happiness and positive emotions, especially variations of "happy"
+
+[125/200] Interpreting feature 31646...
+  Top tokens: ['▁kg', '.', '▁to', '1', 'น', 'kg', 'เป็น', '0', '▁on', 'ش']
+  Bottom tokens: ['c', '𝗲', 'elijk', '▁ಎ', '▁сцен']
+  Interpretation: Weight/measurement units like kg and related numerical contexts, especially in non-English text.
+
+[126/200] Interpreting feature 63478...
+  Top tokens: ['▁a', '▁at', '▁it', 'am', '▁i', 'b', 'p', 'a', '▁and', '▁\\']
+  Bottom tokens: ['िया', 'ین', 'ва', 'ات', 'सँग']
+  Interpretation: English letters and short words versus non-Latin script tokens from other languages.
+
+[127/200] Interpreting feature 41088...
+  Top tokens: ['ور', 'in', '에', '▁I', 'ంగా', 'ry', 'ва', 'い', 'ill', 'に']
+  Bottom tokens: ['</h3>', '<0x0D>', '▁', '];', 't']
+  Interpretation: Non-English language tokens and morphemes from various writing systems and languages.
+
+[128/200] Interpreting feature 53287...
+  Top tokens: ['▁was', '▁hypothes', '\t\t\t\t', '接过', 'ileged', '\t\t\t\t\t', '▁був', '的人', 'ização', '▁дерева']
+  Bottom tokens: ['i', 'ي', 'י', 'ع', 'n']
+  Interpretation: Multi-character tokens including words, word fragments, and whitespace sequences across various languages.
+
+[129/200] Interpreting feature 148611...
+  Top tokens: ['▁예상', '▁జరిగ', '▁因为', '▁Predictions', 'ेंशियल', '撈', '▁predicting', '▁Predicting', '▁বিয়ে', '▁भविष्यवाणी']
+  Bottom tokens: ['0', 'u', 'க', 'ká', '▁dostup']
+  Interpretation: Words related to prediction, forecasting, or expectation across multiple languages.
+
+[130/200] Interpreting feature 167825...
+  Top tokens: ['し', '▁shorthand', '▁stage', '▁larges', '▁proteção', '▁functioning', 'دی', 'یس', '𝓮', '▁chave']
+  Bottom tokens: ['▁СПб', '▁Algebraic', '▁Extending', '▁वर्णित', 'مر']
+  Interpretation: Tokens from diverse non-Latin writing systems and multilingual text including stylized characters
+
+[131/200] Interpreting feature 187806...
+  Top tokens: ['in', 'ור', 'ния', 'กิน', 'ול', 'า', '▁enggak', 'ва', 'ция', 'ции']
+  Bottom tokens: ['ب', 'AND', 'IG', '0', 'ف']
+  Interpretation: Morphological elements and short words from non-Arabic scripts, especially Cyrillic Hebrew Thai.
+
+[132/200] Interpreting feature 241285...
+  Top tokens: ['،', ')،', '▁ထ', '▁ဗ', '))', '▁أثناء', '▁)', '()){', '▁٢', '▁).']
+  Bottom tokens: ['로', '\n', 'ین', 'ת', 'ای']
+  Interpretation: Punctuation marks and characters from Arabic and Burmese writing systems.
+
+[133/200] Interpreting feature 47438...
+  Top tokens: ['▁to', '▁t', '▁', '▁m', '▁p', '▁h', '▁d', '▁b', '▁not', '▁is']
+  Bottom tokens: ['ເຄື່ອງ', 'ຈັດສົ່ງ', 'राइड', 'ږئ', 'their']
+  Interpretation: Common English function words and single letter tokens, avoiding non-Latin scripts.
+
+[134/200] Interpreting feature 77291...
+  Top tokens: ['▁myös', '▁và', '▁chỉ', '▁với', 'erà', '▁également', 'ान्य', '▁luz', '▁avec', '▁with']
+  Bottom tokens: ['5', '4', '6', '3', "'"]
+  Interpretation: Conjunctions and prepositions meaning "with," "also," or "and" across multiple languages.
+
+[135/200] Interpreting feature 78899...
+  Top tokens: ['▁(', '▁B', '▁caps', '▁Presidency', '▁bleaching', '▁frenzy', '▁', 'ంది', '▁reception', '▁prevention']
+  Bottom tokens: ['▁گوشی', '▁لأن', '▁Нужно', '▁ръ', '>=']
+  Interpretation: Opening parenthesis and English words beginning with specific letters, especially uppercase B and words starting with consonants.
+
+[136/200] Interpreting feature 31858...
+  Top tokens: ['▁I', 't', 'string', '▁Black', '\n', 'ried', 'tumor', 'raham', 'noir', 'ton']
+  Bottom tokens: ['ل', 'л', 'ন', 'ル', '{']
+  Interpretation: Tokens containing Latin script letters, especially those with "r" sounds or letter "r".
+
+[137/200] Interpreting feature 73572...
+  Top tokens: ['▁즉', '▁आइए', '▁osteoporosis', '▁assassinated', '▁الأصفر', '▁hypertension', '鞑', '▁arrive', '▁啊', '▁অক্ষয়']
+  Bottom tokens: ['a', 'ものの', 'behaviour', 'はじめ', '▁Trusts']
+  Interpretation: Non-English language tokens and some English medical/action words, contrasted with common English articles and particles.
+
+[138/200] Interpreting feature 24820...
+  Top tokens: ['I', ';', '>,', 'り', 'केंद्रीय', ')\\', 'BRO', '۰', ')(', 'Okay']
+  Bottom tokens: ['at', '▁on', 'на', 'و', 'as']
+  Interpretation: Punctuation marks, single characters, and standalone words rather than common grammatical function words.
+
+[139/200] Interpreting feature 125218...
+  Top tokens: ['▁prothorax', '▁centralization', '▁terraz', '▁stabilizes', '▁stabilize', '▁evaporation', '▁secrete', '▁siècles', '▁tessuto', '▁pretext']
+  Bottom tokens: ['useful', 'in', 'N', 'Life', 'K']
+  Interpretation: Technical or scientific terms containing "te" letter sequences, often describing processes or formal concepts.
+
+[140/200] Interpreting feature 179168...
+  Top tokens: ['Surgery', '▁EXO', '𒀯', 'MAC', '▁Nếu', 'MQTT', 'ampshire', '▁Aloe', '▁Excuse', 'lovakia']
+  Bottom tokens: ['▁syncing', '▁millennia', '▁tracing', '}$,', '▁между']
+  Interpretation: Word fragments and suffixes from technical terms, proper nouns, and specialized vocabulary.
+
+[141/200] Interpreting feature 187073...
+  Top tokens: ['ка', 'mimpi', 'нинг', "{'", 'ни', '▁Pays', 'neau', '▁Bandung', 'Pays', 'ður']
+  Bottom tokens: ['▁twierd', '▁anglais', '▁oznacza', '▁jusqu', '];']
+  Interpretation: Non-English words and tokens from various foreign languages especially Slavic Indonesian and other international languages
+
+[142/200] Interpreting feature 153560...
+  Top tokens: ['\n\n', 'ਰਾ', 'ை', '</b>', '<eos>', '<start_of_image>', 'os', '▁nesting', 'க்கு', 'not']
+  Bottom tokens: ['ियम', '▁zwią', '▁нагрузки', '▁setembro', '্ড']
+  Interpretation: Special tokens including markup tags, non-Latin characters, system tokens, and formatting elements.
+
+[143/200] Interpreting feature 144562...
+  Top tokens: ['▁называют', 'is', 'そして', '▁அவர்கள்', '▁хотят', 'U', 'inflate', 'зывают', 'の両', 'excludeFolder']
+  Bottom tokens: ['{', 't', '$', '▁on', '，']
+  Interpretation: Non-English tokens and uncommon words from various languages and technical domains.
+
+[144/200] Interpreting feature 197652...
+  Top tokens: ['ции', '▁с', '▁to', '▁', 'ación', '▁४', 'masının', 'ımız', '▁अनेक', '▁и']
+  Bottom tokens: ['in', 'the', 't', 'ه', '_']
+  Interpretation: Non-English text tokens, particularly from Cyrillic, Indic, Turkish, and Romance languages.
+
+[145/200] Interpreting feature 127272...
+  Top tokens: ['ст', '▁can', 'я', '१', 'υ', 'ז', 'ست', '没有', 'И', 'тель']
+  Bottom tokens: ['র', 'speople', 'harth', '(.*', 'ים']
+  Interpretation: Non-Latin script characters and tokens from various writing systems including Cyrillic Arabic Hebrew Chinese Greek
+
+[146/200] Interpreting feature 54658...
+  Top tokens: ['не', '▁I', '𝑭', '▁ﺍ', 'hunter', '▁continuamente', 'outheast', 'dmn', '▁८', '▁усі']
+  Bottom tokens: ['}', 'an', '没有', 'the', '▁Zwe']
+  Interpretation: Non-English tokens and specialized characters from diverse languages and writing systems.
+
+[147/200] Interpreting feature 55212...
+  Top tokens: ['س', 'ק', 'Let', 'ामध्ये', 'ن', 'اً', 'اج', 'Paris', '▁և', 'LONDON']
+  Bottom tokens: ['▁used', 'is', 'ースト', '▁shrubs', '▁använda']
+  Interpretation: Non-Latin scripts and characters from diverse writing systems including Arabic, Hebrew, Devanagari, and Armenian.
+
+[148/200] Interpreting feature 90931...
+  Top tokens: ['L', '០', '0', 'O', '٠', '$,', 'M', '»،', 'D', 'K']
+  Bottom tokens: ['्य', 'ב', 'هم', 'માં', 'מ']
+  Interpretation: Characters with circular or oval visual shapes, especially zeros and zero-like letters.
+
+[149/200] Interpreting feature 9410...
+  Top tokens: ['Tax', '▁Tax', '▁taxe', '▁TAX', '税务', '税', '稅', 'TAX', '▁tax', '▁taxes']
+  Bottom tokens: ['/', 'т', '▁flocked', '▁lifeguard', '▁threaded']
+  Interpretation: Tax-related words and characters in various languages and formats including English, Chinese, and different capitalizations.
+
+[150/200] Interpreting feature 53417...
+  Top tokens: ['▁প্রক্রিয়া', '▁esperti', 'tfidf', 'accesso', 'tf', '捪', 'peror', '▁इमारत', '▁étamines', '▁प्रक्रिया']
+  Bottom tokens: ['7', '6', '4', '도', '8']
+  Interpretation: Non-English language tokens, particularly
+
+[151/200] Interpreting feature 10312...
+  Top tokens: ['t', 'N', 'K', 'B', 'W', 'D', '▁on', 'L', 'P', 'ت']
+  Bottom tokens: ['▁futuras', '▁marinas', '▁lindas', 'ش', 'ﻮ']
+  Interpretation: Single uppercase letters and brief standalone alphabetic characters across different writing systems.
+
+[152/200] Interpreting feature 256061...
+  Top tokens: ['g', 'ти', 'n', 'is', 't', 'u', 'r', 'ल', 'ra', 'יות']
+  Bottom tokens: ['1', '3', '4', '6', '7']
+  Interpretation: Single letters or short letter sequences from various alphabetic scripts, negatively activated by digits.
+
+[153/200] Interpreting feature 33613...
+  Top tokens: ['ية', 'కు', '보', 'ر', '▁auront', '్య', '▁ولكن', 't', 'т', 'vě']
+  Bottom tokens: ['1', 'et', '▁a', 'lar', 'pe']
+  Interpretation: Non-Latin script characters and tokens from diverse languages including Arabic, Telugu, Korean, Cyrillic.
+
+[154/200] Interpreting feature 111095...
+  Top tokens: ['Boards', '$,', 'bere', 'schw', 'esi', 'два', '>', 'Re', '#,', 'spiele']
+  Bottom tokens: ['a', 'i', '▁the', '是', '▁TOEFL']
+  Interpretation: Non-English word fragments and tokens from various foreign languages, excluding common English words.
+
+[155/200] Interpreting feature 89310...
+  Top tokens: ['ت', 'ל', 'ת', '裂', '混乱', 'appendChild', '忒', '原本', '徇', '▁henne']
+  Bottom tokens: ['ма', ';', '▁as', '▁is', '▁utilizzando']
+  Interpretation: Non-Latin script characters and foreign language tokens, especially Hebrew and Chinese characters.
+
+[156/200] Interpreting feature 62376...
+  Top tokens: ['ice', 'og', 'ও', 'in', '▁tyto', 'itr', '\u200cها', 'infinity', 'guns', 'ів']
+  Bottom tokens: [',', '▁that', ':', '▁которому', '▁and']
+  Interpretation: Short morphological fragments and word stems, often 2-3 characters from various languages.
+
+[157/200] Interpreting feature 51185...
+  Top tokens: ['te', 'to', 'OL', 'EL', '0', 'ta', 'ad', 'CO', 'is', 'ater']
+  Bottom tokens: ['ری', ':', 'ことを', 'רי', '▁ardından']
+  Interpretation: Short alphanumeric tokens and brief letter combinations, typically 1-3 characters long
+
+[158/200] Interpreting feature 3621...
+  Top tokens: ['t', 'ти', 'r', 'g', 'ल', 'יות', 'atation', 'लया', 'ă', 'नुसार']
+  Bottom tokens: ['4', '3', '6', '8', '▁femmes']
+  Interpretation: Incomplete tokens, single letters, and partial words from various scripts, avoiding complete digits and full words.
+
+[159/200] Interpreting feature 243568...
+  Top tokens: ['▁tätig', 'werp', '(', '>', 'ión', '我相信', '▁في', '▁frankly', '我认为', 'يد']
+  Bottom tokens: ['an', 'a', 'ل', 'et', 'ان']
+  Interpretation: Diverse content words and non-English tokens, avoiding common short function words.
+
+[160/200] Interpreting feature 17016...
+  Top tokens: ['t', '▁on', 'л', '１', 'ς', 'った', 'tedir', 'ด', 'های', 'す']
+  Bottom tokens: ['ich', 'ă', 'נים', 'ikle', '▁I']
+  Interpretation: Short linguistic units including single characters, morphemes, and brief words across multiple writing systems and languages.
+
+[161/200] Interpreting feature 84429...
+  Top tokens: ['t', 'ت', 'т', 'y', 'त', 'c', '没有', 'heten', 'B', 'एस']
+  Bottom tokens: ['ش', '▁a', 'in', 'л', ';']
+  Interpretation: Single characters or short tokens across multiple writing systems and languages.
+
+[162/200] Interpreting feature 3535...
+  Top tokens: ['than', '▁than', '▁Than', 'aría', 'ط', 'ر', 'arı', 'Than', 'ž', 'é']
+  Bottom tokens: ['ERS', '▁машины', 'Fs', '▁maneiras', '▁spese']
+  Interpretation: The word "than" and non-English characters with diacritical marks or special Unicode symbols.
+
+[163/200] Interpreting feature 12411...
+  Top tokens: ['▁الطلاب', '▁{', '▁as', '▁students', 'students', '▁Students', 't', '▁학생', 'یم', 'Students']
+  Bottom tokens: ['on', '로', 'ও', 'та', 'غ']
+  Interpretation: Words meaning "students" in various languages plus some punctuation and single characters.
+
+[164/200] Interpreting feature 49524...
+  Top tokens: ['t', 'B', 'K', '▁on', 'G', 'ت', 'W', 'و', 'L', 'D']
+  Bottom tokens: ['et', '",', 'в', 'in', '▁malattie']
+  Interpretation: Single letters, especially capital letters, likely in abbreviations or initials.
+
+[165/200] Interpreting feature 26674...
+  Top tokens: ['চ্যুত', 'on', 'ad', 'p', '▁ascertain', 'زی', '▁insights', '▁impetus', '▁Insights', '▁){']
+  Bottom tokens: ['▁دي', '▁после', '▁أو', '▁mö', '▁بعد']
+  Interpretation: Tokens related to knowledge acquisition or understanding, often in non-Latin scripts or formal English contexts.
+
+[166/200] Interpreting feature 2256...
+  Top tokens: ['u', 'uettes', '▁reputations', 'ナソニック', '▁variances', '▁reviewers', 'ус', '▁treatises', '▁sureties', 'uia']
+  Bottom tokens: ['▁', 'し', 'כ', 'that', 'り']
+  Interpretation: Tokens containing the letter "u" or prominent "u" sounds in various languages and contexts.
+
+[167/200] Interpreting feature 156923...
+  Top tokens: ['ม', "'", 'ികിത്സ', '▁savag', 'айл', '▁wodurch', "'};", 'ாவின்', 'する必要', '۴']
+  Bottom tokens: ['D', 'ן', 'in', '▁encont', 'X']
+  Interpretation: Non-Latin script characters and symbols from various international writing systems.
+
+[168/200] Interpreting feature 6532...
+  Top tokens: ['ط', 'к', 'ো', ',', 'r', 'ли', '때', 'مة', 'ل', 'o']
+  Bottom tokens: [')', '),', ")'", '▁résultats', '▁been']
+  Interpretation: Non-Latin script characters from various writing systems including Arabic, Cyrillic, Bengali, and Korean.
+
+[169/200] Interpreting feature 11070...
+  Top tokens: ['ség', '▁displaced', 'ﻙ', 'ków', 'kannya', '▁desplazamiento', '▁Displacement', 'larni', 'ካት', '▁displacement']
+  Bottom tokens: ['▁a', 'ade', 'up', 'ation', 'its']
+  Interpretation: Words related to displacement or movement across multiple languages
+
+[170/200] Interpreting feature 100549...
+  Top tokens: ['K', 'N', 'B', 'L', '▁on', 'AT', 'W', 'T', 'P', '▁terwijl']
+  Bottom tokens: ['in', 'et', 'ות', '▁culturales', 'that']
+  Interpretation: Single capital letters, especially consonants, appearing as standalone tokens or abbreviations.
+
+[171/200] Interpreting feature 54511...
+  Top tokens: ['ل', 'л', 'ről', 'ر', 'ל', 'Y', '▁complémentaires', 'ล', 'ت', 'لل']
+  Bottom tokens: ['2', ',', '’', '8', 'ua']
+  Interpretation: Non-Latin script characters from Arabic, Cyrillic, Hebrew, Thai and other writing systems
+
+[172/200] Interpreting feature 5162...
+  Top tokens: ['st', 'f', '\\', '트', 'ل', 'सँग', 'dır', 'ج', '_', '\\*']
+  Bottom tokens: ['ian', '▁केवळ', '▁և', 'ղ', 'arı']
+  Interpretation: Short character sequences, single letters, and special symbols from various writing systems and programming contexts.
+
+[173/200] Interpreting feature 8085...
+  Top tokens: ['л', 'ü', 'al', 'ap', 'acción', 'ل', 'uk', 'í', 'ad', 'ли']
+  Bottom tokens: ['▁this', '0', 'ได้', '▁змо', '▁ovog']
+  Interpretation: Non-English characters and letter combinations from various foreign languages and scripts
+
+[174/200] Interpreting feature 14395...
+  Top tokens: ['ž', 'ط', 'λ', 'than', 'ä', 'یکه', 'し', 'aría', 'ر', 'ської']
+  Bottom tokens: ['Q', '▁besoins', '▁inclinations', '▁ouvrir', 'He']
+  Interpretation: Non-Latin characters and diacritical marks from various writing systems and languages.
+
+[175/200] Interpreting feature 24597...
+  Top tokens: ['h', 'D', '▁is', 'C', 'M', '在', 'S', 'На', '▁', 'R']
+  Bottom tokens: ['та', 'ных', 'é', 'ар', '্টের']
+  Interpretation: Single letters and short tokens, especially at word or sentence beginnings.
+
+[176/200] Interpreting feature 15042...
+  Top tokens: ['ل', 'at', 'ről', 'il', 'r', 'تين', 'et', 'ল', 'rés', '▁for']
+  Bottom tokens: ['▁can', 'IN', 'ุ', '▁I', 'נ']
+  Interpretation: Short character sequences and non-Latin script characters, particularly from Arabic and other foreign writing systems.
+
+[177/200] Interpreting feature 261665...
+  Top tokens: ['ä', '도', 'も', '。', 'ästä', 'år', 'äns', 'ů', 'okk', 'ána']
+  Bottom tokens: ['و', 's', 't', 'та', 'tà']
+  Interpretation: Tokens containing diacritical marks, umlauts, or non-Latin script characters especially from European and East Asian languages.
+
+[178/200] Interpreting feature 62614...
+  Top tokens: ['t', 'р', 'ר', 'ર', '(', 'त', 'ד', 'ס', 'tım', 'شی']
+  Bottom tokens: ['는', '2', 'ك', '▁I', 'টি']
+  Interpretation: Single characters or short tokens from Hebrew, Devanagari, Gujarati, and some Cyrillic scripts.
+
+[179/200] Interpreting feature 91950...
+  Top tokens: ['▁Semiconductor', 'pInBuffer', 'یدہ', '▁рису', '▁அம்ம', 'yyum', 'ষ্ঠ', 'ٹس', 'nemonic', '▁verkl']
+  Bottom tokens: ['ה', 'उन्होंने', 'October', '하기도', 'League']
+  Interpretation: Non-English tokens from various languages and scripts, including technical programming terms.
+
+[180/200] Interpreting feature 203942...
+  Top tokens: ['،', 'te', 'genomes', 'intera', 't', 'these', '।...', '▁Which', '▁حیر', 'काश']
+  Bottom tokens: ['▁για', '▁bạn', 'は', '-', 'ように']
+  Interpretation: Multilingual text tokens especially non-Latin scripts and punctuation from Arabic Devanagari systems.
+
+[181/200] Interpreting feature 53903...
+  Top tokens: ['}//', 'moment', '▁moment', '▁momentos', 'м', '▁tathapi', 'ет', '▁momento', 'к', 'ات']
+  Bottom tokens: ['ig', 'in', 'a', 'use', '▁a']
+  Interpretation: The word "moment" and its translations in various languages like Spanish momento and Portuguese momentos.
+
+[182/200] Interpreting feature 223860...
+  Top tokens: ['ت', 't', 'т', 'م', 'it', 'ف', 'ز', 'त', 'u', 'д']
+  Bottom tokens: ['modelLogin', '\n\n', '▁IDE', ')：', '▁czas']
+  Interpretation: Single character tokens from various alphabets and writing systems
+
+[183/200] Interpreting feature 10314...
+  Top tokens: ['▁Apartment', '▁roommates', '-', '▁apartment', '▁appartement', '▁χρόνο', '▁apartments', '▁apartamento', '/', '▁MONTH']
+  Bottom tokens: ['بر', 'Y', 'T', '로', 'به']
+  Interpretation: Housing and rental-related terms especially apartments and roommates across multiple languages.
+
+[184/200] Interpreting feature 188090...
+  Top tokens: ['F', 'for', '▁for', 'W', 'ss', '▁tervez', 'P', 'G', '▁verwendeten', '▁ប']
+  Bottom tokens: ['▁to', 'ა', '▁Sobolev', '▁tinnitus', 'ત']
+  Interpretation: Single uppercase letters and short common words like "for"
+
+[185/200] Interpreting feature 16794...
+  Top tokens: ['on', 'лизм', 'ли', 'ات', 'ى', '想法', 'த்தில்', '지', 'ıcı', 'بول']
+  Bottom tokens: ['EL', 'TV', 'AS', 'PT', 'OC']
+  Interpretation: Non-English language morphemes and particles, particularly suffixes and function words from various languages.
+
+[186/200] Interpreting feature 4543...
+  Top tokens: ['▁advancements', '▁innovations', '▁inventions', '▁advances', '▁intérieur', '▁humains', '▁fabriqu', '▁breakthroughs', '▁allemand', '▁courants']
+  Bottom tokens: ["▁'", 'Fish', '▁a', 'Ill', 'Items']
+  Interpretation: Words related to technological progress, scientific advancement, and innovation, including some French vocabulary.
+
+[187/200] Interpreting feature 13085...
+  Top tokens: ['t', 'Т', 'С', 'З', 'К', 'IC', 'ت', 'Из', '5', 'Α']
+  Bottom tokens: ['▁was', '▁can', '▁are', '▁will', '▁to']
+  Interpretation: Single characters or very short tokens, especially non-Latin scripts and symbols.
+
+[188/200] Interpreting feature 74018...
+  Top tokens: ['AL', '▁are', 'ut', 'ə', 'ැල', 'ık', '(', 'รับ', '▁understands', '▁attempts']
+  Bottom tokens: ['ன்', 'د', 'ام', 'دو', 'సి']
+  Interpretation: Diverse tokens including English words, non-Latin characters, and fragments with no clear unifying pattern.
+
+[189/200] Interpreting feature 133658...
+  Top tokens: ['the', 'is', 'o', 'r', 'ير', 'ro', 'in', 't', 'us', 'n']
+  Bottom tokens: ['ﻤ', 'ला', '▁ważne', '▁ﺍ', '▁Ä']
+  Interpretation: Common English function words and single letters, with negative activation on non-Latin scripts.
+
+[190/200] Interpreting feature 195009...
+  Top tokens: ['т', '▁ago', 'tuvo', 't', '▁is', 'ρα', '早在', 'tura', 'కు', 'tida']
+  Bottom tokens: ['ش', 'n', 'ing', 'u', 'att']
+  Interpretation: Tokens from non-English languages or scripts, particularly single characters and short words.
+
+[191/200] Interpreting feature 57814...
+  Top tokens: ['\n', '▁for', 'a', 'in', 'ה', 'ר', 'ת', 'ر', 'ه', '(']
+  Bottom tokens: ['لی', '榇', 'IsResolver', '▁respectivos', 'iaire']
+  Interpretation: Short function words, individual Hebrew/Arabic letters, and basic punctuation marks.
+
+[192/200] Interpreting feature 1943...
+  Top tokens: ['in', 'ться', 'al', 'is', 'ia', 'inį', 'ل', 'inizi', 'ول', 'را']
+  Bottom tokens: ['▁are', '</h2>', '▁apparence', '▁estern', '▁avenge']
+  Interpretation: Short function words and morphemes across multiple languages, particularly common grammatical elements.
+
+[193/200] Interpreting feature 5176...
+  Top tokens: ['ל', 'ین', 'મ', 'ти', 'ाम', 'かかる', 'מור', '▁தற்போது', 'اؤن', '▁njegova']
+  Bottom tokens: ['v', '▁of', 'f', '4', 'y']
+  Interpretation: Non-Latin script characters and words from various international languages and writing systems.
+
+[194/200] Interpreting feature 163794...
+  Top tokens: ['ভাবে', '(', 'n', 'ed', 'naires', 'streets', 'odhya', '▁', 'つ', 'тена']
+  Bottom tokens: ['▁posible', 'S', '▁ϕ', '▁ül', '▁Payload']
+  Interpretation: Morphemes and characters from non-Latin writing systems, particularly Bengali, Japanese, and Cyrillic scripts.
+
+[195/200] Interpreting feature 5533...
+  Top tokens: ['▁projects', '▁Projects', 'ન', 'i', '▁projek', 'יים', 'AZIONE', 'ב', 'Projects', 'ب']
+  Bottom tokens: ['▁be', 'ні', 'ре', '▁is', 'og']
+  Interpretation: Project-related words across languages and single characters from non-Latin writing systems.
+
+[196/200] Interpreting feature 199...
+  Top tokens: ['ารย์', '▁mắn', '▁monde', 'K', 'J', 'ল', 'ס', 'Y', '▁comprise', 'N']
+  Bottom tokens: ['i', 'ys', 'ي', 'ে', 'py']
+  Interpretation: Diverse tokens from different languages and writing systems, often single uppercase letters or non-English words.
+
+[197/200] Interpreting feature 93376...
+  Top tokens: ['К', 'in', 'i', '▁not', '마', '▁বাড়ীতে', 'with', 'reports', 'Интернет', 'িদ্ধ']
+  Bottom tokens: ['.', ',', '▁.', '\n\n', '▁,']
+  Interpretation: Non-punctuation tokens especially from non-Latin scripts and alphabets
+
+[198/200] Interpreting feature 27018...
+  Top tokens: ['▁migrants', '▁migrant', 'AN', '▁migr', '▁Migrate', 'IR', '▁migration', 'Migration', '▁shr', 'IS']
+  Bottom tokens: ['ين', 'ما', 'ere', 'ता', 'ent']
+  Interpretation: Migration-related words and their root forms
+
+[199/200] Interpreting feature 78611...
+  Top tokens: ['il', 'ad', 'ين', 'm', 'ir', 'ap', 'ip', 'r', 'x', 'ha']
+  Bottom tokens: ['し', 'は', 'จะ', 'ﺮ', 'い']
+  Interpretation: Short character fragments from non-East Asian scripts, particularly Latin and Arabic partial words.
+
+[200/200] Interpreting feature 29871...
+  Top tokens: ['ol', 'ad', 'c', '▁R', '▁S', '▁E', '▁A', '▁(', '0', '$']
+  Bottom tokens: ['و', 'ل', '手術', 'غ', '▁difficultés']
+  Interpretation: Single Latin characters, digits, and symbols, particularly at word boundaries or in abbreviated contexts.
+
+Results saved to gemmascope/outputs/r1_lora_analysis/autointerp_262k_A_and_B.json
+
+================================================================================
+FEATURE INTERPRETATIONS BY GROUP
+================================================================================
+
+========================================
+GROUP: B_max_cos
+========================================
+
+Feature 106329:
+  Top tokens: ['iden', 'স', 'idiendo', 'ন্ট', 'plane']
+  Bottom tokens: ['▁epitope', '▁neuro', '▁endocr', '▁эш', '▁in']
+  Interpretation: Non-English language tokens and morphemes from various scripts including Bengali, Hindi, Chinese, and Spanish fragments.
+
+Feature 161058:
+  Top tokens: ['t', 'ت', 'و', 'ו', 'فرق']
+  Bottom tokens: ['ia', '▁naturelle', 'णी', 'MA', 'ुरे']
+  Interpretation: Single characters or very short tokens from non-Latin scripts and isolated letters
+
+Feature 62782:
+  Top tokens: ['mbito', '▁itibaren', 'SaveFolder', '▁സിനിമ', '뜩']
+  Bottom tokens: ['i', 'B', '▁can', '▁easily', '▁hidden']
+  Interpretation: Non-English text tokens from various languages and writing systems.
+
+Feature 186137:
+  Top tokens: ['▁for', '\n', '▁not', '▁Don', '▁P']
+  Bottom tokens: ['ным', '▁réglementation', 'ᱼ', 'ру', 'ות']
+  Interpretation: Common English function words and particles, with negative activation on non-English scripts.
+
+Feature 41475:
+  Top tokens: ['▁for', '\n', 'for', 'an', '1']
+  Bottom tokens: ['YNAMIC', 'ClrBit', 'UNCIL', '缮', '=*']
+  Interpretation: Common English function words, basic punctuation, and simple tokens in natural text.
+
+Feature 243842:
+  Top tokens: ['の', 'Ⲥ', 'и', 'Р', '鲞']
+  Bottom tokens: ['ges', 'k', 'max', 'trat', '0']
+  Interpretation: Non-Latin script characters and words from various writing systems including Asian, Arabic, Cyrillic.
+
+Feature 130765:
+  Top tokens: ['t', 'ท', '▁ت', '▁Sozial', 'د']
+  Bottom tokens: ['функциона', '▁tecnologias', 'ফুদ্দিন', '▁tecnologie', '▁tecnologías']
+  Interpretation: Short tokens and single characters, especially from non-Latin scripts like Thai and Arabic.
+
+Feature 161012:
+  Top tokens: ['v', 'man', 'อาการ', '$', 'ager']
+  Bottom tokens: ['▁océano', '▁revisión', '▁valoración', '▁compré', '▁zwycię']
+  Interpretation: Short tokens and word fragments, especially in non-Spanish languages or single characters
+
+Feature 143457:
+  Top tokens: ['▁сол', '▁öğrenciler', '▁FeCl', '𝑻', '▁avaient']
+  Bottom tokens: ['ل', 'í', '▁are', '▁as', '▁It']
+  Interpretation: Non-English language tokens and specialized symbols, avoiding common English words.
+
+Feature 120789:
+  Top tokens: ['фта', '。', '▁', '▁և', 'বস']
+  Bottom tokens: ['urs', 'マックス', 'ra', 'ی', '𝓶']
+  Interpretation: Non-Latin script tokens and whitespace markers, particularly from Cyrillic and South Asian writing systems.
+
+Feature 226665:
+  Top tokens: ['</h3>', 'கொ', '▁zacz', '▁Probleme', '▁']
+  Bottom tokens: ['the', 'ра', ':', 'ма', 'یا']
+  Interpretation: Uncommon or non-English tokens that appear infrequently in typical text.
+
+Feature 191119:
+  Top tokens: ['ف', 'ing', 'ne', 'ى', 'ق']
+  Bottom tokens: ['▁ways', 'W', 'T', '0', 'K']
+  Interpretation: Non-English characters and morphemes, particularly Arabic letters and foreign language suffixes.
+
+Feature 1127:
+  Top tokens: ['.', 'i', '▁', ')', '▁are']
+  Bottom tokens: ['D', 'H', 'U', 'G', 'B']
+  Interpretation: Common short tokens, function words, and punctuation marks, avoiding single capital letters.
+
+Feature 116195:
+  Top tokens: ['la', 't', 'ä', '▁Funding', '▁Researchers']
+  Bottom tokens: ['▁pcMove', 'Defocused', '▁}{}_{\\', '▁mesmos', '▁HUOBI']
+  Interpretation: Non-English characters and academic research-related terms in English text.
+
+Feature 217650:
+  Top tokens: ['▁promen', '▁patina', '▁centerline', 'िकर', '▁uniformed']
+  Bottom tokens: ['н', 'an', 'न', '不愿意', 'ν']
+  Interpretation: Sophisticated English vocabulary tokens, often technical or formal words with Latin origins.
+
+Feature 169341:
+  Top tokens: ['ر', 'ικά', '▁Cardiff', '拉斯', '▁Southport']
+  Bottom tokens: ['znam', 'sidenav', 'ស្ស', '▁saranam', 't']
+  Interpretation: Non-Latin script characters and tokens from diverse writing systems including Arabic Greek Chinese Korean Bengali Hindi
+
+Feature 63227:
+  Top tokens: ['’', ':', '),', '5', '▁অর্থাৎ']
+  Bottom tokens: ['ಗಳನ್ನು', 'ين', 'ಗಳು', 'اب', '▁रझा']
+  Interpretation: Common punctuation marks used for sentence structure and formatting
+
+Feature 31276:
+  Top tokens: ['▁nó', '▁ентите', 'řízení', 'endom', '▁DENUMIRE']
+  Bottom tokens: ['-', '▁', '▁Ball', ')', '▁ball']
+  Interpretation: Non-English content words from various European languages, particularly Slavic and Romance languages.
+
+Feature 46856:
+  Top tokens: ['▁تهیه', 'etheus', 'кси', 'োভ', 'ógicos']
+  Bottom tokens: ['\n', 'ل', '▁shameful', 'ലെ', '▁Measure']
+  Interpretation: Non-English words or morphemes from diverse languages and scripts.
+
+Feature 111437:
+  Top tokens: ['▁Фурга', 'ssä', '▁તમારા', 'abhavena', 'rzez']
+  Bottom tokens: ['2', 'ка', 'q', 'y', 'ing']
+  Interpretation: Non-English language tokens, particularly from Indic, Slavic, Germanic, and Finno-Ugric languages.
+
+Feature 235218:
+  Top tokens: ['▁Mô', '2', 'Ultra', 'Jakarta', '▁двигателя']
+  Bottom tokens: ['स्ति', 'が存在', 'avir', 'czenia', '),”']
+  Interpretation: Technical terms, proper nouns, and specialized vocabulary tokens from various languages.
+
+Feature 217174:
+  Top tokens: ['▁मिळाले', '▁gleichen', 'ória', 'يدة', 'ิ']
+  Bottom tokens: ['ਬ', 'सुबह', 'beatCounter', '▁चुनावी', 'guna']
+  Interpretation: Tokens from non-English languages and writing systems, particularly South Asian and other international scripts.
+
+Feature 31078:
+  Top tokens: ['ﺎ', 'Allora', "'", 'ﺄ', 'ン']
+  Bottom tokens: ['▁$.', '▁aktu', '▁gel', '▁Mathemat', '▁évidence']
+  Interpretation: Non-Latin script characters and diacritical marks from various international writing systems.
+
+Feature 182618:
+  Top tokens: ['駆動', '非常に', '収', '実際に', '▁ottenuto']
+  Bottom tokens: ['Xs', 'ing', 'žil', '秭', 'InEx']
+  Interpretation: Non-English Unicode characters and words from non-Latin script languages.
+
+Feature 68460:
+  Top tokens: ['ग्राम', 'фессиона', 'гора', '전히', '▁(']
+  Bottom tokens: ['illae', 'ikken', 'زه', '▁gt', 'numpy']
+  Interpretation: Non-English tokens from various languages and scripts, particularly Asian and Cyrillic text.
+
+========================================
+GROUP: B_min_cos
+========================================
+
+Feature 205908:
+  Top tokens: ['▁instinctively', 'გენ', 'istence', '▁enigmatic', '▁apportion']
+  Bottom tokens: ['须', '▁ди', '千', '団', '需']
+  Interpretation: Longer complex tokens including sophisticated English vocabulary and non-Latin script text
+
+Feature 186802:
+  Top tokens: ['()))', '៤', 'ourced', '的市场', '▁также']
+  Bottom tokens: ['ut', 'm', '▁it', 'to', '▁he']
+  Interpretation: Rare tokens including non-Latin scripts, special symbols, and uncommon character combinations.
+
+Feature 222113:
+  Top tokens: ['▁unlaw', 'ग्गा', '只要', 'たら', '▁closets']
+  Bottom tokens: ['z', 'van', '▁Maple', 'zadeh', 'zigen']
+  Interpretation: Non-Latin script tokens and formal/legal English words, avoiding simple Latin characters.
+
+Feature 91398:
+  Top tokens: ['r', 'o', 'le', 'ร', 's']
+  Bottom tokens: ['▁Suppliers', '▁OFFIC', 'НИЕ', '▁SUPPL', 'ਿਕ']
+  Interpretation: Short tokens especially single letters and brief syllables
+
+Feature 94325:
+  Top tokens: ['ו', 'ד', 'ן', '▁preservation', 'ร']
+  Bottom tokens: ['c', 'n', 'ول', 'a', 'la']
+  Interpretation: Hebrew letters and other non-Latin script characters, particularly individual Hebrew consonants.
+
+Feature 35854:
+  Top tokens: ['ließlich', '▁எல்லாம்', 'á', '葯', 'heureusement']
+  Bottom tokens: ['\n\n', '▁Kelas', 'x', '.', 'برا']
+  Interpretation: Foreign language tokens and partial word fragments from diverse non-English scripts and languages.
+
+Feature 260896:
+  Top tokens: ['जिटिव', '▁نیست', 'レンズ', 'ંટણી', 'marshalO']
+  Bottom tokens: ['’', '▁fully', '▁conquest', "'", '▁plus']
+  Interpretation: Non-Latin script tokens and Unicode characters from various writing systems.
+
+Feature 228581:
+  Top tokens: ['▁fundamento', '▁piezoelectric', '▁vibrational', '▁arenas', '▁suminist']
+  Bottom tokens: ['璘', 'of', 'x', '什么', 'し']
+  Interpretation: Technical or specialized vocabulary terms from engineering, construction, chemistry and scientific domains.
+
+Feature 108812:
+  Top tokens: ['▁ประกอบ', '▁两', 'ठभे', 'एएस', '一段']
+  Bottom tokens: ['y', '▁and', 'bell', '▁di', 'ka']
+  Interpretation: Non-English tokens from Asian languages especially Thai Chinese and Indic scripts
+
+Feature 69088:
+  Top tokens: ['ل', 'ζ', '▁for', '𝓂', '▁फॉर']
+  Bottom tokens: ['{', 'ON', 'EN', '.', '\\']
+  Interpretation: Non-Latin script characters and foreign language tokens, especially single characters from various writing systems.
+
+Feature 15014:
+  Top tokens: ['ก', 'u', 'ica', 'กำ', '▁होऊ']
+  Bottom tokens: ['▁radios', 'د', '▁aur', '▁drones', '▁милли']
+  Interpretation: Non-English characters and fragments from various international scripts and writing systems.
+
+Feature 26141:
+  Top tokens: ['▁Tropical', 'εται', '取り', 'θο', '▁YOLO']
+  Bottom tokens: ['cza', 'head', 'सिया', 'assung', 'IN']
+  Interpretation: Capital letter tokens starting proper nouns, technical terms, or non-Latin script characters.
+
+Feature 231831:
+  Top tokens: ['▁sesión', 'raš', 'ICIO', 'sembles', 'деш']
+  Bottom tokens: ['▁end', '▁It', '▁Block', '▁V', '▁Not']
+  Interpretation: Non-English words and foreign language tokens, particularly from less common languages in text.
+
+Feature 83737:
+  Top tokens: ['कांना', 'asshi', '▁विद्यार्थ्यांना', 'acchati', 'お願い致します']
+  Bottom tokens: ['▁in', '▁K', '▁Hand', '▁I', '▁في']
+  Interpretation: Non-English script tokens and transliterated words from various languages, particularly Indic scripts.
+
+Feature 38708:
+  Top tokens: ['Ketika', 'सोशल', 'Như', '槨', '▁########.']
+  Bottom tokens: ['▁جهاز', 'quard', 'υσ', 'ласти', '▁rhythmic']
+  Interpretation: Non-English words and characters from various languages including Asian and Cyrillic scripts.
+
+Feature 109550:
+  Top tokens: ['▁Pandas', '▁*}\\', '<unused2>', '▁බොහෝ', 'FD']
+  Bottom tokens: ['рою', 'src', 't', 'рав', 'riven']
+  Interpretation: Technical domain-specific terms and programming-related tokens, often capitalized or containing special characters.
+
+Feature 100038:
+  Top tokens: ['ar', '▁|', '下拉', '▁выбрали', 'showerror']
+  Bottom tokens: ['▁ACLU', 'asyarakat', '▁authorizations', '▁attorney', '▁authorized']
+  Interpretation: Technical symbols, programming elements, and non-English text fragments, avoiding English legal/authority terms.
+
+Feature 12190:
+  Top tokens: ['▁Romantic', '▁गर्ल', '▁romant', '▁romantic', '▁Restaurant']
+  Bottom tokens: ['ين', 'ف', '<0x80>', 'as', 'ج']
+  Interpretation: Words related to romance relationships and hospitality venues associated with dating or intimate settings
+
+Feature 230663:
+  Top tokens: ['ंसह', '४', 'त', 'Wifi', '健康']
+  Bottom tokens: ['▁blockchains', '▁pouches', '▁cartridges', '▁gaskets', '▁membranes']
+  Interpretation: Non-Latin script characters and symbols, particularly from Asian and Middle Eastern writing systems.
+
+Feature 158223:
+  Top tokens: ['1', '▁लीजिएगा', '▁’', '▁ლი', '姬']
+  Bottom tokens: ['அத', '▁expts', '▁Estimation', '▁ভুল', 'Estimation']
+  Interpretation: Non-English characters and symbols from diverse writing systems and scripts.
+
+Feature 238946:
+  Top tokens: ['▁হুগলীর', '▁opposites', 's', '▁asignatura', 'gge']
+  Bottom tokens: ['팅', 'تاج', '▁hire', '▁}_{', '카오']
+  Interpretation: Mixed tokens from various languages without clear semantic or syntactic pattern
+
+Feature 99688:
+  Top tokens: ['▁inconsistencies', '▁usd', '▁asso', 'رج', ':']
+  Bottom tokens: ['▁weren', 'ET', '▁supposing', '▁proximate', 'ēn']
+  Interpretation: Rare or unusual tokens including technical words, word fragments, non-English characters, and specific punctuation.
+
+Feature 73021:
+  Top tokens: ['েন', '▁enumer', '▁увагу', '▁considerazione', '▁présence']
+  Bottom tokens: ['M', 'THE', 'the', 'C', '।']
+  Interpretation: Non-English language tokens and some English words with foreign language characteristics or technical terminology.
+
+Feature 237670:
+  Top tokens: ['טת', 'Tecla', '▁ongles', '۔', 'ğer']
+  Bottom tokens: ['▁livestream', '▁news', '克', '▁pensions', '▁parks']
+  Interpretation: Non-English tokens from various languages and writing systems.
+
+Feature 146091:
+  Top tokens: ['<0x0D>', 'צות', '；', 'Τα', 'பிர']
+  Bottom tokens: ['lap', '͚', '▁hadn', 'la', '在']
+  Interpretation: Rare or non-standard tokens including non-Latin scripts, technical terms, and uncommon punctuation marks.
+
+========================================
+GROUP: A_max_cos
+========================================
+
+Feature 41596:
+  Top tokens: ['я', 'ма', 'তে', 'ש', 'treme']
+  Bottom tokens: ['A', 'D', '}">', '(', 'I']
+  Interpretation: Non-Latin script characters and letter sequences from various writing systems like Cyrillic Bengali Hebrew Thai.
+
+Feature 39176:
+  Top tokens: ['\n', '▁a', 'ن', '</h2>', '</em>']
+  Bottom tokens: ['ä', 'л', 'ל', '▁všetky', '▁Фургал']
+  Interpretation: Common web formatting tags and frequent tokens across languages, avoiding rare foreign characters.
+
+Feature 237794:
+  Top tokens: ['时', '▁édition', '▁effectuées', '▁především', '▁appliquée']
+  Bottom tokens: ['、', '人に', '،', 'ない', 'रा']
+  Interpretation: Formal academic vocabulary in European languages, particularly French, with negative response to Asian punctuation and text.
+
+Feature 91281:
+  Top tokens: ['νης', 'ओं', 'ників', '▁Chaney', 'mis']
+  Bottom tokens: ['▁progressivement', '▁or', 'able', '▁tenia', '行う']
+  Interpretation: Non-English script characters and partial words from various writing systems including Greek, Cyrillic, and Devanagari.
+
+Feature 63044:
+  Top tokens: ['ется', '、', '。', '،', '紅']
+  Bottom tokens: ['ल', '(', 'ח', 'ক', 'ב']
+  Interpretation: Complete linguistic units like full words and punctuation marks across various languages and writing systems.
+
+Feature 73887:
+  Top tokens: ['ింది', 'ம்', '▁centrifuge', 'ף', '▁strs']
+  Bottom tokens: [':', 'if', '-', '{', 'ë']
+  Interpretation: Non-Latin script characters and technical terms, avoiding common punctuation and basic English words.
+
+Feature 248828:
+  Top tokens: ['ка', 'ع', '은', 'indices', 'restaurant']
+  Bottom tokens: ['▁on', '▁(', '▁by', 'CH', 'UGH']
+  Interpretation: Non-English script characters and less common English words, avoiding frequent function words.
+
+Feature 252245:
+  Top tokens: ['ม', '𝘏', 'மே', '灝', '𝘔']
+  Bottom tokens: ['es', 'et', '▁stole', '▁fol', 'c']
+  Interpretation: Non-Latin script characters and words from non-English languages including Thai Tamil Chinese and Indian languages
+
+Feature 30176:
+  Top tokens: ['UZ', '▁पटाखों', '▁alebo', 'SCAPE', 'OP']
+  Bottom tokens: ['\n', 's', '▁किंतु', 'N', '(']
+  Interpretation: Uncommon or specialized tokens from various non-English languages and technical abbreviations.
+
+Feature 66892:
+  Top tokens: ['л', '▁Лондон', 'ל', '▁टु', '▁л']
+  Bottom tokens: ['in', 'to', 'na', 's', 'I']
+  Interpretation: Non-Latin script characters and text from non-English languages, particularly Cyrillic, Hebrew, Devanagari, Greek, and Chinese.
+
+Feature 63387:
+  Top tokens: ['.', '▁', 'ci', 'ла', 'wd']
+  Bottom tokens: ['ก', 'د', 'ד', 'ন', 'ী']
+  Interpretation: Punctuation marks and Latin script tokens, with negative activation on non-Latin script characters.
+
+Feature 253985:
+  Top tokens: ['a', 'v', 'r', 'śmy', '▁निकालेंगे']
+  Bottom tokens: ['▁tsunami', '▁በሽታ', 'ак', 'і', '▁mellitus']
+  Interpretation: Single characters or very short character sequences across multiple writing systems and languages.
+
+Feature 66692:
+  Top tokens: ['、', 'هم', '。', '،', '，']
+  Bottom tokens: ['in', 'ino', '기', '▁불구하고', 'ati']
+  Interpretation: Non-English punctuation marks and characters, particularly from Asian and Middle Eastern writing systems.
+
+Feature 70718:
+  Top tokens: ['리', 'ри', '사', '야', 'ح']
+  Bottom tokens: ['0', 'j', 'y', 'g', 'á']
+  Interpretation: Non-Latin script characters and syllables from languages like Korean, Arabic, Persian, Hindi.
+
+Feature 136872:
+  Top tokens: ['▁brunâtre', '：', '▁می', '▁avez', '▁fabricación']
+  Bottom tokens: ['il', 'er', 'in', 'ur', 'ר']
+  Interpretation: Non-English words from various languages, particularly longer words with diacritical marks or non-Latin scripts.
+
+Feature 77987:
+  Top tokens: ['l', "'", '▁water', '▁table', '▁text']
+  Bottom tokens: ['༥', '▁ܗ', 'štění', '▁მკ', '▁अदर']
+  Interpretation: Common English words and basic Latin characters, with negative activation on non-English scripts.
+
+Feature 144031:
+  Top tokens: ['ን', 'и', 'ی', 'ьте', 'ի']
+  Bottom tokens: ['in', 'r', 'il', 'as', 'l']
+  Interpretation: Non-Latin script characters and non-English words, particularly from various international writing systems.
+
+Feature 253584:
+  Top tokens: ['▁miles', '▁\xad', '▁बड़ी', '▁surpasses', '▁Miles']
+  Bottom tokens: ['滹', '▁kebijakan', '腱', 'otika', '▁Matemat']
+  Interpretation: Tokens related to distance measurement and comparative magnitude across multiple languages.
+
+Feature 51697:
+  Top tokens: ['name', 'nummer', 'offline', 'number', 'Number']
+  Bottom tokens: ['▁Robots', '▁Choosing', '▁tantrums', '▁Scientists', '▁twigs']
+  Interpretation: Words related to identification, naming, or numbering systems across multiple languages.
+
+Feature 222271:
+  Top tokens: ['的時候', '▁shumë', '▁as', '▁وقت', '▁với']
+  Bottom tokens: ['▁QuantityOnHand', '▁protrusion', 'នៃការ', '▁của', '▁occupant']
+  Interpretation: Temporal markers and intensifying adverbs expressing time relationships or degree across multiple languages.
+
+Feature 248175:
+  Top tokens: ['t', 'ig', 'owo', 'n', 'as']
+  Bottom tokens: ['ی', 'و', '▁Rakh', '▁：', 'ّة']
+  Interpretation: Short English subword tokens or character fragments, typically 1-3 characters long.
+
+Feature 154870:
+  Top tokens: ['g', 'c', 'el', 'an', 'EL']
+  Bottom tokens: ['▁измене', '▁размере', '▁Шу', 'DepartTime', '▁alphanumeric']
+  Interpretation: Short letter sequences and abbreviations, particularly single letters and brief letter combinations.
+
+Feature 118994:
+  Top tokens: ['ing', 'el', 'en', 'ed', 'art']
+  Bottom tokens: ['ని', 'SpriteCollision', 'ハ', 'ш', 'ки']
+  Interpretation: English morphological endings and short word fragments, contrasted with non-Latin script characters.
+
+Feature 118168:
+  Top tokens: ['▁Happy', '0', '▁that', '▁I', 'happy']
+  Bottom tokens: ['ل', 'ي', 'ت', '▁singleRun', 'و']
+  Interpretation: Tokens related to happiness and positive emotions, especially variations of "happy"
+
+Feature 31646:
+  Top tokens: ['▁kg', '.', '▁to', '1', 'น']
+  Bottom tokens: ['c', '𝗲', 'elijk', '▁ಎ', '▁сцен']
+  Interpretation: Weight/measurement units like kg and related numerical contexts, especially in non-English text.
+
+========================================
+GROUP: A_min_cos
+========================================
+
+Feature 10312:
+  Top tokens: ['t', 'N', 'K', 'B', 'W']
+  Bottom tokens: ['▁futuras', '▁marinas', '▁lindas', 'ش', 'ﻮ']
+  Interpretation: Single uppercase letters and brief standalone alphabetic characters across different writing systems.
+
+Feature 256061:
+  Top tokens: ['g', 'ти', 'n', 'is', 't']
+  Bottom tokens: ['1', '3', '4', '6', '7']
+  Interpretation: Single letters or short letter sequences from various alphabetic scripts, negatively activated by digits.
+
+Feature 33613:
+  Top tokens: ['ية', 'కు', '보', 'ر', '▁auront']
+  Bottom tokens: ['1', 'et', '▁a', 'lar', 'pe']
+  Interpretation: Non-Latin script characters and tokens from diverse languages including Arabic, Telugu, Korean, Cyrillic.
+
+Feature 111095:
+  Top tokens: ['Boards', '$,', 'bere', 'schw', 'esi']
+  Bottom tokens: ['a', 'i', '▁the', '是', '▁TOEFL']
+  Interpretation: Non-English word fragments and tokens from various foreign languages, excluding common English words.
+
+Feature 89310:
+  Top tokens: ['ت', 'ל', 'ת', '裂', '混乱']
+  Bottom tokens: ['ма', ';', '▁as', '▁is', '▁utilizzando']
+  Interpretation: Non-Latin script characters and foreign language tokens, especially Hebrew and Chinese characters.
+
+Feature 62376:
+  Top tokens: ['ice', 'og', 'ও', 'in', '▁tyto']
+  Bottom tokens: [',', '▁that', ':', '▁которому', '▁and']
+  Interpretation: Short morphological fragments and word stems, often 2-3 characters from various languages.
+
+Feature 51185:
+  Top tokens: ['te', 'to', 'OL', 'EL', '0']
+  Bottom tokens: ['ری', ':', 'ことを', 'רי', '▁ardından']
+  Interpretation: Short alphanumeric tokens and brief letter combinations, typically 1-3 characters long
+
+Feature 3621:
+  Top tokens: ['t', 'ти', 'r', 'g', 'ल']
+  Bottom tokens: ['4', '3', '6', '8', '▁femmes']
+  Interpretation: Incomplete tokens, single letters, and partial words from various scripts, avoiding complete digits and full words.
+
+Feature 243568:
+  Top tokens: ['▁tätig', 'werp', '(', '>', 'ión']
+  Bottom tokens: ['an', 'a', 'ل', 'et', 'ان']
+  Interpretation: Diverse content words and non-English tokens, avoiding common short function words.
+
+Feature 17016:
+  Top tokens: ['t', '▁on', 'л', '１', 'ς']
+  Bottom tokens: ['ich', 'ă', 'נים', 'ikle', '▁I']
+  Interpretation: Short linguistic units including single characters, morphemes, and brief words across multiple writing systems and languages.
+
+Feature 84429:
+  Top tokens: ['t', 'ت', 'т', 'y', 'त']
+  Bottom tokens: ['ش', '▁a', 'in', 'л', ';']
+  Interpretation: Single characters or short tokens across multiple writing systems and languages.
+
+Feature 3535:
+  Top tokens: ['than', '▁than', '▁Than', 'aría', 'ط']
+  Bottom tokens: ['ERS', '▁машины', 'Fs', '▁maneiras', '▁spese']
+  Interpretation: The word "than" and non-English characters with diacritical marks or special Unicode symbols.
+
+Feature 12411:
+  Top tokens: ['▁الطلاب', '▁{', '▁as', '▁students', 'students']
+  Bottom tokens: ['on', '로', 'ও', 'та', 'غ']
+  Interpretation: Words meaning "students" in various languages plus some punctuation and single characters.
+
+Feature 49524:
+  Top tokens: ['t', 'B', 'K', '▁on', 'G']
+  Bottom tokens: ['et', '",', 'в', 'in', '▁malattie']
+  Interpretation: Single letters, especially capital letters, likely in abbreviations or initials.
+
+Feature 26674:
+  Top tokens: ['চ্যুত', 'on', 'ad', 'p', '▁ascertain']
+  Bottom tokens: ['▁دي', '▁после', '▁أو', '▁mö', '▁بعد']
+  Interpretation: Tokens related to knowledge acquisition or understanding, often in non-Latin scripts or formal English contexts.
+
+Feature 2256:
+  Top tokens: ['u', 'uettes', '▁reputations', 'ナソニック', '▁variances']
+  Bottom tokens: ['▁', 'し', 'כ', 'that', 'り']
+  Interpretation: Tokens containing the letter "u" or prominent "u" sounds in various languages and contexts.
+
+Feature 156923:
+  Top tokens: ['ม', "'", 'ികിത്സ', '▁savag', 'айл']
+  Bottom tokens: ['D', 'ן', 'in', '▁encont', 'X']
+  Interpretation: Non-Latin script characters and symbols from various international writing systems.
+
+Feature 6532:
+  Top tokens: ['ط', 'к', 'ো', ',', 'r']
+  Bottom tokens: [')', '),', ")'", '▁résultats', '▁been']
+  Interpretation: Non-Latin script characters from various writing systems including Arabic, Cyrillic, Bengali, and Korean.
+
+Feature 11070:
+  Top tokens: ['ség', '▁displaced', 'ﻙ', 'ków', 'kannya']
+  Bottom tokens: ['▁a', 'ade', 'up', 'ation', 'its']
+  Interpretation: Words related to displacement or movement across multiple languages
+
+Feature 100549:
+  Top tokens: ['K', 'N', 'B', 'L', '▁on']
+  Bottom tokens: ['in', 'et', 'ות', '▁culturales', 'that']
+  Interpretation: Single capital letters, especially consonants, appearing as standalone tokens or abbreviations.
+
+Feature 54511:
+  Top tokens: ['ل', 'л', 'ről', 'ر', 'ל']
+  Bottom tokens: ['2', ',', '’', '8', 'ua']
+  Interpretation: Non-Latin script characters from Arabic, Cyrillic, Hebrew, Thai and other writing systems
+
+Feature 5162:
+  Top tokens: ['st', 'f', '\\', '트', 'ل']
+  Bottom tokens: ['ian', '▁केवळ', '▁և', 'ղ', 'arı']
+  Interpretation: Short character sequences, single letters, and special symbols from various writing systems and programming contexts.
+
+Feature 8085:
+  Top tokens: ['л', 'ü', 'al', 'ap', 'acción']
+  Bottom tokens: ['▁this', '0', 'ได้', '▁змо', '▁ovog']
+  Interpretation: Non-English characters and letter combinations from various foreign languages and scripts
+
+Feature 14395:
+  Top tokens: ['ž', 'ط', 'λ', 'than', 'ä']
+  Bottom tokens: ['Q', '▁besoins', '▁inclinations', '▁ouvrir', 'He']
+  Interpretation: Non-Latin characters and diacritical marks from various writing systems and languages.
+
+Feature 24597:
+  Top tokens: ['h', 'D', '▁is', 'C', 'M']
+  Bottom tokens: ['та', 'ных', 'é', 'ар', '্টের']
+  Interpretation: Single letters and short tokens, especially at word or sentence beginnings.
+Done! Results saved to gemmascope/outputs/r1_lora_analysis/autointerp_262k_A_and_B.json

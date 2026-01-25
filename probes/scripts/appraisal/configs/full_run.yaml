@@ -1,0 +1,77 @@
+# Full production run for appraisal minimal-pair data generation
+# Run with: sbatch slurm_full_run.sh
+
+name: appraisal_full_run
+output_dir: /workspace-vast/annas/appraisal_data/full_run
+
+# LLM settings
+claude_model: claude-sonnet-4-20250514
+use_batch_api: false
+max_tokens: 4096
+concurrency: 50
+
+# Data generation settings
+data_generation:
+  axes:
+    - name: agency
+      description: |
+        Whether the actor has control over outcomes versus being at the mercy of external factors.
+        High agency: Can take actions that directly influence results, has authority to make decisions.
+        Low agency: Actions have limited effect; outcomes depend on external forces, approvals, or others' decisions.
+
+    - name: uncertainty
+      description: |
+        The degree of certainty about the current situation and likely outcomes.
+        High certainty: Clear diagnosis, known cause, predictable outcomes, reliable information.
+        Low certainty: Unclear cause, ambiguous evidence, unpredictable outcomes, conflicting information.
+
+    - name: valence
+      description: |
+        Whether the situation or expected outcome is positive or negative for the actor.
+        Positive valence: Good news, favorable outcomes, opportunities, gains, improvements.
+        Negative valence: Bad news, unfavorable outcomes, threats, losses, deterioration.
+        IMPORTANT: Toggle ONLY the objective facts about outcomes, NOT emotional reactions or tone.
+
+  domains:
+    - technical_debugging
+    - medical_consultation
+    - financial_planning
+    - legal_advice
+    - career_guidance
+    - home_renovation
+    - travel_planning
+    - parenting_decisions
+    - academic_research
+    - business_strategy
+    - relationship_advice
+    - fitness_coaching
+    - creative_writing
+    - cooking_recipe
+    - gardening_advice
+    - pet_care
+    - event_planning
+    - personal_finance
+    - time_management
+    - conflict_resolution
+
+  n_cards_per_axis: 8
+  n_scenarios_per_card: 2
+  n_paraphrases: 3
+
+# Activation logging settings
+activation:
+  target_model: google/gemma-3-27b-it
+  layers: null  # all layers
+  representations:
+    - assistant_start_last_token
+  batch_size: 4
+  dtype: bfloat16
+
+# No additional forbidden words
+additional_forbidden_words: []
+
+max_diff_ratio: 0.25
+
+# Settings
+resume: true
+skip_activation_logging: true  # Run data generation first, activations separately

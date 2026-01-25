@@ -123,7 +123,7 @@ BASELINE_CONFIG = {
 # Model settings
 MODEL_CONFIG = {
     'model_name': 'unsloth/gemma-3-27b-it',
-    'layers': list(range(20, 41)),  # Layers 20-40
+    'layers': list(range(0, 62)),  # All 62 layers
 }
 
 # Emotion settings
@@ -145,6 +145,16 @@ EMOTION_COLORS = {
     'happiness': COLORS['coral'],     # #D4876A
     'sadness': COLORS['sage'],        # #B8CCC8
     'surprise': '#D1728F',            # Darker pink
+}
+
+# Dimensional axes (for axis lens)
+AXES = ['valence', 'arousal', 'dominance', 'approach_avoidance']
+
+AXIS_COLORS = {
+    'valence': '#E74C3C',           # Red
+    'arousal': '#3498DB',           # Blue
+    'dominance': '#2ECC71',         # Green
+    'approach_avoidance': '#9B59B6' # Purple
 }
 
 def get_probe_config(probe_key: str) -> dict:

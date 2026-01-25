@@ -1,0 +1,21 @@
+✓ Activated venv
+================================================================================
+TESTING LOGIT LENS ON SINGLE SENTENCE
+================================================================================
+
+[1/5] Loading model...
+✓ Loaded model: unsloth/gemma-3-27b-it
+
+[2/5] Loading emotion token IDs...
+✓ Loaded token IDs for 6 emotions
+
+[3/5] Loading baseline statistics...
+
+Computing layer-averaged baseline stats across 11 layers...
+✓ Averaged stats for 1231 tokens across 6 emotions
+✓ Loaded and averaged baseline stats for layers 40-50
+
+[4/5] Processing test sentence...
+Prompt: I hate you so much! You make me sick!
+Tokens: ['<bos>', 'I', '▁hate', '▁you', '▁so', '▁much', '!', '▁You', '▁make', '▁me', '▁sick', '!']
+Number of tokens: 12

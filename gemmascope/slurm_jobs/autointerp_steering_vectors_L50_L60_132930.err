@@ -1,0 +1,9 @@
+usage: autointerp_features.py [-h] [--summary-path SUMMARY_PATH]
+                              [--a-matrix-path A_MATRIX_PATH]
+                              [--sae-layer SAE_LAYER] [--sae-width SAE_WIDTH]
+                              [--sae-l0 SAE_L0] [--use-all-layers]
+                              [--model-size MODEL_SIZE]
+                              [--n-features N_FEATURES] [--output OUTPUT]
+                              [--interp-model INTERP_MODEL]
+                              [--concurrent CONCURRENT]
+autointerp_features.py: error: unrecognized arguments: --analysis-path gemmascope/outputs/steering_vector_analysis/textmeandiff_layer50_262k.summary.json --n-top 20 --n-bottom 20

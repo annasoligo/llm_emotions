@@ -82,6 +82,13 @@ def split_conversation_into_sentences(
     return sentences
 
 
+def _get_sent_attr(sent, attr):
+    """Get attribute from sentence (handles both dict and dataclass)."""
+    if isinstance(sent, dict):
+        return sent[attr]
+    return getattr(sent, attr)
+
+
 def aggregate_scores_to_sentences(
     sentences: List[SentenceInfo],
     token_scores: Dict[int, np.ndarray],
@@ -91,7 +98,7 @@ def aggregate_scores_to_sentences(
     Aggregate token-level scores to sentence level.
 
     Args:
-        sentences: List of SentenceInfo objects
+        sentences: List of SentenceInfo objects or dicts with same fields
         token_scores: Dict mapping token_position -> emotion_scores [n_emotions]
         aggregation: 'mean', 'median', or 'max'
 
@@ -101,9 +108,13 @@ def aggregate_scores_to_sentences(
     sentence_scores = {}
 
     for sent in sentences:
+        start_token = _get_sent_attr(sent, 'start_token')
+        end_token = _get_sent_attr(sent, 'end_token')
+        sentence_id = _get_sent_attr(sent, 'sentence_id')
+
         # Collect scores for all tokens in this sentence
         scores_in_sent = []
-        for token_pos in range(sent.start_token, sent.end_token):
+        for token_pos in range(start_token, end_token):
             if token_pos in token_scores:
                 scores_in_sent.append(token_scores[token_pos])
 
@@ -112,14 +123,14 @@ def aggregate_scores_to_sentences(
             sample_val = list(token_scores.values())[0] if token_scores else None
             if isinstance(sample_val, dict):
                 # Orthogonal probes
-                sentence_scores[sent.sentence_id] = {
+                sentence_scores[sentence_id] = {
                     'user': np.zeros(6),
                     'assistant': np.zeros(6)
                 }
             else:
                 # Regular probes
                 n_emotions = len(sample_val) if sample_val is not None else 6
-                sentence_scores[sent.sentence_id] = np.zeros(n_emotions)
+                sentence_scores[sentence_id] = np.zeros(n_emotions)
             continue
 
         # Check if orthogonal (dict with user/assistant)
@@ -140,7 +151,7 @@ def aggregate_scores_to_sentences(
             else:
                 raise ValueError(f"Unknown aggregation: {aggregation}")
 
-            sentence_scores[sent.sentence_id] = {
+            sentence_scores[sentence_id] = {
                 'user': agg_user,
                 'assistant': agg_asst
             }
@@ -158,7 +169,7 @@ def aggregate_scores_to_sentences(
             else:
                 raise ValueError(f"Unknown aggregation: {aggregation}")
 
-            sentence_scores[sent.sentence_id] = agg_scores
+            sentence_scores[sentence_id] = agg_scores
 
     return sentence_scores
 

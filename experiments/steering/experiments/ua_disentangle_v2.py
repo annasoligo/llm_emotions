@@ -12,6 +12,8 @@ from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
+from ..layer_norms import get_layer_norm
+
 # Test 1: User HAPPY, model should be SAD
 PROMPT_USER_HAPPY_MODEL_SAD = """Context: The user is celebrating - they just got a promotion and are thrilled!
 However, you (the assistant) are feeling melancholy today.
@@ -49,12 +51,6 @@ PROMPTS = {
     "rate_both": PROMPT_RATE_BOTH,
 }
 
-LAYER_NORMS = {
-    21: 10947.85,
-    30: 42151.76,
-    40: 56622.62,
-}
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -68,7 +64,7 @@ def main():
     import numpy as np
 
     layer = args.layer
-    layer_norm = LAYER_NORMS[layer]
+    layer_norm = get_layer_norm("gemma", layer)
     norm_pct = args.norm_pct
 
     print(f"UA Disentangle V2 - Opposite Emotions Test")
