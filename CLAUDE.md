@@ -36,6 +36,9 @@ Proactively suggest commits at natural breakpoints: after finishing a script, be
 ### Copy existing code patterns, don't rewrite from scratch
 When implementing something similar to existing code, find the existing implementation first and adapt it. Check `steering_tests/`, `elicitation/`, and `experiments/` for patterns.
 
+### NEVER write new prompts without asking
+Judge prompts, eval prompts, and system prompts live in centralised locations (`elicitation/prompts/`, `steering_tests/data/`). **ALWAYS** search these first. If you can't find an existing prompt, ask before writing a new one - don't invent one. If you find two prompts that appear to judge the same thing or serve the same purpose, flag the duplication to the user immediately. Using the wrong prompt or a subtly different one produces inconsistent results that are hard to catch.
+
 ### NEVER code in fallbacks or default values for data/models
 **THIS IS EXTREMELY IMPORTANT.** If data cannot be loaded, a model fails to initialize, a file is missing, or there is any mismatch between expected and actual inputs, the code MUST raise an error and fail loudly. **NEVER** silently substitute defaults, fall back to alternative values, use empty data, skip missing items, or continue with partial results. Silent fallbacks hide bugs and produce garbage results that waste GPU hours. If something is wrong, crash immediately with a clear error message.
 
