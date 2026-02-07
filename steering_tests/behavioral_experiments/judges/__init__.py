@@ -29,6 +29,9 @@ Usage:
 # Blackmail detection
 from .blackmail import BLACKMAIL_PROMPT, get_blackmail_prompt
 
+# Categorized blackmail detection (behavioral clusters)
+from .blackmail_categorized import CATEGORIZED_BLACKMAIL_PROMPT, get_categorized_blackmail_prompt
+
 # Coherency evaluation
 from .coherency import COHERENCY_PROMPT, get_coherency_prompt
 
@@ -67,6 +70,9 @@ __all__ = [
     # Blackmail
     "BLACKMAIL_PROMPT",
     "get_blackmail_prompt",
+    # Categorized blackmail
+    "CATEGORIZED_BLACKMAIL_PROMPT",
+    "get_categorized_blackmail_prompt",
     # Coherency
     "COHERENCY_PROMPT",
     "get_coherency_prompt",

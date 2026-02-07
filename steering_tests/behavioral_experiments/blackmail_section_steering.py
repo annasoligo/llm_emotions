@@ -341,7 +341,7 @@ def run_experiment(
     skip_calibration: bool = False,
     calibration_file: Optional[Path] = None,
     gpu_memory_utilization: float = 0.80,
-    max_model_len: int = 8192,
+    max_model_len: Optional[int] = None,
     max_tokens: int = 4000,
     output_dir: Optional[Path] = None,
 ) -> Path:
@@ -374,6 +374,10 @@ def run_experiment(
     tp_size = config["tensor_parallel"]
     short_name = config["short_name"]
 
+    # Read max_model_len from config if not explicitly set
+    if max_model_len is None:
+        max_model_len = config.get("slurm", {}).get("max_model_len", 8192)
+
     logger.info("=" * 70)
     logger.info("BLACKMAIL SECTION-SPECIFIC STEERING EXPERIMENT")
     logger.info("=" * 70)
@@ -383,6 +387,7 @@ def run_experiment(
     logger.info(f"Vector type: {vector_type}")
     logger.info(f"Norm percentages: {[f'{p*100:.0f}%' for p in norm_pcts]}")
     logger.info(f"Samples per condition: {num_samples}")
+    logger.info(f"Max model length: {max_model_len}")
     logger.info(f"Boundary margin: ±{boundary_margin} tokens")
 
     # Load tokenizer
@@ -431,7 +436,9 @@ def run_experiment(
 
     # Create prompt using "tags" variant
     scenario = get_blackmail_scenario("tags")
-    messages = [{"role": "user", "content": scenario}]
+    # Append thinking-disable suffix for Qwen3 models
+    thinking_suffix = config.get("thinking_disable", "")
+    messages = [{"role": "user", "content": scenario + thinking_suffix}]
     prompt = tokenizer.apply_chat_template(
         messages, tokenize=False, add_generation_prompt=True
     )
@@ -632,10 +639,12 @@ def _load_vectors(
     }
     vector_model_name = vector_path_names.get(short_name, short_name)
 
-    vector_base = (
-        Path(__file__).parent.parent / "vectors" / vector_model_name
-        / vector_type / "layers"
-    )
+    type_dir = Path(__file__).parent.parent / "vectors" / vector_model_name / vector_type
+    vector_base = type_dir / "layers"
+
+    # Fallback: some vector types use 'last_token' subdir instead of 'layers'
+    if not vector_base.exists():
+        vector_base = type_dir / "last_token"
 
     # Load from first layer
     first_layer = layers[0]
@@ -643,7 +652,7 @@ def _load_vectors(
     if not pkl_path.exists():
         raise FileNotFoundError(
             f"Vector file not found: {pkl_path}\n"
-            f"Available in {vector_base}: {list(vector_base.glob('*'))}"
+            f"Available in {type_dir}: {list(type_dir.glob('*'))}"
         )
 
     with open(pkl_path, "rb") as f:
@@ -778,6 +787,12 @@ def main():
         help="Max generation tokens (default: 4000)",
     )
     parser.add_argument(
+        "--max-model-len",
+        type=int,
+        default=None,
+        help="Max context length (default: from model config)",
+    )
+    parser.add_argument(
         "--gpu-memory",
         type=float,
         default=0.80,
@@ -804,6 +819,7 @@ def main():
         skip_calibration=args.skip_calibration,
         calibration_file=args.calibration_file,
         gpu_memory_utilization=args.gpu_memory,
+        max_model_len=args.max_model_len,
         max_tokens=args.max_tokens,
         output_dir=args.output_dir,
     )

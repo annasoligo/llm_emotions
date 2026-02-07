@@ -34,7 +34,7 @@ python -m steering_tests.behavioral_experiments.blackmail_section_steering \
     --model google/gemma-3-27b-it \
     --layers 35 36 37 38 39 \
     --emotion fear \
-    --vector-type text_pairs_code_emotion_vs_neutral \
+    --vector-type text_pairs_emotion_vs_opposite \
     --norm-pcts 0.10 0.20 \
     --num-samples 50 \
     --num-calibration 20 \
