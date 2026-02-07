@@ -45,6 +45,25 @@ except ImportError:
         return iterable
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
+try:
+    from steering_tests.steering_utils.provenance import get_provenance
+except ImportError:
+    # Fallback if run without PYTHONPATH set to repo root
+    def get_provenance(**kwargs):
+        import subprocess
+        from datetime import datetime, timezone
+        try:
+            commit = subprocess.check_output(
+                ["git", "rev-parse", "--short=10", "HEAD"],
+                text=True, stderr=subprocess.DEVNULL
+            ).strip()
+        except Exception:
+            commit = None
+        meta = {"git_commit": commit, "timestamp": datetime.now(timezone.utc).isoformat()}
+        if kwargs.get("script"):
+            meta["script"] = str(kwargs["script"])
+        return meta
+
 
 @dataclass
 class CollectionMetadata:
@@ -878,10 +897,12 @@ def main():
         total_activations=total_items * len(layers),
     )
 
-    # Save metadata
+    # Save metadata with provenance
+    meta_dict = asdict(metadata)
+    meta_dict["provenance"] = get_provenance(script=__file__)
     meta_path = args.output / "metadata.json"
     with open(meta_path, 'w') as f:
-        json.dump(asdict(metadata), f, indent=2)
+        json.dump(meta_dict, f, indent=2)
     print(f"✓ Saved metadata: {meta_path}")
 
     print("\n" + "=" * 80)

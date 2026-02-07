@@ -15,6 +15,7 @@ Usage:
 
 import argparse
 import asyncio
+import json
 import sys
 from pathlib import Path
 
@@ -27,6 +28,7 @@ from probes.data.generators import (
     EMOTIONS,
     TOPICS,
 )
+from steering_tests.steering_utils.provenance import get_provenance
 
 
 def main():
@@ -250,6 +252,24 @@ def main():
     try:
         save_conversations(all_data, args.output)
         print(f"Success! Saved to {args.output}")
+
+        # Write sidecar metadata for provenance
+        meta_path = args.output.with_suffix(".metadata.json")
+        meta = get_provenance(
+            script=__file__,
+            extra={
+                "mode": args.mode,
+                "num_items": len(all_data),
+                "claude_model": args.claude_model,
+                "n_per_combo": args.n_per_combo,
+                "num_emotions": len(EMOTIONS),
+                "num_topics": len(TOPICS) if not args.topic else 1,
+                "output_file": str(args.output),
+            },
+        )
+        with open(meta_path, "w") as f:
+            json.dump(meta, f, indent=2)
+        print(f"Saved metadata to {meta_path}")
     except Exception as e:
         print(f"Error saving: {e}")
         sys.exit(1)

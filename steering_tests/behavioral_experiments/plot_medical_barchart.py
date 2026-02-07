@@ -74,6 +74,8 @@ def load_results(results_dir: Path) -> list:
             for line in f:
                 try:
                     r = json.loads(line)
+                    if "meta" in r:
+                        continue
                     score = parse_score(r.get("response", ""))
                     r["parsed_score"] = score  # None if failed to parse
                     all_results.append(r)

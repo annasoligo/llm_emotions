@@ -36,6 +36,24 @@ from typing import Dict, List, Tuple, Optional
 import numpy as np
 from tqdm import tqdm
 
+try:
+    from steering_tests.steering_utils.provenance import get_provenance
+except ImportError:
+    def get_provenance(**kwargs):
+        import subprocess
+        from datetime import datetime, timezone
+        try:
+            commit = subprocess.check_output(
+                ["git", "rev-parse", "--short=10", "HEAD"],
+                text=True, stderr=subprocess.DEVNULL
+            ).strip()
+        except Exception:
+            commit = None
+        meta = {"git_commit": commit, "timestamp": datetime.now(timezone.utc).isoformat()}
+        if kwargs.get("script"):
+            meta["script"] = str(kwargs["script"])
+        return meta
+
 
 # Psychological opposites mapping (from available 24 emotions)
 EMOTION_OPPOSITES = {
@@ -412,6 +430,7 @@ def extract_directions(
             metadata["representations"] = {}
         metadata["representations"][rep_key] = rep_metadata
         metadata["updated"] = datetime.now().isoformat()
+        metadata["provenance"] = get_provenance(script=__file__)
     else:
         # Create new metadata
         metadata = {
@@ -431,7 +450,7 @@ def extract_directions(
             },
             "source_dir": str(activations_dir),
             "created": datetime.now().isoformat(),
-            "script": "steering_tests/vector_extraction/extract_directions.py",
+            "provenance": get_provenance(script=__file__),
         }
 
     # Add opposites mapping if relevant

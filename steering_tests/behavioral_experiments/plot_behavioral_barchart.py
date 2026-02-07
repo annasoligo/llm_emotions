@@ -142,6 +142,8 @@ def load_portfolio_results(results_dir, vector_types=None, layer_ranges=None):
             for line in f:
                 try:
                     r = json.loads(line)
+                    if "meta" in r:
+                        continue
                     all_results.append(r)
                 except:
                     pass
@@ -357,6 +359,8 @@ def load_results(results_dir, vector_types=None, layer_ranges=None):
             for line in f:
                 try:
                     r = json.loads(line)
+                    if "meta" in r:
+                        continue
                     all_results.append(r)
                 except:
                     pass

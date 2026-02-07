@@ -46,6 +46,7 @@ from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 
 from steering_tests.steering_utils import VLLMSteering
+from steering_tests.steering_utils.provenance import ResultWriter, get_provenance, sanitize_factor_name
 
 from .config import MODEL_CONFIGS, OUTPUT_DIR
 from .vector_loading import load_appraisal_vectors, get_layer_norm
@@ -304,12 +305,29 @@ def run_experiment(
 
     logger.info(f"Total conditions: {len(experiment_conditions)}")
 
-    # Output file
+    # Per-factor output: one file per condition in a timestamped run directory
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     short_name = config["short_name"]
     think_str = "think" if thinking_enabled else "nothink"
     ortho_str = "ortho" if orthogonalize else "raw"
-    output_file = output_dir / f"portfolio_{short_name}_layer{layer}_{ortho_str}_{think_str}_{timestamp}.jsonl"
+    run_dir = output_dir / short_name / f"layer{layer}_{ortho_str}_{think_str}_{timestamp}"
+
+    writer = ResultWriter(
+        base_dir=run_dir,
+        script=__file__,
+        extra_meta={
+            "experiment": "portfolio",
+            "model": model_name,
+            "layer": layer,
+            "orthogonalize": orthogonalize,
+            "thinking_enabled": thinking_enabled,
+            "variant": variant,
+            "num_samples": num_samples,
+            "norm_pcts": norm_pcts,
+            "conditions": conditions,
+            "vector_metadata": vector_metadata,
+        },
+    )
 
     results = []
 
@@ -343,6 +361,7 @@ def run_experiment(
         prompts = [prompt] * num_samples
         outputs = llm.generate(prompts, sampling_params)
 
+        factor_name = sanitize_factor_name(cond_name)
         truncated = 0
         for i, output in enumerate(outputs):
             response = output.outputs[0].text
@@ -369,28 +388,23 @@ def run_experiment(
                 "valid": parsed["valid"],
                 "actions_raw": parsed["actions_raw"],
                 "parse_errors": parsed["parse_errors"],
-                # Metadata
+                # Per-sample metadata (layer/norm only, provenance in header)
                 "layer": layer,
                 "layer_norm": layer_norm,
-                "orthogonalize": orthogonalize,
-                "thinking_enabled": thinking_enabled,
-                "variant": variant,
-                "vector_metadata": vector_metadata,
             }
             results.append(result)
-
-            with open(output_file, "a") as f:
-                f.write(json.dumps(result) + "\n")
+            writer.write(factor_name, result)
 
         logger.info(f"  Generated {num_samples} ({truncated} truncated)")
 
     steering.clear()
-    logger.info(f"Saved {len(results)} responses to {output_file}")
+    writer.close()
+    logger.info(f"Saved {writer.counts} to {writer.output_dir}")
 
     # Print summary
     _print_summary(results)
 
-    return output_file
+    return writer.output_dir
 
 
 def _print_summary(results: List[dict]):

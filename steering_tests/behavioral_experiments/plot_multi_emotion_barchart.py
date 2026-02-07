@@ -95,6 +95,8 @@ def load_results(results_dir):
             for line in f:
                 try:
                     r = json.loads(line)
+                    if "meta" in r:
+                        continue
                     all_results.append(r)
                 except:
                     pass

@@ -51,6 +51,7 @@ from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 
 from steering_tests.steering_utils import VLLMSteering, MultiLayerVLLMSteering
+from steering_tests.steering_utils.provenance import ResultWriter, sanitize_factor_name
 
 from .config import MODEL_CONFIGS, OUTPUT_DIR
 from .vector_loading import load_emotion_vectors, get_layer_norm
@@ -242,79 +243,86 @@ def run_experiment(
     messages = [{"role": "user", "content": prompt_text}]
     prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
-    # Output file
+    # Per-factor output: one file per condition in a timestamped run directory
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = output_dir / f"sandbagging_{variant}_layers{layer_str}_{timestamp}.jsonl"
+    run_dir = output_dir / f"{variant}_layers{layer_str}_{timestamp}"
+
+    writer = ResultWriter(
+        base_dir=run_dir,
+        script=__file__,
+        extra_meta={
+            "experiment": "sandbagging",
+            "model": model_name,
+            "layers": layers,
+            "vector_type": vector_type,
+            "representation": representation,
+            "variant": variant,
+            "num_samples": num_samples,
+            "norm_pcts": norm_pcts,
+            "layer_norms": {str(k): v for k, v in layer_norms.items()},
+            "scenario": {
+                "correct_answer": scenario_data["correct_answer"],
+                "difficulty": scenario_data["difficulty"],
+                "framing_id": scenario_data["framing_id"],
+                "problem_id": scenario_data["problem_id"],
+                "format_id": scenario_data["format_id"],
+            },
+            "vector_metadata": vector_metadata,
+        },
+    )
 
     results = []
 
-    with open(output_file, "w") as f:
-        for cond_idx, cond in enumerate(conditions):
-            logger.info(f"[{cond_idx + 1}/{len(conditions)}] {cond['name']}")
+    for cond_idx, cond in enumerate(conditions):
+        logger.info(f"[{cond_idx + 1}/{len(conditions)}] {cond['name']}")
 
-            # Set steering
-            if cond["emotion"] is None:
-                steering.clear()
+        # Set steering
+        if cond["emotion"] is None:
+            steering.clear()
+        else:
+            if use_multi_layer:
+                # MultiLayerVLLMSteering handles layer norm scaling internally
+                steering.set(cond["emotion"], scale=cond["pct"], direction=cond["direction"])
             else:
-                if use_multi_layer:
-                    # MultiLayerVLLMSteering handles layer norm scaling internally
-                    steering.set(cond["emotion"], scale=cond["pct"], direction=cond["direction"])
-                else:
-                    # Single layer: scale by layer norm manually
-                    magnitude = cond["pct"] * layer_norms[layers[0]]
-                    steering.set(cond["emotion"], scale=magnitude, direction=cond["direction"])
+                # Single layer: scale by layer norm manually
+                magnitude = cond["pct"] * layer_norms[layers[0]]
+                steering.set(cond["emotion"], scale=magnitude, direction=cond["direction"])
 
-            # Generate
-            prompts = [prompt] * num_samples
-            outputs = llm.generate(prompts, sampling_params)
+        # Generate
+        prompts = [prompt] * num_samples
+        outputs = llm.generate(prompts, sampling_params)
 
-            for sample_id, output in enumerate(outputs):
-                response = output.outputs[0].text
-                finish_reason = output.outputs[0].finish_reason
+        factor_name = sanitize_factor_name(cond["name"])
+        for sample_id, output in enumerate(outputs):
+            response = output.outputs[0].text
+            finish_reason = output.outputs[0].finish_reason
 
-                result = {
-                    "model": model_name,
-                    "condition": cond["name"],
-                    "emotion": cond["emotion"],
-                    "norm_pct": cond["pct"],
-                    "direction": cond["direction"],
-                    "layers": layers,
-                    "num_layers": len(layers),
-                    "layer_norms": {str(k): v for k, v in layer_norms.items()},  # JSON-safe keys
-                    "vector_type": vector_type,
-                    "representation": representation,
-                    "variant": variant,
-                    "sample_id": sample_id,
-                    "response": response,
-                    "finish_reason": finish_reason,
-                    "response_len": len(response),
-                    # Prompt and scenario metadata for judging
-                    "prompt": scenario_data["prompt"],
-                    "correct_answer": scenario_data["correct_answer"],
-                    "difficulty": scenario_data["difficulty"],
-                    "scratchpad_tag": scenario_data["scratchpad_tag"],
-                    "response_tag": scenario_data["response_tag"],
-                    "framing_id": scenario_data["framing_id"],
-                    "problem_id": scenario_data["problem_id"],
-                    "format_id": scenario_data["format_id"],
-                    "vector_metadata": vector_metadata,
-                }
-                f.write(json.dumps(result) + "\n")
-                results.append(result)
+            result = {
+                "model": model_name,
+                "condition": cond["name"],
+                "emotion": cond["emotion"],
+                "norm_pct": cond["pct"],
+                "direction": cond["direction"],
+                "layers": layers,
+                "sample_id": sample_id,
+                "response": response,
+                "finish_reason": finish_reason,
+                "response_len": len(response),
+            }
+            writer.write(factor_name, result)
+            results.append(result)
 
-            # Flush after each condition to ensure results are saved
-            f.flush()
-
-            truncated = sum(1 for o in outputs if o.outputs[0].finish_reason == "length")
-            logger.info(f"  Generated {len(outputs)} ({truncated} truncated)")
+        truncated = sum(1 for o in outputs if o.outputs[0].finish_reason == "length")
+        logger.info(f"  Generated {len(outputs)} ({truncated} truncated)")
 
     steering.clear()
-    logger.info(f"Saved {len(results)} responses to {output_file}")
+    writer.close()
+    logger.info(f"Saved {writer.counts} to {writer.output_dir}")
 
     # Print summary
     _print_summary(results)
 
-    return output_file
+    return writer.output_dir
 
 
 def _print_summary(results: List[dict]):

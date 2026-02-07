@@ -17,6 +17,8 @@ def load_results(base_dir):
             for line in f:
                 try:
                     result = json.loads(line)
+                    if "meta" in result:
+                        continue
                     results.append(result)
                 except json.JSONDecodeError:
                     continue

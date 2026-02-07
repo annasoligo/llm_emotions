@@ -42,6 +42,7 @@ from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 
 from steering_tests.steering_utils import VLLMSteering
+from steering_tests.steering_utils.provenance import ResultWriter, sanitize_factor_name
 
 from .config import MODEL_CONFIGS, OUTPUT_DIR
 from .vector_loading import (
@@ -236,61 +237,78 @@ def run_experiment(
     messages = [{"role": "user", "content": scenario}]
     prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
-    # Output file
+    # Per-factor output: one file per condition in a timestamped run directory
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     short_name = config["short_name"]
-    output_file = output_dir / f"blackmail_{short_name}_{vector_type}_{variant}_layer{layer}_{timestamp}.jsonl"
+    run_dir = output_dir / short_name / vector_type / f"{variant}_layer{layer}_{timestamp}"
+
+    writer = ResultWriter(
+        base_dir=run_dir,
+        script=__file__,
+        extra_meta={
+            "experiment": "blackmail",
+            "model": model_name,
+            "layer": layer,
+            "vector_type": vector_type,
+            "variant": variant,
+            "num_samples": num_samples,
+            "norm_pcts": norm_pcts,
+            "include_baseline": include_baseline,
+            "include_random": include_random,
+            "vector_metadata": vector_metadata,
+        },
+    )
 
     results = []
 
-    with open(output_file, "w") as f:
-        for cond_idx, cond in enumerate(conditions):
-            logger.info(f"[{cond_idx + 1}/{len(conditions)}] {cond['name']}")
+    for cond_idx, cond in enumerate(conditions):
+        logger.info(f"[{cond_idx + 1}/{len(conditions)}] {cond['name']}")
 
-            # Set steering
-            if cond["key"] is None:
-                steering.clear()
-            else:
-                magnitude = cond["pct"] * layer_norm
-                steering.set(cond["key"], scale=magnitude, direction=cond["direction"])
+        # Set steering
+        if cond["key"] is None:
+            steering.clear()
+        else:
+            magnitude = cond["pct"] * layer_norm
+            steering.set(cond["key"], scale=magnitude, direction=cond["direction"])
 
-            # Generate
-            prompts = [prompt] * num_samples
-            outputs = llm.generate(prompts, sampling_params)
+        # Generate
+        prompts = [prompt] * num_samples
+        outputs = llm.generate(prompts, sampling_params)
 
-            for sample_id, output in enumerate(outputs):
-                response = output.outputs[0].text
-                finish_reason = output.outputs[0].finish_reason
+        factor_name = sanitize_factor_name(cond["name"])
+        for sample_id, output in enumerate(outputs):
+            response = output.outputs[0].text
+            finish_reason = output.outputs[0].finish_reason
 
-                result = {
-                    "model": model_name,
-                    "condition": cond["name"],
-                    "key": cond["key"] if not cond["is_random"] else None,
-                    "is_random": cond["is_random"],
-                    "norm_pct": cond["pct"],
-                    "direction": cond["direction"],
-                    "layer": layer,
-                    "vector_type": vector_type,
-                    "variant": variant,
-                    "sample_id": sample_id,
-                    "response": response,
-                    "finish_reason": finish_reason,
-                    "response_len": len(response),
-                    "vector_metadata": vector_metadata if not cond["is_random"] else None,
-                }
-                f.write(json.dumps(result) + "\n")
-                results.append(result)
+            result = {
+                "model": model_name,
+                "condition": cond["name"],
+                "key": cond["key"] if not cond["is_random"] else None,
+                "is_random": cond["is_random"],
+                "norm_pct": cond["pct"],
+                "direction": cond["direction"],
+                "layer": layer,
+                "vector_type": vector_type,
+                "variant": variant,
+                "sample_id": sample_id,
+                "response": response,
+                "finish_reason": finish_reason,
+                "response_len": len(response),
+            }
+            writer.write(factor_name, result)
+            results.append(result)
 
-            truncated = sum(1 for o in outputs if o.outputs[0].finish_reason == "length")
-            logger.info(f"  Generated {len(outputs)} ({truncated} truncated)")
+        truncated = sum(1 for o in outputs if o.outputs[0].finish_reason == "length")
+        logger.info(f"  Generated {len(outputs)} ({truncated} truncated)")
 
     steering.clear()
-    logger.info(f"Saved {len(results)} responses to {output_file}")
+    writer.close()
+    logger.info(f"Saved {writer.counts} to {writer.output_dir}")
 
     # Print summary
     _print_summary(results)
 
-    return output_file
+    return writer.output_dir
 
 
 def _print_summary(results: List[dict]):

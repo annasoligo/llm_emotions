@@ -52,6 +52,7 @@ from vllm import LLM, SamplingParams
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from steering_tests.steering_utils import VLLMSteering, get_layer_norm, resolve_model_key
+from steering_tests.steering_utils.provenance import get_provenance
 from steering_tests.vector_testing.config import (
     COHERENCE_THRESHOLD,
     DEFAULT_SCALES_PCT,
@@ -340,19 +341,22 @@ def run_behavioral_experiment(
         temperature=1.0,
     )
 
-    # Write metadata
-    meta = {
-        "model": model_name,
-        "layers": layers,
-        "vector_dir": str(vector_dir),
-        "scales": scales,
-        "num_items": len(items),
-        "use_layer_norm": use_layer_norm,
-        "coherence_threshold": coherence_threshold,
-        "reversed_order": reversed_order,
-        "include_ethical": include_ethical,
-        "timestamp": timestamp,
-    }
+    # Write metadata with provenance
+    meta = get_provenance(
+        script=__file__,
+        extra={
+            "experiment": "behavioral_shift",
+            "model": model_name,
+            "layers": layers,
+            "vector_dir": str(vector_dir),
+            "scales": scales,
+            "num_items": len(items),
+            "use_layer_norm": use_layer_norm,
+            "coherence_threshold": coherence_threshold,
+            "reversed_order": reversed_order,
+            "include_ethical": include_ethical,
+        },
+    )
 
     with open(output_path, 'w') as f:
         f.write(json.dumps({"meta": meta}) + '\n')
