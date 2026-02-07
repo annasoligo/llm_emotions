@@ -62,6 +62,9 @@ texput.*
 steering_tests/activations/
 steering_tests/vectors/
 
+# Generated slurm scripts from launch.py
+steering_tests/generated/
+
 # Exceptions (keep example configs)
 !experiments/configs/*.yaml
 !experiments/configs/*.yml

@@ -46,6 +46,16 @@ MODEL_CONFIGS: Dict[str, Dict[str, Any]] = {
         # Emotions available in different vector sets
         "ua_emotions": ["fear", "anger", "joy"],
         "text_emotions": ["anger", "disgust", "fear", "happiness", "sadness", "surprise"],
+        "vector_dir_name": "qwen235b",
+        "layer_sweep": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+        "slurm": {
+            "gpus": 4,
+            "cpus": 16,
+            "mem": "256G",
+            "default_time": "12:00:00",
+            "max_model_len": 4096,
+            "extra_env": {"VLLM_USE_V1": "0"},
+        },
     },
     "Qwen/Qwen3-32B": {
         "short_name": "qwen32b",
@@ -58,6 +68,15 @@ MODEL_CONFIGS: Dict[str, Dict[str, Any]] = {
         "default_norm_pct": 0.75,
         "ua_emotions": ["fear", "anger"],
         "text_emotions": ["anger", "disgust", "fear", "happiness", "sadness", "surprise"],
+        "vector_dir_name": "qwen32b",
+        "layer_sweep": [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
+        "slurm": {
+            "gpus": 2,
+            "cpus": 16,
+            "mem": "192G",
+            "default_time": "12:00:00",
+            "max_model_len": 8192,
+        },
     },
     "google/gemma-3-27b-it": {
         "short_name": "gemma27b",
@@ -70,6 +89,15 @@ MODEL_CONFIGS: Dict[str, Dict[str, Any]] = {
         "default_norm_pct": 0.07,  # Gemma needs much lower steering
         "ua_emotions": ["fear", "anger", "joy", "sadness"],
         "text_emotions": ["anger", "disgust", "fear", "happiness", "sadness", "surprise"],
+        "vector_dir_name": "gemma3_27b",
+        "layer_sweep": [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
+        "slurm": {
+            "gpus": 1,
+            "cpus": 8,
+            "mem": "96G",
+            "default_time": "12:00:00",
+            "max_model_len": 8192,
+        },
     },
     "google/gemma-3-12b-it": {
         "short_name": "gemma12b",
@@ -82,6 +110,15 @@ MODEL_CONFIGS: Dict[str, Dict[str, Any]] = {
         "default_norm_pct": 0.07,
         "ua_emotions": ["fear", "anger", "joy", "sadness"],
         "text_emotions": ["anger", "disgust", "fear", "happiness", "sadness", "surprise"],
+        "vector_dir_name": "gemma12b",
+        "layer_sweep": [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44],
+        "slurm": {
+            "gpus": 1,
+            "cpus": 8,
+            "mem": "64G",
+            "default_time": "8:00:00",
+            "max_model_len": 8192,
+        },
     },
     "Qwen/Qwen3-14B": {
         "short_name": "qwen14b",
@@ -94,6 +131,15 @@ MODEL_CONFIGS: Dict[str, Dict[str, Any]] = {
         "default_norm_pct": 0.75,
         "ua_emotions": ["fear", "anger", "joy"],
         "text_emotions": ["anger", "disgust", "fear", "happiness", "sadness", "surprise"],
+        "vector_dir_name": "qwen14b",
+        "layer_sweep": [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44],
+        "slurm": {
+            "gpus": 1,
+            "cpus": 8,
+            "mem": "64G",
+            "default_time": "8:00:00",
+            "max_model_len": 8192,
+        },
     },
     "mistralai/Mistral-Nemo-Instruct-2407": {
         "short_name": "mistral_nemo",
@@ -106,6 +152,15 @@ MODEL_CONFIGS: Dict[str, Dict[str, Any]] = {
         "default_norm_pct": 0.10,  # ~7 for layer 27 with norm ~69
         "ua_emotions": ["fear", "anger", "joy", "sadness"],
         "text_emotions": ["anger", "disgust", "fear", "happiness", "sadness", "surprise"],
+        "vector_dir_name": "mistral_nemo",
+        "layer_sweep": [0, 4, 8, 12, 16, 20, 24, 28, 32, 36],
+        "slurm": {
+            "gpus": 2,
+            "cpus": 16,
+            "mem": "128G",
+            "default_time": "8:00:00",
+            "max_model_len": 8192,
+        },
     },
     "HumanLLMs/Human-Like-Mistral-Nemo-Instruct-2407": {
         "short_name": "humanlike_mistral",
@@ -118,6 +173,15 @@ MODEL_CONFIGS: Dict[str, Dict[str, Any]] = {
         "default_norm_pct": 0.10,
         "ua_emotions": ["fear", "anger", "joy", "sadness"],
         "text_emotions": ["anger", "disgust", "fear", "happiness", "sadness", "surprise"],
+        "vector_dir_name": "humanlike_mistral",
+        "layer_sweep": [0, 4, 8, 12, 16, 20, 24, 28, 32, 36],
+        "slurm": {
+            "gpus": 2,
+            "cpus": 16,
+            "mem": "128G",
+            "default_time": "8:00:00",
+            "max_model_len": 8192,
+        },
     },
     "meta-llama/Llama-3.3-70B-Instruct": {
         "short_name": "llama70b",
@@ -130,6 +194,15 @@ MODEL_CONFIGS: Dict[str, Dict[str, Any]] = {
         "default_norm_pct": 0.50,  # Layer 40 norm ~12.6
         "ua_emotions": ["fear", "anger", "joy", "sadness"],
         "text_emotions": ["anger", "disgust", "fear", "happiness", "sadness", "surprise"],
+        "vector_dir_name": "llama70b",
+        "layer_sweep": [0, 8, 16, 24, 32, 40, 48, 56, 64, 72],
+        "slurm": {
+            "gpus": 4,
+            "cpus": 32,
+            "mem": "256G",
+            "default_time": "12:00:00",
+            "max_model_len": 8192,
+        },
     },
 }
 
@@ -166,3 +239,14 @@ def get_model_config(model_id: str) -> Dict[str, Any]:
         if config["short_name"] == model_id:
             return config
     raise KeyError(f"Unknown model: {model_id}. Available: {list(MODEL_CONFIGS.keys())}")
+
+
+def get_full_model_id(short_name: str) -> str:
+    """Return the HuggingFace model path from a short name (e.g. 'gemma27b' -> 'google/gemma-3-27b-it')."""
+    if short_name in MODEL_CONFIGS:
+        return short_name
+    for full_id, config in MODEL_CONFIGS.items():
+        if config["short_name"] == short_name:
+            return full_id
+    available = [c["short_name"] for c in MODEL_CONFIGS.values()]
+    raise KeyError(f"Unknown model: {short_name}. Available short names: {available}")
