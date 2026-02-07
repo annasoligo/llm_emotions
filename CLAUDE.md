@@ -203,11 +203,51 @@ probes/                   # Emotion probe training (orthogonal, cPCA)
 - `steering_tests/behavioral_experiments/config.py` - Model-specific configs (layers, hidden dims, stop tokens)
 - `elicitation/prompts/judges.py` - `get_negativity_judge_prompt()` for frustration rating (0-10 scale)
 
-## Output Conventions
+## Data Saving Conventions
 
+### Provenance (ALWAYS use this)
+All saved data MUST include provenance metadata via `steering_tests/steering_utils/provenance.py`:
+```python
+from steering_utils.provenance import get_provenance, ResultWriter
+```
+- **`get_provenance(script=__file__, extra={...})`** returns a dict with `git_commit`, `git_dirty`, `timestamp`, `script` (relative path), plus any extras
+- **NEVER** save results without provenance. If you can't trace a result back to a commit and script, it's useless.
+
+### ResultWriter (for experiment results)
+Use `ResultWriter` for all new experiment scripts. It writes **one JSONL file per experimental condition**, with a metadata header and flush-after-every-write for crash safety:
+```python
+writer = ResultWriter(
+    base_dir=run_dir,
+    script=__file__,
+    extra_meta={"model": model_name, "layer": layer, ...},
+)
+writer.write("baseline", {"sample_id": 0, "response": "..."})
+writer.write("fear_pos50pct", {"sample_id": 0, "response": "..."})
+writer.close()
+```
+This produces per-factor files like `baseline.jsonl`, `fear_pos50pct.jsonl`, each starting with a `{"meta": {...}}` line. Use `sanitize_factor_name()` for condition names (`+` -> `pos`, `%` -> `pct`, etc.).
+
+Reading results back:
+```python
+from steering_utils.provenance import load_results, load_meta
+meta = load_meta(path)      # First-line metadata dict
+results = load_results(path) # All result dicts (skipping meta)
+```
+
+### Binary data (activations, vectors)
+- Per-layer pickle files (`layer_20.pkl`, `layer_21.pkl`, ...) in a directory
+- Always include a `metadata.json` sidecar with provenance
+- Activation collection supports `--resume` by checking existing layer files for completed IDs
+
+### Directory naming
+All experiments use timestamped run directories to prevent overwriting:
+```
+results/{experiment}/{model_short}/{vector_type}/{variant}_layer{N}_{YYYYMMDD_HHMMSS}/
+```
+
+### General output formats
 - **Timestamps**: `%Y%m%d_%H%M%S` (e.g., `20260207_103722`)
-- **File naming**: `{description}_{model_short}_{scenario}_{timestamp}.{ext}`
-- **Activations**: `layer_00.pkl`, `layer_01.pkl` + `metadata.json` sidecar
+- **Activations**: `layer_NN.pkl` + `metadata.json` sidecar
 - **Vectors**: `{emotion}.npy` in `vectors/{model}/{method}/` directories
-- **Results**: JSONL for streaming, JSON for full results
+- **Results**: JSONL via `ResultWriter` (per-factor files)
 - **Plots**: PNG at 150 DPI, saved alongside data or in `plots/` directory
