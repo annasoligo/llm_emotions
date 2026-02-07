@@ -119,6 +119,7 @@ Default model for data generation and judging: **`claude-sonnet-4-5-20250929`** 
 - `figsize=(12, 8)`, `dpi=150`, `bbox_inches='tight'`
 - Error bars: 90% confidence intervals unless otherwise specified
 - No N= labels on plots unless requested
+- **NEVER save PDF versions of plots** — PNG only (150 DPI is sufficient)
 
 ## Cluster Architecture
 
