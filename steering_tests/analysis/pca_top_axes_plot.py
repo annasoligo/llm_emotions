@@ -57,6 +57,7 @@ MODELS = {
     'gemma3_27b': {'middle_layer': 31, 'n_layers': 62},
     'qwen14b': {'middle_layer': 20, 'n_layers': 40},
     'qwen32b': {'middle_layer': 32, 'n_layers': 64},
+    'qwen235b': {'middle_layer': 47, 'n_layers': 94},
 }
 
 # Colors for axes - muted palette
@@ -227,6 +228,9 @@ def plot_summary_table(high_results: Dict, neutral_results: Dict, output_path: P
         for pc_idx in range(n_pcs):
             row = []
             for model in models:
+                if model not in results:
+                    row.append('N/A')
+                    continue
                 corrs = results[model]['correlations']
                 var = results[model]['variance'][pc_idx] if pc_idx < len(results[model]['variance']) else 0
 
@@ -256,15 +260,18 @@ def plot_summary_table(high_results: Dict, neutral_results: Dict, output_path: P
         table.scale(1.3, 2.8)
 
         # Color cells based on top axis
+        import matplotlib.colors as mcolors
         for i in range(n_pcs):
             for j, model in enumerate(models):
+                if model not in results:
+                    table[(i+1, j)].set_facecolor('#e0e0e0')  # Gray for N/A
+                    continue
                 corrs = results[model]['correlations']
                 abs_corrs = np.abs(corrs[i])
                 top_idx = np.argmax(abs_corrs)
                 color = AXIS_COLORS[AXES[top_idx]]
 
                 # Lighten the color slightly
-                import matplotlib.colors as mcolors
                 rgb = mcolors.to_rgb(color)
                 light_rgb = tuple(0.2 + 0.8 * c for c in rgb)
 

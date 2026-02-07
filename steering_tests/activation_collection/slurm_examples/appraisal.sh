@@ -7,13 +7,11 @@
 #SBATCH --output=logs/appraisal_%j.out
 #SBATCH --error=logs/appraisal_%j.err
 
-# Example: Collect activations for appraisal minimal pairs
-
-# Activate virtual environment
+source /workspace-vast/annas/.secrets/load_secrets.sh
+cd /workspace-vast/annas/git/research-tools
 source .venv/bin/activate
 
-# Load secrets
-source /workspace-vast/annas/.secrets/load_secrets.sh
+# Example: Collect activations for appraisal minimal pairs
 
 # Configuration
 MODEL="google/gemma-2-9b-it"

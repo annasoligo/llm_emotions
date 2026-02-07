@@ -466,3 +466,276 @@ class VLLMSteering:
     def available_emotions(self) -> List[str]:
         """List of loaded emotion vectors."""
         return list(self.vectors.keys())
+
+
+# ============================================================================
+# MULTI-LAYER STEERING
+# ============================================================================
+
+
+class _SetupMultiLayerHookCallable:
+    """Picklable callable for setting up steering hooks on multiple layers."""
+    def __init__(self, layer_indices: List[int]):
+        self.layer_indices = layer_indices
+
+    def __call__(self, model):
+        results = []
+        for layer_idx in self.layer_indices:
+            results.append(_setup_hook(model, layer_idx))
+        return f"Hooks registered on layers {self.layer_indices}"
+
+
+class _UpdateMultiLayerSteeringCallable:
+    """Picklable callable for updating steering on multiple layers."""
+    def __init__(
+        self,
+        layer_indices: List[int],
+        vector_list: Optional[List[float]],
+        scales: List[float],
+        steer_prompt: bool,
+        steer_generation: bool,
+    ):
+        self.layer_indices = layer_indices
+        self.vector_list = vector_list
+        self.scales = scales
+        self.steer_prompt = steer_prompt
+        self.steer_generation = steer_generation
+
+    def __call__(self, model):
+        results = []
+        for layer_idx, scale in zip(self.layer_indices, self.scales):
+            result = _update_steering(
+                model, layer_idx, self.vector_list, scale,
+                self.steer_prompt, self.steer_generation, None
+            )
+            results.append(result)
+        return results
+
+
+class _ClearMultiLayerSteeringCallable:
+    """Picklable callable for clearing steering on multiple layers."""
+    def __init__(self, layer_indices: List[int]):
+        self.layer_indices = layer_indices
+
+    def __call__(self, model):
+        for layer_idx in self.layer_indices:
+            _clear_steering(model, layer_idx)
+        return f"Steering cleared on layers {self.layer_indices}"
+
+
+class MultiLayerVLLMSteering:
+    """
+    Multi-layer steering for vLLM models.
+
+    Applies steering across multiple layers simultaneously, distributing
+    the total steering magnitude across layers.
+
+    Example:
+        llm = LLM(model="google/gemma-3-27b-it", enforce_eager=True)
+
+        # Steer layers 30-34, each getting 1/5 of the total magnitude
+        steering = MultiLayerVLLMSteering(
+            llm,
+            layers=[30, 31, 32, 33, 34],
+            layer_norms={30: 43000, 31: 43500, ...}  # Optional per-layer norms
+        )
+
+        steering.load_vector('fear', fear_vector)
+        steering.set('fear', scale=0.10)  # 10% total, 2% per layer
+        outputs = llm.generate(prompts, params)
+    """
+
+    def __init__(
+        self,
+        llm: LLM,
+        layers: List[int],
+        layer_norms: Optional[Dict[int, float]] = None,
+        uniform_norm: Optional[float] = None,
+    ):
+        """
+        Initialize multi-layer steering.
+
+        Args:
+            llm: vLLM LLM instance (must have enforce_eager=True)
+            layers: List of layer indices to steer
+            layer_norms: Dict mapping layer index to its residual stream norm.
+                        Used for proper scaling per layer.
+            uniform_norm: If provided, use this norm for all layers instead of
+                         per-layer norms. Simpler but less accurate.
+        """
+        self.llm = llm
+        self.layers = layers
+        self.num_layers = len(layers)
+        self.vectors: Dict[str, np.ndarray] = {}
+
+        # Setup layer norms
+        if layer_norms is not None:
+            self.layer_norms = layer_norms
+        elif uniform_norm is not None:
+            self.layer_norms = {layer: uniform_norm for layer in layers}
+        else:
+            # Default to 1.0 if no norms provided (user should provide norms!)
+            logger.warning("No layer_norms provided - using 1.0 for all layers. "
+                          "For proper scaling, provide layer_norms or uniform_norm.")
+            self.layer_norms = {layer: 1.0 for layer in layers}
+
+        self._setup_hooks()
+
+    def _setup_hooks(self):
+        """Register steering hooks on all layers."""
+        setup_callable = _SetupMultiLayerHookCallable(self.layers)
+        result = self.llm.apply_model(setup_callable)
+        logger.info(f"Multi-layer steering setup: {result}")
+
+    def load_vector(self, name: str, vector: np.ndarray):
+        """Load a single vector by name."""
+        self.vectors[name] = vector
+
+    def set(
+        self,
+        emotion: str,
+        scale: float = 1.0,
+        direction: int = 1,
+        steer_prompt: bool = True,
+        steer_generation: bool = True,
+    ):
+        """
+        Set steering across all layers.
+
+        The total steering magnitude (scale) is divided equally across layers,
+        with each layer's contribution scaled by its layer norm.
+
+        Args:
+            emotion: Name of the emotion/direction to steer
+            scale: Total steering magnitude as fraction of layer norm (e.g., 0.10 = 10%)
+            direction: +1 for positive steering, -1 for negative
+            steer_prompt: Whether to apply during prompt processing (prefill)
+            steer_generation: Whether to apply during token generation (decode)
+        """
+        if emotion not in self.vectors:
+            raise ValueError(f"Unknown emotion '{emotion}'. Available: {list(self.vectors.keys())}")
+
+        vector = self.vectors[emotion]
+        vector_list = vector.tolist()
+
+        # Compute per-layer scales: each layer gets (scale / num_layers) * layer_norm
+        per_layer_fraction = scale / self.num_layers
+        scales = []
+        for layer in self.layers:
+            layer_norm = self.layer_norms[layer]
+            layer_scale = per_layer_fraction * layer_norm * direction
+            scales.append(layer_scale)
+
+        logger.info(f"Multi-layer steering: {emotion} @ {scale*100:.1f}% total "
+                   f"({per_layer_fraction*100:.2f}% per layer), direction={direction}")
+        for layer, s in zip(self.layers, scales):
+            logger.debug(f"  Layer {layer}: scale={s:.2f}")
+
+        update_callable = _UpdateMultiLayerSteeringCallable(
+            self.layers, vector_list, scales, steer_prompt, steer_generation
+        )
+        result = self.llm.apply_model(update_callable)
+        logger.debug(f"Multi-layer steering update: {result}")
+
+    def set_raw_vector(
+        self,
+        vector: np.ndarray,
+        scale: float = 1.0,
+        steer_prompt: bool = True,
+        steer_generation: bool = True,
+    ):
+        """
+        Apply a raw vector directly across all layers.
+
+        Args:
+            vector: The vector to apply
+            scale: Total scaling factor (divided across layers)
+            steer_prompt: Whether to apply during prompt processing
+            steer_generation: Whether to apply during token generation
+        """
+        if hasattr(vector, 'numpy'):
+            vector = vector.numpy()
+        elif not isinstance(vector, np.ndarray):
+            vector = np.array(vector)
+
+        vector_list = vector.tolist()
+
+        # Divide scale equally across layers
+        per_layer_scale = scale / self.num_layers
+        scales = [per_layer_scale] * self.num_layers
+
+        update_callable = _UpdateMultiLayerSteeringCallable(
+            self.layers, vector_list, scales, steer_prompt, steer_generation
+        )
+        result = self.llm.apply_model(update_callable)
+        logger.info(f"Raw multi-layer steering applied: {result}")
+
+    def clear(self):
+        """Clear steering on all layers."""
+        clear_callable = _ClearMultiLayerSteeringCallable(self.layers)
+        result = self.llm.apply_model(clear_callable)
+        if hasattr(self, '_layer_vectors'):
+            self._layer_vectors.clear()
+        logger.debug(f"Multi-layer steering cleared: {result}")
+
+    def set_layer_vector(
+        self,
+        layer: int,
+        vector: np.ndarray,
+        scale: float = 1.0,
+        steer_prompt: bool = True,
+        steer_generation: bool = True,
+    ):
+        """
+        Set steering for a specific layer using a custom vector.
+
+        This allows per-layer customization, useful when combining different
+        vectors at different layers (e.g., emotion + suppression).
+
+        Args:
+            layer: Layer index to set
+            vector: Vector to apply at this layer
+            scale: Scaling factor for the vector
+            steer_prompt: Whether to apply during prompt processing
+            steer_generation: Whether to apply during token generation
+        """
+        if layer not in self.layers:
+            raise ValueError(f"Layer {layer} not in steering layers: {self.layers}")
+
+        if hasattr(vector, 'numpy'):
+            vector = vector.numpy()
+        elif not isinstance(vector, np.ndarray):
+            vector = np.array(vector)
+
+        vector_list = vector.tolist()
+
+        # Store in per-layer vectors
+        if not hasattr(self, '_layer_vectors'):
+            self._layer_vectors = {}
+        self._layer_vectors[layer] = (vector_list, scale, steer_prompt, steer_generation)
+
+        # Apply to this single layer
+        update_callable = _UpdateSteeringCallable(
+            layer, vector_list, scale, steer_prompt, steer_generation, None
+        )
+        result = self.llm.apply_model(update_callable)
+        logger.debug(f"Layer {layer} vector set: {result}")
+
+    def get_layer_steering(self, layer: int) -> Optional[np.ndarray]:
+        """
+        Get the current steering vector for a specific layer.
+
+        Returns None if no steering is set for that layer.
+        """
+        if not hasattr(self, '_layer_vectors'):
+            return None
+        if layer not in self._layer_vectors:
+            return None
+
+        vector_list, scale, _, _ = self._layer_vectors[layer]
+        return np.array(vector_list, dtype=np.float32) * scale
+
+    @property
+    def available_emotions(self) -> List[str]:
+        """List of loaded emotion vectors."""
+        return list(self.vectors.keys())

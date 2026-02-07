@@ -1015,14 +1015,32 @@ Example structure for job interview:
                 data = json.loads(json_str)
 
             except json.JSONDecodeError as e:
-                raise ValueError(f"Failed to parse JSON for set {set_idx}: {e}")
+                print(f"    Warning: Failed to parse JSON for set {set_idx}, retrying...")
+                # Retry once
+                try:
+                    response = await client.messages.create(
+                        model=model,
+                        max_tokens=8000,
+                        system=system_prompt,
+                        messages=[{"role": "user", "content": user_prompt}],
+                    )
+                    content = response.content[0].text
+                    start_idx = content.find("{")
+                    end_idx = content.rfind("}") + 1
+                    json_str = content[start_idx:end_idx]
+                    data = json.loads(json_str)
+                except Exception as retry_e:
+                    print(f"    Warning: Retry also failed for set {set_idx}: {retry_e}, skipping")
+                    return None
 
             # Validate structure
             if not isinstance(data, dict):
-                raise ValueError(f"Expected dict for set {set_idx}, got {type(data)}")
+                print(f"    Warning: Expected dict for set {set_idx}, got {type(data)}, skipping")
+                return None
 
             if "neutral_text" not in data:
-                raise KeyError(f"Set {set_idx} missing 'neutral_text'")
+                print(f"    Warning: Set {set_idx} missing 'neutral_text', skipping")
+                return None
 
             neutral_text = data["neutral_text"]
 
@@ -1055,7 +1073,8 @@ Example structure for job interview:
     tasks = [generate_one_set(i) for i in range(n_pairs)]
     results = await asyncio.gather(*tasks)
 
-    return results
+    # Filter out None results (from skipped/failed sets)
+    return [r for r in results if r is not None]
 
 
 def generate_neutral_conversation(

@@ -7,13 +7,11 @@
 #SBATCH --output=logs/test_gemma3_27b_%j.out
 #SBATCH --error=logs/test_gemma3_27b_%j.err
 
-# Test: Collect activations on Gemma-3-27B model
-
-# Activate virtual environment
+source /workspace-vast/annas/.secrets/load_secrets.sh
+cd /workspace-vast/annas/git/research-tools
 source .venv/bin/activate
 
-# Load secrets
-source /workspace-vast/annas/.secrets/load_secrets.sh
+# Test: Collect activations on Gemma-3-27B model
 
 # Configuration
 MODEL="google/gemma-3-27b-it"

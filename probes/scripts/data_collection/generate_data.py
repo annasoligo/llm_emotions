@@ -175,41 +175,63 @@ def main():
 
     elif args.mode == "pairs":
         # Generate pairs for all emotions with async concurrency
-        topic = args.topic or TOPICS[0]
+        if args.topic:
+            topics = [args.topic]
+        else:
+            topics = list(TOPICS)
+
+        # Distribute n_per_combo samples across topics for each tier
+        if len(topics) <= args.n_per_combo:
+            n_per_topic = args.n_per_combo // len(topics)
+            remainder = args.n_per_combo % len(topics)
+            # First `remainder` topics get one extra sample
+            topic_counts = [
+                (t, n_per_topic + (1 if i < remainder else 0))
+                for i, t in enumerate(topics)
+            ]
+        else:
+            # More topics than requested samples — pick a random subset
+            import random
+            random.seed(42)
+            selected = random.sample(topics, args.n_per_combo)
+            topic_counts = [(t, 1) for t in selected]
+
+        total_per_tier = sum(n for _, n in topic_counts)
+        print(f"\nUsing {len(topic_counts)} topics, {total_per_tier} samples per tier")
 
         async def generate_all_tiers():
-            """Generate all tiers concurrently."""
-            tier_tasks = []
+            """Generate all tiers × topics concurrently."""
+            all_tasks = []
 
             for tier in ["third_person", "second_person_eliciting", "direct_address"]:
-                print(f"\nGenerating tier: {tier}, topic: {topic}")
-
-                # Create async task for this tier
-                tier_tasks.append(
-                    generate_emotion_pairs_async(
-                        emotions=EMOTIONS,
-                        topic=topic,
-                        tier=tier,
-                        n_pairs=args.n_per_combo,
-                        api_key=args.api_key,
-                        model=args.claude_model,
-                        max_concurrent=20,  # 20 concurrent API calls
-                        use_batch_api=args.use_batch_api,
+                for topic, n in topic_counts:
+                    all_tasks.append(
+                        generate_emotion_pairs_async(
+                            emotions=EMOTIONS,
+                            topic=topic,
+                            tier=tier,
+                            n_pairs=n,
+                            api_key=args.api_key,
+                            model=args.claude_model,
+                            max_concurrent=20,
+                            use_batch_api=args.use_batch_api,
+                        )
                     )
-                )
 
-            # Run all tiers concurrently
-            try:
-                tier_results = await asyncio.gather(*tier_tasks)
+            print(f"Launching {len(all_tasks)} generation tasks "
+                  f"(3 tiers × {len(topic_counts)} topics)...")
 
-                # Flatten and add to all_data
-                for pairs in tier_results:
-                    all_data.extend(pairs)
-                    print(f"  Generated {len(pairs)} pairs")
+            results = await asyncio.gather(*all_tasks, return_exceptions=True)
 
-            except Exception as e:
-                print(f"  Error: {e}")
-                raise
+            n_failed = 0
+            for result in results:
+                if isinstance(result, Exception):
+                    n_failed += 1
+                    print(f"  Warning: task failed: {result}")
+                elif isinstance(result, list):
+                    all_data.extend(result)
+
+            print(f"  Generated {len(all_data)} items ({n_failed} tasks failed)")
 
         # Run async generation
         try:

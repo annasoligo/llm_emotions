@@ -7,13 +7,11 @@
 #SBATCH --output=logs/multi_model_%j.out
 #SBATCH --error=logs/multi_model_%j.err
 
-# Example: Collect activations on multiple models (large model with multi-GPU)
-
-# Activate virtual environment
+source /workspace-vast/annas/.secrets/load_secrets.sh
+cd /workspace-vast/annas/git/research-tools
 source .venv/bin/activate
 
-# Load secrets
-source /workspace-vast/annas/.secrets/load_secrets.sh
+# Example: Collect activations on multiple models (large model with multi-GPU)
 
 # Configuration
 MODEL="Qwen/Qwen3-32B"

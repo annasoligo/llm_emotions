@@ -7,11 +7,9 @@
 #SBATCH --output=logs/gemma3_pairs_%j.out
 #SBATCH --error=logs/gemma3_pairs_%j.err
 
-# Activate virtual environment
-source .venv/bin/activate
-
-# Load secrets
 source /workspace-vast/annas/.secrets/load_secrets.sh
+cd /workspace-vast/annas/git/research-tools
+source .venv/bin/activate
 
 # Configuration
 MODEL="google/gemma-3-27b-it"

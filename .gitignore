@@ -50,6 +50,13 @@ slurm_jobs/
 # OS
 .DS_Store
 Thumbs.db
+.nfs*
+
+# LaTeX temp files
+*.aux
+*.fdb_latexmk
+*.fls
+texput.*
 
 # Large data directories
 steering_tests/activations/

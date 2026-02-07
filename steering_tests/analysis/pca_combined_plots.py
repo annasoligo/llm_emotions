@@ -56,6 +56,7 @@ MODELS = {
     'gemma3_27b': {'middle_layer': 31, 'n_layers': 62},
     'qwen14b': {'middle_layer': 20, 'n_layers': 40},
     'qwen32b': {'middle_layer': 32, 'n_layers': 64},
+    'qwen235b': {'middle_layer': 47, 'n_layers': 94},
 }
 
 # Vector set display names

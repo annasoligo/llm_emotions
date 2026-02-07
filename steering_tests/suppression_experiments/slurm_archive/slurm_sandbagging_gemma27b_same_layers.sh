@@ -1,0 +1,37 @@
+#!/bin/bash
+#SBATCH --job-name=sandbag_same_gemma27b
+#SBATCH --output=/workspace-vast/annas/logs/sandbag_same_gemma27b_%j.out
+#SBATCH --error=/workspace-vast/annas/logs/sandbag_same_gemma27b_%j.out
+#SBATCH --time=3:00:00
+#SBATCH --partition=general
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+
+source /workspace-vast/annas/.secrets/load_secrets.sh
+export VLLM_ALLOW_INSECURE_SERIALIZATION=1
+
+cd /workspace-vast/annas/git/research-tools
+source .venv/bin/activate
+
+echo "===== Sandbagging with SAME Fear/Suppression Layers ====="
+echo "Model: google/gemma-3-27b-it"
+echo "Fear: 15% at layers 40-44"
+echo "Suppression: 0%, 5%, 10%, 20% at layers 40-44 (SAME as fear)"
+echo "Vector types: text_pairs_emotion_vs_opposite, high_emotion_vs_opposite"
+echo "=========================================================="
+
+python -m steering_tests.suppression_experiments.sandbagging_separate_layers \
+    --model google/gemma-3-27b-it \
+    --fear-layers 40 41 42 43 44 \
+    --suppress-layers 40 41 42 43 44 \
+    --fear-pct 0.15 \
+    --suppress-pcts 0 0.05 0.10 0.20 \
+    --vector-types text_pairs_emotion_vs_opposite high_emotion_vs_opposite \
+    --num-samples 30 \
+    --tp 1 \
+    --gpu-memory 0.90 \
+    --max-model-len 8192 \
+    --max-tokens 2000
+
+echo "===== Experiment Complete ====="

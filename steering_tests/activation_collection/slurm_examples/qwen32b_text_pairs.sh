@@ -7,14 +7,12 @@
 #SBATCH --output=logs/qwen32b_pairs_%j.out
 #SBATCH --error=logs/qwen32b_pairs_%j.err
 
-# Activate virtual environment
+source /workspace-vast/annas/.secrets/load_secrets.sh
+cd /workspace-vast/annas/git/research-tools
 source .venv/bin/activate
 
-# Load secrets
-source /workspace-vast/annas/.secrets/load_secrets.sh
-
 # Configuration
-MODEL="Qwen/Qwen2.5-32B-Instruct"
+MODEL="Qwen/Qwen3-32B"
 INPUT="steering_tests/data/emotion_text_pairs_24_full_500.jsonl"
 OUTPUT="steering_tests/activations/test_qwen32b_text_pairs"
 LAYERS="all"

@@ -7,13 +7,13 @@
 #SBATCH --output=logs/emotion_prompts_%j.out
 #SBATCH --error=logs/emotion_prompts_%j.err
 
-# Example: Collect activations for emotion prompts dataset
-
-# Activate virtual environment
+source /workspace-vast/annas/.secrets/load_secrets.sh
+cd /workspace-vast/annas/git/research-tools
 source .venv/bin/activate
 
+# Example: Collect activations for emotion prompts dataset
+
 # Load secrets (API keys, etc.)
-source /workspace-vast/annas/.secrets/load_secrets.sh
 
 # Configuration
 MODEL="google/gemma-2-9b-it"

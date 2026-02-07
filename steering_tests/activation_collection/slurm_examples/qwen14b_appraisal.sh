@@ -7,8 +7,9 @@
 #SBATCH --output=logs/qwen14b_appr_%j.out
 #SBATCH --error=logs/qwen14b_appr_%j.err
 
-source .venv/bin/activate
 source /workspace-vast/annas/.secrets/load_secrets.sh
+cd /workspace-vast/annas/git/research-tools
+source .venv/bin/activate
 
 MODEL="Qwen/Qwen3-14B"
 DATA_DIR="steering_tests/data/appraisal_minimal_pairs"

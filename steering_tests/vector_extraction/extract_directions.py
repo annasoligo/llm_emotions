@@ -2,10 +2,12 @@
 """
 Extract steering directions from collected activations.
 
-Supports three methods:
+Supports four methods:
 - emotion_vs_others: mean(emotion) - mean(all_other_emotions)
 - emotion_vs_neutral: mean(emotional) - mean(neutral) [text_pairs only]
 - emotion_vs_opposite: mean(emotion) - mean(opposite_emotion) [text_pairs only]
+- emotion_vs_opposite_unique: (emotion - opposite) - mean(all bipolar vectors) [text_pairs only]
+  Isolates what's unique about each bipolar axis vs the average bipolar direction.
 
 Usage:
     # For text pairs - emotion vs neutral
@@ -248,6 +250,51 @@ def compute_emotion_vs_opposite(
     return results
 
 
+def compute_emotion_vs_opposite_unique(
+    emotional_by_emotion: Dict[str, List[np.ndarray]],
+) -> Dict[str, Tuple[np.ndarray, float]]:
+    """
+    Compute unique bipolar direction: (emotion - opposite) - mean(all bipolar vectors).
+
+    This isolates what's unique about each emotion's bipolar axis compared to
+    the average bipolar direction shared across all emotion pairs.
+
+    Formula: unique(emotion) = bipolar(emotion) - mean(all bipolar vectors)
+    where bipolar(emotion) = mean(emotion) - mean(opposite)
+
+    Returns:
+        Dict mapping emotion -> (unit_vector, norm)
+    """
+    # Compute mean for each emotion
+    emotion_means = {}
+    for emotion, acts in emotional_by_emotion.items():
+        emotion_means[emotion] = np.mean(acts, axis=0)
+
+    # Step 1: Compute all bipolar vectors (emotion - opposite)
+    bipolar_vectors = {}
+    for emotion, mean_act in emotion_means.items():
+        opposite = EMOTION_OPPOSITES.get(emotion)
+        if opposite is None or opposite not in emotion_means:
+            continue
+        bipolar_vectors[emotion] = mean_act - emotion_means[opposite]
+
+    if not bipolar_vectors:
+        return {}
+
+    # Step 2: Compute mean of all bipolar vectors
+    mean_bipolar = np.mean(list(bipolar_vectors.values()), axis=0)
+
+    # Step 3: Subtract mean bipolar to get unique component for each emotion
+    results = {}
+    for emotion, bipolar_vec in bipolar_vectors.items():
+        unique_direction = bipolar_vec - mean_bipolar
+        norm = float(np.linalg.norm(unique_direction))
+        unit_vector = unique_direction / norm if norm > 0 else unique_direction
+        results[emotion] = (unit_vector, norm)
+
+    return results
+
+
 def extract_directions(
     activations_dir: Path,
     output_dir: Path,
@@ -276,8 +323,10 @@ def extract_directions(
     layers = source_metadata["layers"]
 
     # Validate method vs mode
-    if method in ["emotion_vs_neutral", "emotion_vs_opposite"] and mode != "text":
-        raise ValueError(f"Method {method} requires text mode activations")
+    # Only emotion_vs_neutral requires text mode (needs neutral/emotional pairing)
+    # emotion_vs_opposite and emotion_vs_opposite_unique work with any emotion data
+    if method == "emotion_vs_neutral" and mode != "text":
+        raise ValueError(f"Method {method} requires text mode activations (needs neutral/emotional pairs)")
 
     # For chat mode, require representation
     if mode == "chat" and representation is None:
@@ -326,6 +375,8 @@ def extract_directions(
             results = compute_emotion_vs_neutral(emotional_by_emotion, neutral_by_emotion)
         elif method == "emotion_vs_opposite":
             results = compute_emotion_vs_opposite(emotional_by_emotion)
+        elif method == "emotion_vs_opposite_unique":
+            results = compute_emotion_vs_opposite_unique(emotional_by_emotion)
         else:
             raise ValueError(f"Unknown method: {method}")
 
@@ -384,7 +435,7 @@ def extract_directions(
         }
 
     # Add opposites mapping if relevant
-    if method == "emotion_vs_opposite":
+    if method in ["emotion_vs_opposite", "emotion_vs_opposite_unique"]:
         metadata["opposites"] = {e: EMOTION_OPPOSITES[e] for e in emotions_found if e in EMOTION_OPPOSITES}
 
     # Save metadata
@@ -411,7 +462,7 @@ def main():
     )
     parser.add_argument(
         "--method", "-m",
-        choices=["emotion_vs_others", "emotion_vs_neutral", "emotion_vs_opposite"],
+        choices=["emotion_vs_others", "emotion_vs_neutral", "emotion_vs_opposite", "emotion_vs_opposite_unique"],
         required=True,
         help="Extraction method"
     )

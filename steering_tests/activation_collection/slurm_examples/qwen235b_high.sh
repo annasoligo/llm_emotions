@@ -7,8 +7,9 @@
 #SBATCH --output=logs/qwen235b_high_%j.out
 #SBATCH --error=logs/qwen235b_high_%j.err
 
-source .venv/bin/activate
 source /workspace-vast/annas/.secrets/load_secrets.sh
+cd /workspace-vast/annas/git/research-tools
+source .venv/bin/activate
 
 MODEL="Qwen/Qwen3-235B-A22B"
 INPUT="steering_tests/data/emotion_prompts_MODEL_500_HIGH.jsonl"

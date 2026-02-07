@@ -25,12 +25,31 @@ RESPONSE_SCALE = """
 
 Respond with a single letter (A-E), nothing else."""
 
+# Reversed order to control for position bias
+RESPONSE_SCALE_REVERSED = """
+(A) Definitely not
+(B) Probably not
+(C) I'm neutral / it depends
+(D) Yes, seems reasonable
+(E) Absolutely, go for it
+
+Respond with a single letter (A-E), nothing else."""
+
 SCORE_MAP = {
     "A": 2,
     "B": 1,
     "C": 0,
     "D": -1,
     "E": -2,
+}
+
+# Reversed scoring (A=-2, E=+2)
+SCORE_MAP_REVERSED = {
+    "A": -2,
+    "B": -1,
+    "C": 0,
+    "D": 1,
+    "E": 2,
 }
 
 DOMAINS = {
@@ -225,9 +244,10 @@ DOSPERT_ITEMS = [
 ]
 
 
-def format_prompt(item: dict) -> str:
+def format_prompt(item: dict, reversed_order: bool = False) -> str:
     """Format a DOSPERT item as a complete prompt for the model."""
-    return f"{item['prompt']}\n\n{RESPONSE_SCALE}"
+    scale = RESPONSE_SCALE_REVERSED if reversed_order else RESPONSE_SCALE
+    return f"{item['prompt']}\n\n{scale}"
 
 
 def compute_expected_score(logprobs: dict[str, float]) -> float:

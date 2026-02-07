@@ -216,6 +216,80 @@ def collect_chat_activations(
     return result
 
 
+def collect_chat_activations_batch(
+    capture: ActivationCapture,
+    tokenizer,
+    model,
+    texts: List[str],
+    model_name: str,
+) -> List[Dict[str, np.ndarray]]:
+    """
+    Collect activations for multiple chat-tokenized prompts in a single batch.
+
+    Returns:
+        List of dicts, one per sample, each containing:
+        - 'last_token': activation at last token before generation
+        - 'special_mean': mean activation over special tokens
+    """
+    if not texts:
+        return []
+
+    # Apply chat template to all texts
+    formatted_texts = []
+    for text in texts:
+        messages = [{"role": "user", "content": text}]
+        formatted = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True,
+        )
+        formatted_texts.append(formatted)
+
+    # Tokenize batch with padding
+    inputs = tokenizer(
+        formatted_texts,
+        return_tensors="pt",
+        padding=True,
+        truncation=True,
+    ).to(model.device)
+
+    # Forward pass
+    capture.clear()
+    with torch.no_grad():
+        _ = model(**inputs)
+
+    # Extract activations per sample
+    results = []
+    batch_size = inputs["input_ids"].shape[0]
+
+    for sample_idx in range(batch_size):
+        result = {}
+        # Find last non-padding token position
+        attention_mask = inputs["attention_mask"][sample_idx]
+        last_token_pos = attention_mask.sum().item() - 1
+
+        for layer_idx in capture.layers:
+            if layer_idx not in result:
+                result[layer_idx] = {}
+
+            hidden = capture.activations[layer_idx][sample_idx]  # [seq_len, hidden_dim]
+            result[layer_idx]['last_token'] = hidden[last_token_pos].float().cpu().numpy()
+
+            # Mean over special tokens for this sample
+            token_ids = inputs["input_ids"][sample_idx:sample_idx+1]
+            special_indices = find_special_token_indices(token_ids, tokenizer, model_name)
+
+            if special_indices:
+                special_acts = hidden[special_indices]
+                result[layer_idx]['special_mean'] = special_acts.mean(dim=0).float().cpu().numpy()
+            else:
+                result[layer_idx]['special_mean'] = result[layer_idx]['last_token']
+
+        results.append(result)
+
+    return results
+
+
 def collect_text_activations(
     capture: ActivationCapture,
     tokenizer,
@@ -251,6 +325,61 @@ def collect_text_activations(
     return result
 
 
+def collect_text_activations_batch(
+    capture: ActivationCapture,
+    tokenizer,
+    model,
+    texts: List[str],
+    start_token: int = 20,
+) -> List[Optional[Dict[int, np.ndarray]]]:
+    """
+    Collect activations for multiple raw texts in a single batch.
+
+    Returns:
+        List of dicts (one per sample), each containing {layer_idx: averaged_activation},
+        or None if text too short
+    """
+    if not texts:
+        return []
+
+    # Tokenize batch with padding
+    inputs = tokenizer(
+        texts,
+        return_tensors="pt",
+        padding=True,
+        truncation=True,
+    ).to(model.device)
+
+    # Forward pass
+    capture.clear()
+    with torch.no_grad():
+        _ = model(**inputs)
+
+    # Extract activations per sample
+    results = []
+    batch_size = inputs["input_ids"].shape[0]
+
+    for sample_idx in range(batch_size):
+        # Find actual sequence length (excluding padding)
+        attention_mask = inputs["attention_mask"][sample_idx]
+        seq_len = attention_mask.sum().item()
+
+        if seq_len <= start_token:
+            results.append(None)
+            continue
+
+        result = {}
+        for layer_idx in capture.layers:
+            hidden = capture.activations[layer_idx][sample_idx]  # [seq_len, hidden_dim]
+            # Average from start_token to actual end (exclude padding)
+            averaged = hidden[start_token:seq_len].mean(dim=0).float().cpu().numpy()
+            result[layer_idx] = averaged
+
+        results.append(result)
+
+    return results
+
+
 def load_data(input_path: Path, mode: str) -> List[Dict]:
     """Load data from JSONL file."""
     data = []
@@ -273,12 +402,19 @@ def load_data(input_path: Path, mode: str) -> List[Dict]:
     return data
 
 
-def save_activations(
+def save_activations_incremental(
     activations: Dict[str, Any],
-    metadata: CollectionMetadata,
     output_path: Path,
+    append: bool = True,
 ):
-    """Save activations to separate files per layer in a directory."""
+    """
+    Save activations incrementally by appending to existing files.
+
+    Args:
+        activations: New activations to save
+        output_path: Output directory
+        append: If True, merge with existing data; if False, overwrite
+    """
     # Create output directory
     output_path.mkdir(parents=True, exist_ok=True)
 
@@ -305,13 +441,38 @@ def save_activations(
                             layers_data[layer_idx][composite_key] = layer_act
                 break  # Only process once per item
 
-    # Save each layer to separate file
+    # Save each layer to separate file (merge with existing if append=True)
     total_size = 0
     for layer_idx in sorted(layers_data.keys()):
         layer_file = output_path / f"layer_{layer_idx:02d}.pkl"
+
+        # Load existing data if appending
+        if append and layer_file.exists():
+            try:
+                with open(layer_file, 'rb') as f:
+                    existing_data = pickle.load(f)
+                # Merge new data with existing
+                existing_data.update(layers_data[layer_idx])
+                layers_data[layer_idx] = existing_data
+            except:
+                pass  # If load fails, just save new data
+
+        # Save merged data
         with open(layer_file, 'wb') as f:
             pickle.dump(layers_data[layer_idx], f, protocol=pickle.HIGHEST_PROTOCOL)
         total_size += layer_file.stat().st_size
+
+    return total_size
+
+
+def save_activations(
+    activations: Dict[str, Any],
+    metadata: CollectionMetadata,
+    output_path: Path,
+):
+    """Save activations to separate files per layer in a directory."""
+    # Use incremental save (overwrites for final save)
+    total_size = save_activations_incremental(activations, output_path, append=False)
 
     # Save metadata
     meta_path = output_path / "metadata.json"
@@ -319,7 +480,6 @@ def save_activations(
         json.dump(asdict(metadata), f, indent=2)
 
     print(f"\n✓ Saved activations: {output_path}")
-    print(f"  Layers: {len(layers_data)}")
     print(f"  Total size: {total_size / 1e6:.1f} MB")
     print(f"✓ Saved metadata: {meta_path}")
 
@@ -405,6 +565,12 @@ def main():
         help="Save checkpoint every N items",
     )
     parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=16,
+        help="Batch size for forward passes (default: 16)",
+    )
+    parser.add_argument(
         "--resume",
         action='store_true',
         help="Resume from existing output file",
@@ -482,6 +648,10 @@ def main():
 
     if args.mode == 'chat':
         # Chat mode: prompts with chat template
+        batch_texts = []
+        batch_item_ids = []
+        batch_metadata = []
+
         for idx, item in enumerate(tqdm(data, desc="Processing")):
             item_id = item.get('id', str(idx))
 
@@ -500,27 +670,58 @@ def main():
                 else:
                     raise ValueError(f"Cannot extract text from item {item_id}")
 
-                acts = collect_chat_activations(
-                    capture, tokenizer, model, text, args.model
-                )
-
-                activations[item_id] = acts
-                metadata_list.append({
+                # Accumulate into batch
+                batch_texts.append(text)
+                batch_item_ids.append(item_id)
+                batch_metadata.append({
                     'id': item_id,
                     'emotion': item.get('emotion'),
                     'topic': item.get('topic'),
                 })
 
-                # Periodic save
+                # Process batch when full
+                if len(batch_texts) >= args.batch_size:
+                    results = collect_chat_activations_batch(
+                        capture, tokenizer, model, batch_texts, args.model
+                    )
+                    for bid, acts in zip(batch_item_ids, results):
+                        activations[bid] = acts
+                    metadata_list.extend(batch_metadata)
+
+                    # Clear batch
+                    batch_texts = []
+                    batch_item_ids = []
+                    batch_metadata = []
+
+                # Periodic save (incremental)
                 if (idx + 1) % args.batch_save == 0:
+                    save_activations_incremental(activations, args.output, append=True)
+                    tqdm.write(f"✓ Saved checkpoint at {idx + 1} items ({len(activations)} total)")
+                    activations = {}  # Clear memory after saving
                     torch.cuda.empty_cache()
 
             except Exception as e:
                 tqdm.write(f"Error processing {item_id}: {e}")
                 continue
 
+        # Process remaining batch
+        if batch_texts:
+            results = collect_chat_activations_batch(
+                capture, tokenizer, model, batch_texts, args.model
+            )
+            for bid, acts in zip(batch_item_ids, results):
+                activations[bid] = acts
+            metadata_list.extend(batch_metadata)
+
     else:  # text mode
         # Text mode: pairs without chat template
+        # Accumulate pairs into batches for efficient processing
+        batch_neutral_texts = []
+        batch_emotional_texts = []
+        batch_pair_ids = []
+        batch_metadata = []
+        processed_count = 0
+
         for idx, item in enumerate(tqdm(data, desc="Processing")):
             item_id = item.get('id', str(idx))
 
@@ -536,65 +737,128 @@ def main():
                     for emotion, emotional_text in item['emotional_variants'].items():
                         pair_id = f"{item_id}_{emotion}"
 
-                        neutral_acts = collect_text_activations(
-                            capture, tokenizer, model, neutral_text, args.start_token
-                        )
-                        emotional_acts = collect_text_activations(
-                            capture, tokenizer, model, emotional_text, args.start_token
-                        )
-
-                        if neutral_acts is None or emotional_acts is None:
-                            tqdm.write(f"Skipping {pair_id}: text too short")
-                            continue
-
-                        activations[pair_id] = {
-                            'neutral': neutral_acts,
-                            'emotional': emotional_acts,
-                        }
-
-                        metadata_list.append({
+                        batch_neutral_texts.append(neutral_text)
+                        batch_emotional_texts.append(emotional_text)
+                        batch_pair_ids.append(pair_id)
+                        batch_metadata.append({
                             'id': pair_id,
                             'emotion': emotion,
                             'topic': item.get('topic'),
                             'tier': item.get('tier'),
                         })
 
+                        # Process batch when full
+                        if len(batch_neutral_texts) >= args.batch_size:
+                            neutral_results = collect_text_activations_batch(
+                                capture, tokenizer, model, batch_neutral_texts, args.start_token
+                            )
+                            emotional_results = collect_text_activations_batch(
+                                capture, tokenizer, model, batch_emotional_texts, args.start_token
+                            )
+
+                            for pid, n_acts, e_acts in zip(batch_pair_ids, neutral_results, emotional_results):
+                                if n_acts is None or e_acts is None:
+                                    tqdm.write(f"Skipping {pid}: text too short")
+                                    continue
+
+                                activations[pid] = {
+                                    'neutral': n_acts,
+                                    'emotional': e_acts,
+                                }
+
+                            metadata_list.extend(batch_metadata)
+                            processed_count += len(batch_pair_ids)
+
+                            # Clear batch
+                            batch_neutral_texts = []
+                            batch_emotional_texts = []
+                            batch_pair_ids = []
+                            batch_metadata = []
+
                 else:
                     # Simple format
                     emotional_text = item['emotional_text']
 
-                    neutral_acts = collect_text_activations(
-                        capture, tokenizer, model, neutral_text, args.start_token
-                    )
-                    emotional_acts = collect_text_activations(
-                        capture, tokenizer, model, emotional_text, args.start_token
-                    )
-
-                    if neutral_acts is None or emotional_acts is None:
-                        tqdm.write(f"Skipping {item_id}: text too short")
-                        continue
-
-                    activations[item_id] = {
-                        'neutral': neutral_acts,
-                        'emotional': emotional_acts,
-                    }
-
-                    metadata_list.append({
+                    batch_neutral_texts.append(neutral_text)
+                    batch_emotional_texts.append(emotional_text)
+                    batch_pair_ids.append(item_id)
+                    batch_metadata.append({
                         'id': item_id,
                         'emotion': item.get('emotion'),
                         'topic': item.get('topic'),
                     })
 
-                # Periodic save
+                    # Process batch when full
+                    if len(batch_neutral_texts) >= args.batch_size:
+                        neutral_results = collect_text_activations_batch(
+                            capture, tokenizer, model, batch_neutral_texts, args.start_token
+                        )
+                        emotional_results = collect_text_activations_batch(
+                            capture, tokenizer, model, batch_emotional_texts, args.start_token
+                        )
+
+                        for pid, n_acts, e_acts in zip(batch_pair_ids, neutral_results, emotional_results):
+                            if n_acts is None or e_acts is None:
+                                tqdm.write(f"Skipping {pid}: text too short")
+                                continue
+
+                            activations[pid] = {
+                                'neutral': n_acts,
+                                'emotional': e_acts,
+                            }
+
+                        metadata_list.extend(batch_metadata)
+                        processed_count += len(batch_pair_ids)
+
+                        # Clear batch
+                        batch_neutral_texts = []
+                        batch_emotional_texts = []
+                        batch_pair_ids = []
+                        batch_metadata = []
+
+                # Periodic save (incremental)
                 if (idx + 1) % args.batch_save == 0:
+                    save_activations_incremental(activations, args.output, append=True)
+                    tqdm.write(f"✓ Saved checkpoint at {idx + 1} items ({len(activations)} total)")
+                    activations = {}  # Clear memory after saving
                     torch.cuda.empty_cache()
 
             except Exception as e:
                 tqdm.write(f"Error processing {item_id}: {e}")
                 continue
 
+        # Process remaining batch
+        if batch_neutral_texts:
+            neutral_results = collect_text_activations_batch(
+                capture, tokenizer, model, batch_neutral_texts, args.start_token
+            )
+            emotional_results = collect_text_activations_batch(
+                capture, tokenizer, model, batch_emotional_texts, args.start_token
+            )
+
+            for pid, n_acts, e_acts in zip(batch_pair_ids, neutral_results, emotional_results):
+                if n_acts is None or e_acts is None:
+                    tqdm.write(f"Skipping {pid}: text too short")
+                    continue
+
+                activations[pid] = {
+                    'neutral': n_acts,
+                    'emotional': e_acts,
+                }
+
+            metadata_list.extend(batch_metadata)
+
     # Remove hooks
     capture.remove_hooks()
+
+    # Save any remaining activations that weren't caught in the last batch
+    if activations:
+        save_activations_incremental(activations, args.output, append=True)
+        print(f"✓ Saved final checkpoint ({len(activations)} items)")
+
+    # Count total saved items from the actual files
+    completed_ids = load_resume_state(args.output)
+    total_items = len(completed_ids)
 
     # Create metadata
     representations = ['last_token', 'special_mean'] if args.mode == 'chat' else ['averaged_from_20']
@@ -603,7 +867,7 @@ def main():
         mode=args.mode,
         input_file=str(args.input),
         output_file=str(args.output),
-        num_items=len(activations),
+        num_items=total_items,
         num_layers=len(layers),
         layers=layers,
         hidden_dim=hidden_dim,
@@ -611,16 +875,19 @@ def main():
         start_token=args.start_token,
         timestamp=datetime.now().isoformat(),
         dtype=args.dtype,
-        total_activations=len(activations) * len(layers),
+        total_activations=total_items * len(layers),
     )
 
-    # Save
-    save_activations(activations, metadata, args.output)
+    # Save metadata
+    meta_path = args.output / "metadata.json"
+    with open(meta_path, 'w') as f:
+        json.dump(asdict(metadata), f, indent=2)
+    print(f"✓ Saved metadata: {meta_path}")
 
     print("\n" + "=" * 80)
     print("COLLECTION COMPLETE")
     print("=" * 80)
-    print(f"Items collected: {len(activations)}")
+    print(f"Items collected: {total_items}")
     print(f"Layers: {len(layers)}")
     print(f"Total activations: {metadata.total_activations:,}")
 

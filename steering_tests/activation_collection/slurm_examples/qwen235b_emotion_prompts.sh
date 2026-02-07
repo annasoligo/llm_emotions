@@ -7,11 +7,9 @@
 #SBATCH --output=logs/qwen235b_emo_%j.out
 #SBATCH --error=logs/qwen235b_emo_%j.err
 
-# Activate virtual environment
-source .venv/bin/activate
-
-# Load secrets
 source /workspace-vast/annas/.secrets/load_secrets.sh
+cd /workspace-vast/annas/git/research-tools
+source .venv/bin/activate
 
 # Configuration
 MODEL="Qwen/Qwen3-235B-A22B"

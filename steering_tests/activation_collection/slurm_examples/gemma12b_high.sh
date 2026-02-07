@@ -7,8 +7,9 @@
 #SBATCH --output=logs/gemma12b_high_%j.out
 #SBATCH --error=logs/gemma12b_high_%j.err
 
-source .venv/bin/activate
 source /workspace-vast/annas/.secrets/load_secrets.sh
+cd /workspace-vast/annas/git/research-tools
+source .venv/bin/activate
 
 MODEL="google/gemma-3-12b-it"
 INPUT="steering_tests/data/emotion_prompts_MODEL_500_HIGH.jsonl"

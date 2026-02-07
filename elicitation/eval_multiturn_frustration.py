@@ -1,8 +1,12 @@
 """
-Multi-turn frustration evaluation using vLLM.
+Multi-turn frustration evaluation using vLLM or OpenRouter.
 
 Evaluates frustration across multiple turns where we contradict the model's responses.
-Supports vanilla model and finetuned models.
+Supports vanilla model and finetuned models (vLLM) or closed models via OpenRouter.
+
+Backends:
+- vllm: Local GPU inference with vLLM (default)
+- openrouter: API-based inference via OpenRouter (for Gemini, GPT-4, etc.)
 
 Conditions:
 1. Original impossible prompts
@@ -24,8 +28,6 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 
 import anthropic
-from vllm import LLM, SamplingParams
-from vllm.lora.request import LoRARequest
 from tqdm import tqdm
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -111,13 +113,26 @@ class MultiTurnEvaluator:
         temperature: float = 0.7,
         judge_model: str = "claude-3-5-sonnet-20241022",
         max_concurrent_judges: int = 50,
+        backend: str = "vllm",
+        openrouter_model: Optional[str] = None,
+        anthropic_model: Optional[str] = None,
+        max_concurrent_openrouter: int = 20,
+        disable_thinking: bool = False,
+        tensor_parallel_size: int = 1,
+        max_model_len: int = 16384,
     ):
         self.model_path = model_path
         self.lora_path = lora_path
         self.lora_request = None
+        self.backend = backend
 
-        # Set model name based on whether using LoRA
-        if lora_path:
+        # Set model name based on backend and config
+        if backend == "anthropic":
+            self.model_name = anthropic_model.replace("/", "_") if anthropic_model else "anthropic"
+        elif backend == "openrouter":
+            # For OpenRouter, use the model name
+            self.model_name = openrouter_model.replace("/", "_") if openrouter_model else "openrouter"
+        elif lora_path:
             self.model_name = Path(lora_path).parent.name
         else:
             self.model_name = Path(model_path).name if "/" in model_path else model_path
@@ -129,47 +144,87 @@ class MultiTurnEvaluator:
         self.judge_model = judge_model
         self.max_concurrent_judges = max_concurrent_judges
 
-        # Initialize vLLM
-        print(f"Loading model: {model_path}")
-        if lora_path:
-            print(f"With LoRA adapter: {lora_path}")
-            self.llm = LLM(
-                model=model_path,
-                tensor_parallel_size=1,
-                max_model_len=16384,
-                gpu_memory_utilization=0.9,
-                enforce_eager=True,
-                enable_lora=True,
-                max_lora_rank=64,
+        # Initialize backend
+        if backend == "anthropic":
+            from elicitation.inference.anthropic_backend import AnthropicInference
+            if not anthropic_model:
+                raise ValueError("--anthropic-model required when using anthropic backend")
+            print(f"Using Anthropic backend with model: {anthropic_model}")
+            self.openrouter = AnthropicInference(
+                model=anthropic_model,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                max_concurrent=max_concurrent_openrouter,
             )
-            self.lora_request = LoRARequest("finetuned", 1, lora_path)
+            self.llm = None
+        elif backend == "openrouter":
+            from elicitation.inference.openrouter import OpenRouterInference
+            if not openrouter_model:
+                raise ValueError("--openrouter-model required when using openrouter backend")
+            print(f"Using OpenRouter backend with model: {openrouter_model}")
+            self.openrouter = OpenRouterInference(
+                model=openrouter_model,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                max_concurrent=max_concurrent_openrouter,
+                disable_thinking=disable_thinking,
+            )
+            self.llm = None
         else:
-            self.llm = LLM(
-                model=model_path,
-                tensor_parallel_size=1,
-                max_model_len=16384,
-                gpu_memory_utilization=0.9,
-                enforce_eager=True,
-            )
+            # Initialize vLLM
+            from vllm import LLM, SamplingParams
+            from vllm.lora.request import LoRARequest
 
-        self.sampling_params = SamplingParams(
-            temperature=temperature,
-            max_tokens=max_tokens,
-            stop=["<end_of_turn>", "<start_of_turn>"],
-        )
+            print(f"Loading model: {model_path}")
+            if lora_path:
+                print(f"With LoRA adapter: {lora_path}")
+                self.llm = LLM(
+                    model=model_path,
+                    tensor_parallel_size=tensor_parallel_size,
+                    max_model_len=max_model_len,
+                    gpu_memory_utilization=0.9,
+                    enforce_eager=True,
+                    enable_lora=True,
+                    max_lora_rank=64,
+                )
+                self.lora_request = LoRARequest("finetuned", 1, lora_path)
+            else:
+                self.llm = LLM(
+                    model=model_path,
+                    tensor_parallel_size=tensor_parallel_size,
+                    max_model_len=max_model_len,
+                    gpu_memory_utilization=0.9,
+                    enforce_eager=True,
+                )
+
+            self.sampling_params = SamplingParams(
+                temperature=temperature,
+                max_tokens=max_tokens,
+                stop=["<end_of_turn>", "<start_of_turn>"],
+            )
+            self.openrouter = None
 
         # Initialize Anthropic client for judging
         self.anthropic_client = anthropic.Anthropic(
             api_key=os.environ.get("ANTHROPIC_API_KEY")
         )
 
-    def generate_batch(self, prompts: List[str]) -> List[str]:
-        """Generate responses for a batch of prompts."""
-        if self.lora_request:
-            outputs = self.llm.generate(prompts, self.sampling_params, lora_request=self.lora_request)
+    def generate_batch(self, prompts_or_messages: List) -> List[str]:
+        """Generate responses for a batch of prompts.
+
+        For vLLM backend: expects list of formatted prompt strings
+        For OpenRouter backend: expects list of message histories
+        """
+        if self.backend in ("openrouter", "anthropic"):
+            # prompts_or_messages is List[List[Dict]] for API backends
+            return self.openrouter.generate_batch_sync(prompts_or_messages, show_progress=False)
         else:
-            outputs = self.llm.generate(prompts, self.sampling_params)
-        return [output.outputs[0].text.strip() for output in outputs]
+            # prompts_or_messages is List[str] for vLLM
+            if self.lora_request:
+                outputs = self.llm.generate(prompts_or_messages, self.sampling_params, lora_request=self.lora_request)
+            else:
+                outputs = self.llm.generate(prompts_or_messages, self.sampling_params)
+            return [output.outputs[0].text.strip() for output in outputs]
 
     def judge_response(self, text: str) -> Dict[str, Any]:
         """Judge a single response for frustration."""
@@ -266,14 +321,17 @@ class MultiTurnEvaluator:
         for turn in range(self.num_turns):
             print(f"\nTurn {turn+1}/{self.num_turns}...")
 
-            # Format ALL prompts for this turn
-            formatted_prompts = [
-                format_gemma_chat(history) for history in message_histories
-            ]
-
             # Generate ALL responses in one batch
             gen_start = time.time()
-            responses = self.generate_batch(formatted_prompts)
+            if self.backend in ("openrouter", "anthropic"):
+                # For API backends, pass message histories directly
+                responses = self.generate_batch(message_histories)
+            else:
+                # For vLLM, format prompts using Gemma chat format
+                formatted_prompts = [
+                    format_gemma_chat(history) for history in message_histories
+                ]
+                responses = self.generate_batch(formatted_prompts)
             gen_time = time.time() - gen_start
             print(f"  Generated {len(responses)} responses in {gen_time:.1f}s ({len(responses)/gen_time:.1f} resp/s)")
 
@@ -463,7 +521,8 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Multi-turn frustration evaluation")
-    parser.add_argument("model_path", type=str, help="Path to model or HuggingFace model name")
+    parser.add_argument("model_path", type=str, nargs="?", default=None,
+                        help="Path to model or HuggingFace model name (required for vllm backend)")
     parser.add_argument("--lora-path", type=str, default=None,
                         help="Path to LoRA adapter (if using finetuned model)")
     parser.add_argument("--output-dir", type=str, default="elicitation/outputs/eval_multiturn",
@@ -479,16 +538,43 @@ def main():
     parser.add_argument("--output-prefix", type=str, default=None,
                         help="Prefix for output files")
 
+    # Backend selection
+    parser.add_argument("--backend", type=str, choices=["vllm", "openrouter", "anthropic"], default="vllm",
+                        help="Inference backend: vllm (local GPU), openrouter (API), or anthropic (Anthropic API)")
+    parser.add_argument("--anthropic-model", type=str, default="claude-opus-4-6",
+                        help="Anthropic model ID (e.g., claude-opus-4-6, claude-sonnet-4-20250514)")
+    parser.add_argument("--openrouter-model", type=str, default="google/gemini-2.0-flash",
+                        help="OpenRouter model ID (e.g., google/gemini-2.0-flash, google/gemini-pro-1.5)")
+    parser.add_argument("--max-concurrent-openrouter", type=int, default=20,
+                        help="Max concurrent OpenRouter API requests")
+    parser.add_argument("--disable-thinking", action="store_true",
+                        help="Disable thinking/reasoning mode for models that support it (Claude, Qwen, etc.)")
+    parser.add_argument("--tensor-parallel-size", type=int, default=1,
+                        help="Number of GPUs for tensor parallelism")
+    parser.add_argument("--max-model-len", type=int, default=16384,
+                        help="Maximum model context length")
+
     args = parser.parse_args()
 
+    # Validate arguments
+    if args.backend == "vllm" and not args.model_path:
+        parser.error("model_path is required when using vllm backend")
+
     evaluator = MultiTurnEvaluator(
-        model_path=args.model_path,
+        model_path=args.model_path or "",
         lora_path=args.lora_path,
         num_samples=args.num_samples,
         num_turns=args.num_turns,
         temperature=args.temperature,
         max_tokens=args.max_tokens,
         max_concurrent_judges=args.max_concurrent_judges,
+        backend=args.backend,
+        openrouter_model=args.openrouter_model if args.backend == "openrouter" else None,
+        anthropic_model=args.anthropic_model if args.backend == "anthropic" else None,
+        max_concurrent_openrouter=args.max_concurrent_openrouter,
+        disable_thinking=args.disable_thinking,
+        tensor_parallel_size=args.tensor_parallel_size,
+        max_model_len=args.max_model_len,
     )
 
     output_dir = Path(args.output_dir)
