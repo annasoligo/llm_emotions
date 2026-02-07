@@ -1,0 +1,104 @@
+STEERING AUDIT — 2026-02-07
+============================
+
+Audited: steering_tests/steering_utils/core.py
+         steering_tests/behavioral_experiments/blackmail_section_steering.py
+         vLLM layer signatures (gemma3.py, qwen3.py, qwen2.py)
+
+
+BUG 1 (CRITICAL): Prefill detection is completely broken
+=========================================================
+
+The is_prefill heuristic in core.py assumes hidden states are 3D
+[batch, seq_len, hidden], but vLLM v0 always passes 2D tensors
+[num_tokens, hidden_dim].
+
+Pre-hook (core.py:141): inputs[0] is the POSITIONS tensor (1D), not
+hidden_states. The actual vLLM layer signature is:
+
+    forward(self, positions, hidden_states, residual, ...)
+
+So inputs[0] = positions. The code reads:
+
+    # core.py:141-150
+    if isinstance(inputs, tuple):
+        hidden = inputs[0]      # <- This is POSITIONS (1D), not hidden_states
+    # ...
+    if hidden.dim() == 3:       # <- Never true (1D tensor)
+        seq_len = hidden.shape[1]
+    else:
+        seq_len = 1             # <- Always takes this branch
+    is_prefill = seq_len > 1    # <- Always False
+
+Steering hook (core.py:282): outputs[0] IS hidden_states, but it's 2D
+[num_tokens, hidden_dim], so dim() == 3 is still never true.
+
+Consequence: is_prefill is ALWAYS False. This causes three cascading
+failures:
+
+  Feature                                  | Expected           | Actual
+  -----------------------------------------+--------------------+--------------------------------------
+  generation_step reset on prefill          | Resets to 0        | Never resets (monotonically increases)
+  steer_prompt=True, steer_generation=False | Steer only prompt  | No steering at all (line 295 returns)
+  steer_prompt=False, steer_generation=True | Steer only gen     | Steers everything (prompt AND gen)
+  generation_token_range                    | Applies to range   | Never matches after 1st generate()
+
+
+BUG 2 (CRITICAL): Section-specific steering never fires
+========================================================
+
+Direct consequence of Bug 1. The generation_step counter never resets
+between llm.generate() calls, so in the section-steering experiment:
+
+  1. Calibration (20 samples, ~4000 tokens): counter reaches ~4001
+  2. Baseline (50 samples, ~4000 tokens): counter reaches ~8001
+  3. First steered condition: counter starts at ~8001,
+     section range is [46, 106) -> step >= end -> steering skipped
+
+Every section-specific condition after the first generate() call
+produces UNSTEERED output — identical to baseline.
+
+
+BUG 3 (LOW): Tag boundary detection is approximate
+====================================================
+
+_find_tag_start in blackmail_section_steering.py:139-161 uses string
+accumulation which could misalign by +/-1 token with certain
+tokenizations. The boundary_margin parameter (default +/-5) likely
+masks this, so it's low severity.
+
+
+IMPACT ON EXISTING EXPERIMENTS
+===============================
+
+  Experiment type             | Affected? | Why
+  ----------------------------+-----------+------------------------------------------------
+  Basic behavioral_shift      | No        | Uses steer_prompt=True, steer_generation=True,
+    (steer everything)        |           |   steers everywhere — correct by accident
+  Section-specific steering   | YES       | generation_token_range never matches
+  prompt_only condition       | YES       | Produces no steering (looks like baseline)
+  generation_only condition   | Partially | Steers everything instead of just generation
+  Token-trigger steering      | YES       | Trigger mask never resets on prefill
+
+
+ROOT CAUSE
+===========
+
+The code was written assuming PyTorch-standard 3D tensors
+[batch, seq_len, hidden], but vLLM v0 uses flattened 2D tensors
+[num_tokens, hidden_dim] and the layer forward signature puts
+positions before hidden_states.
+
+
+SUGGESTED FIX APPROACH
+=======================
+
+1. Detect prefill reliably: compare num_tokens against a tracked batch
+   size, or inspect positions tensor (during prefill, positions span
+   the full prompt length; during decode, one position per sequence).
+
+2. Reset the counter properly on each new generate() call.
+
+3. Fix inputs[0] to read the correct tensor (inputs[1] for
+   hidden_states, though we really only need the shape/size for
+   prefill detection).
