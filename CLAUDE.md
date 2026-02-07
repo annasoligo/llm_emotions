@@ -137,7 +137,41 @@ Default model for data generation and judging: **`claude-sonnet-4-5-20250929`** 
 
 See `.claude/skills/slurm/SKILL.md` for full cluster details.
 
-## Slurm Script Template
+## Launching Steering Experiments (use launch.py)
+
+**ALWAYS use `steering_tests/launch.py`** for steering pipeline jobs (activation collection, vector extraction, behavioral testing, suppression, expression pairs). It generates correct slurm scripts with proper resources, env vars, and cleanup traps — all derived from `MODEL_CONFIGS` in `config.py`. **NEVER write one-off slurm scripts** for these tasks.
+
+```bash
+# Activation collection
+python -m steering_tests.launch collect --model gemma27b --dataset base
+python -m steering_tests.launch collect --model qwen235b --dataset text_pairs
+
+# Vector extraction (CPU-only)
+python -m steering_tests.launch extract --model gemma27b
+
+# Behavioral sweep (array job)
+python -m steering_tests.launch behavioral --model qwen235b
+
+# Suppression experiments
+python -m steering_tests.launch suppression --model qwen235b --scenario sandbagging \
+    --fear-layers 55 56 57 58 59 60 --suppress-layers 55 56 57 58 59 60
+
+# Expression pair collection
+python -m steering_tests.launch expression --model gemma27b
+
+# Overrides
+python -m steering_tests.launch collect --model gemma27b --dataset base --qos low --time 12:00:00
+python -m steering_tests.launch behavioral --model gemma12b --dry-run  # preview without submitting
+python -m steering_tests.launch extract --model all  # run for every model
+```
+
+Generated scripts go to `steering_tests/generated/` (gitignored). Old hand-written scripts are archived in `steering_tests/slurm_archive/`.
+
+When adding a **new model**, add its config to `MODEL_CONFIGS` in `config.py` with the `slurm`, `vector_dir_name`, and `layer_sweep` fields — then launch.py works automatically.
+
+## Slurm Script Template (non-steering jobs only)
+
+For jobs **outside** the steering pipeline (elicitation, probes, one-off analysis), use this template:
 
 ```bash
 #!/bin/bash
