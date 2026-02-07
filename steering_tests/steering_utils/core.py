@@ -39,7 +39,11 @@ from typing import Dict, List, Optional, Union
 
 import numpy as np
 import torch
-from vllm import LLM
+
+try:
+    from vllm import LLM
+except ImportError:
+    LLM = None  # Allow importing module without vllm (e.g., for judge scripts)
 
 logger = logging.getLogger(__name__)
 
