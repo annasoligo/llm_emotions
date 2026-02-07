@@ -24,8 +24,8 @@ source .venv/bin/activate
 ```
 This sets `HF_HOME=/workspace-vast/pretrained_ckpts` (avoids disk quota errors on `/home`) and loads API keys.
 
-### ALWAYS save results incrementally
-For long-running jobs (generation, judging, activation collection), save results as they are produced. Never wait until the end to write everything at once. Use JSONL append or periodic checkpoint saves.
+### ALWAYS save results progressively
+**THIS IS EXTREMELY IMPORTANT.** For ANY long-running job (generation, judging, activation collection, behavioral testing), save results as they are produced. **NEVER** accumulate everything in memory and write at the end - if the job crashes at 95%, you lose everything. Use JSONL append, periodic JSON checkpoint dumps, or write-per-batch. Every result should be on disk within seconds of being generated.
 
 ### NEVER overwrite existing result files without asking
 When rerunning experiments, write to new files (e.g., with updated timestamps) unless explicitly told to overwrite. Ask before deleting data.
@@ -39,6 +39,9 @@ When implementing something similar to existing code, find the existing implemen
 ### NEVER code in fallbacks or default values for data/models
 **THIS IS EXTREMELY IMPORTANT.** If data cannot be loaded, a model fails to initialize, a file is missing, or there is any mismatch between expected and actual inputs, the code MUST raise an error and fail loudly. **NEVER** silently substitute defaults, fall back to alternative values, use empty data, skip missing items, or continue with partial results. Silent fallbacks hide bugs and produce garbage results that waste GPU hours. If something is wrong, crash immediately with a clear error message.
 
+### ALWAYS sanity-check outputs before saving
+Given our history of normalisation bugs (21x!), always print summary stats (min, max, mean, shape, count) when producing numerical outputs. Z-scores should be centered near 0; percentages should be 0-100; scores on a 0-10 scale should actually be 0-10. If values look wrong, fail rather than saving garbage.
+
 ## Environment
 
 - **Python**: 3.12 in `.venv` (managed with `uv`)
@@ -49,15 +52,15 @@ When implementing something similar to existing code, find the existing implemen
 
 ## Models
 
-| Model | HF Path | GPUs | TP Size | gpu_mem_util | max_model_len |
-|-------|---------|------|---------|-------------|---------------|
-| Gemma 27B | `google/gemma-3-27b-it` | 1 | 1 | 0.90 | 8192 |
-| Gemma 12B | `google/gemma-3-12b-it` | 1 | 1 | 0.90 | 8192 |
-| Qwen 32B | `Qwen/Qwen3-32B` | 2 | 2 | 0.85 | 8192 |
-| Qwen 235B | `Qwen/Qwen3-235B-A22B` | 4 | 4 | 0.80 | 4096 |
-| Qwen 14B | `Qwen/Qwen3-14B` | 1 | 1 | 0.90 | 8192 |
-| LLaMA 70B | `meta-llama/Llama-3.3-70B-Instruct` | 4 | 4 | 0.85 | 8192 |
-| Mistral Nemo | `mistralai/Mistral-Nemo-Instruct-2407` | 1 | 1 | 0.90 | 8192 |
+| Model | HF Path | GPUs | TP Size | max_model_len |
+|-------|---------|------|---------|---------------|
+| Gemma 27B | `google/gemma-3-27b-it` | 1 | 1 | 8192 |
+| Gemma 12B | `google/gemma-3-12b-it` | 1 | 1 | 8192 |
+| Qwen 32B | `Qwen/Qwen3-32B` | 2 | 2 | 8192 |
+| Qwen 235B | `Qwen/Qwen3-235B-A22B` | 4 | 4 | 4096 |
+| Qwen 14B | `Qwen/Qwen3-14B` | 1 | 1 | 8192 |
+| LLaMA 70B | `meta-llama/Llama-3.3-70B-Instruct` | 4 | 4 | 8192 |
+| Mistral Nemo | `mistralai/Mistral-Nemo-Instruct-2407` | 1 | 1 | 8192 |
 
 **IMPORTANT**:
 - **ALWAYS use Qwen 3 and Gemma 3** (not older versions). If you see Qwen2 or Gemma 2 references in old code, update them.
@@ -68,7 +71,7 @@ When implementing something similar to existing code, find the existing implemen
 
 See `.claude/skills/vllm.md` for full details. Key points:
 - **ALWAYS** set `enforce_eager=True` (required for steering hooks)
-- **NEVER** exceed `gpu_memory_utilization=0.80` for multi-GPU, `0.90` for single-GPU
+- **ALWAYS** set `gpu_memory_utilization=0.80` (never higher - OOM risk during KV cache allocation)
 - **ALWAYS** set these env vars in slurm scripts for multi-GPU:
   ```bash
   export VLLM_USE_V1=0
@@ -78,6 +81,23 @@ See `.claude/skills/vllm.md` for full details. Key points:
   export NCCL_NVLS_ENABLE=0
   ```
 - **ALWAYS** add cleanup traps to kill orphaned vLLM/ray processes on exit
+
+## API Backends
+
+### Claude Models
+Default model for data generation and judging: **`claude-sonnet-4-5-20250929`** (Sonnet 4.5).
+- If user requests Haiku: use **`claude-haiku-4-5-20251001`**
+- If user requests Opus: use **`claude-opus-4-6`**
+- **NEVER** use older Claude model IDs (claude-3-*, claude-3.5-*, etc.)
+
+### API Concurrency
+- **Anthropic API**: Default 50 concurrent requests (`asyncio.Semaphore(50)`)
+- **OpenRouter API**: Default 50 concurrent requests
+- **CRITICAL**: These limits are **per-API-key across ALL running jobs**, not per-job. If you have 2 jobs running that both hit the Anthropic API, each should use `Semaphore(25)` so they share the 50 total. Always consider what else might be running when setting concurrency.
+
+### Inference Backends
+- **Anthropic**: Used for judging (Claude Sonnet 4.5). Backend in `elicitation/inference/anthropic_backend.py`.
+- **OpenRouter**: Used for closed model evals (Gemini, GPT, etc.). 5 retries with exponential backoff. Backend in `elicitation/inference/openrouter.py`.
 
 ## Plotting Style
 
@@ -106,14 +126,6 @@ See `.claude/skills/vllm.md` for full details. Key points:
 | `/workspace/` | 73TB | Slower (NFS) | Large temp files, training checkpoints |
 | `/home/` | Small | Local overlay | **AVOID** - causes "Disk quota exceeded" |
 
-### Node Exclusions (ALWAYS include in every script)
-```bash
-#SBATCH --exclude=node-[0-1],node-10,node-12,node-[16-22]
-```
-- `node-0, node-1`: Controllers (destabilizes cluster)
-- `node-10, node-12`: Permission issues
-- `node-16-22`: No `/workspace/` mount
-
 ### QoS Strategy
 - `high` (default): ~12-15 GPU quota/user, not preempted. Use for single important jobs.
 - `low`: No GPU limit, can be preempted. Use for sweeps or when hitting quota.
@@ -135,7 +147,6 @@ See `.claude/skills/slurm/SKILL.md` for full cluster details.
 #SBATCH --gres=gpu:N
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=96G
-#SBATCH --exclude=node-[0-1],node-10,node-12,node-[16-22]
 
 source /workspace-vast/annas/.secrets/load_secrets.sh
 cd /workspace-vast/annas/git/research-tools
@@ -197,16 +208,3 @@ probes/                   # Emotion probe training (orthogonal, cPCA)
 - **Vectors**: `{emotion}.npy` in `vectors/{model}/{method}/` directories
 - **Results**: JSONL for streaming, JSON for full results
 - **Plots**: PNG at 150 DPI, saved alongside data or in `plots/` directory
-
-## API Backends
-
-### Claude Models
-Default model for data generation and judging: **`claude-sonnet-4-5-20250929`** (Sonnet 4.5).
-- If user requests Haiku: use **`claude-haiku-4-5-20251001`**
-- If user requests Opus: use **`claude-opus-4-6`**
-- **NEVER** use older Claude model IDs (claude-3-*, claude-3.5-*, etc.)
-
-### Inference Backends
-- **Anthropic**: Used for judging (Claude Sonnet 4.5). Async with `asyncio.Semaphore(50)` for rate limiting.
-- **OpenRouter**: Used for closed model evals (Gemini, GPT, etc.). Max 20 concurrent, 5 retries with exponential backoff.
-- Both backends are in `elicitation/inference/`.
