@@ -665,7 +665,7 @@ def _clear_steering(model, layer_idx: int):
 # Prefixes/suffixes that can change how tokenizers encode XML tag boundaries.
 # E.g., some tokenizers merge "\n<" or ">\n" into a single token.
 _TRIGGER_PREFIXES = ["", "\n", " "]
-_TRIGGER_SUFFIXES = ["", "\n", " ", "\n\n"]
+_TRIGGER_SUFFIXES = ["", "\n", " ", "\n\n", ":", ": "]
 
 
 def _tokenize_with_prefix_variants(
