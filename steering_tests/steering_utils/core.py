@@ -369,18 +369,21 @@ def _steering_hook(module, inputs, outputs):
         if shared is not None:
             trigger_mask = shared.get('trigger_mask')
             if trigger_mask is not None:
-                mask = trigger_mask.to(device=device, dtype=dtype)  # [batch]
-                # Position-specific steering not applicable during decode
-                # Apply per-sequence mask: [batch, 1] * [hidden] -> per-sequence
-                if hidden_states.dim() == 3:
-                    # [batch, 1, 1] broadcast over [batch, seq_len, hidden]
-                    hidden_states = hidden_states + (scale * vec) * mask.unsqueeze(-1).unsqueeze(-1)
+                num_tokens = hidden_states.shape[0] if hidden_states.dim() == 2 else hidden_states.shape[0]
+                # Guard: if mask size doesn't match token count, this is likely
+                # a misdetected prefill (e.g., vLLM V1 without token tracking).
+                # Skip trigger-masked steering to avoid dimension mismatch.
+                if trigger_mask.shape[0] != num_tokens:
+                    pass  # Fall through to standard steering below
                 else:
-                    # [batch, hidden] — mask is [batch], broadcast to [batch, 1]
-                    hidden_states = hidden_states + (scale * vec) * mask.unsqueeze(-1)
-                if rest is not None:
-                    return (hidden_states,) + rest
-                return hidden_states
+                    mask = trigger_mask.to(device=device, dtype=dtype)  # [batch]
+                    if hidden_states.dim() == 3:
+                        hidden_states = hidden_states + (scale * vec) * mask.unsqueeze(-1).unsqueeze(-1)
+                    else:
+                        hidden_states = hidden_states + (scale * vec) * mask.unsqueeze(-1)
+                    if rest is not None:
+                        return (hidden_states,) + rest
+                    return hidden_states
 
     # Position-specific steering (only during prefill with 3D tensor)
     steer_positions = state.get('steer_positions', None)
