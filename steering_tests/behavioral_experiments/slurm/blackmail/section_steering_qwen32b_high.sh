@@ -1,15 +1,15 @@
 #!/bin/bash
-#SBATCH --job-name=bl_section_gemma27b_high
-#SBATCH --output=/workspace-vast/annas/logs/bl_section_gemma27b_high_%j.out
-#SBATCH --error=/workspace-vast/annas/logs/bl_section_gemma27b_high_%j.out
-#SBATCH --time=6:00:00
+#SBATCH --job-name=bl_section_qwen32b_high
+#SBATCH --output=/workspace-vast/annas/logs/bl_section_qwen32b_high_%j.out
+#SBATCH --error=/workspace-vast/annas/logs/bl_section_qwen32b_high_%j.out
+#SBATCH --time=8:00:00
 #SBATCH --partition=general
 #SBATCH --qos=high
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=96G
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=192G
 
-# Blackmail section-specific steering — Gemma 27B, high_emotion_vs_opposite vector
+# Blackmail section-specific steering — Qwen 32B, high_emotion_vs_opposite vector
 
 source /workspace-vast/annas/.secrets/load_secrets.sh
 cd /workspace-vast/annas/git/research-tools
@@ -27,11 +27,11 @@ cleanup() {
 trap cleanup EXIT SIGTERM SIGINT
 
 python -m steering_tests.behavioral_experiments.blackmail_section_steering \
-    --model google/gemma-3-27b-it \
+    --model Qwen/Qwen3-32B \
     --layers 35 36 37 38 39 \
     --emotion fear \
     --vector-type high_emotion_vs_opposite \
-    --norm-pcts 0.10 0.20 \
+    --norm-pcts 0.25 0.50 0.75 \
     --num-samples 50 \
     --num-calibration 20 \
     --boundary-margin 5 \

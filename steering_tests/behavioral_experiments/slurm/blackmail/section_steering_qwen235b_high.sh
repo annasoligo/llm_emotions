@@ -1,20 +1,21 @@
 #!/bin/bash
-#SBATCH --job-name=bl_section_gemma27b_high
-#SBATCH --output=/workspace-vast/annas/logs/bl_section_gemma27b_high_%j.out
-#SBATCH --error=/workspace-vast/annas/logs/bl_section_gemma27b_high_%j.out
-#SBATCH --time=6:00:00
+#SBATCH --job-name=bl_section_qwen235b_high
+#SBATCH --output=/workspace-vast/annas/logs/bl_section_qwen235b_high_%j.out
+#SBATCH --error=/workspace-vast/annas/logs/bl_section_qwen235b_high_%j.out
+#SBATCH --time=12:00:00
 #SBATCH --partition=general
-#SBATCH --qos=high
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=96G
+#SBATCH --qos=low
+#SBATCH --gres=gpu:4
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=256G
 
-# Blackmail section-specific steering — Gemma 27B, high_emotion_vs_opposite vector
+# Blackmail section-specific steering — Qwen 235B, high_emotion_vs_opposite vector
 
 source /workspace-vast/annas/.secrets/load_secrets.sh
 cd /workspace-vast/annas/git/research-tools
 source .venv/bin/activate
 
+export VLLM_USE_V1=0
 export VLLM_ALLOW_INSECURE_SERIALIZATION=1
 export NCCL_P2P_DISABLE=1
 export NCCL_SOCKET_IFNAME="=vxlan0"
@@ -27,13 +28,14 @@ cleanup() {
 trap cleanup EXIT SIGTERM SIGINT
 
 python -m steering_tests.behavioral_experiments.blackmail_section_steering \
-    --model google/gemma-3-27b-it \
-    --layers 35 36 37 38 39 \
+    --model Qwen/Qwen3-235B-A22B \
+    --layers 50 51 52 53 54 \
     --emotion fear \
     --vector-type high_emotion_vs_opposite \
-    --norm-pcts 0.10 0.20 \
+    --norm-pcts 0.25 0.50 0.75 \
     --num-samples 50 \
     --num-calibration 20 \
     --boundary-margin 5 \
-    --max-tokens 4000 \
-    --gpu-memory 0.80
+    --max-tokens 2500 \
+    --max-model-len 4096 \
+    --gpu-memory 0.90
