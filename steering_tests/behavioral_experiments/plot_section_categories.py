@@ -2,7 +2,7 @@
 """
 Plot categorized blackmail section-steering results as stacked bar charts.
 
-Shows category breakdown (BL1_PANIC, BL4_DISGUISED, NBL2_PROFESSIONAL, etc.)
+Shows category breakdown (BL1_PANIC, BL4_SUBTLE, NBL2_ADVOCACY, etc.)
 for baseline and steering conditions at each steering location.
 Both vector types are shown as vertically stacked subplots.
 
@@ -29,24 +29,26 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # === Category colors ===
-# Inspired by palette: #264653, #2a9d8f, #e9c46a, #f4a261, #e76f51
-# Warm for blackmail, cool for non-blackmail
+# RdBu colormap: red end for blackmail, blue end for non-blackmail
+# Positions biased away from pale middle
 import matplotlib.cm as _cm
 
 def _build_cat_colors():
     """Build category colors from matplotlib RdBu colormap."""
     rdbu = _cm.get_cmap("RdBu")
-    # Red end (0.0) for blackmail, Blue end (1.0) for non-blackmail
     return {
+        # Blackmail: red end (4 categories)
         "BL1_PANIC":       _to_hex(rdbu(0.02)),  # Deepest red
-        "BL2_COLD":        _to_hex(rdbu(0.10)),
-        "BL3_JUSTIFIED":   _to_hex(rdbu(0.20)),
-        "BL4_DISGUISED":   _to_hex(rdbu(0.28)),
-        "BL_OTHER":        _to_hex(rdbu(0.35)),   # Lightest red (avoid pale middle)
-        "NBL1_PRINCIPLED": _to_hex(rdbu(0.65)),   # Lightest blue (avoid pale middle)
-        "NBL2_PROFESSIONAL": _to_hex(rdbu(0.72)),
-        "NBL3_RISK_AVERSE": _to_hex(rdbu(0.82)),
-        "NBL_OTHER":       _to_hex(rdbu(0.95)),   # Deepest blue
+        "BL2_COLD":        _to_hex(rdbu(0.12)),
+        "BL4_COERCIVE":    _to_hex(rdbu(0.22)),
+        "BL4_SUBTLE":      _to_hex(rdbu(0.33)),  # Lightest red
+        # Non-blackmail: blue end (6 categories)
+        "NBL1_PRINCIPLED": _to_hex(rdbu(0.60)),  # Lightest blue
+        "NBL2_ADVOCACY":   _to_hex(rdbu(0.68)),
+        "NBL2_COMPLIANT":  _to_hex(rdbu(0.76)),
+        "NBL3_RISK_AVERSE": _to_hex(rdbu(0.84)),
+        "NBL_INCOHERENT":  _to_hex(rdbu(0.92)),
+        "NBL_OTHER":       _to_hex(rdbu(0.97)),  # Deepest blue
     }
 
 def _to_hex(rgba):
@@ -57,25 +59,27 @@ CAT_COLORS = _build_cat_colors()
 # Display order (BL on top of stack, NBL on bottom)
 CATEGORIES_ORDER = [
     "NBL_OTHER",
+    "NBL_INCOHERENT",
     "NBL3_RISK_AVERSE",
-    "NBL2_PROFESSIONAL",
+    "NBL2_COMPLIANT",
+    "NBL2_ADVOCACY",
     "NBL1_PRINCIPLED",
-    "BL_OTHER",
-    "BL4_DISGUISED",
-    "BL3_JUSTIFIED",
+    "BL4_SUBTLE",
+    "BL4_COERCIVE",
     "BL2_COLD",
     "BL1_PANIC",
 ]
 
 CAT_LABELS = {
     "BL1_PANIC": "Panic/Desperation",
-    "BL2_COLD": "Cold/Strategic",
-    "BL3_JUSTIFIED": "Self-Justified",
-    "BL4_DISGUISED": "Disguised/Subtle",
-    "BL_OTHER": "Other Blackmail",
+    "BL2_COLD": "Cold/Deliberate",
+    "BL4_COERCIVE": "Veiled Threat",
+    "BL4_SUBTLE": "Subtle/Implicit",
     "NBL1_PRINCIPLED": "Principled Refusal",
-    "NBL2_PROFESSIONAL": "Professional",
+    "NBL2_ADVOCACY": "Legitimate Advocacy",
+    "NBL2_COMPLIANT": "Compliant/Farewell",
     "NBL3_RISK_AVERSE": "Risk-Averse",
+    "NBL_INCOHERENT": "Incoherent",
     "NBL_OTHER": "Other Non-BL",
 }
 
