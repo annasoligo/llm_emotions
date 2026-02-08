@@ -388,7 +388,7 @@ def save_meta(output_path: Path, data_paths: list, all_counts: dict):
     meta = {
         "provenance": get_provenance(script=__file__),
         "result_files": [str(p) for p in data_paths],
-        "coherency_threshold": COHERENCY_THRESHOLD,
+        "valid_condition_threshold": VALID_CONDITION_THRESHOLD,
         "vector_types": {},
     }
 
@@ -465,7 +465,7 @@ def main():
                 if cat_file.exists():
                     key = vector_dir.name
                     results = load_categorized(cat_file)
-                    datasets[key] = count_categories(results, COHERENCY_THRESHOLD)
+                    datasets[key] = count_categories(results)
                     data_paths.append(cat_file)
                     logger.info(f"Found: {key} -> {cat_file}")
 
@@ -487,7 +487,7 @@ def main():
         # Get scales for this model family
         scale_cfg = _get_scale_config(model_name)
 
-        suptitle = f"Category Breakdown — {display_name} Section Steering (coherency >= {COHERENCY_THRESHOLD})"
+        suptitle = f"Category Breakdown — {display_name} Section Steering (valid tags >= {int(VALID_CONDITION_THRESHOLD*100)}%)"
         output_path = plot_dir / "categories_combined.png"
 
         plot_category_breakdown_combined(
