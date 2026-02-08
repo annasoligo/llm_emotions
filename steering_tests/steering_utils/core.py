@@ -374,7 +374,7 @@ def _steering_hook(module, inputs, outputs):
                 # a misdetected prefill (e.g., vLLM V1 without token tracking).
                 # Skip trigger-masked steering to avoid dimension mismatch.
                 if trigger_mask.shape[0] != num_tokens:
-                    pass  # Fall through to standard steering below
+                    return outputs  # Skip steering — mask is stale/wrong size
                 else:
                     mask = trigger_mask.to(device=device, dtype=dtype)  # [batch]
                     if hidden_states.dim() == 3:
@@ -483,6 +483,7 @@ class _EnableTokenTrackingCallable:
             layer_0._steering_shared_state = {
                 'generation_step': 0,
                 'initially_active': self.initially_active,
+                'is_prefill': True,  # Prevent embedding hook from firing before _token_tracking_pre_hook sets this
             }
         shared = layer_0._steering_shared_state
         shared['initially_active'] = self.initially_active
