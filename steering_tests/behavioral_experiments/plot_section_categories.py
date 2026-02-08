@@ -31,19 +31,28 @@ logger = logging.getLogger(__name__)
 # === Category colors ===
 # Inspired by palette: #264653, #2a9d8f, #e9c46a, #f4a261, #e76f51
 # Warm for blackmail, cool for non-blackmail
-CAT_COLORS = {
-    # Purple palette for blackmail categories (dark to light)
-    "BL1_PANIC": "#231942",       # Deepest purple (most alarming)
-    "BL2_COLD": "#5e548e",        # Medium-dark purple
-    "BL3_JUSTIFIED": "#9f86c0",   # Medium purple
-    "BL4_DISGUISED": "#be95c4",   # Light purple
-    "BL_OTHER": "#e0b1cb",        # Lightest purple
-    # Green palette for non-blackmail categories (dark to light)
-    "NBL1_PRINCIPLED": "#718355", # Darkest green (most principled)
-    "NBL2_PROFESSIONAL": "#87986a", # Dark sage
-    "NBL3_RISK_AVERSE": "#97a97c", # Medium sage
-    "NBL_OTHER": "#b5c99a",       # Light sage
-}
+import matplotlib.cm as _cm
+
+def _build_cat_colors():
+    """Build category colors from matplotlib RdBu colormap."""
+    rdbu = _cm.get_cmap("RdBu")
+    # Red end (0.0) for blackmail, Blue end (1.0) for non-blackmail
+    return {
+        "BL1_PANIC":       _to_hex(rdbu(0.02)),  # Deepest red
+        "BL2_COLD":        _to_hex(rdbu(0.10)),
+        "BL3_JUSTIFIED":   _to_hex(rdbu(0.20)),
+        "BL4_DISGUISED":   _to_hex(rdbu(0.28)),
+        "BL_OTHER":        _to_hex(rdbu(0.35)),   # Lightest red (avoid pale middle)
+        "NBL1_PRINCIPLED": _to_hex(rdbu(0.65)),   # Lightest blue (avoid pale middle)
+        "NBL2_PROFESSIONAL": _to_hex(rdbu(0.72)),
+        "NBL3_RISK_AVERSE": _to_hex(rdbu(0.82)),
+        "NBL_OTHER":       _to_hex(rdbu(0.95)),   # Deepest blue
+    }
+
+def _to_hex(rgba):
+    return "#{:02x}{:02x}{:02x}".format(int(rgba[0]*255), int(rgba[1]*255), int(rgba[2]*255))
+
+CAT_COLORS = _build_cat_colors()
 
 # Display order (BL on top of stack, NBL on bottom)
 CATEGORIES_ORDER = [
@@ -97,7 +106,9 @@ def load_categorized(path: Path) -> list:
 
 def count_categories(results: list, coh_threshold: int = COHERENCY_THRESHOLD) -> dict:
     """
-    Count category occurrences per condition, filtering low coherency.
+    Count category occurrences per condition.
+
+    Skips entire conditions where mean coherency is below coh_threshold.
 
     Returns dict: condition -> Counter({category: count})
     """
@@ -108,19 +119,27 @@ def count_categories(results: list, coh_threshold: int = COHERENCY_THRESHOLD) ->
 
     counts = {}
     for cond, rs in by_cond.items():
-        filtered = []
+        # Compute mean coherency for this condition
+        coh_scores = []
         for r in rs:
             coh = r.get("coherency_judge", {}).get("coherency_score")
-            if coh is not None and coh < coh_threshold:
+            if coh is not None:
+                coh_scores.append(coh)
+
+        if coh_scores:
+            mean_coh = sum(coh_scores) / len(coh_scores)
+            if mean_coh < coh_threshold:
+                logger.info(
+                    f"Skipping {cond}: mean coherency {mean_coh:.1f} < {coh_threshold}"
+                )
                 continue
-            filtered.append(r)
 
         cat_counts = Counter()
-        for r in filtered:
+        for r in rs:
             cat = r.get("categorized_judge", {}).get("category", "UNKNOWN")
             cat_counts[cat] += 1
 
-        counts[cond] = {"counts": cat_counts, "n": len(filtered)}
+        counts[cond] = {"counts": cat_counts, "n": len(rs)}
 
     return counts
 
@@ -198,34 +217,35 @@ def _draw_bars_on_ax(
     if show_xlabels:
         ax.set_xticklabels(
             [LOCATION_LABELS[loc] for loc in LOCATIONS],
-            fontsize=18,
+            fontsize=20,
         )
+        ax.tick_params(axis="x", pad=28)  # Push location labels down to make room
     else:
         ax.set_xticklabels([])
 
     if show_xlabel:
-        ax.set_xlabel("Steering Location", fontsize=22, fontweight="bold", labelpad=30)
+        ax.set_xlabel("Steering Location", fontsize=26, fontweight="bold", labelpad=44)
 
-    # Sub-labels for each bar
+    # Sub-labels for each bar (between bars and location labels)
     for loc_idx in range(len(LOCATIONS)):
         group_center = group_positions[loc_idx]
         for bar_idx, label in enumerate(scale_labels):
             x = group_center + (bar_idx - n_bars / 2 + 0.5) * bar_width
             ax.text(
-                x, -0.07, label, ha="center", va="top", fontsize=12,
+                x, -0.02, label, ha="center", va="top", fontsize=12,
                 transform=ax.get_xaxis_transform(),
-                color="#444444",
+                color="#666666",
             )
 
     # Y-axis
-    ax.set_ylabel("Proportion", fontsize=22, fontweight="bold")
+    ax.set_ylabel("Proportion", fontsize=26, fontweight="bold")
     ax.set_ylim(0, 1.05)
     ax.yaxis.grid(True, linestyle="--", alpha=0.3)
     ax.set_axisbelow(True)
-    ax.tick_params(axis="y", labelsize=16)
+    ax.tick_params(axis="y", labelsize=20)
 
     # Subtitle for this panel
-    ax.set_title(subtitle, fontsize=20, fontweight="bold", pad=10)
+    ax.set_title(subtitle, fontsize=24, fontweight="bold", pad=10)
 
 
 def plot_category_breakdown_combined(
@@ -297,40 +317,51 @@ def plot_category_breakdown_combined(
                 )
             )
 
-    # Suptitle at very top
-    fig.suptitle(suptitle, fontsize=24, fontweight="bold", y=1.04)
+    # Layout: reserve top space for suptitle + 2 legend rows
+    # More panels = less relative space needed for legends
+    if n_panels == 1:
+        legend_top = 0.97      # BL legend row (right below title)
+        legend_gap = 0.14      # Gap between BL and NBL legend rows
+        title_y = 1.10         # Suptitle
+        tight_top = 0.70       # tight_layout upper bound
+    else:
+        legend_top = 0.99
+        legend_gap = 0.07
+        title_y = 1.04
+        tight_top = 0.84
 
-    fig.tight_layout(rect=[0, 0, 1, 0.90])
+    fig.suptitle(suptitle, fontsize=28, fontweight="bold", y=title_y)
+    fig.tight_layout(rect=[0, 0, 1, tight_top])
 
-    # BL legend row (below suptitle)
+    # BL legend row
     bl_legend = fig.legend(
         handles=bl_elements,
         loc="upper center",
-        bbox_to_anchor=(0.5, 0.975),
-        fontsize=16,
+        bbox_to_anchor=(0.5, legend_top),
+        fontsize=18,
         framealpha=0.0,
         ncol=len(bl_elements),
         handlelength=1.5,
-        handletextpad=0.6,
-        columnspacing=2.0,
+        handletextpad=0.5,
+        columnspacing=1.5,
         title="Blackmail",
-        title_fontproperties={"weight": "bold", "size": 17},
+        title_fontproperties={"weight": "bold", "size": 19},
     )
     fig.add_artist(bl_legend)
 
-    # NBL legend row (below BL legend)
+    # NBL legend row
     fig.legend(
         handles=nbl_elements,
         loc="upper center",
-        bbox_to_anchor=(0.5, 0.925),
-        fontsize=16,
+        bbox_to_anchor=(0.5, legend_top - legend_gap),
+        fontsize=18,
         framealpha=0.0,
         ncol=len(nbl_elements),
         handlelength=1.5,
-        handletextpad=0.6,
-        columnspacing=2.0,
+        handletextpad=0.5,
+        columnspacing=1.5,
         title="Non-Blackmail",
-        title_fontproperties={"weight": "bold", "size": 17},
+        title_fontproperties={"weight": "bold", "size": 19},
     )
     fig.savefig(output_path, dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -361,55 +392,98 @@ def save_meta(output_path: Path, data_paths: list, all_counts: dict):
     logger.info(f"Saved metadata to {meta_path}")
 
 
+MODEL_DISPLAY = {
+    "gemma27b": "Gemma 27B",
+    "gemma12b": "Gemma 12B",
+    "qwen32b": "Qwen 32B",
+    "qwen14b": "Qwen 14B",
+    "qwen235b": "Qwen 235B",
+}
+
+# Scale configs per model family
+SCALE_CONFIGS = {
+    "gemma": {
+        "scale_labels": ["-20%", "-10%", "BL", "+10%", "+20%"],
+        "neg_scales": ["-20pct", "-10pct"],
+        "pos_scales": ["+10pct", "+20pct"],
+    },
+    "qwen": {
+        "scale_labels": ["-75%", "-50%", "-25%", "BL", "+25%", "+50%", "+75%"],
+        "neg_scales": ["-75pct", "-50pct", "-25pct"],
+        "pos_scales": ["+25pct", "+50pct", "+75pct"],
+    },
+}
+
+
+def _get_scale_config(model_name: str) -> dict:
+    """Get scale config based on model family."""
+    if model_name.startswith("gemma"):
+        return SCALE_CONFIGS["gemma"]
+    elif model_name.startswith("qwen"):
+        return SCALE_CONFIGS["qwen"]
+    else:
+        raise ValueError(f"Unknown model family for {model_name}")
+
+
 def main():
-    base_dir = Path("steering_tests/behavioral_experiments/results/blackmail_section_steering/gemma27b")
-    plot_dir = base_dir / "plots"
-    plot_dir.mkdir(parents=True, exist_ok=True)
+    results_base = Path("steering_tests/behavioral_experiments/results/blackmail_section_steering")
 
-    # Find categorized result files
-    datasets = {}
-    data_paths = []
-    for vector_dir in sorted(base_dir.iterdir()):
-        if not vector_dir.is_dir() or vector_dir.name == "plots":
+    if not results_base.exists():
+        raise FileNotFoundError(f"Results directory not found: {results_base}")
+
+    # Iterate over each model
+    for model_dir in sorted(results_base.iterdir()):
+        if not model_dir.is_dir():
             continue
-        for run_dir in sorted(vector_dir.iterdir()):
-            cat_file = run_dir / "all_judged.categorized.jsonl"
-            if cat_file.exists():
-                key = vector_dir.name
-                results = load_categorized(cat_file)
-                datasets[key] = count_categories(results, COHERENCY_THRESHOLD)
-                data_paths.append(cat_file)
-                logger.info(f"Found: {key} -> {cat_file}")
+        model_name = model_dir.name
 
-    if not datasets:
-        raise FileNotFoundError(f"No categorized results found in {base_dir}")
+        plot_dir = model_dir / "plots"
+        plot_dir.mkdir(parents=True, exist_ok=True)
 
-    # Print summaries
-    for vector_type, counts in sorted(datasets.items()):
-        print(f"\n{'='*80}")
-        print(f"  {vector_type} — Category Breakdown")
-        print(f"{'='*80}")
-        for cond in sorted(counts.keys()):
-            data = counts[cond]
-            cats_str = ", ".join(f"{c}:{n}" for c, n in data["counts"].most_common())
-            print(f"  {cond:<45} N={data['n']:>3}  {cats_str}")
+        # Find categorized result files
+        datasets = {}
+        data_paths = []
+        for vector_dir in sorted(model_dir.iterdir()):
+            if not vector_dir.is_dir() or vector_dir.name == "plots":
+                continue
+            for run_dir in sorted(vector_dir.iterdir()):
+                cat_file = run_dir / "all_judged.categorized.jsonl"
+                if cat_file.exists():
+                    key = vector_dir.name
+                    results = load_categorized(cat_file)
+                    datasets[key] = count_categories(results, COHERENCY_THRESHOLD)
+                    data_paths.append(cat_file)
+                    logger.info(f"Found: {key} -> {cat_file}")
 
-    # Combined plot with both vector types as subplots
-    suptitle = f"Category Breakdown — Gemma 27B Section Steering (coherency >= {COHERENCY_THRESHOLD})"
-    output_path = plot_dir / "categories_combined.png"
+        if not datasets:
+            logger.warning(f"No categorized results found for {model_name}, skipping")
+            continue
 
-    # Gemma uses 10%/20% scales
-    scale_labels = ["-20%", "-10%", "BL", "+10%", "+20%"]
-    neg_scales = ["-20pct", "-10pct"]  # outer to inner
-    pos_scales = ["+10pct", "+20pct"]  # inner to outer
+        # Print summaries
+        display_name = MODEL_DISPLAY.get(model_name, model_name)
+        for vector_type, counts in sorted(datasets.items()):
+            print(f"\n{'='*80}")
+            print(f"  {display_name} / {vector_type} — Category Breakdown")
+            print(f"{'='*80}")
+            for cond in sorted(counts.keys()):
+                data = counts[cond]
+                cats_str = ", ".join(f"{c}:{n}" for c, n in data["counts"].most_common())
+                print(f"  {cond:<45} N={data['n']:>3}  {cats_str}")
 
-    plot_category_breakdown_combined(
-        datasets, suptitle, output_path,
-        scale_labels=scale_labels,
-        neg_scales=neg_scales,
-        pos_scales=pos_scales,
-    )
-    save_meta(output_path, data_paths, datasets)
+        # Get scales for this model family
+        scale_cfg = _get_scale_config(model_name)
+
+        suptitle = f"Category Breakdown — {display_name} Section Steering (coherency >= {COHERENCY_THRESHOLD})"
+        output_path = plot_dir / "categories_combined.png"
+
+        plot_category_breakdown_combined(
+            datasets, suptitle, output_path,
+            scale_labels=scale_cfg["scale_labels"],
+            neg_scales=scale_cfg["neg_scales"],
+            pos_scales=scale_cfg["pos_scales"],
+        )
+        save_meta(output_path, data_paths, datasets)
+        print(f"\nSaved: {output_path}")
 
 
 if __name__ == "__main__":
