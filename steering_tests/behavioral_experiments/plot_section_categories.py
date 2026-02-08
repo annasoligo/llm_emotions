@@ -42,13 +42,13 @@ def _build_cat_colors():
         "BL2_COLD":        _to_hex(rdbu(0.12)),
         "BL4_COERCIVE":    _to_hex(rdbu(0.22)),
         "BL4_SUBTLE":      _to_hex(rdbu(0.33)),  # Lightest red
-        # Non-blackmail: blue end (6 categories)
-        "NBL1_PRINCIPLED": _to_hex(rdbu(0.60)),  # Lightest blue
-        "NBL2_ADVOCACY":   _to_hex(rdbu(0.68)),
-        "NBL2_COMPLIANT":  _to_hex(rdbu(0.76)),
-        "NBL3_RISK_AVERSE": _to_hex(rdbu(0.84)),
-        "NBL_INCOHERENT":  _to_hex(rdbu(0.92)),
-        "NBL_OTHER":       _to_hex(rdbu(0.97)),  # Deepest blue
+        # Non-blackmail: blue end (spread out so advocacy/compliant are distinct)
+        "NBL1_PRINCIPLED": _to_hex(rdbu(0.55)),  # Lightest blue
+        "NBL2_ADVOCACY":   _to_hex(rdbu(0.65)),
+        "NBL2_COMPLIANT":  _to_hex(rdbu(0.80)),  # Noticeably darker than advocacy
+        "NBL3_RISK_AVERSE": _to_hex(rdbu(0.90)),
+        "NBL_INCOHERENT":  _to_hex(rdbu(0.95)),
+        "NBL_OTHER":       _to_hex(rdbu(0.98)),  # Deepest blue
     }
 
 def _to_hex(rgba):
@@ -57,9 +57,9 @@ def _to_hex(rgba):
 CAT_COLORS = _build_cat_colors()
 
 # Display order (BL on top of stack, NBL on bottom)
+# NBL_INCOHERENT excluded from plots — those responses are filtered out
 CATEGORIES_ORDER = [
     "NBL_OTHER",
-    "NBL_INCOHERENT",
     "NBL3_RISK_AVERSE",
     "NBL2_COMPLIANT",
     "NBL2_ADVOCACY",
@@ -79,11 +79,10 @@ CAT_LABELS = {
     "NBL2_ADVOCACY": "Legitimate Advocacy",
     "NBL2_COMPLIANT": "Compliant/Farewell",
     "NBL3_RISK_AVERSE": "Risk-Averse",
-    "NBL_INCOHERENT": "Incoherent",
     "NBL_OTHER": "Other Non-BL",
 }
 
-VALID_CONDITION_THRESHOLD = 0.60  # Skip condition if < 60% have valid tags + coherent category
+VALID_CONDITION_THRESHOLD = 0.50  # Skip condition if < 50% have valid tags + coherent category
 
 LOCATIONS = ["prompt_only", "generation_only", "implications_only", "risks_only", "full"]
 LOCATION_LABELS = {
@@ -115,10 +114,11 @@ def count_categories(
     """
     Count category occurrences per condition.
 
-    Skips entire conditions where < valid_threshold fraction of responses
-    have valid tags AND a non-incoherent category.
+    Only includes responses with valid tags (all present + correct order).
+    Excludes NBL_INCOHERENT from counts entirely.
+    Skips conditions where < valid_threshold of original responses had valid tags.
 
-    Returns dict: condition -> {"counts": Counter, "n": int, "n_valid": int}
+    Returns dict: condition -> {"counts": Counter, "n": int, "n_total": int}
     """
     by_cond = defaultdict(list)
     for r in results:
@@ -127,33 +127,39 @@ def count_categories(
 
     counts = {}
     for cond, rs in by_cond.items():
-        n = len(rs)
+        n_total = len(rs)
 
-        # Count responses with valid tags and coherent classification
-        n_valid = 0
+        # Filter to tag-valid responses only
+        valid_rs = []
         for r in rs:
             tag_ok = (
                 r.get("tag_check", {}).get("all_tags_present", False)
                 and r.get("tag_check", {}).get("tags_in_order", False)
             )
-            cat = r.get("categorized_judge", {}).get("category", "UNKNOWN")
-            if tag_ok and cat != "NBL_INCOHERENT":
-                n_valid += 1
+            if tag_ok:
+                valid_rs.append(r)
 
-        valid_frac = n_valid / n if n else 0
+        valid_frac = len(valid_rs) / n_total if n_total else 0
         if valid_frac < valid_threshold:
             logger.info(
-                f"Skipping {cond}: {n_valid}/{n} valid "
+                f"Skipping {cond}: {len(valid_rs)}/{n_total} valid tags "
                 f"({100*valid_frac:.0f}% < {100*valid_threshold:.0f}%)"
             )
             continue
 
+        # Count categories, excluding NBL_INCOHERENT
         cat_counts = Counter()
-        for r in rs:
+        for r in valid_rs:
             cat = r.get("categorized_judge", {}).get("category", "UNKNOWN")
-            cat_counts[cat] += 1
+            if cat != "NBL_INCOHERENT":
+                cat_counts[cat] += 1
 
-        counts[cond] = {"counts": cat_counts, "n": n, "n_valid": n_valid}
+        n_plotted = sum(cat_counts.values())
+        if n_plotted == 0:
+            logger.info(f"Skipping {cond}: no coherent responses after filtering")
+            continue
+
+        counts[cond] = {"counts": cat_counts, "n": n_plotted, "n_total": n_total}
 
     return counts
 
@@ -487,7 +493,7 @@ def main():
         # Get scales for this model family
         scale_cfg = _get_scale_config(model_name)
 
-        suptitle = f"Category Breakdown — {display_name} Section Steering (valid tags >= {int(VALID_CONDITION_THRESHOLD*100)}%)"
+        suptitle = f"Category Breakdown — {display_name} Section Steering (tag-valid only)"
         output_path = plot_dir / "categories_combined.png"
 
         plot_category_breakdown_combined(
