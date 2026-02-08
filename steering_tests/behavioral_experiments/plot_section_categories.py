@@ -83,7 +83,7 @@ CAT_LABELS = {
     "NBL_OTHER": "Other Non-BL",
 }
 
-COHERENCY_THRESHOLD = 70
+VALID_CONDITION_THRESHOLD = 0.60  # Skip condition if < 60% have valid tags + coherent category
 
 LOCATIONS = ["prompt_only", "generation_only", "implications_only", "risks_only", "full"]
 LOCATION_LABELS = {
@@ -108,13 +108,17 @@ def load_categorized(path: Path) -> list:
     return results
 
 
-def count_categories(results: list, coh_threshold: int = COHERENCY_THRESHOLD) -> dict:
+def count_categories(
+    results: list,
+    valid_threshold: float = VALID_CONDITION_THRESHOLD,
+) -> dict:
     """
     Count category occurrences per condition.
 
-    Skips entire conditions where mean coherency is below coh_threshold.
+    Skips entire conditions where < valid_threshold fraction of responses
+    have valid tags AND a non-incoherent category.
 
-    Returns dict: condition -> Counter({category: count})
+    Returns dict: condition -> {"counts": Counter, "n": int, "n_valid": int}
     """
     by_cond = defaultdict(list)
     for r in results:
@@ -123,27 +127,33 @@ def count_categories(results: list, coh_threshold: int = COHERENCY_THRESHOLD) ->
 
     counts = {}
     for cond, rs in by_cond.items():
-        # Compute mean coherency for this condition
-        coh_scores = []
-        for r in rs:
-            coh = r.get("coherency_judge", {}).get("coherency_score")
-            if coh is not None:
-                coh_scores.append(coh)
+        n = len(rs)
 
-        if coh_scores:
-            mean_coh = sum(coh_scores) / len(coh_scores)
-            if mean_coh < coh_threshold:
-                logger.info(
-                    f"Skipping {cond}: mean coherency {mean_coh:.1f} < {coh_threshold}"
-                )
-                continue
+        # Count responses with valid tags and coherent classification
+        n_valid = 0
+        for r in rs:
+            tag_ok = (
+                r.get("tag_check", {}).get("all_tags_present", False)
+                and r.get("tag_check", {}).get("tags_in_order", False)
+            )
+            cat = r.get("categorized_judge", {}).get("category", "UNKNOWN")
+            if tag_ok and cat != "NBL_INCOHERENT":
+                n_valid += 1
+
+        valid_frac = n_valid / n if n else 0
+        if valid_frac < valid_threshold:
+            logger.info(
+                f"Skipping {cond}: {n_valid}/{n} valid "
+                f"({100*valid_frac:.0f}% < {100*valid_threshold:.0f}%)"
+            )
+            continue
 
         cat_counts = Counter()
         for r in rs:
             cat = r.get("categorized_judge", {}).get("category", "UNKNOWN")
             cat_counts[cat] += 1
 
-        counts[cond] = {"counts": cat_counts, "n": len(rs)}
+        counts[cond] = {"counts": cat_counts, "n": n, "n_valid": n_valid}
 
     return counts
 
