@@ -206,21 +206,28 @@ def _embedding_hook(module, inputs, outputs):
             return  # Prefill
         last_tokens = input_ids[:, -1]
     elif input_ids.dim() == 1:
-        # Flattened tokens — use trigger_mask size to detect prefill
-        if 'trigger_mask' in shared:
-            if input_ids.shape[0] != shared['trigger_mask'].shape[0]:
-                return  # Likely prefill
+        # In vLLM V1 with chunked prefill, batch size can change between
+        # forward passes (e.g., first decode call may include scheduler
+        # artifacts). Don't use trigger_mask size to detect prefill —
+        # the is_prefill check above (from _token_tracking_pre_hook) is
+        # sufficient. Let the mask recreation below handle size changes.
         last_tokens = input_ids
     else:
         return
 
-    # Ensure trigger_mask exists and has the right size
+    # Ensure trigger_mask exists and has the right size.
+    # If batch size changed (e.g., first decode call in V1 chunked prefill),
+    # recreate mask and clear stale token buffers.
     batch_size = last_tokens.shape[0]
     if 'trigger_mask' not in shared or shared['trigger_mask'].shape[0] != batch_size:
         initial_val = 1.0 if shared.get('initially_active', False) else 0.0
         shared['trigger_mask'] = torch.full(
             (batch_size,), initial_val, dtype=torch.float32, device=last_tokens.device,
         )
+        # Clear stale token buffers — indices are positional and may
+        # correspond to a different batch layout.
+        if 'token_buffers' in shared:
+            shared['token_buffers'].clear()
 
     # Ensure per-sequence token buffers exist
     max_trigger_len = shared.get('max_trigger_len', 1)
@@ -487,6 +494,7 @@ class _EnableTokenTrackingCallable:
             }
         shared = layer_0._steering_shared_state
         shared['initially_active'] = self.initially_active
+        shared['is_prefill'] = True  # Reset so embedding hook skips next prefill
 
         # Register pre-hook on layer 0 for step counting (only once)
         if not hasattr(layer_0, '_token_tracking_handle'):
@@ -654,9 +662,10 @@ def _clear_steering(model, layer_idx: int):
 # TRIGGER ARGUMENT RESOLUTION
 # ============================================================================
 
-# Prefixes that can change how tokenizers encode the start of an XML tag.
-# E.g., some tokenizers merge "\n<" into a single token different from "<".
+# Prefixes/suffixes that can change how tokenizers encode XML tag boundaries.
+# E.g., some tokenizers merge "\n<" or ">\n" into a single token.
 _TRIGGER_PREFIXES = ["", "\n", " "]
+_TRIGGER_SUFFIXES = ["", "\n", " ", "\n\n"]
 
 
 def _tokenize_with_prefix_variants(
@@ -664,33 +673,75 @@ def _tokenize_with_prefix_variants(
     tokenizer,
     label: str = "trigger",
 ) -> List[List[int]]:
-    """Tokenize trigger strings with prefix variants for robustness.
+    """Tokenize trigger strings with prefix AND suffix variants for robustness.
 
-    Some tokenizers encode '<' differently depending on the preceding
-    character (e.g., '\\n<' may merge into a single token distinct from '<').
-    We tokenize each string with common prefixes and deduplicate, so the
-    ring buffer matcher handles all variants.
+    BPE tokenizers can merge characters at tag boundaries:
+    - Prefix: '\\n<' may merge into a single token distinct from '<'
+    - Suffix: '>\\n' may merge into a single token distinct from '>'
+
+    We tokenize each string with common prefixes and suffixes, extract
+    the trigger-specific tokens, and deduplicate. This ensures the ring
+    buffer matcher handles all boundary variants.
     """
     seqs = []
     seen: set[tuple[int, ...]] = set()
+
     for s in strings:
         for prefix in _TRIGGER_PREFIXES:
-            ids = tokenizer.encode(prefix + s, add_special_tokens=False)
-            if not ids:
-                raise ValueError(f"Trigger string '{prefix!r}+{s}' produced no tokens")
-            key = tuple(ids)
-            if key not in seen:
-                seen.add(key)
-                seqs.append(ids)
+            for suffix in _TRIGGER_SUFFIXES:
+                full = prefix + s + suffix
+                full_ids = tokenizer.encode(full, add_special_tokens=False)
+                if not full_ids:
+                    raise ValueError(f"Trigger string '{prefix!r}+{s}+{suffix!r}' produced no tokens")
+
+                # Strip prefix tokens: tokenize just the prefix and remove
+                # matching tokens from the start. If prefix merges with the
+                # trigger start, we keep the merged token.
                 if prefix:
+                    prefix_ids = tokenizer.encode(prefix, add_special_tokens=False)
+                    # Remove prefix tokens that match exactly
+                    strip_start = 0
+                    for i, pid in enumerate(prefix_ids):
+                        if i < len(full_ids) and full_ids[i] == pid:
+                            strip_start = i + 1
+                        else:
+                            break
+                else:
+                    strip_start = 0
+
+                # Strip suffix tokens: tokenize just the suffix and remove
+                # matching tokens from the end.
+                if suffix:
+                    suffix_ids = tokenizer.encode(suffix, add_special_tokens=False)
+                    strip_end = len(full_ids)
+                    for i in range(len(suffix_ids) - 1, -1, -1):
+                        idx = strip_end - (len(suffix_ids) - i)
+                        if idx >= strip_start and idx < len(full_ids) and full_ids[idx] == suffix_ids[i]:
+                            strip_end = idx
+                        else:
+                            break
+                else:
+                    strip_end = len(full_ids)
+
+                ids = full_ids[strip_start:strip_end]
+                if not ids:
+                    continue
+
+                key = tuple(ids)
+                if key not in seen:
+                    seen.add(key)
+                    seqs.append(ids)
+                    ctx_parts = []
+                    if prefix:
+                        ctx_parts.append(f"prefix {prefix!r}")
+                    if suffix:
+                        ctx_parts.append(f"suffix {suffix!r}")
+                    ctx = f" ({', '.join(ctx_parts)})" if ctx_parts else ""
                     logger.info(
-                        f"Trigger {label} '{s}' (prefix {prefix!r}) -> {ids} "
+                        f"Trigger {label} '{s}'{ctx} -> {ids} "
                         f"({len(ids)} tokens)"
                     )
-                else:
-                    logger.info(
-                        f"Trigger {label} '{s}' -> {ids} ({len(ids)} tokens)"
-                    )
+
     return seqs
 
 
