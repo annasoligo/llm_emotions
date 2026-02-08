@@ -353,6 +353,7 @@ def run_experiment(
     max_model_len: Optional[int] = None,
     max_tokens: int = 4000,
     output_dir: Optional[Path] = None,
+    locations: Optional[List[str]] = None,
 ) -> Path:
     """
     Run the section-specific steering experiment.
@@ -507,10 +508,19 @@ def run_experiment(
         },
     )
 
+    # Filter locations if specified
+    active_locations = STEERING_LOCATIONS
+    if locations:
+        unknown = set(locations) - set(STEERING_LOCATIONS)
+        if unknown:
+            raise ValueError(f"Unknown locations: {unknown}. Valid: {list(STEERING_LOCATIONS)}")
+        active_locations = {k: v for k, v in STEERING_LOCATIONS.items() if k in locations}
+        logger.info(f"Running subset of locations: {list(active_locations)}")
+
     # Build condition list
     conditions = []
 
-    # Baseline (no steering)
+    # Baseline (no steering) — always included
     conditions.append({
         "name": "baseline",
         "scale_pct": 0.0,
@@ -526,7 +536,7 @@ def run_experiment(
             dir_str = "+" if direction == 1 else "-"
             pct_str = f"{scale_pct*100:.0f}pct"
 
-            for loc_name, loc_config in STEERING_LOCATIONS.items():
+            for loc_name, loc_config in active_locations.items():
                 conditions.append({
                     "name": f"{emotion}_{dir_str}{pct_str}_{loc_name}",
                     "scale_pct": scale_pct,
@@ -799,6 +809,13 @@ def main():
         default=None,
         help="Override output directory",
     )
+    parser.add_argument(
+        "--locations",
+        nargs="+",
+        default=None,
+        choices=list(STEERING_LOCATIONS.keys()),
+        help="Only run these steering locations (default: all)",
+    )
 
     args = parser.parse_args()
 
@@ -816,6 +833,7 @@ def main():
         max_model_len=args.max_model_len,
         max_tokens=args.max_tokens,
         output_dir=args.output_dir,
+        locations=args.locations,
     )
 
 
