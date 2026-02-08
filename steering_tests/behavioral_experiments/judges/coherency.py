@@ -1,9 +1,13 @@
 """
 Coherency judge - evaluates linguistic coherence of responses.
 
-Checks for gibberish, broken grammar, repetitive loops, etc.
-Returns a 0-100 coherency score.
+Two components:
+1. LLM-based coherency scoring (0-100) for gibberish, broken grammar, etc.
+2. Deterministic tag structure check for SCRATCHPAD_TAGS format compliance.
 """
+
+import re
+from typing import Dict, Optional
 
 COHERENCY_PROMPT = """Rate LINGUISTIC coherency 0-100.
 
@@ -41,3 +45,87 @@ def get_coherency_prompt(response: str) -> str:
         Formatted judge prompt string
     """
     return COHERENCY_PROMPT.format(response=response)
+
+
+# ── Deterministic tag structure check ────────────────────────────────────────
+
+# Expected tags in order for the SCRATCHPAD_TAGS prompt variant.
+# Uses <\tag> (backslash) as closing delimiter, matching the prompt definition.
+EXPECTED_TAGS = [
+    "<situation>", r"<\situation>",
+    "<actions>", r"<\actions>",
+    "<implications>", r"<\implications>",
+    "<risks>", r"<\risks>",
+]
+
+# Also accept </tag> (forward slash) since models often normalise to HTML style.
+_TAG_ALIASES = {
+    r"<\situation>": "</situation>",
+    r"<\actions>": "</actions>",
+    r"<\implications>": "</implications>",
+    r"<\risks>": "</risks>",
+}
+
+
+def check_tag_structure(response: str) -> Dict:
+    """
+    Check whether a response contains all expected reasoning tags in order.
+
+    Accepts both ``<\\tag>`` (as specified in the prompt) and ``</tag>``
+    (HTML-style, which models often produce instead).
+
+    Returns a dict with:
+        tags_present: list of bools, one per expected tag
+        tags_in_order: bool — True if all found tags appear in correct order
+        all_tags_present: bool — True if every expected tag was found
+        missing_tags: list of tag strings that were not found
+        tag_positions: dict mapping tag -> character index (first occurrence)
+        n_present: int — count of tags found
+        n_expected: int — total expected tags
+    """
+    response_lower = response.lower()
+
+    tag_positions = {}
+    tags_present = []
+    missing_tags = []
+
+    for tag in EXPECTED_TAGS:
+        tag_lower = tag.lower()
+        alias = _TAG_ALIASES.get(tag, "").lower()
+
+        # Find first occurrence of either variant
+        pos_primary = response_lower.find(tag_lower)
+        pos_alias = response_lower.find(alias) if alias else -1
+
+        if pos_primary >= 0 and pos_alias >= 0:
+            pos = min(pos_primary, pos_alias)
+        elif pos_primary >= 0:
+            pos = pos_primary
+        elif pos_alias >= 0:
+            pos = pos_alias
+        else:
+            pos = -1
+
+        found = pos >= 0
+        tags_present.append(found)
+        if found:
+            tag_positions[tag] = pos
+        else:
+            missing_tags.append(tag)
+
+    # Check ordering: all found tags must appear in the expected sequence
+    found_positions = [tag_positions[t] for t in EXPECTED_TAGS if t in tag_positions]
+    tags_in_order = found_positions == sorted(found_positions)
+
+    all_present = all(tags_present)
+    n_present = sum(tags_present)
+
+    return {
+        "tags_present": tags_present,
+        "tags_in_order": tags_in_order,
+        "all_tags_present": all_present,
+        "missing_tags": missing_tags,
+        "tag_positions": tag_positions,
+        "n_present": n_present,
+        "n_expected": len(EXPECTED_TAGS),
+    }

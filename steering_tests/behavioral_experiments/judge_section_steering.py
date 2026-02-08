@@ -28,6 +28,7 @@ import anthropic
 from steering_tests.behavioral_experiments.judges import (
     get_blackmail_prompt,
     get_coherency_prompt,
+    check_tag_structure,
     parse_json_response,
 )
 from steering_tests.steering_utils.provenance import load_results, load_meta
@@ -47,10 +48,14 @@ async def judge_single(
     result: Dict,
     semaphore: asyncio.Semaphore,
 ) -> Dict:
-    """Run blackmail + coherency judges on a single result."""
-    async with semaphore:
-        response_text = result["response"]
+    """Run blackmail + coherency + tag structure judges on a single result."""
+    response_text = result["response"]
 
+    # Tag structure check (deterministic, no API call needed)
+    if "tag_check" not in result:
+        result["tag_check"] = check_tag_structure(response_text)
+
+    async with semaphore:
         # Blackmail judge
         try:
             bl_prompt = get_blackmail_prompt(response_text)
@@ -132,6 +137,11 @@ def process_directory(
 
     logger.info(f"Total: {len(all_results)} results to judge")
 
+    # Run tag structure check on all results (deterministic, instant)
+    for r in all_results:
+        if "tag_check" not in r:
+            r["tag_check"] = check_tag_structure(r["response"])
+
     # Check how many already have judges (for resume support)
     already_judged = sum(
         1 for r in all_results
@@ -200,14 +210,14 @@ def print_summary(results: List[Dict]):
         cond = r.get("condition", "unknown")
         by_cond[cond].append(r)
 
-    print("\n" + "=" * 90)
+    print("\n" + "=" * 100)
     print("BLACKMAIL SECTION-STEERING JUDGE RESULTS")
-    print("=" * 90)
+    print("=" * 100)
     print(
         f"{'Condition':<45} {'N':>4} {'BL%':>6} {'BL#':>4} "
-        f"{'Affair%':>7} {'Coh':>5} {'Errs':>5}"
+        f"{'Affair%':>7} {'Coh':>5} {'Tags':>5} {'Errs':>5}"
     )
-    print("-" * 90)
+    print("-" * 100)
 
     # Sort: baseline first, then by scale/direction/location
     def sort_key(cond):
@@ -249,6 +259,14 @@ def print_summary(results: List[Dict]):
         ]
         mean_coh = np.mean(coh_scores) if coh_scores else float("nan")
 
+        # Tag structure
+        tags_ok = sum(
+            1 for r in rs
+            if r.get("tag_check", {}).get("all_tags_present", False)
+            and r.get("tag_check", {}).get("tags_in_order", False)
+        )
+        tags_pct = 100 * tags_ok / n if n else 0
+
         # Errors
         errs = sum(
             1 for r in rs
@@ -258,7 +276,7 @@ def print_summary(results: List[Dict]):
 
         print(
             f"{cond:<45} {n:>4} {bl_pct:>5.1f}% {bl_count:>4} "
-            f"{affair_pct:>6.1f}% {mean_coh:>5.0f} {errs:>5}"
+            f"{affair_pct:>6.1f}% {mean_coh:>5.0f} {tags_pct:>4.0f}% {errs:>5}"
         )
 
     # Overall stats
@@ -267,8 +285,17 @@ def print_summary(results: List[Dict]):
         1 for r in results
         if r.get("blackmail_judge", {}).get("is_blackmail", False)
     )
-    print("=" * 90)
-    print(f"Total: {total} responses, {total_bl} blackmail ({100*total_bl/total:.1f}%)")
+    # Overall tag stats
+    total_tags_ok = sum(
+        1 for r in results
+        if r.get("tag_check", {}).get("all_tags_present", False)
+        and r.get("tag_check", {}).get("tags_in_order", False)
+    )
+    print("=" * 100)
+    print(
+        f"Total: {total} responses, {total_bl} blackmail ({100*total_bl/total:.1f}%), "
+        f"{total_tags_ok} valid tags ({100*total_tags_ok/total:.1f}%)"
+    )
 
 
 def main():

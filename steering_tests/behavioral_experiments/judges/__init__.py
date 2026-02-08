@@ -33,7 +33,7 @@ from .blackmail import BLACKMAIL_PROMPT, get_blackmail_prompt
 from .blackmail_categorized import CATEGORIZED_BLACKMAIL_PROMPT, get_categorized_blackmail_prompt
 
 # Coherency evaluation
-from .coherency import COHERENCY_PROMPT, get_coherency_prompt
+from .coherency import COHERENCY_PROMPT, get_coherency_prompt, check_tag_structure
 
 # Emotionality dimensions
 from .emotionality import (
@@ -76,6 +76,7 @@ __all__ = [
     # Coherency
     "COHERENCY_PROMPT",
     "get_coherency_prompt",
+    "check_tag_structure",
     # Emotionality
     "VALENCE_PROMPT",
     "AROUSAL_PROMPT",
