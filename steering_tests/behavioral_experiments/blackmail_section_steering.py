@@ -300,31 +300,41 @@ def run_calibration(
 # =============================================================================
 
 # Steering location configurations
+# Section-specific locations use real-time XML tag triggers instead of
+# pre-calibrated token ranges. The model generates XML tags (<implications>,
+# </implications>, etc.) and steering activates/deactivates when these tags
+# are detected in the generated output.
 STEERING_LOCATIONS = {
     "prompt_only": {
         "steer_prompt": True,
         "steer_generation": False,
-        "section": None,
+        "triggers": None,
     },
     "generation_only": {
         "steer_prompt": False,
         "steer_generation": True,
-        "section": None,
+        "triggers": None,
     },
     "implications_only": {
         "steer_prompt": False,
         "steer_generation": True,
-        "section": "implications",
+        "triggers": {
+            "start": ["<implications>"],
+            "end": ["</implications>", "<\\implications>"],
+        },
     },
     "risks_only": {
         "steer_prompt": False,
         "steer_generation": True,
-        "section": "risks",
+        "triggers": {
+            "start": ["<risks>"],
+            "end": ["</risks>", "<\\risks>"],
+        },
     },
     "full": {
         "steer_prompt": True,
         "steer_generation": True,
-        "section": None,
+        "triggers": None,
     },
 }
 
@@ -337,7 +347,6 @@ def run_experiment(
     emotion: str = "fear",
     vector_type: str = "text_pairs_code_emotion_vs_neutral",
     num_calibration: int = 20,
-    boundary_margin: int = 5,
     skip_calibration: bool = False,
     calibration_file: Optional[Path] = None,
     gpu_memory_utilization: float = 0.80,
@@ -348,8 +357,12 @@ def run_experiment(
     """
     Run the section-specific steering experiment.
 
-    Phase 1: Calibration — find median section boundaries from unsteered generations
-    Phase 2: Experiment — run all 21 conditions with section-specific steering
+    Uses real-time XML tag triggers for section-specific steering: the model
+    generates <implications>...</implications> tags, and steering activates/
+    deactivates when these tags are detected in the output stream.
+
+    Optionally runs calibration (for analysis of section boundaries) but
+    calibration is NOT used for steering ranges.
 
     Args:
         model_name: HuggingFace model ID
@@ -358,10 +371,9 @@ def run_experiment(
         num_samples: Samples per condition
         emotion: Emotion to steer (default: fear)
         vector_type: Vector set to use
-        num_calibration: Number of calibration samples
-        boundary_margin: Token margin to add around section boundaries
-        skip_calibration: If True, requires calibration_file
-        calibration_file: Path to pre-existing calibration.json
+        num_calibration: Number of calibration samples (for analysis only)
+        skip_calibration: If True, skip calibration phase
+        calibration_file: Path to pre-existing calibration.json (for analysis)
         gpu_memory_utilization: GPU memory fraction
         max_model_len: Max context length
         max_tokens: Max generation tokens
@@ -388,7 +400,7 @@ def run_experiment(
     logger.info(f"Norm percentages: {[f'{p*100:.0f}%' for p in norm_pcts]}")
     logger.info(f"Samples per condition: {num_samples}")
     logger.info(f"Max model length: {max_model_len}")
-    logger.info(f"Boundary margin: ±{boundary_margin} tokens")
+    logger.info(f"Steering method: real-time XML tag triggers")
 
     # Load tokenizer
     logger.info("Loading tokenizer...")
@@ -424,7 +436,7 @@ def run_experiment(
     steering = MultiLayerVLLMSteering(llm, layers=layers, layer_norms=layer_norms)
     steering.load_vector(emotion, vectors[emotion])
 
-    # Enable token tracking for generation_token_range
+    # Token tracking is enabled per-condition (with triggers for section-specific)
     steering.enable_token_tracking()
 
     # Sampling params
@@ -454,43 +466,27 @@ def run_experiment(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # =========================================================================
-    # Phase 1: Calibration
+    # Optional calibration (for analysis, not used for steering ranges)
     # =========================================================================
 
-    if skip_calibration:
-        if calibration_file is None:
-            raise ValueError("--skip-calibration requires --calibration-file")
-        logger.info(f"Loading calibration from {calibration_file}")
-        with open(calibration_file) as f:
-            calibration = json.load(f)
-    else:
+    if not skip_calibration:
         steering.clear()
         calibration = run_calibration(
             llm, tokenizer, prompt, sampling_params, n=num_calibration
         )
-        # Save calibration
         cal_path = output_dir / "calibration.json"
         with open(cal_path, "w") as f:
             json.dump(calibration, f, indent=2)
         logger.info(f"Saved calibration to {cal_path}")
-
-    # Extract median boundaries and apply margin
-    section_ranges = {}
-    for section in ["implications", "risks"]:
-        median_start, median_end = calibration["median_boundaries"][section]
-        # Apply margin (expand the range)
-        range_start = max(0, median_start - boundary_margin)
-        range_end = median_end + boundary_margin
-        # Convert 0-indexed token positions to 1-indexed generation steps
-        # generation_step is 1-indexed (first decode = step 1)
-        section_ranges[section] = (range_start + 1, range_end + 1)
-        logger.info(
-            f"  {section} generation_token_range: "
-            f"[{section_ranges[section][0]}, {section_ranges[section][1]})"
-        )
+    elif calibration_file is not None:
+        logger.info(f"Loading calibration from {calibration_file}")
+        with open(calibration_file) as f:
+            calibration = json.load(f)
+    else:
+        calibration = None
 
     # =========================================================================
-    # Phase 2: Experiment
+    # Experiment
     # =========================================================================
 
     writer = ResultWriter(
@@ -505,10 +501,7 @@ def run_experiment(
             "variant": "tags",
             "num_samples": num_samples,
             "norm_pcts": norm_pcts,
-            "boundary_margin": boundary_margin,
-            "section_ranges": {k: list(v) for k, v in section_ranges.items()},
-            "calibration_parse_rate": calibration["parse_rate"],
-            "calibration_n_parsed": calibration["n_parsed"],
+            "steering_method": "trigger",  # real-time XML tag triggers
             "vector_metadata": vector_metadata,
             "layer_norms": {str(k): v for k, v in layer_norms.items()},
         },
@@ -525,7 +518,7 @@ def run_experiment(
         "location": "baseline",
         "steer_prompt": False,
         "steer_generation": False,
-        "generation_token_range": None,
+        "triggers": None,
     })
 
     for scale_pct in norm_pcts:
@@ -534,11 +527,6 @@ def run_experiment(
             pct_str = f"{scale_pct*100:.0f}pct"
 
             for loc_name, loc_config in STEERING_LOCATIONS.items():
-                # Determine generation_token_range for section-specific locations
-                gen_range = None
-                if loc_config["section"] is not None:
-                    gen_range = section_ranges[loc_config["section"]]
-
                 conditions.append({
                     "name": f"{emotion}_{dir_str}{pct_str}_{loc_name}",
                     "scale_pct": scale_pct,
@@ -546,7 +534,7 @@ def run_experiment(
                     "location": loc_name,
                     "steer_prompt": loc_config["steer_prompt"],
                     "steer_generation": loc_config["steer_generation"],
-                    "generation_token_range": gen_range,
+                    "triggers": loc_config["triggers"],
                 })
 
     logger.info(f"Running {len(conditions)} conditions x {num_samples} samples = {len(conditions) * num_samples} generations")
@@ -556,17 +544,30 @@ def run_experiment(
     for cond_idx, cond in enumerate(conditions):
         logger.info(f"[{cond_idx + 1}/{len(conditions)}] {cond['name']}")
 
-        # Set steering
+        # Configure steering and triggers for this condition
         if cond["location"] == "baseline":
             steering.clear()
+            # Plain token tracking (no triggers) for baseline
+            steering.enable_token_tracking()
         else:
+            # Set up triggers for section-specific conditions
+            triggers = cond["triggers"]
+            if triggers is not None:
+                steering.enable_token_tracking(
+                    tokenizer=tokenizer,
+                    trigger_start_strings=triggers["start"],
+                    trigger_end_strings=triggers["end"],
+                )
+            else:
+                # No triggers — plain token tracking
+                steering.enable_token_tracking()
+
             steering.set(
                 emotion,
                 scale=cond["scale_pct"],
                 direction=cond["direction"],
                 steer_prompt=cond["steer_prompt"],
                 steer_generation=cond["steer_generation"],
-                generation_token_range=cond["generation_token_range"],
             )
 
         # Generate
@@ -585,7 +586,7 @@ def run_experiment(
                 "direction": cond["direction"],
                 "steer_prompt": cond["steer_prompt"],
                 "steer_generation": cond["steer_generation"],
-                "generation_token_range": cond["generation_token_range"],
+                "triggers": cond["triggers"],
                 "sample_id": sample_id,
                 "response": response,
                 "finish_reason": finish_reason,
@@ -764,15 +765,9 @@ def main():
         help="Number of calibration samples (default: 20)",
     )
     parser.add_argument(
-        "--boundary-margin",
-        type=int,
-        default=5,
-        help="Token margin around section boundaries (default: 5)",
-    )
-    parser.add_argument(
         "--skip-calibration",
         action="store_true",
-        help="Skip calibration (requires --calibration-file)",
+        help="Skip calibration phase (calibration is for analysis only)",
     )
     parser.add_argument(
         "--calibration-file",
@@ -815,7 +810,6 @@ def main():
         emotion=args.emotion,
         vector_type=args.vector_type,
         num_calibration=args.num_calibration,
-        boundary_margin=args.boundary_margin,
         skip_calibration=args.skip_calibration,
         calibration_file=args.calibration_file,
         gpu_memory_utilization=args.gpu_memory,

@@ -167,6 +167,9 @@ def _token_tracking_pre_hook(module, inputs):
             initial_val = 1.0 if shared['initially_active'] else 0.0
             if 'trigger_mask' in shared:
                 shared['trigger_mask'].fill_(initial_val)
+        # Reset per-sequence token buffers for trigger sequence matching
+        if 'token_buffers' in shared:
+            shared['token_buffers'].clear()
     else:
         # Increment decode step counter
         shared['generation_step'] = shared.get('generation_step', 0) + 1
@@ -175,38 +178,39 @@ def _token_tracking_pre_hook(module, inputs):
 def _embedding_hook(module, inputs, outputs):
     """Forward hook on embed_tokens that checks generated tokens for triggers.
 
-    Reads the input_ids being embedded and updates the per-sequence trigger mask
-    in the shared state dict. Only operates during decode (single token per sequence).
+    Supports multi-token trigger sequences (e.g., "<implications>" tokenized as
+    multiple tokens). Maintains a per-sequence ring buffer of recent token IDs
+    and checks if the buffer suffix matches any trigger sequence.
+
+    Only operates during decode (single token per sequence).
     """
     if not hasattr(module, '_steering_shared_state'):
         return
 
     shared = module._steering_shared_state
-    trigger_start_ids = shared.get('trigger_start_ids')
-    trigger_end_ids = shared.get('trigger_end_ids')
+    start_seqs = shared.get('trigger_start_seqs')
+    end_seqs = shared.get('trigger_end_seqs')
 
-    if trigger_start_ids is None and trigger_end_ids is None:
+    if not start_seqs and not end_seqs:
+        return
+
+    # Skip during prefill (set by _token_tracking_pre_hook)
+    if shared.get('is_prefill', False):
         return
 
     # Get input_ids from the embedding layer's input
     input_ids = inputs[0]  # shape: [num_tokens] or [batch, seq_len]
 
     if input_ids.dim() == 2:
-        seq_len = input_ids.shape[1]
-        if seq_len > 1:
-            return  # Prefill — don't check triggers
-        # Decode: input_ids is [batch, 1]
-        last_tokens = input_ids[:, -1]  # [batch]
+        if input_ids.shape[1] > 1:
+            return  # Prefill
+        last_tokens = input_ids[:, -1]
     elif input_ids.dim() == 1:
-        # Flattened tokens — during decode with N sequences, shape is [N]
-        # Each element is the latest token for that sequence
-        # But during prefill this is [total_tokens] which is > batch_size
-        # Use a heuristic: if trigger_mask exists, compare sizes
+        # Flattened tokens — use trigger_mask size to detect prefill
         if 'trigger_mask' in shared:
-            expected_batch = shared['trigger_mask'].shape[0]
-            if input_ids.shape[0] != expected_batch:
-                return  # Likely prefill, skip
-        last_tokens = input_ids  # [batch]
+            if input_ids.shape[0] != shared['trigger_mask'].shape[0]:
+                return  # Likely prefill
+        last_tokens = input_ids
     else:
         return
 
@@ -218,20 +222,39 @@ def _embedding_hook(module, inputs, outputs):
             (batch_size,), initial_val, dtype=torch.float32, device=last_tokens.device,
         )
 
+    # Ensure per-sequence token buffers exist
+    max_trigger_len = shared.get('max_trigger_len', 1)
+    if 'token_buffers' not in shared:
+        shared['token_buffers'] = {}
+    buffers = shared['token_buffers']
+
     mask = shared['trigger_mask']
 
-    # Check each sequence's latest token against triggers
-    if trigger_start_ids:
-        start_set = set(trigger_start_ids)
-        for i in range(batch_size):
-            if last_tokens[i].item() in start_set:
-                mask[i] = 1.0
+    for i in range(batch_size):
+        tok = last_tokens[i].item()
 
-    if trigger_end_ids:
-        end_set = set(trigger_end_ids)
-        for i in range(batch_size):
-            if last_tokens[i].item() in end_set:
-                mask[i] = 0.0
+        # Append to this sequence's buffer, trim to max needed length
+        buf = buffers.get(i)
+        if buf is None:
+            buf = []
+            buffers[i] = buf
+        buf.append(tok)
+        if len(buf) > max_trigger_len:
+            del buf[:len(buf) - max_trigger_len]
+
+        # Check if buffer suffix matches any start trigger sequence
+        if start_seqs:
+            for seq in start_seqs:
+                if len(buf) >= len(seq) and buf[-len(seq):] == seq:
+                    mask[i] = 1.0
+                    break
+
+        # Check end triggers (checked after start so end takes priority on same token)
+        if end_seqs:
+            for seq in end_seqs:
+                if len(buf) >= len(seq) and buf[-len(seq):] == seq:
+                    mask[i] = 0.0
+                    break
 
 
 def _find_embedding_layer(model):
@@ -288,19 +311,15 @@ def _steering_hook(module, inputs, outputs):
         hidden_states = outputs
         rest = None
 
-    # Detect prefill vs decode.
-    # Primary: read from shared state (set by _token_tracking_pre_hook on layer 0).
-    # Fallback: use hidden_states token count (works when batch_size=1 in decode).
+    # Detect prefill vs decode from shared state (set by _token_tracking_pre_hook).
+    # Without token tracking, default to is_prefill=False (steer everything).
+    # Selective steering (steer_prompt/steer_generation, generation_token_range)
+    # requires enable_token_tracking() to work correctly.
     shared = state.get('_steering_shared_state')
     if shared is not None and 'is_prefill' in shared:
         is_prefill = shared['is_prefill']
     else:
-        # Fallback for when token tracking is not enabled.
-        # vLLM 2D tensors: [num_tokens, hidden_dim].
-        # During prefill num_tokens = prompt_len (large), during decode num_tokens = batch_size (small).
-        # Heuristic: > 16 tokens is likely prefill. Only used without token tracking.
-        num_tokens = hidden_states.shape[0] if hidden_states.dim() == 2 else hidden_states.shape[1]
-        is_prefill = num_tokens > 16
+        is_prefill = False
 
     steer_prompt = state.get('steer_prompt', True)
     steer_generation = state.get('steer_generation', True)
@@ -436,17 +455,21 @@ class _EnableTokenTrackingCallable:
     Creates shared state on layer 0, registers a pre-hook for step counting,
     and links the shared state to each steering layer. Optionally registers
     an embedding hook for token-triggered steering.
+
+    Supports multi-token trigger sequences (e.g., "<implications>" tokenized
+    as [<, implic, ations, >]). Each trigger is a list of token IDs that must
+    appear consecutively to fire.
     """
     def __init__(
         self,
         steering_layer_indices: List[int],
-        trigger_start_ids: Optional[List[int]] = None,
-        trigger_end_ids: Optional[List[int]] = None,
+        trigger_start_seqs: Optional[List[List[int]]] = None,
+        trigger_end_seqs: Optional[List[List[int]]] = None,
         initially_active: bool = True,
     ):
         self.steering_layer_indices = steering_layer_indices
-        self.trigger_start_ids = trigger_start_ids
-        self.trigger_end_ids = trigger_end_ids
+        self.trigger_start_seqs = trigger_start_seqs
+        self.trigger_end_seqs = trigger_end_seqs
         self.initially_active = initially_active
 
     def __call__(self, model):
@@ -475,14 +498,29 @@ class _EnableTokenTrackingCallable:
             # Also store directly on the layer for the pre-hook to find
             layer._steering_shared_state = shared
 
-        # Set up trigger tokens in shared state
-        if self.trigger_start_ids is not None:
-            shared['trigger_start_ids'] = self.trigger_start_ids
-        if self.trigger_end_ids is not None:
-            shared['trigger_end_ids'] = self.trigger_end_ids
+        # Set up trigger sequences in shared state
+        if self.trigger_start_seqs is not None:
+            shared['trigger_start_seqs'] = self.trigger_start_seqs
+        else:
+            shared.pop('trigger_start_seqs', None)
+        if self.trigger_end_seqs is not None:
+            shared['trigger_end_seqs'] = self.trigger_end_seqs
+        else:
+            shared.pop('trigger_end_seqs', None)
+
+        # Compute max trigger length for ring buffer sizing
+        max_len = 0
+        for seqs in (self.trigger_start_seqs or [], self.trigger_end_seqs or []):
+            for seq in seqs:
+                max_len = max(max_len, len(seq))
+        shared['max_trigger_len'] = max_len
+
+        # Clear any stale buffers/mask from previous trigger config
+        shared.pop('token_buffers', None)
+        shared.pop('trigger_mask', None)
 
         # Register embedding hook for triggers if needed
-        has_triggers = (self.trigger_start_ids or self.trigger_end_ids)
+        has_triggers = (self.trigger_start_seqs or self.trigger_end_seqs)
         if has_triggers:
             embed_layer = _find_embedding_layer(model)
             if not hasattr(embed_layer, '_trigger_hook_handle'):
@@ -606,6 +644,93 @@ def _clear_steering(model, layer_idx: int):
         for k in keys_to_remove:
             del layer._steering_state[k]
     return "Steering cleared"
+
+
+# ============================================================================
+# TRIGGER ARGUMENT RESOLUTION
+# ============================================================================
+
+# Prefixes that can change how tokenizers encode the start of an XML tag.
+# E.g., some tokenizers merge "\n<" into a single token different from "<".
+_TRIGGER_PREFIXES = ["", "\n", " "]
+
+
+def _tokenize_with_prefix_variants(
+    strings: List[str],
+    tokenizer,
+    label: str = "trigger",
+) -> List[List[int]]:
+    """Tokenize trigger strings with prefix variants for robustness.
+
+    Some tokenizers encode '<' differently depending on the preceding
+    character (e.g., '\\n<' may merge into a single token distinct from '<').
+    We tokenize each string with common prefixes and deduplicate, so the
+    ring buffer matcher handles all variants.
+    """
+    seqs = []
+    seen: set[tuple[int, ...]] = set()
+    for s in strings:
+        for prefix in _TRIGGER_PREFIXES:
+            ids = tokenizer.encode(prefix + s, add_special_tokens=False)
+            if not ids:
+                raise ValueError(f"Trigger string '{prefix!r}+{s}' produced no tokens")
+            key = tuple(ids)
+            if key not in seen:
+                seen.add(key)
+                seqs.append(ids)
+                if prefix:
+                    logger.info(
+                        f"Trigger {label} '{s}' (prefix {prefix!r}) -> {ids} "
+                        f"({len(ids)} tokens)"
+                    )
+                else:
+                    logger.info(
+                        f"Trigger {label} '{s}' -> {ids} ({len(ids)} tokens)"
+                    )
+    return seqs
+
+
+def _resolve_trigger_args(
+    trigger: Optional[TokenTrigger],
+    tokenizer,
+    trigger_start_strings: Optional[List[str]],
+    trigger_end_strings: Optional[List[str]],
+):
+    """Resolve trigger arguments into token ID sequences.
+
+    Shared by VLLMSteering and MultiLayerVLLMSteering.
+
+    For string-based triggers, automatically generates prefix variants
+    (newline, space) to handle tokenizers that merge preceding whitespace
+    with the '<' character.
+
+    Returns:
+        (start_seqs, end_seqs, initially_active) where seqs are
+        List[List[int]] or None.
+    """
+    start_seqs = None
+    end_seqs = None
+    initially_active = True
+
+    if trigger is not None:
+        # Convert single-token IDs to length-1 sequences
+        if trigger.start_tokens:
+            start_seqs = [[tid] for tid in trigger.start_tokens]
+        if trigger.end_tokens:
+            end_seqs = [[tid] for tid in trigger.end_tokens]
+        initially_active = trigger.initially_active
+    elif tokenizer is not None and (trigger_start_strings or trigger_end_strings):
+        if trigger_start_strings:
+            start_seqs = _tokenize_with_prefix_variants(
+                trigger_start_strings, tokenizer, label="start",
+            )
+        if trigger_end_strings:
+            end_seqs = _tokenize_with_prefix_variants(
+                trigger_end_strings, tokenizer, label="end",
+            )
+        initially_active = False  # Default: inactive until first start trigger
+
+    return start_seqs, end_seqs, initially_active
 
 
 # ============================================================================
@@ -780,41 +905,27 @@ class VLLMSteering:
     ):
         """Enable per-token generation tracking for this steering layer.
 
-        Required for generation_token_range to work. Optionally enables
-        token-triggered steering activation/deactivation.
+        Required for generation_token_range and trigger-based steering to work.
+
+        Supports multi-token trigger strings (e.g., "<implications>") — each
+        string is tokenized into a sequence and matched as a whole, not as
+        individual tokens.
 
         Args:
-            trigger: TokenTrigger config with start/end token IDs
+            trigger: TokenTrigger config with start/end token IDs (single-token)
             tokenizer: If provided with trigger_start/end_strings, resolves
-                string tokens to IDs automatically
-            trigger_start_strings: Strings that activate steering (resolved via tokenizer)
-            trigger_end_strings: Strings that deactivate steering (resolved via tokenizer)
+                string triggers to token ID sequences
+            trigger_start_strings: Strings that activate steering (e.g., ["<implications>"])
+            trigger_end_strings: Strings that deactivate steering (e.g., ["</implications>"])
         """
-        trigger_start_ids = None
-        trigger_end_ids = None
-        initially_active = True
-
-        if trigger is not None:
-            trigger_start_ids = trigger.start_tokens or None
-            trigger_end_ids = trigger.end_tokens or None
-            initially_active = trigger.initially_active
-        elif tokenizer is not None and (trigger_start_strings or trigger_end_strings):
-            if trigger_start_strings:
-                trigger_start_ids = []
-                for s in trigger_start_strings:
-                    ids = tokenizer.encode(s, add_special_tokens=False)
-                    trigger_start_ids.extend(ids)
-            if trigger_end_strings:
-                trigger_end_ids = []
-                for s in trigger_end_strings:
-                    ids = tokenizer.encode(s, add_special_tokens=False)
-                    trigger_end_ids.extend(ids)
-            initially_active = False  # Default: inactive until first start trigger
+        start_seqs, end_seqs, initially_active = _resolve_trigger_args(
+            trigger, tokenizer, trigger_start_strings, trigger_end_strings,
+        )
 
         callable_ = _EnableTokenTrackingCallable(
             steering_layer_indices=[self.layer],
-            trigger_start_ids=trigger_start_ids,
-            trigger_end_ids=trigger_end_ids,
+            trigger_start_seqs=start_seqs,
+            trigger_end_seqs=end_seqs,
             initially_active=initially_active,
         )
         result = self.llm.apply_model(callable_)
@@ -1161,41 +1272,26 @@ class MultiLayerVLLMSteering:
     ):
         """Enable per-token generation tracking for all steering layers.
 
-        Required for generation_token_range to work. Optionally enables
-        token-triggered steering activation/deactivation.
+        Required for generation_token_range and trigger-based steering to work.
+
+        Supports multi-token trigger strings (e.g., "<implications>") — each
+        string is tokenized into a sequence and matched as a whole.
 
         Args:
-            trigger: TokenTrigger config with start/end token IDs
+            trigger: TokenTrigger config with start/end token IDs (single-token)
             tokenizer: If provided with trigger_start/end_strings, resolves
-                string tokens to IDs automatically
-            trigger_start_strings: Strings that activate steering (resolved via tokenizer)
-            trigger_end_strings: Strings that deactivate steering (resolved via tokenizer)
+                string triggers to token ID sequences
+            trigger_start_strings: Strings that activate steering (e.g., ["<implications>"])
+            trigger_end_strings: Strings that deactivate steering (e.g., ["</implications>"])
         """
-        trigger_start_ids = None
-        trigger_end_ids = None
-        initially_active = True
-
-        if trigger is not None:
-            trigger_start_ids = trigger.start_tokens or None
-            trigger_end_ids = trigger.end_tokens or None
-            initially_active = trigger.initially_active
-        elif tokenizer is not None and (trigger_start_strings or trigger_end_strings):
-            if trigger_start_strings:
-                trigger_start_ids = []
-                for s in trigger_start_strings:
-                    ids = tokenizer.encode(s, add_special_tokens=False)
-                    trigger_start_ids.extend(ids)
-            if trigger_end_strings:
-                trigger_end_ids = []
-                for s in trigger_end_strings:
-                    ids = tokenizer.encode(s, add_special_tokens=False)
-                    trigger_end_ids.extend(ids)
-            initially_active = False  # Default: inactive until first start trigger
+        start_seqs, end_seqs, initially_active = _resolve_trigger_args(
+            trigger, tokenizer, trigger_start_strings, trigger_end_strings,
+        )
 
         callable_ = _EnableTokenTrackingCallable(
             steering_layer_indices=self.layers,
-            trigger_start_ids=trigger_start_ids,
-            trigger_end_ids=trigger_end_ids,
+            trigger_start_seqs=start_seqs,
+            trigger_end_seqs=end_seqs,
             initially_active=initially_active,
         )
         result = self.llm.apply_model(callable_)
