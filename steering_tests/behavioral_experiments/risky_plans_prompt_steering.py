@@ -22,11 +22,16 @@ Usage:
 import argparse
 import json
 import logging
+import os
 import pickle
 import re
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+# Disable V1 multiprocessing before vLLM import — subprocess model causes
+# CUDA init failures on some nodes, and we need in-process hooks anyway
+os.environ.setdefault("VLLM_ENABLE_V1_MULTIPROCESSING", "0")
 
 import numpy as np
 from transformers import AutoTokenizer
@@ -242,6 +247,7 @@ def run_experiment(
         tensor_parallel_size=tp_size, enforce_eager=True,
         disable_log_stats=True, gpu_memory_utilization=gpu_memory_utilization,
         max_model_len=max_model_len,
+        enable_prefix_caching=False,
     )
 
     # Load both emotion vectors
@@ -329,6 +335,11 @@ def run_experiment(
             steering.clear()
             steering.enable_token_tracking()
         else:
+            # Token tracking is required so the hook can detect prefill vs decode
+            # (without it, is_prefill defaults to False and steer_generation=False
+            # causes the hook to skip steering entirely)
+            steering.enable_token_tracking()
+
             # Set fear on its prompt section — steer prompt only, not generation
             steering.set(
                 "fear", scale=cond["scale_pct"], direction=1,

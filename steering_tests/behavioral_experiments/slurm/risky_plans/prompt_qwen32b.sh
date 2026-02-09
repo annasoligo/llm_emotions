@@ -2,7 +2,7 @@
 #SBATCH --job-name=rprompt_q32_%a
 #SBATCH --output=/workspace-vast/annas/logs/rprompt_q32_%A_%a.out
 #SBATCH --error=/workspace-vast/annas/logs/rprompt_q32_%A_%a.out
-#SBATCH --time=1:00:00
+#SBATCH --time=2:00:00
 #SBATCH --partition=general
 #SBATCH --qos=high
 #SBATCH --gres=gpu:2
@@ -42,7 +42,7 @@ python -m steering_tests.behavioral_experiments.risky_plans_prompt_steering \
     --layers 35 36 37 38 39 \
     --mode "$MODE" \
     --vector-type "$VTYPE" \
-    --norm-pcts 0.50 0.75 \
+    --norm-pcts 0.05 0.10 0.20 0.50 1.00 2.00 \
     --num-samples 50 \
     --max-tokens 2000 \
     --gpu-memory 0.80
