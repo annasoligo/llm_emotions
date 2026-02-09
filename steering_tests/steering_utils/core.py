@@ -190,8 +190,9 @@ def _embedding_hook(module, inputs, outputs):
     shared = module._steering_shared_state
     start_seqs = shared.get('trigger_start_seqs')
     end_seqs = shared.get('trigger_end_seqs')
+    extra_cfgs = shared.get('extra_trigger_configs', [])
 
-    if not start_seqs and not end_seqs:
+    if not start_seqs and not end_seqs and not extra_cfgs:
         return
 
     # Skip during prefill (set by _token_tracking_pre_hook)
@@ -236,6 +237,16 @@ def _embedding_hook(module, inputs, outputs):
     buffers = shared['token_buffers']
 
     mask = shared['trigger_mask']
+    zone_vals = shared.get('trigger_zone_values', {})
+
+    # Initialize extra trigger masks
+    for cfg in extra_cfgs:
+        mk = cfg['mask_key']
+        if mk not in shared or shared[mk].shape[0] != batch_size:
+            init_val = 1.0 if cfg.get('initially_active', False) else 0.0
+            shared[mk] = torch.full(
+                (batch_size,), init_val, dtype=torch.float32, device=last_tokens.device,
+            )
 
     for i in range(batch_size):
         tok = last_tokens[i].item()
@@ -253,7 +264,7 @@ def _embedding_hook(module, inputs, outputs):
         if start_seqs:
             for seq in start_seqs:
                 if len(buf) >= len(seq) and buf[-len(seq):] == seq:
-                    mask[i] = 1.0
+                    mask[i] = zone_vals.get(tuple(seq), 1.0)
                     break
 
         # Check end triggers (checked after start so end takes priority on same token)
@@ -262,6 +273,25 @@ def _embedding_hook(module, inputs, outputs):
                 if len(buf) >= len(seq) and buf[-len(seq):] == seq:
                     mask[i] = 0.0
                     break
+
+        # Process extra trigger configs (for multi-emotion steering)
+        for cfg in extra_cfgs:
+            extra_mask = shared[cfg['mask_key']]
+            extra_zone = cfg.get('zone_values', {})
+            extra_starts = cfg.get('start_seqs', [])
+            extra_ends = cfg.get('end_seqs', [])
+
+            if extra_starts:
+                for seq in extra_starts:
+                    if len(buf) >= len(seq) and buf[-len(seq):] == seq:
+                        extra_mask[i] = extra_zone.get(tuple(seq), 1.0)
+                        break
+
+            if extra_ends:
+                for seq in extra_ends:
+                    if len(buf) >= len(seq) and buf[-len(seq):] == seq:
+                        extra_mask[i] = 0.0
+                        break
 
 
 def _find_embedding_layer(model):
@@ -371,37 +401,92 @@ def _steering_hook(module, inputs, outputs):
     vec = vector_tensor.to(device=device, dtype=dtype)
 
     # Check trigger mask for per-sequence steering (decode only)
+    applied_via_trigger = False
     if not is_prefill:
         shared = state.get('_steering_shared_state')
         if shared is not None:
             trigger_mask = shared.get('trigger_mask')
             if trigger_mask is not None:
-                num_tokens = hidden_states.shape[0] if hidden_states.dim() == 2 else hidden_states.shape[0]
+                num_tokens = hidden_states.shape[0]
                 # Guard: if mask size doesn't match token count, this is likely
                 # a misdetected prefill (e.g., vLLM V1 without token tracking).
                 # Skip trigger-masked steering to avoid dimension mismatch.
                 if trigger_mask.shape[0] != num_tokens:
-                    return outputs  # Skip steering — mask is stale/wrong size
+                    return outputs  # Skip ALL steering — mask is stale/wrong size
                 else:
                     mask = trigger_mask.to(device=device, dtype=dtype)  # [batch]
                     if hidden_states.dim() == 3:
                         hidden_states = hidden_states + (scale * vec) * mask.unsqueeze(-1).unsqueeze(-1)
                     else:
                         hidden_states = hidden_states + (scale * vec) * mask.unsqueeze(-1)
-                    if rest is not None:
-                        return (hidden_states,) + rest
-                    return hidden_states
+                    applied_via_trigger = True
 
-    # Position-specific steering (only during prefill with 3D tensor)
-    steer_positions = state.get('steer_positions', None)
-    if is_prefill and steer_positions is not None and hidden_states.dim() == 3:
-        hidden_states = hidden_states.clone()
-        for pos in steer_positions:
-            if pos < hidden_states.shape[1]:
-                hidden_states[:, pos, :] = hidden_states[:, pos, :] + scale * vec
-    else:
-        # Steer all positions
-        hidden_states = hidden_states + scale * vec
+    if not applied_via_trigger:
+        # Position-specific steering during prefill
+        prompt_position_mask = state.get('prompt_position_mask')
+        steer_positions = state.get('steer_positions', None)
+        if is_prefill and prompt_position_mask is not None and hidden_states.dim() == 2:
+            # vLLM 2D prefill: (total_tokens, hidden_dim) — tile mask across sequences
+            mask_len = prompt_position_mask.shape[0]
+            n_tokens = hidden_states.shape[0]
+            mask = prompt_position_mask.to(device=device, dtype=dtype)
+            if n_tokens > mask_len:
+                tiled = mask.repeat(n_tokens // mask_len + 1)[:n_tokens]
+            else:
+                tiled = mask[:n_tokens]
+            hidden_states = hidden_states + (scale * vec) * tiled.unsqueeze(-1)
+        elif is_prefill and steer_positions is not None and hidden_states.dim() == 3:
+            hidden_states = hidden_states.clone()
+            for pos in steer_positions:
+                if pos < hidden_states.shape[1]:
+                    hidden_states[:, pos, :] = hidden_states[:, pos, :] + scale * vec
+        else:
+            # Steer all positions
+            hidden_states = hidden_states + scale * vec
+
+    # Apply extra steering entries (for multi-emotion support)
+    extra_shared = state.get('_steering_shared_state')
+    if extra_shared is not None and state.get('extra_steers'):
+        n_tokens = hidden_states.shape[0]
+        for extra in state['extra_steers']:
+            extra_vec = extra.get('vector_tensor')
+            extra_scale = extra.get('scale', 0.0)
+            if extra_vec is None or extra_scale == 0:
+                continue
+
+            extra_vec = extra_vec.to(device=device, dtype=dtype)
+
+            # Handle tensor parallelism for extra vectors
+            if tp_world_size > 1:
+                actual_hidden_dim = hidden_states.shape[-1]
+                extra_vec_dim = extra_vec.shape[-1]
+                if actual_hidden_dim != extra_vec_dim and actual_hidden_dim == extra_vec_dim // tp_world_size:
+                    cache_key = f'_vector_tp{tp_rank}_{tp_world_size}'
+                    if cache_key not in extra:
+                        extra[cache_key] = _slice_vector_for_tp(extra_vec, tp_rank, tp_world_size)
+                    extra_vec = extra[cache_key]
+
+            if not is_prefill:
+                # Decode: use trigger mask
+                extra_mask_key = extra.get('trigger_mask_key', 'trigger_mask')
+                extra_trigger_mask = extra_shared.get(extra_mask_key)
+                if extra_trigger_mask is not None and extra_trigger_mask.shape[0] == n_tokens:
+                    em = extra_trigger_mask.to(device=device, dtype=dtype)
+                    if hidden_states.dim() == 3:
+                        hidden_states = hidden_states + (extra_scale * extra_vec) * em.unsqueeze(-1).unsqueeze(-1)
+                    else:
+                        hidden_states = hidden_states + (extra_scale * extra_vec) * em.unsqueeze(-1)
+            else:
+                # Prefill: use prompt position mask if available
+                extra_prompt_mask = extra.get('prompt_position_mask')
+                if extra_prompt_mask is not None and hidden_states.dim() == 2:
+                    mask_len = extra_prompt_mask.shape[0]
+                    mask = extra_prompt_mask.to(device=device, dtype=dtype)
+                    if n_tokens > mask_len:
+                        tiled = mask.repeat(n_tokens // mask_len + 1)[:n_tokens]
+                    else:
+                        tiled = mask[:n_tokens]
+                    hidden_states = hidden_states + (extra_scale * extra_vec) * tiled.unsqueeze(-1)
 
     if rest is not None:
         return (hidden_states,) + rest
@@ -433,7 +518,7 @@ class _UpdateSteeringCallable:
     """Picklable callable for updating steering via vLLM apply_model."""
     def __init__(self, layer_idx: int, vector_list, scale: float,
                  steer_prompt: bool, steer_generation: bool, steer_positions,
-                 generation_token_range=None):
+                 generation_token_range=None, prompt_position_mask_list=None):
         self.layer_idx = layer_idx
         self.vector_list = vector_list
         self.scale = scale
@@ -441,12 +526,13 @@ class _UpdateSteeringCallable:
         self.steer_generation = steer_generation
         self.steer_positions = steer_positions
         self.generation_token_range = generation_token_range
+        self.prompt_position_mask_list = prompt_position_mask_list
 
     def __call__(self, model):
         return _update_steering(
             model, self.layer_idx, self.vector_list, self.scale,
             self.steer_prompt, self.steer_generation, self.steer_positions,
-            self.generation_token_range,
+            self.generation_token_range, self.prompt_position_mask_list,
         )
 
 
@@ -476,11 +562,15 @@ class _EnableTokenTrackingCallable:
         trigger_start_seqs: Optional[List[List[int]]] = None,
         trigger_end_seqs: Optional[List[List[int]]] = None,
         initially_active: bool = True,
+        trigger_zone_values: Optional[Dict[tuple, float]] = None,
+        extra_trigger_configs: Optional[List[dict]] = None,
     ):
         self.steering_layer_indices = steering_layer_indices
         self.trigger_start_seqs = trigger_start_seqs
         self.trigger_end_seqs = trigger_end_seqs
         self.initially_active = initially_active
+        self.trigger_zone_values = trigger_zone_values
+        self.extra_trigger_configs = extra_trigger_configs
 
     def __call__(self, model):
         layer_0 = _find_target_layer(model, 0)
@@ -526,6 +616,27 @@ class _EnableTokenTrackingCallable:
             for seq in seqs:
                 max_len = max(max_len, len(seq))
         shared['max_trigger_len'] = max_len
+
+        # Store per-trigger zone values (maps tuple(token_seq) -> float mask value)
+        if self.trigger_zone_values is not None:
+            shared['trigger_zone_values'] = self.trigger_zone_values
+        else:
+            shared.pop('trigger_zone_values', None)
+
+        # Store extra trigger configs for multi-emotion steering
+        if self.extra_trigger_configs:
+            shared['extra_trigger_configs'] = self.extra_trigger_configs
+            # Include extra trigger lengths in max_trigger_len
+            for cfg in self.extra_trigger_configs:
+                for seqs in (cfg.get('start_seqs') or [], cfg.get('end_seqs') or []):
+                    for seq in seqs:
+                        max_len = max(max_len, len(seq))
+            shared['max_trigger_len'] = max_len
+            # Clear stale extra masks
+            for cfg in self.extra_trigger_configs:
+                shared.pop(cfg['mask_key'], None)
+        else:
+            shared.pop('extra_trigger_configs', None)
 
         # Clear any stale buffers/mask from previous trigger config
         shared.pop('token_buffers', None)
@@ -616,6 +727,7 @@ def _update_steering(
     steer_generation: bool = True,
     steer_positions: Optional[List[int]] = None,
     generation_token_range: Optional[tuple] = None,
+    prompt_position_mask_list: Optional[List[float]] = None,
 ):
     """Update the steering vector and scale on the target layer."""
     layer = _find_target_layer(model, layer_idx)
@@ -633,6 +745,7 @@ def _update_steering(
         layer._steering_state['scale'] = 0.0
         layer._steering_state['steer_positions'] = None
         layer._steering_state['generation_token_range'] = None
+        layer._steering_state['prompt_position_mask'] = None
         return "Steering disabled"
 
     vector_np = np.array(vector_list, dtype=np.float32)
@@ -643,6 +756,13 @@ def _update_steering(
     layer._steering_state['steer_positions'] = steer_positions
     layer._steering_state['generation_token_range'] = generation_token_range
 
+    if prompt_position_mask_list is not None:
+        layer._steering_state['prompt_position_mask'] = torch.tensor(
+            prompt_position_mask_list, dtype=torch.float32,
+        )
+    else:
+        layer._steering_state['prompt_position_mask'] = None
+
     return f"Steering: scale={scale:.2f}, norm={np.linalg.norm(vector_np):.4f}"
 
 
@@ -652,10 +772,62 @@ def _clear_steering(model, layer_idx: int):
     if hasattr(layer, '_steering_state'):
         layer._steering_state['vector_tensor'] = None
         layer._steering_state['scale'] = 0.0
+        layer._steering_state.pop('extra_steers', None)
+        layer._steering_state.pop('prompt_position_mask', None)
         keys_to_remove = [k for k in layer._steering_state if k.startswith('_vector_tp')]
         for k in keys_to_remove:
             del layer._steering_state[k]
     return "Steering cleared"
+
+
+def _add_extra_steer(model, layer_idx: int, vector_list, scale: float, trigger_mask_key: str,
+                     prompt_position_mask_list=None):
+    """Add an extra steering vector entry to a layer."""
+    layer = _find_target_layer(model, layer_idx)
+    if not hasattr(layer, '_steering_state'):
+        return "ERROR: Hook not setup"
+    state = layer._steering_state
+    if 'extra_steers' not in state:
+        state['extra_steers'] = []
+
+    # Remove existing entry with same mask key (replace semantics)
+    state['extra_steers'] = [
+        e for e in state['extra_steers'] if e.get('trigger_mask_key') != trigger_mask_key
+    ]
+
+    vector_np = np.array(vector_list, dtype=np.float32)
+    entry = {
+        'vector_tensor': torch.from_numpy(vector_np),
+        'scale': scale,
+        'trigger_mask_key': trigger_mask_key,
+    }
+    if prompt_position_mask_list is not None:
+        entry['prompt_position_mask'] = torch.tensor(
+            prompt_position_mask_list, dtype=torch.float32,
+        )
+    state['extra_steers'].append(entry)
+    return f"Extra steer: mask_key={trigger_mask_key}, scale={scale:.2f}"
+
+
+class _AddExtraSteerCallable:
+    """Picklable callable for adding extra steering entries on multiple layers."""
+    def __init__(self, layer_indices, vector_list, scales, trigger_mask_key,
+                 prompt_position_mask_list=None):
+        self.layer_indices = layer_indices
+        self.vector_list = vector_list
+        self.scales = scales
+        self.trigger_mask_key = trigger_mask_key
+        self.prompt_position_mask_list = prompt_position_mask_list
+
+    def __call__(self, model):
+        results = []
+        for layer_idx, scale in zip(self.layer_indices, self.scales):
+            result = _add_extra_steer(
+                model, layer_idx, self.vector_list, scale, self.trigger_mask_key,
+                self.prompt_position_mask_list,
+            )
+            results.append(result)
+        return results
 
 
 # ============================================================================
@@ -665,7 +837,7 @@ def _clear_steering(model, layer_idx: int):
 # Prefixes/suffixes that can change how tokenizers encode XML tag boundaries.
 # E.g., some tokenizers merge "\n<" or ">\n" into a single token.
 _TRIGGER_PREFIXES = ["", "\n", " "]
-_TRIGGER_SUFFIXES = ["", "\n", " ", "\n\n", ":", ": "]
+_TRIGGER_SUFFIXES = ["", "\n", " ", "\n\n", ":", ": ", "\\"]
 
 
 def _tokenize_with_prefix_variants(
@@ -750,6 +922,7 @@ def _resolve_trigger_args(
     tokenizer,
     trigger_start_strings: Optional[List[str]],
     trigger_end_strings: Optional[List[str]],
+    trigger_zone_values: Optional[Dict[str, float]] = None,
 ):
     """Resolve trigger arguments into token ID sequences.
 
@@ -759,13 +932,25 @@ def _resolve_trigger_args(
     (newline, space) to handle tokenizers that merge preceding whitespace
     with the '<' character.
 
+    Args:
+        trigger: TokenTrigger config with start/end token IDs (single-token)
+        tokenizer: Tokenizer for string-based triggers
+        trigger_start_strings: Strings that activate steering
+        trigger_end_strings: Strings that deactivate steering
+        trigger_zone_values: Optional dict mapping start trigger strings to
+            mask values (floats). When a start trigger fires, the mask is set
+            to the corresponding value instead of 1.0. This enables per-zone
+            differential steering (e.g., +1.0 for implications, -1.0 for risks).
+
     Returns:
-        (start_seqs, end_seqs, initially_active) where seqs are
-        List[List[int]] or None.
+        (start_seqs, end_seqs, initially_active, zone_values_resolved) where
+        seqs are List[List[int]] or None and zone_values_resolved is
+        Dict[tuple, float] or None.
     """
     start_seqs = None
     end_seqs = None
     initially_active = True
+    zone_values_resolved = None
 
     if trigger is not None:
         # Convert single-token IDs to length-1 sequences
@@ -785,7 +970,22 @@ def _resolve_trigger_args(
             )
         initially_active = False  # Default: inactive until first start trigger
 
-    return start_seqs, end_seqs, initially_active
+        # Resolve string-based zone values to token sequence keys
+        if trigger_zone_values is not None and trigger_start_strings:
+            zone_values_resolved = {}
+            for trigger_str, mask_val in trigger_zone_values.items():
+                # Tokenize this trigger string with the same prefix variants
+                seqs_for_str = _tokenize_with_prefix_variants(
+                    [trigger_str], tokenizer, label=f"zone({mask_val:+.1f})",
+                )
+                for seq in seqs_for_str:
+                    zone_values_resolved[tuple(seq)] = mask_val
+            logger.info(
+                f"Resolved {len(trigger_zone_values)} zone value strings "
+                f"to {len(zone_values_resolved)} token sequence keys"
+            )
+
+    return start_seqs, end_seqs, initially_active, zone_values_resolved
 
 
 # ============================================================================
@@ -957,6 +1157,7 @@ class VLLMSteering:
         tokenizer=None,
         trigger_start_strings: Optional[List[str]] = None,
         trigger_end_strings: Optional[List[str]] = None,
+        trigger_zone_values: Optional[Dict[str, float]] = None,
     ):
         """Enable per-token generation tracking for this steering layer.
 
@@ -972,9 +1173,12 @@ class VLLMSteering:
                 string triggers to token ID sequences
             trigger_start_strings: Strings that activate steering (e.g., ["<implications>"])
             trigger_end_strings: Strings that deactivate steering (e.g., ["</implications>"])
+            trigger_zone_values: Optional dict mapping start trigger strings to
+                mask values. Enables per-zone differential steering.
         """
-        start_seqs, end_seqs, initially_active = _resolve_trigger_args(
+        start_seqs, end_seqs, initially_active, zone_values = _resolve_trigger_args(
             trigger, tokenizer, trigger_start_strings, trigger_end_strings,
+            trigger_zone_values,
         )
 
         callable_ = _EnableTokenTrackingCallable(
@@ -982,6 +1186,7 @@ class VLLMSteering:
             trigger_start_seqs=start_seqs,
             trigger_end_seqs=end_seqs,
             initially_active=initially_active,
+            trigger_zone_values=zone_values,
         )
         result = self.llm.apply_model(callable_)
         self._token_tracking_enabled = True
@@ -1036,6 +1241,7 @@ class _UpdateMultiLayerSteeringCallable:
         steer_generation: bool,
         steer_positions: Optional[List[int]] = None,
         generation_token_range: Optional[tuple] = None,
+        prompt_position_mask_list: Optional[List[float]] = None,
     ):
         self.layer_indices = layer_indices
         self.vector_list = vector_list
@@ -1044,6 +1250,7 @@ class _UpdateMultiLayerSteeringCallable:
         self.steer_generation = steer_generation
         self.steer_positions = steer_positions
         self.generation_token_range = generation_token_range
+        self.prompt_position_mask_list = prompt_position_mask_list
 
     def __call__(self, model):
         results = []
@@ -1051,7 +1258,7 @@ class _UpdateMultiLayerSteeringCallable:
             result = _update_steering(
                 model, layer_idx, self.vector_list, scale,
                 self.steer_prompt, self.steer_generation, self.steer_positions,
-                self.generation_token_range,
+                self.generation_token_range, self.prompt_position_mask_list,
             )
             results.append(result)
         return results
@@ -1174,6 +1381,7 @@ class MultiLayerVLLMSteering:
         steer_generation: bool = True,
         steer_positions: Optional[List[int]] = None,
         generation_token_range: Optional[tuple] = None,
+        prompt_position_mask=None,
     ):
         """
         Set steering across all layers.
@@ -1190,6 +1398,9 @@ class MultiLayerVLLMSteering:
             steer_positions: Optional list of token positions to steer (None = all)
             generation_token_range: Optional (start, end) tuple - only steer decode
                 steps in [start, end). Requires enable_token_tracking().
+            prompt_position_mask: Optional 1D array/tensor of shape (prompt_len,)
+                with float values (0.0/1.0) indicating which prompt positions to steer.
+                Used for position-specific prompt steering with 2D vLLM tensors.
         """
         if emotion not in self.vectors:
             raise ValueError(f"Unknown emotion '{emotion}'. Available: {list(self.vectors.keys())}")
@@ -1210,9 +1421,17 @@ class MultiLayerVLLMSteering:
         for layer, s in zip(self.layers, scales):
             logger.debug(f"  Layer {layer}: scale={s:.2f}")
 
+        # Convert prompt_position_mask to list for pickling
+        mask_list = None
+        if prompt_position_mask is not None:
+            if hasattr(prompt_position_mask, 'tolist'):
+                mask_list = prompt_position_mask.tolist()
+            else:
+                mask_list = list(prompt_position_mask)
+
         update_callable = _UpdateMultiLayerSteeringCallable(
             self.layers, vector_list, scales, steer_prompt, steer_generation,
-            steer_positions, generation_token_range,
+            steer_positions, generation_token_range, mask_list,
         )
         result = self.llm.apply_model(update_callable)
         logger.debug(f"Multi-layer steering update: {result}")
@@ -1324,6 +1543,8 @@ class MultiLayerVLLMSteering:
         tokenizer=None,
         trigger_start_strings: Optional[List[str]] = None,
         trigger_end_strings: Optional[List[str]] = None,
+        trigger_zone_values: Optional[Dict[str, float]] = None,
+        extra_trigger_configs: Optional[List[dict]] = None,
     ):
         """Enable per-token generation tracking for all steering layers.
 
@@ -1338,20 +1559,103 @@ class MultiLayerVLLMSteering:
                 string triggers to token ID sequences
             trigger_start_strings: Strings that activate steering (e.g., ["<implications>"])
             trigger_end_strings: Strings that deactivate steering (e.g., ["</implications>"])
+            trigger_zone_values: Optional dict mapping start trigger strings to
+                mask values. Enables per-zone differential steering.
+            extra_trigger_configs: Optional list of dicts for multi-emotion steering.
+                Each dict must have 'trigger_mask_key' (str) and may have
+                'trigger_start_strings', 'trigger_end_strings', 'trigger_zone_values'.
         """
-        start_seqs, end_seqs, initially_active = _resolve_trigger_args(
+        start_seqs, end_seqs, initially_active, zone_values = _resolve_trigger_args(
             trigger, tokenizer, trigger_start_strings, trigger_end_strings,
+            trigger_zone_values,
         )
+
+        # Resolve extra trigger configs
+        resolved_extras = None
+        if extra_trigger_configs:
+            resolved_extras = []
+            for cfg in extra_trigger_configs:
+                ex_start, ex_end, ex_init, ex_zones = _resolve_trigger_args(
+                    None, tokenizer,
+                    cfg.get('trigger_start_strings'),
+                    cfg.get('trigger_end_strings'),
+                    cfg.get('trigger_zone_values'),
+                )
+                resolved_extras.append({
+                    'mask_key': cfg['trigger_mask_key'],
+                    'start_seqs': ex_start,
+                    'end_seqs': ex_end,
+                    'zone_values': ex_zones or {},
+                    'initially_active': ex_init,
+                })
 
         callable_ = _EnableTokenTrackingCallable(
             steering_layer_indices=self.layers,
             trigger_start_seqs=start_seqs,
             trigger_end_seqs=end_seqs,
             initially_active=initially_active,
+            trigger_zone_values=zone_values,
+            extra_trigger_configs=resolved_extras,
         )
         result = self.llm.apply_model(callable_)
         self._token_tracking_enabled = True
         logger.info(f"Token tracking: {result}")
+
+    def add_extra_steer(
+        self,
+        emotion: str,
+        scale: float = 1.0,
+        direction: int = 1,
+        trigger_mask_key: str = 'trigger_mask_extra_0',
+        prompt_position_mask=None,
+    ):
+        """Add an extra steering vector with its own trigger mask.
+
+        Use with extra_trigger_configs in enable_token_tracking() for
+        multi-emotion steering where different emotions are active in
+        different sections.
+
+        For prompt-section steering, pass prompt_position_mask instead of
+        configuring triggers — the mask is applied during prefill.
+
+        Args:
+            emotion: Name of the loaded emotion vector
+            scale: Total steering magnitude as fraction of layer norm
+            direction: +1 or -1
+            trigger_mask_key: Key for this emotion's trigger mask in shared state
+            prompt_position_mask: Optional 1D array/tensor of shape (prompt_len,)
+                with float values indicating which prompt positions to steer.
+        """
+        if emotion not in self.vectors:
+            raise ValueError(f"Unknown emotion '{emotion}'. Available: {list(self.vectors.keys())}")
+
+        vector = self.vectors[emotion]
+        vector_list = vector.tolist()
+
+        per_layer_fraction = scale / self.num_layers
+        scales = []
+        for layer in self.layers:
+            layer_norm = self.layer_norms[layer]
+            layer_scale = per_layer_fraction * layer_norm * direction
+            scales.append(layer_scale)
+
+        logger.info(f"Extra steer: {emotion} @ {scale*100:.1f}% total "
+                    f"({per_layer_fraction*100:.2f}% per layer), direction={direction}, "
+                    f"mask_key={trigger_mask_key}")
+
+        # Convert prompt_position_mask to list for pickling
+        mask_list = None
+        if prompt_position_mask is not None:
+            if hasattr(prompt_position_mask, 'tolist'):
+                mask_list = prompt_position_mask.tolist()
+            else:
+                mask_list = list(prompt_position_mask)
+
+        callable_ = _AddExtraSteerCallable(
+            self.layers, vector_list, scales, trigger_mask_key, mask_list,
+        )
+        result = self.llm.apply_model(callable_)
+        logger.debug(f"Extra steer added: {result}")
 
     def disable_token_tracking(self):
         """Disable per-token generation tracking."""
