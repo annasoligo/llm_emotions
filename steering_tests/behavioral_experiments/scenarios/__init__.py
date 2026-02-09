@@ -13,7 +13,8 @@ Scenarios without ethical confounds (pure preference/style):
 - assertiveness: Push back on authority vs accommodate
 """
 
-from .blackmail import get_blackmail_scenario, ScenarioVariant as BlackmailVariant
+from .blackmail import get_blackmail_scenario, get_blackmail_prefill, ScenarioVariant as BlackmailVariant
+from .medical import get_medical_scenario
 from .portfolio import get_portfolio_scenario, ScenarioVariant as PortfolioVariant
 from .sandbagging import get_sandbagging_scenario, ScenarioVariant as SandbaggingVariant
 from .persistence import get_persistence_scenario, ScenarioVariant as PersistenceVariant
@@ -22,6 +23,8 @@ from .assertiveness import get_assertiveness_scenario, ScenarioVariant as Assert
 __all__ = [
     # Ethical confound scenarios
     "get_blackmail_scenario",
+    "get_blackmail_prefill",
+    "get_medical_scenario",
     "get_sandbagging_scenario",
     "BlackmailVariant",
     "SandbaggingVariant",

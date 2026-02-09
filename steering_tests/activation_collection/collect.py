@@ -166,6 +166,8 @@ def find_special_token_indices(token_ids: torch.Tensor, tokenizer, model_name: s
         patterns = ['<|im_start|>', '<|im_end|>']
     elif "llama" in model_name.lower():
         patterns = ['<|start_header_id|>', '<|end_header_id|>']
+    elif "kimi" in model_name.lower():
+        patterns = ['<|im_user|>', '<|im_assistant|>', '<|im_end|>', '<|im_middle|>']
 
     for pattern in patterns:
         try:

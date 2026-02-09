@@ -36,6 +36,16 @@ Proactively suggest commits at natural breakpoints: after finishing a script, be
 ### Copy existing code patterns, don't rewrite from scratch
 When implementing something similar to existing code, find the existing implementation first and adapt it. Check `steering_tests/`, `elicitation/`, and `experiments/` for patterns.
 
+### ALWAYS match result format of related experiments
+When creating a new experiment script that is a variation of an existing one (e.g., `medical_section_steering` from `blackmail_section_steering`), the new script MUST:
+1. **Use identical result row fields** where applicable — same key names, same types, same semantics. Add new fields for genuinely new data (e.g., `score`, `parsed_ok` for medical), but never rename existing ones (e.g., don't change `response_len` to `resp_length`).
+2. **Use the same output directory structure** — `results/{experiment_name}/{model_short}/{vector_type}/{variant}_layers{L}_{timestamp}/`
+3. **Use the same ResultWriter pattern** — per-factor JSONL files with metadata header, same `extra_meta` keys where applicable.
+4. **Use the same summary format** — if the parent script prints a table with columns, the new script should print the same columns plus any new ones appended to the right.
+5. **Check the parent script's exact field names** before writing the new one — don't guess from memory.
+
+The goal: any downstream analysis script should be able to load results from related experiments with minimal or no special-casing.
+
 ### NEVER write new prompts without asking
 Judge prompts, eval prompts, and system prompts live in centralised locations (`elicitation/prompts/`, `steering_tests/data/`). **ALWAYS** search these first. If you can't find an existing prompt, ask before writing a new one - don't invent one. If you find two prompts that appear to judge the same thing or serve the same purpose, flag the duplication to the user immediately. Using the wrong prompt or a subtly different one produces inconsistent results that are hard to catch.
 
@@ -74,11 +84,14 @@ Given our history of normalisation bugs (21x!), always print summary stats (min,
 
 See `.claude/skills/vllm.md` for full details. Key points:
 - **ALWAYS** set `enforce_eager=True` (required for steering hooks)
-- **ALWAYS** set `gpu_memory_utilization=0.80` (never higher - OOM risk during KV cache allocation)
-- **ALWAYS** set these env vars in slurm scripts for multi-GPU:
+- **ALWAYS** set `gpu_memory_utilization=0.80` for most models. **Exception:** Qwen 235B needs `0.90` — model weights (109.5 GiB across 4 GPUs) leave no KV cache headroom at 0.80
+- **ALWAYS** set these env vars in **ALL** vLLM slurm scripts (including single-GPU):
   ```bash
   export VLLM_USE_V1=0
-  export VLLM_ALLOW_INSECURE_SERIALIZATION=1
+  export VLLM_ALLOW_INSECURE_SERIALIZATION=1  # Required for steering hook serialization
+  ```
+- **Additionally** for multi-GPU jobs, set NCCL vars:
+  ```bash
   export NCCL_P2P_DISABLE=1
   export NCCL_SOCKET_IFNAME="=vxlan0"
   export NCCL_NVLS_ENABLE=0
@@ -131,10 +144,10 @@ Default model for data generation and judging: **`claude-sonnet-4-5-20250929`** 
 | `/home/` | Small | Local overlay | **AVOID** - causes "Disk quota exceeded" |
 
 ### QoS Strategy
-- `high` (default): ~12-15 GPU quota/user, not preempted. Use for single important jobs.
-- `low`: No GPU limit, can be preempted. Use for sweeps or when hitting quota.
+- **Default to `--qos=high`** for all jobs. High QoS is not preempted, so results are guaranteed.
+- `low`: No GPU limit, but **can be preempted at any time**. Only use `--qos=low` for jobs that are **interruptible and resumable** (e.g., activation collection with `--resume`, or jobs that checkpoint incrementally). Never submit a non-resumable job at low QoS — if it gets preempted you lose all progress.
 - `dev`: Interactive `srun` ONLY. Never with `sbatch`.
-- If blocked by `QOSMaxGRESPerUser`: switch to `--qos=low`.
+- If blocked by `QOSMaxGRESPerUser`: switch to `--qos=low` only if the job supports resume/checkpointing.
 
 See `.claude/skills/slurm/SKILL.md` for full cluster details.
 

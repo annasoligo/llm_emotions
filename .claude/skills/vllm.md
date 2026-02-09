@@ -4,16 +4,14 @@ This covers vLLM-specific configuration. For slurm templates and cluster details
 
 ## Environment Variables (Required)
 
-Always set these in slurm scripts before running vLLM:
+**IMPORTANT:** `VLLM_USE_V1=0` and `VLLM_ALLOW_INSECURE_SERIALIZATION=1` are required for **ALL** vLLM jobs — including single-GPU. Without them, steering hooks fail with `TypeError: Object of type _SetupMultiLayerHookCallable is not serializable`. This is the #1 cause of "Engine core died unexpectedly" errors.
 
 ```bash
-# Disable vLLM V1 engine (causes serialization issues with steering hooks)
+# Required for ALL vLLM steering jobs (single-GPU and multi-GPU)
 export VLLM_USE_V1=0
-
-# Allow serialization for steering vectors
 export VLLM_ALLOW_INSECURE_SERIALIZATION=1
 
-# NCCL networking (required for multi-GPU)
+# NCCL networking (required for multi-GPU only)
 # The "=" prefix is NCCL syntax for "interfaces starting with vxlan0"
 export NCCL_P2P_DISABLE=1
 export NCCL_SOCKET_IFNAME="=vxlan0"
@@ -22,15 +20,26 @@ export NCCL_NVLS_ENABLE=0
 
 ## GPU Memory Configuration
 
-**ALWAYS use `gpu_memory_utilization=0.80`.** Never higher - risks OOM during KV cache allocation.
+Use `gpu_memory_utilization=0.80` for most models. **Exception:** Qwen 235B (109.5 GiB across 4 GPUs) needs `gpu_memory_utilization=0.90` — at 0.80 there is negative KV cache headroom and vLLM will fail with "No available memory for cache blocks".
 
 ```python
+# Most models
 llm = LLM(
     model=model_name,
     tensor_parallel_size=4,  # Match #SBATCH --gres=gpu:N
     gpu_memory_utilization=0.80,
-    max_model_len=4096,  # Reduce for large models to save KV cache memory
+    max_model_len=8192,
     enforce_eager=True,  # Required for steering hooks
+    disable_log_stats=True,
+)
+
+# Qwen 235B specifically
+llm = LLM(
+    model="Qwen/Qwen3-235B-A22B",
+    tensor_parallel_size=4,
+    gpu_memory_utilization=0.90,  # 0.80 causes OOM - model is 109.5 GiB
+    max_model_len=8192,
+    enforce_eager=True,
     disable_log_stats=True,
 )
 ```
@@ -88,8 +97,12 @@ trap cleanup EXIT SIGTERM SIGINT
 - **Fix:** Add `export NCCL_SOCKET_IFNAME="=vxlan0"` and `export NCCL_NVLS_ENABLE=0`
 
 ### "No available memory for cache blocks"
-- **Cause:** Model weights use too much GPU memory
-- **Fix:** Reduce `max_model_len` (e.g., 8192 -> 4096) or ensure `gpu_memory_utilization=0.80`
+- **Cause:** Model weights use too much GPU memory for the `gpu_memory_utilization` budget
+- **Fix:** For Qwen 235B, use `gpu_memory_utilization=0.90` (not 0.80). For other models, reduce `max_model_len` or check that no other processes are using GPU memory on the node (use `--exclude=node-X` to avoid busy nodes)
+
+### "Object of type _SetupMultiLayerHookCallable is not serializable" / "Engine core died unexpectedly"
+- **Cause:** Missing `VLLM_ALLOW_INSECURE_SERIALIZATION=1`. This is needed for ALL vLLM jobs (including single-GPU) when using steering hooks.
+- **Fix:** Add `export VLLM_ALLOW_INSECURE_SERIALIZATION=1` to the slurm script
 
 ### "Engine core initialization failed"
 - **Cause:** Often a combination of memory and NCCL issues

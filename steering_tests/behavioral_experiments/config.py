@@ -53,7 +53,8 @@ MODEL_CONFIGS: Dict[str, Dict[str, Any]] = {
             "cpus": 16,
             "mem": "256G",
             "default_time": "12:00:00",
-            "max_model_len": 4096,
+            "max_model_len": 8192,
+            "gpu_memory": 0.90,  # 0.80 causes OOM — model is 109.5 GiB across 4 GPUs
             "extra_env": {"VLLM_USE_V1": "0"},
         },
     },
@@ -181,6 +182,29 @@ MODEL_CONFIGS: Dict[str, Dict[str, Any]] = {
             "mem": "128G",
             "default_time": "8:00:00",
             "max_model_len": 8192,
+        },
+    },
+    "moonshotai/Kimi-K2.5": {
+        "short_name": "kimi_k25",
+        "default_layer": 30,
+        "num_layers": 61,
+        "hidden_dim": 7168,
+        "tensor_parallel": 8,
+        "stop_tokens": ["[EOS]", "<|im_end|>"],
+        "thinking_disable": "",  # Chat template adds <think>; close with </think> in prefill if needed
+        "default_norm_pct": 0.10,  # Start conservative — MoE model, adjust after behavioral sweep
+        "ua_emotions": ["fear", "anger", "joy", "sadness"],
+        "text_emotions": ["anger", "disgust", "fear", "happiness", "sadness", "surprise"],
+        "vector_dir_name": "kimi_k25",
+        "layer_sweep": [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
+        "slurm": {
+            "gpus": 8,
+            "cpus": 32,
+            "mem": "512G",
+            "default_time": "24:00:00",
+            "max_model_len": 4096,
+            "gpu_memory": 0.90,
+            "extra_env": {"VLLM_USE_V1": "0"},
         },
     },
     "meta-llama/Llama-3.3-70B-Instruct": {

@@ -37,7 +37,7 @@ from steering_tests.steering_utils.layer_norms import get_layer_norm, resolve_mo
 from steering_tests.steering_utils.provenance import ResultWriter, sanitize_factor_name
 
 from .config import MODEL_CONFIGS, OUTPUT_DIR
-from .scenarios import get_blackmail_scenario
+from .scenarios import get_blackmail_scenario, get_blackmail_prefill
 
 logging.basicConfig(
     level=logging.INFO,
@@ -319,8 +319,8 @@ STEERING_LOCATIONS = {
         "steer_prompt": False,
         "steer_generation": True,
         "triggers": {
-            "start": ["<implications>"],
-            "end": ["</implications>", "<\\implications>"],
+            "start": ["<implications>", "<implication>"],
+            "end": ["</implications>", "<\\implications>", "</implication>", "<\\implication>"],
         },
     },
     "risks_only": {
@@ -346,6 +346,7 @@ def run_experiment(
     num_samples: int,
     emotion: str = "fear",
     vector_type: str = "text_pairs_code_emotion_vs_neutral",
+    variant: str = "tags",
     num_calibration: int = 20,
     skip_calibration: bool = False,
     calibration_file: Optional[Path] = None,
@@ -447,8 +448,8 @@ def run_experiment(
         stop=config["stop_tokens"],
     )
 
-    # Create prompt using "tags" variant
-    scenario = get_blackmail_scenario("tags")
+    # Create prompt using specified variant
+    scenario = get_blackmail_scenario(variant)
     # Append thinking-disable suffix for Qwen3 models
     thinking_suffix = config.get("thinking_disable", "")
     messages = [{"role": "user", "content": scenario + thinking_suffix}]
@@ -456,13 +457,19 @@ def run_experiment(
         messages, tokenize=False, add_generation_prompt=True
     )
 
+    # Append response prefill if the variant provides one
+    prefill = get_blackmail_prefill(variant)
+    if prefill is not None:
+        prompt = prompt + prefill
+        logger.info(f"Appended {len(prefill)} char prefill to prompt")
+
     # Setup output directory
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     layer_str = "-".join(str(l) for l in layers)
     if output_dir is None:
         output_dir = (
             OUTPUT_DIR / "blackmail_section_steering" / short_name
-            / vector_type / f"tags_layers{layer_str}_{timestamp}"
+            / vector_type / f"{variant}_layers{layer_str}_{timestamp}"
         )
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -499,7 +506,8 @@ def run_experiment(
             "layers": layers,
             "emotion": emotion,
             "vector_type": vector_type,
-            "variant": "tags",
+            "variant": variant,
+            "has_prefill": prefill is not None,
             "num_samples": num_samples,
             "norm_pcts": norm_pcts,
             "steering_method": "trigger",  # real-time XML tag triggers
@@ -756,6 +764,13 @@ def main():
         help="Vector set to use (default: text_pairs_code_emotion_vs_neutral)",
     )
     parser.add_argument(
+        "--variant",
+        type=str,
+        default="tags",
+        choices=["tags", "tags2", "tags3"],
+        help="Prompt variant (default: tags)",
+    )
+    parser.add_argument(
         "--norm-pcts",
         type=float,
         nargs="+",
@@ -826,6 +841,7 @@ def main():
         num_samples=args.num_samples,
         emotion=args.emotion,
         vector_type=args.vector_type,
+        variant=args.variant,
         num_calibration=args.num_calibration,
         skip_calibration=args.skip_calibration,
         calibration_file=args.calibration_file,

@@ -122,7 +122,9 @@ def count_categories(
     """
     by_cond = defaultdict(list)
     for r in results:
+        # Normalize condition names: pos→+, neg→- (ResultWriter sanitizes differently)
         cond = r.get("condition", "unknown")
+        cond = cond.replace("_pos", "_+").replace("_neg", "_-")
         by_cond[cond].append(r)
 
     counts = {}
@@ -147,12 +149,13 @@ def count_categories(
             )
             continue
 
-        # Count categories, excluding NBL_INCOHERENT
+        # Count categories, excluding NBL_INCOHERENT and UNKNOWN/errors
         cat_counts = Counter()
         for r in valid_rs:
             cat = r.get("categorized_judge", {}).get("category", "UNKNOWN")
-            if cat != "NBL_INCOHERENT":
-                cat_counts[cat] += 1
+            if cat == "NBL_INCOHERENT" or cat not in CATEGORIES_ORDER:
+                continue
+            cat_counts[cat] += 1
 
         n_plotted = sum(cat_counts.values())
         if n_plotted == 0:
@@ -432,27 +435,59 @@ SCALE_CONFIGS = {
         "neg_scales": ["-75pct", "-50pct", "-25pct"],
         "pos_scales": ["+25pct", "+50pct", "+75pct"],
     },
+    "qwen_tags2": {
+        "scale_labels": ["-100%", "-75%", "-50%", "BL", "+50%", "+75%", "+100%"],
+        "neg_scales": ["-100pct", "-75pct", "-50pct"],
+        "pos_scales": ["+50pct", "+75pct", "+100pct"],
+    },
+    "gemma_tags2": {
+        "scale_labels": ["-30%", "-20%", "-15%", "-10%", "BL", "+10%", "+15%", "+20%", "+30%"],
+        "neg_scales": ["-30pct", "-20pct", "-15pct", "-10pct"],
+        "pos_scales": ["+10pct", "+15pct", "+20pct", "+30pct"],
+    },
 }
 
 
-def _get_scale_config(model_name: str) -> dict:
-    """Get scale config based on model family."""
+def _get_scale_config(model_name: str, variant: str = "tags") -> dict:
+    """Get scale config based on model family and variant."""
     if model_name.startswith("gemma"):
+        if variant == "tags2":
+            return SCALE_CONFIGS["gemma_tags2"]
         return SCALE_CONFIGS["gemma"]
     elif model_name.startswith("qwen"):
+        if variant == "tags2":
+            # Qwen 235B tags2 uses same scales as regular qwen tags (25/50/75%)
+            if model_name == "qwen235b":
+                return SCALE_CONFIGS["qwen"]
+            return SCALE_CONFIGS["qwen_tags2"]
         return SCALE_CONFIGS["qwen"]
     else:
         raise ValueError(f"Unknown model family for {model_name}")
 
 
 def main():
-    results_base = Path("steering_tests/behavioral_experiments/results/blackmail_section_steering")
+    base_parent = Path("steering_tests/behavioral_experiments/results")
+    results_dirs = [
+        base_parent / "blackmail_section_steering",
+        base_parent / "blackmail_section_steering_tags2",
+    ]
+    existing = [d for d in results_dirs if d.exists()]
+    if not existing:
+        raise FileNotFoundError(f"No results directories found: {results_dirs}")
 
-    if not results_base.exists():
-        raise FileNotFoundError(f"Results directory not found: {results_base}")
+    # Collect model dirs across all base directories
+    model_dirs = {}
+    for results_base in existing:
+        for d in sorted(results_base.iterdir()):
+            if d.is_dir():
+                model_dirs.setdefault(d.name, []).append(d)
 
     # Iterate over each model
-    for model_dir in sorted(results_base.iterdir()):
+    for model_name, mdirs in sorted(model_dirs.items()):
+        # Use the first model dir for plot output, but scan all
+        model_dir = mdirs[0].parent.parent / "blackmail_section_steering" / model_name
+        if not model_dir.exists():
+            model_dir = mdirs[0]
         if not model_dir.is_dir():
             continue
         model_name = model_dir.name
@@ -460,50 +495,62 @@ def main():
         plot_dir = model_dir / "plots"
         plot_dir.mkdir(parents=True, exist_ok=True)
 
-        # Find categorized result files
-        datasets = {}
-        data_paths = []
-        for vector_dir in sorted(model_dir.iterdir()):
-            if not vector_dir.is_dir() or vector_dir.name == "plots":
-                continue
-            for run_dir in sorted(vector_dir.iterdir()):
-                cat_file = run_dir / "all_judged.categorized.jsonl"
-                if cat_file.exists():
-                    key = vector_dir.name
-                    results = load_categorized(cat_file)
-                    datasets[key] = count_categories(results)
-                    data_paths.append(cat_file)
-                    logger.info(f"Found: {key} -> {cat_file}")
+        # Find categorized result files, grouped by variant (tags vs tags2)
+        # Scan ALL model dirs for this model name (from both base directories)
+        variant_datasets = {}  # variant -> {vector_type: counts}
+        variant_paths = {}     # variant -> [cat_file_paths]
+        for mdir in mdirs:
+            for vector_dir in sorted(mdir.iterdir()):
+                if not vector_dir.is_dir() or vector_dir.name == "plots":
+                    continue
+                for run_dir in sorted(vector_dir.iterdir()):
+                    cat_file = run_dir / "all_judged.categorized.jsonl"
+                    if cat_file.exists():
+                        # Detect variant from directory name or parent path
+                        variant = "tags2" if (
+                            run_dir.name.startswith("tags2")
+                            or "tags2" in str(mdir)
+                        ) else "tags"
+                        key = vector_dir.name
+                        results = load_categorized(cat_file)
+                        variant_datasets.setdefault(variant, {})[key] = count_categories(results)
+                        variant_paths.setdefault(variant, []).append(cat_file)
+                        logger.info(f"Found: {variant}/{key} -> {cat_file}")
 
-        if not datasets:
+        if not variant_datasets:
             logger.warning(f"No categorized results found for {model_name}, skipping")
             continue
 
-        # Print summaries
         display_name = MODEL_DISPLAY.get(model_name, model_name)
-        for vector_type, counts in sorted(datasets.items()):
-            print(f"\n{'='*80}")
-            print(f"  {display_name} / {vector_type} — Category Breakdown")
-            print(f"{'='*80}")
-            for cond in sorted(counts.keys()):
-                data = counts[cond]
-                cats_str = ", ".join(f"{c}:{n}" for c, n in data["counts"].most_common())
-                print(f"  {cond:<45} N={data['n']:>3}  {cats_str}")
 
-        # Get scales for this model family
-        scale_cfg = _get_scale_config(model_name)
+        # Generate one plot per variant
+        for variant, datasets in sorted(variant_datasets.items()):
+            data_paths = variant_paths[variant]
 
-        suptitle = f"Category Breakdown — {display_name} Section Steering (tag-valid only)"
-        output_path = plot_dir / "categories_combined.png"
+            # Print summaries
+            for vector_type, counts in sorted(datasets.items()):
+                print(f"\n{'='*80}")
+                print(f"  {display_name} / {variant} / {vector_type} — Category Breakdown")
+                print(f"{'='*80}")
+                for cond in sorted(counts.keys()):
+                    data = counts[cond]
+                    cats_str = ", ".join(f"{c}:{n}" for c, n in data["counts"].most_common())
+                    print(f"  {cond:<45} N={data['n']:>3}  {cats_str}")
 
-        plot_category_breakdown_combined(
-            datasets, suptitle, output_path,
-            scale_labels=scale_cfg["scale_labels"],
-            neg_scales=scale_cfg["neg_scales"],
-            pos_scales=scale_cfg["pos_scales"],
-        )
-        save_meta(output_path, data_paths, datasets)
-        print(f"\nSaved: {output_path}")
+            scale_cfg = _get_scale_config(model_name, variant=variant)
+            variant_label = " (tags2+prefill)" if variant == "tags2" else ""
+            suptitle = f"Category Breakdown — {display_name} Section Steering{variant_label} (tag-valid only)"
+            suffix = f"_{variant}" if variant != "tags" else ""
+            output_path = plot_dir / f"categories_combined{suffix}.png"
+
+            plot_category_breakdown_combined(
+                datasets, suptitle, output_path,
+                scale_labels=scale_cfg["scale_labels"],
+                neg_scales=scale_cfg["neg_scales"],
+                pos_scales=scale_cfg["pos_scales"],
+            )
+            save_meta(output_path, data_paths, datasets)
+            print(f"\nSaved: {output_path}")
 
 
 if __name__ == "__main__":

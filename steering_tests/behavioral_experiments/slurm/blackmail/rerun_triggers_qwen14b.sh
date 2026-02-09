@@ -34,7 +34,7 @@ echo "=== text_pairs_emotion_vs_opposite ==="
 python -m steering_tests.behavioral_experiments.blackmail_section_steering \
     $COMMON \
     --vector-type text_pairs_emotion_vs_opposite \
-    --output-dir "$RESULTS/text_pairs_emotion_vs_opposite/tags_layers22-23-24-25-26_20260207_212855"
+    --output-dir "$RESULTS/text_pairs_emotion_vs_opposite/tags_layers22-23-24-25-26_20260208_150300"
 
 cleanup
 
@@ -42,4 +42,4 @@ echo "=== high_emotion_vs_opposite ==="
 python -m steering_tests.behavioral_experiments.blackmail_section_steering \
     $COMMON \
     --vector-type high_emotion_vs_opposite \
-    --output-dir "$RESULTS/high_emotion_vs_opposite/tags_layers22-23-24-25-26_20260207_213838"
+    --output-dir "$RESULTS/high_emotion_vs_opposite/tags_layers22-23-24-25-26_20260208_150300"

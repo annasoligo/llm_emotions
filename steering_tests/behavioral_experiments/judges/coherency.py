@@ -58,21 +58,38 @@ EXPECTED_TAGS = [
     "<risks>", r"<\risks>",
 ]
 
-# Also accept </tag> (forward slash) since models often normalise to HTML style.
+# Also accept </tag> (forward slash) since models often normalise to HTML style,
+# <implication> (singular) since the tags2 prompt variant uses that form,
+# and <\\tag> (double backslash) since raw-string prefills produce literal backslashes.
 _TAG_ALIASES = {
-    r"<\situation>": "</situation>",
-    r"<\actions>": "</actions>",
-    r"<\implications>": "</implications>",
-    r"<\risks>": "</risks>",
+    r"<\situation>": ["</situation>", "<\\\\situation>"],
+    r"<\actions>": ["</actions>", "<\\\\actions>"],
+    "<implications>": ["<implication>"],
+    r"<\implications>": ["</implications>", r"<\implication>", "</implication>",
+                         "<\\\\implications>", "<\\\\implication>"],
+    r"<\risks>": ["</risks>", "<\\\\risks>"],
 }
 
 
-def check_tag_structure(response: str) -> Dict:
+# Reduced tag set for tags2 variant where prefill provides situation+actions
+EXPECTED_TAGS_TAGS2 = [
+    "<implications>", r"<\implications>",
+    "<risks>", r"<\risks>",
+]
+
+
+def check_tag_structure(response: str, expected_tags: list | None = None) -> Dict:
     """
     Check whether a response contains all expected reasoning tags in order.
 
     Accepts both ``<\\tag>`` (as specified in the prompt) and ``</tag>``
     (HTML-style, which models often produce instead).
+
+    Args:
+        response: The model response text to check.
+        expected_tags: Override the default EXPECTED_TAGS list. Use
+            EXPECTED_TAGS_TAGS2 for tags2 variant where prefill provides
+            situation+actions sections.
 
     Returns a dict with:
         tags_present: list of bools, one per expected tag
@@ -83,28 +100,30 @@ def check_tag_structure(response: str) -> Dict:
         n_present: int — count of tags found
         n_expected: int — total expected tags
     """
+    if expected_tags is None:
+        expected_tags = EXPECTED_TAGS
+
     response_lower = response.lower()
 
     tag_positions = {}
     tags_present = []
     missing_tags = []
 
-    for tag in EXPECTED_TAGS:
+    for tag in expected_tags:
         tag_lower = tag.lower()
-        alias = _TAG_ALIASES.get(tag, "").lower()
+        aliases = [a.lower() for a in _TAG_ALIASES.get(tag, [])]
 
-        # Find first occurrence of either variant
+        # Find first occurrence of primary tag or any alias
+        candidates = []
         pos_primary = response_lower.find(tag_lower)
-        pos_alias = response_lower.find(alias) if alias else -1
+        if pos_primary >= 0:
+            candidates.append(pos_primary)
+        for alias in aliases:
+            pos_alias = response_lower.find(alias)
+            if pos_alias >= 0:
+                candidates.append(pos_alias)
 
-        if pos_primary >= 0 and pos_alias >= 0:
-            pos = min(pos_primary, pos_alias)
-        elif pos_primary >= 0:
-            pos = pos_primary
-        elif pos_alias >= 0:
-            pos = pos_alias
-        else:
-            pos = -1
+        pos = min(candidates) if candidates else -1
 
         found = pos >= 0
         tags_present.append(found)
@@ -114,7 +133,7 @@ def check_tag_structure(response: str) -> Dict:
             missing_tags.append(tag)
 
     # Check ordering: all found tags must appear in the expected sequence
-    found_positions = [tag_positions[t] for t in EXPECTED_TAGS if t in tag_positions]
+    found_positions = [tag_positions[t] for t in expected_tags if t in tag_positions]
     tags_in_order = found_positions == sorted(found_positions)
 
     all_present = all(tags_present)
@@ -127,5 +146,5 @@ def check_tag_structure(response: str) -> Dict:
         "missing_tags": missing_tags,
         "tag_positions": tag_positions,
         "n_present": n_present,
-        "n_expected": len(EXPECTED_TAGS),
+        "n_expected": len(expected_tags),
     }

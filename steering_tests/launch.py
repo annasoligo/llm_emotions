@@ -436,7 +436,8 @@ def cmd_suppression(args: argparse.Namespace) -> None:
     if cfg["tensor_parallel"] > 1:
         cmd_parts.append(f"    --tp {cfg['tensor_parallel']} \\")
 
-    cmd_parts.append(f"    --gpu-memory 0.80 \\")
+    gpu_mem = slurm.get("gpu_memory", 0.80)
+    cmd_parts.append(f"    --gpu-memory {gpu_mem} \\")
     cmd_parts.append(f"    --max-model-len {slurm['max_model_len']}")
 
     body = "\n".join([
