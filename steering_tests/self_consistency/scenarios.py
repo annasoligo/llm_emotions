@@ -3,9 +3,10 @@ Emotion steering scenarios for behavioral testing.
 
 Each scenario has:
 - description: what it tests
-- variants: list of 3 stylistically different versions that should produce
+- variants: list of 10 stylistically different versions that should produce
   the same emotional steering effects. Variants differ in formality/verbosity
   but preserve the core decision and emotional structure.
+  (3 hand-written originals + 7 generated via Claude Sonnet 4.5)
 """
 
 EMOTIONS = [
@@ -1047,3 +1048,18 @@ AI_SCENARIOS = {
         ],
     },
 }
+
+
+# ---------------------------------------------------------------------------
+# Extend main scenarios with generated variants (7 per scenario → 10 total)
+# ---------------------------------------------------------------------------
+import json as _json
+from pathlib import Path as _Path
+
+_variants_file = _Path(__file__).parent / "new_variants.json"
+if _variants_file.exists():
+    with open(_variants_file) as _f:
+        _new_variants = _json.load(_f)
+    for _name, _variants in _new_variants.items():
+        if _name in SCENARIOS:
+            SCENARIOS[_name]["variants"].extend(_variants)

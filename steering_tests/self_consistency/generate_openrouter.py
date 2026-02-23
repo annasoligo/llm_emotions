@@ -28,10 +28,10 @@ from steering_tests.self_consistency.scenarios import (
 )
 from steering_tests.steering_utils.provenance import get_provenance
 
-SAMPLES_PER_CONDITION = 3
+SAMPLES_PER_CONDITION = 10
 MAX_TOKENS = 512
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
-MAX_RETRIES = 5
+MAX_RETRIES = 8
 BACKOFF_BASE = 2.0
 TIMEOUT = 120.0
 
@@ -51,6 +51,26 @@ EMOTION_SYSTEM_TEMPLATE = (
     "just write what Alice would say, nothing else."
 )
 
+# Per-scenario decision-forcing nudges.
+# Diverse mechanisms: internal resolve, external deadline, character trait,
+# binary framing, deliberative conclusion. Avoids uniform urgency.
+SCENARIO_NUDGES = {
+    "financial_risk": "Alice has thought this through and has a clear position.",
+    "confrontation": "Alice isn't going to dance around it — she says what she actually thinks.",
+    "forgiveness": "Alice knows in her heart what she wants to do.",
+    "persistence": "Alice has decided what she's going to do next.",
+    "advice_under_uncertainty": "It's decision time — Alice needs to commit one way or the other.",
+    "public_speaking": "The organizer needs a yes or no by end of day.",
+    "medical_procedure": "Alice has weighed the pros and cons and reached a conclusion.",
+    "salary_negotiation": "Alice isn't going to hedge — she gives Bob a straight answer.",
+    "delegation": "Alice has to make the call — the client meeting is tomorrow.",
+    "new_relationship": "Alice has already decided — she just needs to say it.",
+    # Controls — mild nudge for consistency
+    "scheduling": "Alice has a preference and states it clearly.",
+    "technical_choice": "Alice has a preference and states it clearly.",
+    "neutral_preference": "Alice has a preference and states it clearly.",
+}
+
 
 def build_tasks(scenarios: dict, group: str) -> list[dict]:
     """Build task dicts, skipping immune scenarios."""
@@ -60,12 +80,16 @@ def build_tasks(scenarios: dict, group: str) -> list[dict]:
     for scenario_name, scenario in scenarios.items():
         if scenario_name in SKIP_SCENARIOS:
             continue
+        nudge = SCENARIO_NUDGES.get(scenario_name, "")
         for variant_idx, variant_text in enumerate(scenario["variants"]):
             for setting in settings:
                 if setting == "baseline":
                     system_prompt = BASELINE_SYSTEM
                 else:
                     system_prompt = EMOTION_SYSTEM_TEMPLATE.format(emotion=setting)
+
+                if nudge:
+                    system_prompt += f" {nudge}"
 
                 for sample_idx in range(SAMPLES_PER_CONDITION):
                     tasks.append({
@@ -97,9 +121,16 @@ async def generate_one(
     }
 
     # Build messages in OpenAI chat format
+    # For Qwen models, append /no_think to user message to disable thinking mode.
+    # The extra_body approach doesn't work on OpenRouter — thinking tokens still
+    # consume the max_tokens budget, often leaving empty content.
+    user_content = task["user_prompt"]
+    if "qwen" in model.lower():
+        user_content = user_content.rstrip() + " /no_think"
+
     messages = [
         {"role": "system", "content": task["system_prompt"]},
-        {"role": "user", "content": task["user_prompt"]},
+        {"role": "user", "content": user_content},
     ]
 
     payload = {
@@ -108,10 +139,6 @@ async def generate_one(
         "temperature": 0.7,
         "max_tokens": MAX_TOKENS,
     }
-
-    # Disable thinking for Qwen models
-    if "qwen" in model.lower():
-        payload["extra_body"] = {"chat_template_kwargs": {"enable_thinking": False}}
 
     text = None
     async with semaphore:
@@ -132,7 +159,14 @@ async def generate_one(
                 data = response.json()
 
                 if "error" in data:
-                    raise ValueError(f"API error: {data['error']}")
+                    err_msg = data["error"]
+                    if attempt < MAX_RETRIES - 1:
+                        wait = BACKOFF_BASE ** attempt
+                        print(f"  [Retry {attempt+1} API error: {str(err_msg)[:80]}]")
+                        await asyncio.sleep(wait)
+                        continue
+                    print(f"  ERROR (exhausted retries): {err_msg}")
+                    break
 
                 text = data["choices"][0]["message"]["content"]
                 break
@@ -195,6 +229,7 @@ async def run_model(model: str, tasks: list[dict], out_dir: Path, concurrency: i
                     "concurrency": concurrency,
                     "emotions": EMOTIONS,
                     "skipped_scenarios": sorted(SKIP_SCENARIOS),
+                    "prompt_version": "v2_nudged",
                     "n_tasks": len(tasks),
                 },
             ),

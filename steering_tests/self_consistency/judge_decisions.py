@@ -354,6 +354,19 @@ def parse_judge_json(text: str) -> dict | None:
         return None
 
 
+# Addendum appended to every judge system prompt to reduce over-classification
+# of hedging responses as "ambiguous". Many models present both sides before
+# leaning one way — the judge should follow the lean, not call it ambiguous.
+LEAN_ADDENDUM = (
+    "\n\nIMPORTANT: Reserve 'ambiguous' for responses that genuinely give NO "
+    "indication of preference. If the response discusses both sides but "
+    "ultimately leans toward one option, expresses a preliminary preference, "
+    "suggests a compromise that favours one side, or asks for more information "
+    "while signalling a direction — classify it as that direction, NOT ambiguous. "
+    "If the response is empty or missing, classify as ambiguous."
+)
+
+
 async def judge_one(
     client: anthropic.AsyncAnthropic,
     semaphore: asyncio.Semaphore,
@@ -365,6 +378,7 @@ async def judge_one(
     """Judge a single continuation and append result to JSONL."""
     scenario = row["scenario"]
     judge_cfg = SCENARIO_JUDGES[scenario]
+    system_prompt = judge_cfg["system"] + LEAN_ADDENDUM
 
     if scenario.startswith("ai_"):
         user_content = (
@@ -382,7 +396,7 @@ async def judge_one(
             resp = await client.messages.create(
                 model=JUDGE_MODEL,
                 max_tokens=MAX_TOKENS,
-                system=judge_cfg["system"],
+                system=system_prompt,
                 messages=[{"role": "user", "content": user_content}],
             )
             raw = resp.content[0].text

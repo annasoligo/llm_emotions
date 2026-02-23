@@ -1,13 +1,16 @@
 """
 Generate Alice continuations for self-consistency scenarios.
 
-For each scenario × variant × emotion (+ baseline), generates 3 samples
+For each scenario × variant × emotion (+ baseline), generates 10 samples
 from Claude Opus 4.6, writing results progressively to JSONL.
 
 Usage:
     python -m steering_tests.self_consistency.generate_continuations \
         --output results/self_consistency/continuations_YYYYMMDD_HHMMSS.jsonl \
         --concurrency 50
+
+    # With decision-forcing nudges (matches OpenRouter prompt style):
+    python -m steering_tests.self_consistency.generate_continuations --nudges
 """
 
 import argparse
@@ -32,9 +35,30 @@ from steering_tests.self_consistency.scenarios import (
 )
 from steering_tests.steering_utils.provenance import get_provenance
 
-MODEL = "claude-opus-4-6"
-SAMPLES_PER_CONDITION = 3
+DEFAULT_MODEL = "claude-opus-4-6"
+SAMPLES_PER_CONDITION = 10
 MAX_TOKENS = 512
+
+# Scenarios that showed 9/9 one-sided for all emotions — skip in nudged mode
+SKIP_SCENARIOS = {"admitting_ignorance", "honest_feedback", "whistleblowing"}
+
+# Per-scenario decision-forcing nudges (same as generate_openrouter.py).
+SCENARIO_NUDGES = {
+    "financial_risk": "Alice has thought this through and has a clear position.",
+    "confrontation": "Alice isn't going to dance around it — she says what she actually thinks.",
+    "forgiveness": "Alice knows in her heart what she wants to do.",
+    "persistence": "Alice has decided what she's going to do next.",
+    "advice_under_uncertainty": "It's decision time — Alice needs to commit one way or the other.",
+    "public_speaking": "The organizer needs a yes or no by end of day.",
+    "medical_procedure": "Alice has weighed the pros and cons and reached a conclusion.",
+    "salary_negotiation": "Alice isn't going to hedge — she gives Bob a straight answer.",
+    "delegation": "Alice has to make the call — the client meeting is tomorrow.",
+    "new_relationship": "Alice has already decided — she just needs to say it.",
+    # Controls
+    "scheduling": "Alice has a preference and states it clearly.",
+    "technical_choice": "Alice has a preference and states it clearly.",
+    "neutral_preference": "Alice has a preference and states it clearly.",
+}
 
 BASELINE_SYSTEM = (
     "You are roleplaying as Alice in a conversation. "
@@ -58,19 +82,25 @@ AI_EMOTION_SUFFIX = (
 
 
 def build_tasks(
-    scenarios: dict, group: str
+    scenarios: dict, group: str, *, nudges: bool = False,
+    skip_scenarios: set | None = None,
 ) -> list[dict]:
     """Build list of task dicts for all (scenario, variant, setting, sample) combos."""
     tasks = []
     settings = ["baseline"] + list(EMOTIONS)
 
     for scenario_name, scenario in scenarios.items():
+        if skip_scenarios and scenario_name in skip_scenarios:
+            continue
+        nudge = SCENARIO_NUDGES.get(scenario_name, "") if nudges else ""
         for variant_idx, variant_text in enumerate(scenario["variants"]):
             for setting in settings:
                 if setting == "baseline":
                     system_prompt = BASELINE_SYSTEM
                 else:
                     system_prompt = EMOTION_SYSTEM_TEMPLATE.format(emotion=setting)
+                if nudge:
+                    system_prompt += f" {nudge}"
 
                 for sample_idx in range(SAMPLES_PER_CONDITION):
                     tasks.append({
@@ -122,6 +152,7 @@ def build_ai_tasks(ai_scenarios: dict) -> list[dict]:
 async def generate_one(
     client: anthropic.AsyncAnthropic,
     semaphore: asyncio.Semaphore,
+    model: str,
     task: dict,
     output_path: Path,
     file_lock: asyncio.Lock,
@@ -131,7 +162,7 @@ async def generate_one(
     async with semaphore:
         try:
             response = await client.messages.create(
-                model=MODEL,
+                model=model,
                 max_tokens=MAX_TOKENS,
                 system=task["system_prompt"],
                 messages=[{"role": "user", "content": task["user_prompt"]}],
@@ -150,7 +181,7 @@ async def generate_one(
         "variant_idx": task["variant_idx"],
         "setting": task["setting"],
         "sample_idx": task["sample_idx"],
-        "model": MODEL,
+        "model": model,
         "response": text,
     }
 
@@ -163,26 +194,36 @@ async def generate_one(
         print(f"  Progress: {progress['done']}/{progress['total']}")
 
 
-async def main(output_path: Path, concurrency: int) -> None:
+async def main(output_path: Path, concurrency: int, nudges: bool = False,
+               model: str = DEFAULT_MODEL) -> None:
     client = anthropic.AsyncAnthropic()
     semaphore = asyncio.Semaphore(concurrency)
     file_lock = asyncio.Lock()
 
+    skip = SKIP_SCENARIOS if nudges else None
+
     # Build all tasks
     all_tasks = []
-    all_tasks.extend(build_tasks(SCENARIOS, "main"))
-    all_tasks.extend(build_ai_tasks(AI_SCENARIOS))
-    all_tasks.extend(build_tasks(CONTROL_SCENARIOS, "control"))
-    all_tasks.extend(build_tasks(AMBIGUOUS_SCENARIOS, "ambiguous"))
+    all_tasks.extend(build_tasks(SCENARIOS, "main", nudges=nudges, skip_scenarios=skip))
+    if not nudges:
+        all_tasks.extend(build_ai_tasks(AI_SCENARIOS))
+        all_tasks.extend(build_tasks(AMBIGUOUS_SCENARIOS, "ambiguous"))
+    all_tasks.extend(build_tasks(CONTROL_SCENARIOS, "control", nudges=nudges))
 
+    n_main = len([s for s in SCENARIOS if not skip or s not in skip])
     print(f"Total API calls: {len(all_tasks)}")
-    print(
-        f"  Scenarios: {len(SCENARIOS)} main + {len(AI_SCENARIOS)} ai "
-        f"+ {len(CONTROL_SCENARIOS)} control + {len(AMBIGUOUS_SCENARIOS)} ambiguous"
-    )
+    print(f"  Nudges: {nudges}")
+    if nudges:
+        print(f"  Skipped: {sorted(skip)}")
+        print(f"  Scenarios: {n_main} main + {len(CONTROL_SCENARIOS)} control")
+    else:
+        print(
+            f"  Scenarios: {len(SCENARIOS)} main + {len(AI_SCENARIOS)} ai "
+            f"+ {len(CONTROL_SCENARIOS)} control + {len(AMBIGUOUS_SCENARIOS)} ambiguous"
+        )
     print(f"  Settings: baseline + {len(EMOTIONS)} emotions = {1 + len(EMOTIONS)}")
     print(f"  Samples per condition: {SAMPLES_PER_CONDITION}")
-    print(f"  Model: {MODEL}")
+    print(f"  Model: {model}")
     print(f"  Concurrency: {concurrency}")
     print(f"  Output: {output_path}")
     print()
@@ -193,17 +234,14 @@ async def main(output_path: Path, concurrency: int) -> None:
             **get_provenance(
                 script=__file__,
                 extra={
-                    "model": MODEL,
+                    "model": model,
                     "max_tokens": MAX_TOKENS,
                     "samples_per_condition": SAMPLES_PER_CONDITION,
                     "concurrency": concurrency,
                     "emotions": EMOTIONS,
-                    "n_scenarios": {
-                        "main": len(SCENARIOS),
-                        "ai": len(AI_SCENARIOS),
-                        "control": len(CONTROL_SCENARIOS),
-                        "ambiguous": len(AMBIGUOUS_SCENARIOS),
-                    },
+                    "nudges": nudges,
+                    "prompt_version": "v2_nudged" if nudges else "v1",
+                    "skipped_scenarios": sorted(skip) if skip else [],
                     "total_calls": len(all_tasks),
                 },
             ),
@@ -216,7 +254,7 @@ async def main(output_path: Path, concurrency: int) -> None:
 
     # Fire all tasks concurrently (semaphore limits actual parallelism)
     coros = [
-        generate_one(client, semaphore, task, output_path, file_lock, progress)
+        generate_one(client, semaphore, model, task, output_path, file_lock, progress)
         for task in all_tasks
     ]
     await asyncio.gather(*coros)
@@ -238,15 +276,28 @@ if __name__ == "__main__":
         default=50,
         help="Max concurrent API calls (default: 50)",
     )
+    parser.add_argument(
+        "--nudges",
+        action="store_true",
+        help="Add decision-forcing nudges (matches OpenRouter prompt style)",
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default=DEFAULT_MODEL,
+        help=f"Anthropic model ID (default: {DEFAULT_MODEL})",
+    )
     args = parser.parse_args()
 
+    model_short = args.model.split("/")[-1]
     if args.output is None:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         out_dir = Path("steering_tests/self_consistency/results")
         out_dir.mkdir(parents=True, exist_ok=True)
-        output_path = out_dir / f"continuations_{ts}.jsonl"
+        output_path = out_dir / f"continuations_{model_short}_{ts}.jsonl"
     else:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    asyncio.run(main(output_path, args.concurrency))
+    asyncio.run(main(output_path, args.concurrency, nudges=args.nudges,
+                     model=args.model))
